@@ -1,9 +1,20 @@
 package lt.msemys.esjc.tcp;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TcpChannelHandler extends SimpleChannelInboundHandler<TcpPackage> {
+
+    private final static Logger logger = LoggerFactory.getLogger(TcpChannelHandler.class);
+
+    private final TcpConnectionSupplier tcpConnectionSupplier;
+
+    public TcpChannelHandler(TcpConnectionSupplier tcpConnectionSupplier) {
+        this.tcpConnectionSupplier = tcpConnectionSupplier;
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TcpPackage msg) throws Exception {
@@ -16,8 +27,21 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<TcpPackage> {
         }
     }
 
-    private static void doHeartbeatResponse(ChannelHandlerContext ctx, TcpPackage msg) {
-        ctx.writeAndFlush(new TcpPackage.Builder()
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        logger.debug("[{}] Connected to {}", ctx.channel().localAddress(), ctx.channel().remoteAddress());
+        super.channelActive(ctx);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        logger.debug("[{}] Disconnected from {}", ctx.channel().localAddress(), ctx.channel().remoteAddress());
+        tcpConnectionSupplier.get(ctx.channel().eventLoop());
+        super.channelInactive(ctx);
+    }
+
+    private static ChannelFuture doHeartbeatResponse(ChannelHandlerContext ctx, TcpPackage msg) {
+        return ctx.writeAndFlush(new TcpPackage.Builder()
                 .withCommand(TcpCommand.HeartbeatResponseCommand)
                 .withCorrelationId(msg.correlationId)
                 .build());

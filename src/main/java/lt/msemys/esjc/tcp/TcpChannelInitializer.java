@@ -12,6 +12,12 @@ public class TcpChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;
 
+    private final TcpConnectionSupplier tcpConnectionSupplier;
+
+    public TcpChannelInitializer(TcpConnectionSupplier tcpConnectionSupplier) {
+        this.tcpConnectionSupplier = tcpConnectionSupplier;
+    }
+
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
@@ -24,7 +30,7 @@ public class TcpChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("frame-encoder", new LengthFieldPrepender(LITTLE_ENDIAN, 4, 0, false));
         pipeline.addLast("package-encoder", new TcpPackageEncoder());
 
-        pipeline.addLast(new TcpChannelHandler());
+        pipeline.addLast(new TcpChannelHandler(tcpConnectionSupplier));
     }
 
 }
