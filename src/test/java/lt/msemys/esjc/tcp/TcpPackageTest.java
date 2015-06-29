@@ -21,9 +21,9 @@ public class TcpPackageTest {
     @Test
     public void convertsNonAuthorizedTcpPackageToByteArray() {
         TcpPackage tcpPackage = TcpPackage.newBuilder()
-                .withCommand(TcpCommand.HeartbeatRequestCommand)
-                .withCorrelationId(UUID.randomUUID())
-                .withData(DATA.getBytes(UTF_8))
+                .command(TcpCommand.HeartbeatRequestCommand)
+                .correlationId(UUID.randomUUID())
+                .data(DATA.getBytes(UTF_8))
                 .build();
 
         logger.debug(tcpPackage.toString());
@@ -44,12 +44,12 @@ public class TcpPackageTest {
         String password = "secret";
 
         TcpPackage tcpPackage = TcpPackage.newBuilder()
-                .withCommand(TcpCommand.HeartbeatRequestCommand)
-                .withTcpFlag(TcpFlag.Authenticated)
-                .withCorrelationId(UUID.randomUUID())
-                .withLogin(user)
-                .withPassword(password)
-                .withData(DATA.getBytes(UTF_8))
+                .command(TcpCommand.HeartbeatRequestCommand)
+                .flag(TcpFlag.Authenticated)
+                .correlationId(UUID.randomUUID())
+                .login(user)
+                .password(password)
+                .data(DATA.getBytes(UTF_8))
                 .build();
 
         logger.debug(tcpPackage.toString());

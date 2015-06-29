@@ -108,13 +108,13 @@ public class TcpPackage {
 
         byte[] message = copyOfRange(data, headerSize, data.length);
 
-        return new Builder()
-                .withCommand(command)
-                .withTcpFlag(flag)
-                .withCorrelationId(correlationId)
-                .withLogin(login)
-                .withPassword(password)
-                .withData(message)
+        return newBuilder()
+                .command(command)
+                .flag(flag)
+                .correlationId(correlationId)
+                .login(login)
+                .password(password)
+                .data(message)
                 .build();
     }
 
@@ -165,32 +165,32 @@ public class TcpPackage {
         private Builder() {
         }
 
-        public Builder withCommand(TcpCommand command) {
+        public Builder command(TcpCommand command) {
             this.command = command;
             return this;
         }
 
-        public Builder withTcpFlag(TcpFlag flag) {
+        public Builder flag(TcpFlag flag) {
             this.flag = flag;
             return this;
         }
 
-        public Builder withCorrelationId(UUID correlationId) {
+        public Builder correlationId(UUID correlationId) {
             this.correlationId = correlationId;
             return this;
         }
 
-        public Builder withLogin(String login) {
+        public Builder login(String login) {
             this.login = login;
             return this;
         }
 
-        public Builder withPassword(String password) {
+        public Builder password(String password) {
             this.password = password;
             return this;
         }
 
-        public Builder withData(byte[] data) {
+        public Builder data(byte[] data) {
             this.data = data;
             return this;
         }
