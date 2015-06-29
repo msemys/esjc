@@ -18,7 +18,7 @@ public class EventStoreClient {
     private ChannelFuture connection;
 
     public EventStoreClient(String host, int port) {
-        this(new Settings.Builder()
+        this(Settings.newBuilder()
                 .withAddress(host, port)
                 .build());
     }

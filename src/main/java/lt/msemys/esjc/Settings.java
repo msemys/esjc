@@ -19,6 +19,10 @@ public class Settings {
         writeBufferHighWaterMark = builder.writeBufferHighWaterMark;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Settings{");
@@ -35,6 +39,9 @@ public class Settings {
         private Duration reconnectionDelay;
         private Integer writeBufferLowWaterMark;
         private Integer writeBufferHighWaterMark;
+
+        private Builder() {
+        }
 
         public Builder withAddress(String host, int port) {
             this.address = new InetSocketAddress(host, port);
