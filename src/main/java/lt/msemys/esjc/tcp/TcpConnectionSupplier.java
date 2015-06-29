@@ -50,6 +50,7 @@ public class TcpConnectionSupplier implements Supplier<ChannelFuture> {
         return new Bootstrap()
                 .option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, settings.writeBufferLowWaterMark)
                 .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, settings.writeBufferHighWaterMark)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) settings.reconnectionDelay.toMillis())
                 .group(eventLoopGroup)
                 .channel(NioSocketChannel.class)
                 .handler(tcpChannelInitializer)
