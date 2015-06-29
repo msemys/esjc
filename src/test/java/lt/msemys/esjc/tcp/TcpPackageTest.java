@@ -20,7 +20,7 @@ public class TcpPackageTest {
 
     @Test
     public void convertsNonAuthorizedTcpPackageToByteArray() {
-        TcpPackage tcpPackage = new TcpPackage.Builder()
+        TcpPackage tcpPackage = TcpPackage.newBuilder()
                 .withCommand(TcpCommand.HeartbeatRequestCommand)
                 .withCorrelationId(UUID.randomUUID())
                 .withData(DATA.getBytes(UTF_8))
@@ -43,7 +43,7 @@ public class TcpPackageTest {
         String user = "admin";
         String password = "secret";
 
-        TcpPackage tcpPackage = new TcpPackage.Builder()
+        TcpPackage tcpPackage = TcpPackage.newBuilder()
                 .withCommand(TcpCommand.HeartbeatRequestCommand)
                 .withTcpFlag(TcpFlag.Authenticated)
                 .withCorrelationId(UUID.randomUUID())

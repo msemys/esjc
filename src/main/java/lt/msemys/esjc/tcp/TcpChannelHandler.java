@@ -48,7 +48,7 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<TcpPackage> {
     }
 
     private static ChannelFuture doHeartbeatResponse(ChannelHandlerContext ctx, TcpPackage msg) {
-        return ctx.writeAndFlush(new TcpPackage.Builder()
+        return ctx.writeAndFlush(TcpPackage.newBuilder()
                 .withCommand(TcpCommand.HeartbeatResponseCommand)
                 .withCorrelationId(msg.correlationId)
                 .build());

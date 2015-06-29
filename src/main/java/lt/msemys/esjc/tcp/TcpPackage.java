@@ -36,6 +36,10 @@ public class TcpPackage {
         this.data = builder.data;
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public byte[] toByteArray() {
         byte[] result;
 
@@ -157,6 +161,9 @@ public class TcpPackage {
         private String login;
         private String password;
         private byte[] data;
+
+        private Builder() {
+        }
 
         public Builder withCommand(TcpCommand command) {
             this.command = command;
