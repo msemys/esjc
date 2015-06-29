@@ -2,6 +2,7 @@ package lt.msemys.esjc.tcp;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,13 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<TcpPackage> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         logger.debug("[{}] Disconnected from {}", ctx.channel().localAddress(), ctx.channel().remoteAddress());
-        tcpConnectionSupplier.get(ctx.channel().eventLoop());
+
+        final EventLoop loop = ctx.channel().eventLoop();
+
+        if (!loop.isShuttingDown()) {
+            tcpConnectionSupplier.get(ctx.channel().eventLoop());
+        }
+
         super.channelInactive(ctx);
     }
 
