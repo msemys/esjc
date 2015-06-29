@@ -30,13 +30,13 @@ public class TcpChannelHandler extends SimpleChannelInboundHandler<TcpPackage> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        logger.debug("[{}] Connected to {}", ctx.channel().localAddress(), ctx.channel().remoteAddress());
+        logger.info("[{}] Connected to {}", ctx.channel().localAddress(), ctx.channel().remoteAddress());
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        logger.debug("[{}] Disconnected from {}", ctx.channel().localAddress(), ctx.channel().remoteAddress());
+        logger.info("[{}] Disconnected from {}", ctx.channel().localAddress(), ctx.channel().remoteAddress());
 
         final EventLoop loop = ctx.channel().eventLoop();
 
