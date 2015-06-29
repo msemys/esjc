@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.copyOfRange;
+import static lt.msemys.esjc.util.Preconditions.checkArgument;
+import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
 /**
  * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.Core/Services/Transport/Tcp/TcpPackage.cs">EventStore.Core/Services/Transport/Tcp/TcpPackage.cs</a>
@@ -196,32 +198,20 @@ public class TcpPackage {
         }
 
         public TcpPackage build() {
-            if (command == null) {
-                throw new IllegalArgumentException("TCP command is not provided.");
-            }
+            checkNotNull(command, "TCP command is not provided.");
 
             if (flag == null) {
                 flag = TcpFlag.None;
             }
 
-            if (correlationId == null) {
-                throw new IllegalArgumentException("Correlation ID is not provided.");
-            }
+            checkNotNull(correlationId, "Correlation ID is not provided.");
 
             if (flag == TcpFlag.Authenticated) {
-                if (login == null) {
-                    throw new IllegalArgumentException("Login is not provided for authorized TcpPackage.");
-                }
-                if (password == null) {
-                    throw new IllegalArgumentException("Password is not provided for authorized TcpPackage.");
-                }
+                checkNotNull(login, "Login is not provided for authorized TcpPackage.");
+                checkNotNull(password, "Password is not provided for authorized TcpPackage.");
             } else {
-                if (login != null) {
-                    throw new IllegalArgumentException("Login provided for non-authorized TcpPackage.");
-                }
-                if (password != null) {
-                    throw new IllegalArgumentException("Password provided for non-authorized TcpPackage.");
-                }
+                checkArgument(login == null, "Login provided for non-authorized TcpPackage.");
+                checkArgument(password == null, "Password provided for non-authorized TcpPackage.");
             }
 
             if (data == null) {
