@@ -6,7 +6,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
 import lt.msemys.esjc.tcp.TcpConnectionSupplier;
-import lt.msemys.esjc.util.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +30,7 @@ public class EventStoreClient {
     }
 
     public EventStoreClient connect() {
-        try {
-            connection().sync();
-        } catch (InterruptedException e) {
-            Throwables.propagate(e);
-        }
+        connection().awaitUninterruptibly();
         return this;
     }
 
