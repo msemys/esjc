@@ -19,7 +19,7 @@ public class EventStoreClient {
 
     public EventStoreClient(String host, int port) {
         this(Settings.newBuilder()
-                .withAddress(host, port)
+                .address(host, port)
                 .build());
     }
 

@@ -43,22 +43,22 @@ public class Settings {
         private Builder() {
         }
 
-        public Builder withAddress(String host, int port) {
+        public Builder address(String host, int port) {
             this.address = new InetSocketAddress(host, port);
             return this;
         }
 
-        public Builder withReconnectionDelay(Duration duration) {
+        public Builder reconnectionDelay(Duration duration) {
             this.reconnectionDelay = duration;
             return this;
         }
 
-        public Builder withWriteBufferLowWaterMark(int size) {
+        public Builder writeBufferLowWaterMark(int size) {
             this.writeBufferLowWaterMark = size;
             return this;
         }
 
-        public Builder withWriteBufferHighWaterMark(int size) {
+        public Builder writeBufferHighWaterMark(int size) {
             this.writeBufferHighWaterMark = size;
             return this;
         }
