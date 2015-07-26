@@ -1,11 +1,12 @@
 package lt.msemys.esjc.tcp;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.copyOfRange;
+import static lt.msemys.esjc.util.Bytes.toBytes;
+import static lt.msemys.esjc.util.Bytes.toUUID;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
@@ -80,7 +81,7 @@ public class TcpPackage {
 
         TcpCommand command = TcpCommand.of(data[COMMAND_OFFSET]);
         TcpFlag flag = TcpFlag.of(data[FLAG_OFFSET]);
-        UUID correlationId = convertByteArrayToUUID(copyOfRange(data, CORRELATION_OFFSET, CORRELATION_OFFSET + UUID_SIZE));
+        UUID correlationId = toUUID(copyOfRange(data, CORRELATION_OFFSET, CORRELATION_OFFSET + UUID_SIZE));
 
         int headerSize = MANDATORY_SIZE;
 
@@ -124,23 +125,9 @@ public class TcpPackage {
         byte[] result = new byte[size];
         result[COMMAND_OFFSET] = command.value;
         result[FLAG_OFFSET] = flag.value;
-        System.arraycopy(convertUUIDToByteArray(correlationId), 0, result, CORRELATION_OFFSET, UUID_SIZE);
+        System.arraycopy(toBytes(correlationId), 0, result, CORRELATION_OFFSET, UUID_SIZE);
 
         return result;
-    }
-
-    private static byte[] convertUUIDToByteArray(UUID uuid) {
-        ByteBuffer bb = ByteBuffer.allocate(UUID_SIZE);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return bb.array();
-    }
-
-    private static UUID convertByteArrayToUUID(byte[] bytes) {
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-        long mostSignificantBits = bb.getLong();
-        long leastSignificantBits = bb.getLong();
-        return new UUID(mostSignificantBits, leastSignificantBits);
     }
 
     @Override
