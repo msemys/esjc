@@ -3,7 +3,7 @@ package lt.msemys.esjc.util;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-public class Bytes {
+public class UUIDConverter {
 
     public static byte[] toBytes(UUID uuid) {
         ByteBuffer bb = ByteBuffer.allocate(16);

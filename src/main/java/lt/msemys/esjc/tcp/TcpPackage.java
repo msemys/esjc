@@ -5,10 +5,10 @@ import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.copyOfRange;
-import static lt.msemys.esjc.util.Bytes.toBytes;
-import static lt.msemys.esjc.util.Bytes.toUUID;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
+import static lt.msemys.esjc.util.UUIDConverter.toBytes;
+import static lt.msemys.esjc.util.UUIDConverter.toUUID;
 
 /**
  * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.Core/Services/Transport/Tcp/TcpPackage.cs">EventStore.Core/Services/Transport/Tcp/TcpPackage.cs</a>
