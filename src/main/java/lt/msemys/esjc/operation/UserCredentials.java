@@ -17,4 +17,12 @@ public class UserCredentials {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("UserCredentials{");
+        sb.append("username='").append(username).append('\'');
+        sb.append(", password='****").append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
