@@ -32,8 +32,8 @@ public class RecordedEvent {
 
         eventType = systemRecord.getEventType();
 
-        data = (systemRecord.getData() == null) ? EMPTY_BYTES : systemRecord.getData().toByteArray();
-        metadata = (systemRecord.getMetadata() == null) ? EMPTY_BYTES : systemRecord.getMetadata().toByteArray();
+        data = (systemRecord.hasData()) ? systemRecord.getData().toByteArray() : EMPTY_BYTES;
+        metadata = (systemRecord.hasMetadata()) ? systemRecord.getMetadata().toByteArray() : EMPTY_BYTES;
         isJson = systemRecord.getDataContentType() == 1;
 
         created = systemRecord.hasCreatedEpoch() ? Optional.of(ofEpochMilli(systemRecord.getCreatedEpoch())) : Optional.empty();

@@ -12,14 +12,14 @@ public class ResolvedEvent {
     public final Position originalPosition;
 
     public ResolvedEvent(EventStoreClientMessages.ResolvedEvent event) {
-        this.event = (event.getEvent() == null) ? null : new RecordedEvent(event.getEvent());
-        this.link = (event.getLink() == null) ? null : new RecordedEvent(event.getLink());
+        this.event = (event.hasEvent()) ? new RecordedEvent(event.getEvent()) : null;
+        this.link = (event.hasLink()) ? new RecordedEvent(event.getLink()) : null;
         this.originalPosition = new Position(event.getCommitPosition(), event.getPreparePosition());
     }
 
     public ResolvedEvent(EventStoreClientMessages.ResolvedIndexedEvent event) {
-        this.event = (event.getEvent() == null) ? null : new RecordedEvent(event.getEvent());
-        this.link = (event.getLink() == null) ? null : new RecordedEvent(event.getLink());
+        this.event = (event.hasEvent()) ? new RecordedEvent(event.getEvent()) : null;
+        this.link = (event.hasLink()) ? new RecordedEvent(event.getLink()) : null;
         this.originalPosition = null;
     }
 
