@@ -88,7 +88,7 @@ public class ReadAllEventsForwardOperation extends AbstractOperation<AllEventsSl
 
     @Override
     public String toString() {
-        return String.format("position: %d, maxCount: %d, resolveLinkTos: %s, requireMaster: %s",
+        return String.format("position: %s, maxCount: %d, resolveLinkTos: %s, requireMaster: %s",
                 position, maxCount, resolveLinkTos, requireMaster);
     }
 
