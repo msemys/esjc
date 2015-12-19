@@ -78,7 +78,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <get src="https://raw.githubusercontent.com/EventStore/EventStore/dev/src/Protos/ClientAPI/ClientMessageDtos.proto"
+                                <get src="https://raw.githubusercontent.com/EventStore/EventStore/release-v3.5.0/src/Protos/ClientAPI/ClientMessageDtos.proto"
                                      dest="${project.basedir}/src/main/protobuf/EventStoreClientMessages.proto"
                                      verbose="false"
                                      usetimestamp="true"/>
