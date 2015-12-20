@@ -30,6 +30,10 @@ public class StaticNodeSettings {
         private InetSocketAddress address;
         private Boolean ssl;
 
+        public Builder address(String host, int port) {
+            return address(new InetSocketAddress(host, port));
+        }
+
         public Builder address(InetSocketAddress address) {
             this.address = address;
             return this;
