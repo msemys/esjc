@@ -32,6 +32,18 @@ public class ClusterSettings {
         return new BuilderForDnsDiscoverer();
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ClusterSettings{");
+        sb.append("clusterDns='").append(clusterDns).append('\'');
+        sb.append(", maxDiscoverAttempts=").append(maxDiscoverAttempts);
+        sb.append(", externalGossipPort=").append(externalGossipPort);
+        sb.append(", gossipSeeds=").append(gossipSeeds);
+        sb.append(", gossipTimeout=").append(gossipTimeout);
+        sb.append('}');
+        return sb.toString();
+    }
+
 
     /**
      * Builder for gossip seed discoverer
