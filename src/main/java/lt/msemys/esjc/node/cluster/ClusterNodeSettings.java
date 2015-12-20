@@ -9,14 +9,14 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 
-public class ClusterSettings {
+public class ClusterNodeSettings {
     public final String clusterDns;
     public final int maxDiscoverAttempts;
     public final int externalGossipPort;
     public final List<GossipSeed> gossipSeeds;
     public final Duration gossipTimeout;
 
-    private ClusterSettings(Builder builder) {
+    private ClusterNodeSettings(Builder builder) {
         clusterDns = builder.clusterDns;
         maxDiscoverAttempts = builder.maxDiscoverAttempts;
         externalGossipPort = builder.externalGossipPort;
@@ -34,7 +34,7 @@ public class ClusterSettings {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ClusterSettings{");
+        final StringBuilder sb = new StringBuilder("ClusterNodeSettings{");
         sb.append("clusterDns='").append(clusterDns).append('\'');
         sb.append(", maxDiscoverAttempts=").append(maxDiscoverAttempts);
         sb.append(", externalGossipPort=").append(externalGossipPort);
@@ -70,7 +70,7 @@ public class ClusterSettings {
         }
 
         @Override
-        public ClusterSettings build() {
+        public ClusterNodeSettings build() {
             checkArgument(super.gossipSeeds != null && !super.gossipSeeds.isEmpty(), "Empty FakeDnsEntries collection.");
             return super.build();
         }
@@ -102,7 +102,7 @@ public class ClusterSettings {
         }
 
         @Override
-        public ClusterSettings build() {
+        public ClusterNodeSettings build() {
             checkArgument(super.clusterDns != null && !super.clusterDns.isEmpty(), "clusterDns is empty");
 
             if (super.externalGossipPort == null) {
@@ -123,7 +123,7 @@ public class ClusterSettings {
         private List<GossipSeed> gossipSeeds;
         private Duration gossipTimeout;
 
-        public ClusterSettings build() {
+        public ClusterNodeSettings build() {
             if (clusterDns == null) {
                 clusterDns = "";
             }
@@ -150,7 +150,7 @@ public class ClusterSettings {
                 gossipTimeout = Duration.ofSeconds(1);
             }
 
-            return new ClusterSettings(this);
+            return new ClusterNodeSettings(this);
         }
     }
 }

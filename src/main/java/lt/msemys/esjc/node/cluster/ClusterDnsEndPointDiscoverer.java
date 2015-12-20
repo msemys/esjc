@@ -31,10 +31,10 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
     private final Executor executor = Executors.newCachedThreadPool();
     private List<MemberInfoDto> oldGossip;
     private final ReentrantLock oldGossipLock = new ReentrantLock();
-    private final ClusterSettings settings;
+    private final ClusterNodeSettings settings;
     private final Gson gson;
 
-    public ClusterDnsEndPointDiscoverer(ClusterSettings settings) {
+    public ClusterDnsEndPointDiscoverer(ClusterNodeSettings settings) {
         this.settings = settings;
 
         gson = new GsonBuilder()
