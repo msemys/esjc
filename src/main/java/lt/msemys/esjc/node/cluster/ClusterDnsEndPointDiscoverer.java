@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
 public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
     private final static Logger logger = LoggerFactory.getLogger(ClusterDnsEndPointDiscoverer.class);
@@ -35,6 +36,8 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
     private final Gson gson;
 
     public ClusterDnsEndPointDiscoverer(ClusterNodeSettings settings) {
+        checkNotNull(settings, "settings is null");
+
         this.settings = settings;
 
         gson = new GsonBuilder()
