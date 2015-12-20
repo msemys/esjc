@@ -11,6 +11,7 @@
     <properties>
         <netty.version>4.0.30.Final</netty.version>
         <protobuf.version>2.6.1</protobuf.version>
+        <gson.version>2.5</gson.version>
         <slf4j.version>1.7.12</slf4j.version>
     </properties>
 
@@ -34,6 +35,11 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
