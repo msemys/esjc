@@ -1,10 +1,10 @@
 package lt.msemys.esjc.node;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 public interface EndPointDiscoverer {
 
-    Future<NodeEndPoints> discover(InetSocketAddress failedTcpEndPoint);
+    CompletableFuture<NodeEndPoints> discover(InetSocketAddress failedTcpEndPoint);
 
 }

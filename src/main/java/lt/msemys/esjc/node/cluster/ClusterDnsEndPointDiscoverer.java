@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -47,7 +46,7 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
     }
 
     @Override
-    public Future<NodeEndPoints> discover(InetSocketAddress failedTcpEndPoint) {
+    public CompletableFuture<NodeEndPoints> discover(InetSocketAddress failedTcpEndPoint) {
         CompletableFuture<NodeEndPoints> result = new CompletableFuture<>();
 
         executor.execute(() -> {

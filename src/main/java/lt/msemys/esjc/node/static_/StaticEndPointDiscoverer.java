@@ -5,13 +5,12 @@ import lt.msemys.esjc.node.NodeEndPoints;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
 public class StaticEndPointDiscoverer implements EndPointDiscoverer {
 
-    private final Future<NodeEndPoints> result;
+    private final CompletableFuture<NodeEndPoints> result;
 
     public StaticEndPointDiscoverer(StaticNodeSettings settings) {
         checkNotNull(settings, "settings is null");
@@ -21,7 +20,7 @@ public class StaticEndPointDiscoverer implements EndPointDiscoverer {
     }
 
     @Override
-    public Future<NodeEndPoints> discover(InetSocketAddress failedTcpEndPoint) {
+    public CompletableFuture<NodeEndPoints> discover(InetSocketAddress failedTcpEndPoint) {
         return result;
     }
 
