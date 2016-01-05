@@ -153,7 +153,7 @@ public class OperationManager {
     }
 
     private static String connectionId(Channel connection) {
-        return String.valueOf(connection.hashCode());
+        return String.format("0x%08x", (int) connection.hashCode());
     }
 
 }
