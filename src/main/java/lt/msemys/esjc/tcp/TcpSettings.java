@@ -128,17 +128,4 @@ public class TcpSettings {
             return new TcpSettings(this);
         }
     }
-
-    /*
-    // ir itraukti i pagrindini settings
-    //https://github.com/EventStore/EventStore/blob/release-v3.5.0/src/EventStore.ClientAPI/Transport.Tcp/TcpConfiguratin.cs
-    //.option(ChannelOption.SO_BACKLOG, settings.maxIncomingConnections)
-    //.option(ChannelOption.SO_KEEPALIVE, settings.keepAlive)
-    //.option(ChannelOption.TCP_NODELAY, settings.tcpNoDelay)
-    //.option(ChannelOption.SO_SNDBUF, settings.sendBufferSize)
-    //.option(ChannelOption.SO_RCVBUF, settings.receiveBufferSize)
-    .option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, settings.writeBufferLowWaterMark)
-    .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, settings.writeBufferHighWaterMark)
-    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) settings.connectionTimeout.toMillis())
-    */
 }
