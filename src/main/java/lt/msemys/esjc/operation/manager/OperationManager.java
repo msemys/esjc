@@ -1,6 +1,7 @@
 package lt.msemys.esjc.operation.manager;
 
 import io.netty.channel.Channel;
+import lt.msemys.esjc.ConnectionClosedException;
 import lt.msemys.esjc.Settings;
 import lt.msemys.esjc.tcp.TcpPackage;
 import org.slf4j.Logger;

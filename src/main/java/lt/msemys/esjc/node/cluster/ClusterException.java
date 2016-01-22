@@ -1,6 +1,6 @@
 package lt.msemys.esjc.node.cluster;
 
-import lt.msemys.esjc.operation.EventStoreException;
+import lt.msemys.esjc.EventStoreException;
 
 public class ClusterException extends EventStoreException {
     public ClusterException(String message) {

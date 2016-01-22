@@ -1,6 +1,4 @@
-package lt.msemys.esjc.operation.manager;
-
-import lt.msemys.esjc.operation.EventStoreException;
+package lt.msemys.esjc;
 
 public class InvalidOperationException extends EventStoreException {
 

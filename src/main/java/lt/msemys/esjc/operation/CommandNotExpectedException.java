@@ -1,5 +1,6 @@
 package lt.msemys.esjc.operation;
 
+import lt.msemys.esjc.EventStoreException;
 import lt.msemys.esjc.tcp.TcpCommand;
 
 /**

@@ -1,6 +1,6 @@
 package lt.msemys.esjc.operation.manager;
 
-import lt.msemys.esjc.operation.EventStoreException;
+import lt.msemys.esjc.EventStoreException;
 
 public class RetriesLimitReachedException extends EventStoreException {
 
