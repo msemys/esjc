@@ -157,21 +157,21 @@ public class EventStoreClient {
     }
 
     public CompletableFuture<WriteResult> appendToStream(String stream,
-                                                         ExpectedVersion version,
+                                                         ExpectedVersion expectedVersion,
                                                          Iterable<EventData> events) {
-        return appendToStream(stream, version, events, null);
+        return appendToStream(stream, expectedVersion, events, null);
     }
 
     public CompletableFuture<WriteResult> appendToStream(String stream,
-                                                         ExpectedVersion version,
+                                                         ExpectedVersion expectedVersion,
                                                          Iterable<EventData> events,
                                                          UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
-        checkNotNull(version, "version");
+        checkNotNull(expectedVersion, "expectedVersion");
         checkNotNull(events, "events");
 
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
-        enqueue(new AppendToStreamOperation(result, settings.requireMaster, stream, version.value, events, userCredentials));
+        enqueue(new AppendToStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, events, userCredentials));
         return result;
     }
 
