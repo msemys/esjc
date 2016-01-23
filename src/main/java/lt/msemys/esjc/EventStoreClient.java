@@ -13,10 +13,7 @@ import lt.msemys.esjc.node.EndPointDiscoverer;
 import lt.msemys.esjc.node.NodeEndPoints;
 import lt.msemys.esjc.node.cluster.ClusterDnsEndPointDiscoverer;
 import lt.msemys.esjc.node.static_.StaticEndPointDiscoverer;
-import lt.msemys.esjc.operation.AppendToStreamOperation;
-import lt.msemys.esjc.operation.Operation;
-import lt.msemys.esjc.operation.ReadAllEventsForwardOperation;
-import lt.msemys.esjc.operation.UserCredentials;
+import lt.msemys.esjc.operation.*;
 import lt.msemys.esjc.operation.manager.OperationItem;
 import lt.msemys.esjc.operation.manager.OperationManager;
 import lt.msemys.esjc.task.*;
@@ -133,6 +130,30 @@ public class EventStoreClient {
         tasks.register(StartOperation.class, this::handle);
 
         this.settings = settings;
+    }
+
+    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion) {
+        return deleteStream(stream, expectedVersion, false, null);
+    }
+
+    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion, UserCredentials userCredentials) {
+        return deleteStream(stream, expectedVersion, false, userCredentials);
+    }
+
+    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion, boolean hardDelete) {
+        return deleteStream(stream, expectedVersion, hardDelete, null);
+    }
+
+    public CompletableFuture<DeleteResult> deleteStream(String stream,
+                                                        ExpectedVersion expectedVersion,
+                                                        boolean hardDelete,
+                                                        UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkNotNull(expectedVersion, "expectedVersion");
+
+        CompletableFuture<DeleteResult> result = new CompletableFuture<>();
+        enqueue(new DeleteStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, hardDelete, userCredentials));
+        return result;
     }
 
     public CompletableFuture<WriteResult> appendToStream(String stream,
