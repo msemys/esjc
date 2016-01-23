@@ -13,6 +13,7 @@ import lt.msemys.esjc.node.EndPointDiscoverer;
 import lt.msemys.esjc.node.NodeEndPoints;
 import lt.msemys.esjc.node.cluster.ClusterDnsEndPointDiscoverer;
 import lt.msemys.esjc.node.static_.StaticEndPointDiscoverer;
+import lt.msemys.esjc.operation.AppendToStreamOperation;
 import lt.msemys.esjc.operation.Operation;
 import lt.msemys.esjc.operation.ReadAllEventsForwardOperation;
 import lt.msemys.esjc.operation.UserCredentials;
@@ -41,6 +42,7 @@ import static lt.msemys.esjc.Settings.MAX_READ_SIZE;
 import static lt.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
+import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
 
 public class EventStoreClient {
     private static final Logger logger = LoggerFactory.getLogger(EventStoreClient.class);
@@ -131,6 +133,25 @@ public class EventStoreClient {
         tasks.register(StartOperation.class, this::handle);
 
         this.settings = settings;
+    }
+
+    public CompletableFuture<WriteResult> appendToStream(String stream,
+                                                         ExpectedVersion version,
+                                                         Iterable<EventData> events) {
+        return appendToStream(stream, version, events, null);
+    }
+
+    public CompletableFuture<WriteResult> appendToStream(String stream,
+                                                         ExpectedVersion version,
+                                                         Iterable<EventData> events,
+                                                         UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkNotNull(version, "version");
+        checkNotNull(events, "events");
+
+        CompletableFuture<WriteResult> result = new CompletableFuture<>();
+        enqueue(new AppendToStreamOperation(result, settings.requireMaster, stream, version.value, events, userCredentials));
+        return result;
     }
 
     public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position,
