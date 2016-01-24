@@ -7,9 +7,10 @@ import lt.msemys.esjc.proto.EventStoreClientMessages.ReadEvent;
 import lt.msemys.esjc.proto.EventStoreClientMessages.ReadEventCompleted;
 import lt.msemys.esjc.proto.EventStoreClientMessages.ReadEventCompleted.ReadEventResult;
 import lt.msemys.esjc.tcp.TcpCommand;
-import lt.msemys.esjc.util.Strings;
 
 import java.util.concurrent.CompletableFuture;
+
+import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
 
 public class ReadEventOperation extends AbstractOperation<EventReadResult, ReadEventCompleted> {
 
@@ -74,7 +75,7 @@ public class ReadEventOperation extends AbstractOperation<EventReadResult, ReadE
                     .description("StreamDeleted")
                     .build();
             case Error:
-                fail(new ServerErrorException(Strings.isNullOrEmpty(response.getError()) ? "<no message>" : response.getError()));
+                fail(new ServerErrorException(isNullOrEmpty(response.getError()) ? "<no message>" : response.getError()));
                 return InspectionResult.newBuilder()
                     .decision(InspectionDecision.EndOperation)
                     .description("Error")
