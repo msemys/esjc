@@ -36,7 +36,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.between;
 import static java.time.Instant.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static lt.msemys.esjc.Settings.MAX_READ_SIZE;
 import static lt.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
@@ -44,6 +43,9 @@ import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
 
 public class EventStoreClient {
     private static final Logger logger = LoggerFactory.getLogger(EventStoreClient.class);
+
+    private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;
+    private static final int MAX_READ_SIZE = 4 * 1024;
 
     private enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
 
@@ -87,7 +89,7 @@ public class EventStoreClient {
                     ChannelPipeline pipeline = ch.pipeline();
 
                     // decoder
-                    pipeline.addLast("frame-decoder", new LengthFieldBasedFrameDecoder(LITTLE_ENDIAN, 64 * 1024 * 1024, 0, 4, 0, 4, true));
+                    pipeline.addLast("frame-decoder", new LengthFieldBasedFrameDecoder(LITTLE_ENDIAN, MAX_FRAME_LENGTH, 0, 4, 0, 4, true));
                     pipeline.addLast("package-decoder", new TcpPackageDecoder());
 
                     // encoder

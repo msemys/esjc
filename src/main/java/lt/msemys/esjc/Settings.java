@@ -11,9 +11,6 @@ import java.util.Optional;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 
 public class Settings {
-
-    public static final int MAX_READ_SIZE = 4 * 1024;
-
     public final TcpSettings tcpSettings;
     public final Optional<StaticNodeSettings> staticNodeSettings;
     public final Optional<ClusterNodeSettings> clusterNodeSettings;
