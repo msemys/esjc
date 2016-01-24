@@ -199,6 +199,19 @@ public class EventStoreClient {
         return new Transaction(transactionId, userCredentials, transactionManager);
     }
 
+    public CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber, boolean resolveLinkTos) {
+        return readEvent(stream, eventNumber, resolveLinkTos, null);
+    }
+
+    public CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber, boolean resolveLinkTos, UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(eventNumber > -1, "Event number out of range");
+
+        CompletableFuture<EventReadResult> result = new CompletableFuture<>();
+        enqueue(new ReadEventOperation(result, stream, eventNumber, resolveLinkTos, settings.requireMaster, userCredentials));
+        return result;
+    }
+
     public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position,
                                                                   int maxCount,
                                                                   boolean resolveLinkTos) {
