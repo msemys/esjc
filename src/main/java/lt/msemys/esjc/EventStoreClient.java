@@ -22,6 +22,7 @@ import lt.msemys.esjc.tcp.TcpPackageEncoder;
 import lt.msemys.esjc.tcp.handler.AuthenticationHandler;
 import lt.msemys.esjc.tcp.handler.HeartbeatHandler;
 import lt.msemys.esjc.tcp.handler.OperationHandler;
+import lt.msemys.esjc.transaction.TransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,7 @@ public class EventStoreClient {
     private final Bootstrap bootstrap;
     private final EndPointDiscoverer discoverer;
     private final OperationManager operationManager;
+    private final TransactionManager transactionManager;
     private final TaskQueue tasks;
     private final Settings settings;
 
@@ -122,6 +124,7 @@ public class EventStoreClient {
         reconnectionInfo = new ReconnectionInfo();
 
         operationManager = new OperationManager(settings);
+        transactionManager = new TransactionManagerImpl();
 
         tasks = new TaskQueue();
         tasks.register(StartConnection.class, this::handle);
@@ -173,6 +176,27 @@ public class EventStoreClient {
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
         enqueue(new AppendToStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, events, userCredentials));
         return result;
+    }
+
+    public CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion) {
+        return startTransaction(stream, expectedVersion, null);
+    }
+
+    public CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion, UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkNotNull(expectedVersion, "expectedVersion");
+
+        CompletableFuture<Transaction> result = new CompletableFuture<>();
+        enqueue(new StartTransactionOperation(result, settings.requireMaster, stream, expectedVersion.value, transactionManager, userCredentials));
+        return result;
+    }
+
+    public Transaction continueTransaction(long transactionId) {
+        return continueTransaction(transactionId, null);
+    }
+
+    public Transaction continueTransaction(long transactionId, UserCredentials userCredentials) {
+        return new Transaction(transactionId, userCredentials, transactionManager);
     }
 
     public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position,
@@ -431,6 +455,28 @@ public class EventStoreClient {
             }
         }
         tasks.enqueue(new StartOperation(operation));
+    }
+
+    private class TransactionManagerImpl implements TransactionManager {
+
+        @Override
+        public CompletableFuture<Void> write(Transaction transaction, Iterable<EventData> events, UserCredentials userCredentials) {
+            checkNotNull(transaction, "transaction");
+            checkNotNull(events, "events");
+
+            CompletableFuture<Void> result = new CompletableFuture<>();
+            enqueue(new TransactionalWriteOperation(result, settings.requireMaster, transaction.transactionId, events, userCredentials));
+            return result;
+        }
+
+        @Override
+        public CompletableFuture<WriteResult> commit(Transaction transaction, UserCredentials userCredentials) {
+            checkNotNull(transaction, "transaction");
+
+            CompletableFuture<WriteResult> result = new CompletableFuture<>();
+            enqueue(new CommitTransactionOperation(result, settings.requireMaster, transaction.transactionId, userCredentials));
+            return result;
+        }
     }
 
     private static class ReconnectionInfo {
