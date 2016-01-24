@@ -269,6 +269,19 @@ public class EventStoreClient {
         return result;
     }
 
+    public CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount, boolean resolveLinkTos) {
+        return readAllEventsBackward(position, maxCount, resolveLinkTos, null);
+    }
+
+    public CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount, boolean resolveLinkTos, UserCredentials userCredentials) {
+        checkArgument(maxCount > 0, "Count should be positive.");
+        checkArgument(maxCount < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
+
+        CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
+        enqueue(new ReadAllEventsBackwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
+        return result;
+    }
+
     public void connect() {
         if (!isTimerTicking()) {
             timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
