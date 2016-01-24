@@ -212,6 +212,21 @@ public class EventStoreClient {
         return result;
     }
 
+    public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count, boolean resolveLinkTos) {
+        return readStreamEventsForward(stream, start, count, resolveLinkTos, null);
+    }
+
+    public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count, boolean resolveLinkTos, UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(start >= 0, "start should be non negative.");
+        checkArgument(count > 0, "count should be positive.");
+        checkArgument(count < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
+
+        CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
+        enqueue(new ReadStreamEventsForwardOperation(result, stream, start, count, resolveLinkTos, settings.requireMaster, userCredentials));
+        return result;
+    }
+
     public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position,
                                                                   int maxCount,
                                                                   boolean resolveLinkTos) {
