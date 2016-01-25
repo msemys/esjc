@@ -101,7 +101,7 @@ public class OperationManager {
             logger.debug("scheduleOperationRetry for {}", item);
 
             if (item.maxRetries >= 0 && item.retryCount >= item.maxRetries) {
-                item.operation.fail(new RetriesLimitReachedException(item, item.retryCount));
+                item.operation.fail(new RetriesLimitReachedException(item.toString(), item.retryCount));
             } else {
                 retryPendingOperations.add(item);
             }

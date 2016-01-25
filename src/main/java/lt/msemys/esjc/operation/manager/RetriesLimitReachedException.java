@@ -8,7 +8,7 @@ public class RetriesLimitReachedException extends EventStoreException {
         super(String.format("Reached retries limit : %d", retries));
     }
 
-    public RetriesLimitReachedException(OperationItem item, int retries) {
-        super(String.format("Item %s reached retries limit : %d", item.toString(), retries));
+    public RetriesLimitReachedException(String item, int retries) {
+        super(String.format("Item %s reached retries limit : %d", item, retries));
     }
 }
