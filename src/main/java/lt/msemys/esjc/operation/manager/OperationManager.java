@@ -9,9 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Stream.concat;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
@@ -61,7 +63,7 @@ public class OperationManager {
             } else if (!item.timeout.isZero() &&
                 Duration.between(Instant.now(), item.lastUpdated).compareTo(settings.operationTimeout) > 0) {
                 String error = String.format("Operation never got response from server. UTC now: %s, operation: %s.",
-                    Instant.now(), item.toString());
+                    ZonedDateTime.now(UTC), item.toString());
 
                 logger.debug(error);
 
