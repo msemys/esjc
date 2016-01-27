@@ -12,7 +12,7 @@ public class CommandNotExpectedException extends EventStoreException {
         super(String.format("Expected : %s. Actual : %s.", expected, actual));
     }
 
-    public CommandNotExpectedException(TcpCommand unexpectedCommand) {
+    public CommandNotExpectedException(String unexpectedCommand) {
         super(String.format("Unexpected command: %s.", unexpectedCommand));
     }
 
