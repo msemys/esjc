@@ -16,13 +16,19 @@ import lt.msemys.esjc.node.static_.StaticEndPointDiscoverer;
 import lt.msemys.esjc.operation.*;
 import lt.msemys.esjc.operation.manager.OperationItem;
 import lt.msemys.esjc.operation.manager.OperationManager;
+import lt.msemys.esjc.subscription.VolatileSubscription;
+import lt.msemys.esjc.subscription.VolatileSubscriptionOperation;
+import lt.msemys.esjc.subscription.manager.SubscriptionItem;
+import lt.msemys.esjc.subscription.manager.SubscriptionManager;
 import lt.msemys.esjc.task.*;
+import lt.msemys.esjc.tcp.ChannelId;
 import lt.msemys.esjc.tcp.TcpPackageDecoder;
 import lt.msemys.esjc.tcp.TcpPackageEncoder;
 import lt.msemys.esjc.tcp.handler.AuthenticationHandler;
 import lt.msemys.esjc.tcp.handler.HeartbeatHandler;
 import lt.msemys.esjc.tcp.handler.OperationHandler;
 import lt.msemys.esjc.transaction.TransactionManager;
+import lt.msemys.esjc.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +36,8 @@ import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -57,6 +65,7 @@ public class EventStoreClient {
     private final Bootstrap bootstrap;
     private final EndPointDiscoverer discoverer;
     private final OperationManager operationManager;
+    private final SubscriptionManager subscriptionManager;
     private final TransactionManager transactionManager;
     private final TaskQueue tasks;
     private final Settings settings;
@@ -65,6 +74,8 @@ public class EventStoreClient {
     private volatile Channel connection;
     private volatile ConnectingPhase connectingPhase = ConnectingPhase.INVALID;
     private Instant lastOperationTimeoutCheck = Instant.MIN;
+
+    private final Executor executor = Executors.newCachedThreadPool();
 
     public EventStoreClient(Settings settings) {
         checkNotNull(settings, "settings");
@@ -105,7 +116,7 @@ public class EventStoreClient {
                                 gotoConnectedPhase();
                             }
                         }));
-                    pipeline.addLast("operation-handler", new OperationHandler(operationManager)
+                    pipeline.addLast("operation-handler", new OperationHandler(operationManager, subscriptionManager)
                         .whenBadRequest(msg -> {
                             String message = (msg.data != null) ? new String(msg.data, UTF_8) : "<no message>";
                             handle(new CloseConnection("Connection-wide BadRequest received. Too dangerous to continue.",
@@ -126,13 +137,15 @@ public class EventStoreClient {
         reconnectionInfo = new ReconnectionInfo();
 
         operationManager = new OperationManager(settings);
+        subscriptionManager = new SubscriptionManager(settings);
         transactionManager = new TransactionManagerImpl();
 
-        tasks = new TaskQueue();
+        tasks = new TaskQueue(executor);
         tasks.register(StartConnection.class, this::handle);
         tasks.register(CloseConnection.class, this::handle);
         tasks.register(EstablishTcpConnection.class, this::handle);
         tasks.register(StartOperation.class, this::handle);
+        tasks.register(StartSubscription.class, this::handle);
 
         this.settings = settings;
     }
@@ -282,6 +295,39 @@ public class EventStoreClient {
         return result;
     }
 
+    public CompletableFuture<VolatileSubscription> subscribeToStream(String stream,
+                                                                     boolean resolveLinkTos,
+                                                                     SubscriptionListener listener) {
+        return subscribeToStream(stream, resolveLinkTos, listener, null);
+    }
+
+    public CompletableFuture<VolatileSubscription> subscribeToStream(String stream,
+                                                                     boolean resolveLinkTos,
+                                                                     SubscriptionListener listener,
+                                                                     UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkNotNull(listener, "listener");
+
+        CompletableFuture<VolatileSubscription> result = new CompletableFuture<>();
+        enqueue(new StartSubscription(result, stream, resolveLinkTos, userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
+        return result;
+    }
+
+    public CompletableFuture<VolatileSubscription> subscribeToAll(boolean resolveLinkTos,
+                                                                  SubscriptionListener listener) {
+        return subscribeToAll(resolveLinkTos, listener, null);
+    }
+
+    public CompletableFuture<VolatileSubscription> subscribeToAll(boolean resolveLinkTos,
+                                                                  SubscriptionListener listener,
+                                                                  UserCredentials userCredentials) {
+        checkNotNull(listener, "listener");
+
+        CompletableFuture<VolatileSubscription> result = new CompletableFuture<>();
+        enqueue(new StartSubscription(result, Strings.EMPTY, resolveLinkTos, userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
+        return result;
+    }
+
     public void connect() {
         if (!isTimerTicking()) {
             timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
@@ -305,6 +351,7 @@ public class EventStoreClient {
             timer.cancel(true);
             timer = null;
             operationManager.cleanUp();
+            subscriptionManager.cleanUp();
             closeTcpConnection(reason);
             logger.info("Disconnected, reason: {}", reason);
         }
@@ -340,6 +387,7 @@ public class EventStoreClient {
     private void checkOperationTimeout() {
         if (between(lastOperationTimeoutCheck, now()).compareTo(settings.operationTimeoutCheckInterval) > 0) {
             operationManager.checkTimeoutsAndRetry(connection);
+            subscriptionManager.checkTimeoutsAndRetry(connection);
             lastOperationTimeoutCheck = now();
         }
     }
@@ -402,6 +450,10 @@ public class EventStoreClient {
     }
 
     private void onTcpConnectionClosed() {
+        if (connection != null) {
+            subscriptionManager.purgeSubscribedAndDropped(ChannelId.of(connection));
+        }
+
         connection = null;
         connectingPhase = ConnectingPhase.RECONNECTING;
         reconnectionInfo.touch();
@@ -503,6 +555,40 @@ public class EventStoreClient {
         }
     }
 
+    private void handle(StartSubscription task) {
+        ConnectionState state = connectionState();
+
+        switch (state) {
+            case INIT:
+                task.result.completeExceptionally(new InvalidOperationException("No connection"));
+                break;
+            case CONNECTING:
+            case CONNECTED:
+                VolatileSubscriptionOperation operation = new VolatileSubscriptionOperation(
+                    (CompletableFuture<VolatileSubscription>) task.result,
+                    task.streamId, task.resolveLinkTos, task.userCredentials, task.listener,
+                    () -> connection, executor);
+
+                logger.debug("StartSubscription {} {}, {}, {}, {}.",
+                    state == ConnectionState.CONNECTED ? "fire" : "enqueue",
+                    operation.getClass().getSimpleName(), operation, task.maxRetries, task.timeout);
+
+                SubscriptionItem item = new SubscriptionItem(operation, task.maxRetries, task.timeout);
+
+                if (state == ConnectionState.CONNECTING) {
+                    subscriptionManager.enqueueSubscription(item);
+                } else {
+                    subscriptionManager.startSubscription(item, connection);
+                }
+                break;
+            case CLOSED:
+                task.result.completeExceptionally(new ConnectionClosedException("Connection is closed"));
+                break;
+            default:
+                throw new IllegalStateException("Unknown connection state");
+        }
+    }
+
     private void enqueue(Operation operation) {
         while (operationManager.totalOperationCount() >= settings.maxQueueSize) {
             try {
@@ -511,7 +597,12 @@ public class EventStoreClient {
                 // ignore
             }
         }
-        tasks.enqueue(new StartOperation(operation));
+        enqueue(new StartOperation(operation));
+    }
+
+    private void enqueue(Task task) {
+        logger.trace("enqueueing task {}.", task.getClass().getSimpleName());
+        tasks.enqueue(task);
     }
 
     private class TransactionManagerImpl implements TransactionManager {

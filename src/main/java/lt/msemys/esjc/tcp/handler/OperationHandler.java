@@ -5,7 +5,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lt.msemys.esjc.node.NodeEndPoints;
 import lt.msemys.esjc.operation.InspectionResult;
+import lt.msemys.esjc.operation.manager.OperationItem;
 import lt.msemys.esjc.operation.manager.OperationManager;
+import lt.msemys.esjc.subscription.manager.SubscriptionItem;
+import lt.msemys.esjc.subscription.manager.SubscriptionManager;
 import lt.msemys.esjc.tcp.TcpPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +20,13 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
     private static final Logger logger = LoggerFactory.getLogger(OperationHandler.class);
 
     private final OperationManager operationManager;
+    private final SubscriptionManager subscriptionManager;
     private Optional<Consumer<TcpPackage>> badRequestConsumer;
     private Optional<Consumer<NodeEndPoints>> reconnectConsumer;
 
-    public OperationHandler(OperationManager operationManager) {
+    public OperationHandler(OperationManager operationManager, SubscriptionManager subscriptionManager) {
         this.operationManager = operationManager;
+        this.subscriptionManager = subscriptionManager;
     }
 
     @Override
@@ -33,10 +38,14 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                     break;
                 }
             default:
-                operationManager.getActiveOperation(msg.correlationId).ifPresent(item -> {
+                Optional<OperationItem> operationItem = operationManager.getActiveOperation(msg.correlationId);
+
+                if (operationItem.isPresent()) {
+                    OperationItem item = operationItem.get();
+
                     InspectionResult result = item.operation.inspect(msg);
 
-                    logger.debug("operationHandler OPERATION DECISION {} ({}), {}", result.decision, result.description, item);
+                    logger.debug("HandleTcpPackage OPERATION DECISION {} ({}), {}", result.decision, result.description, item);
 
                     switch (result.decision) {
                         case DoNothing:
@@ -55,7 +64,39 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                             throw new ChannelException(String.format("Unknown InspectionDecision: {}", result.decision));
                     }
                     operationManager.scheduleWaitingOperations(ctx.channel());
-                });
+                } else {
+                    Optional<SubscriptionItem> subscriptionItem = subscriptionManager.getActiveSubscription(msg.correlationId);
+
+                    if (subscriptionItem.isPresent()) {
+                        SubscriptionItem item = subscriptionItem.get();
+
+                        InspectionResult result = item.operation.inspect(msg);
+
+                        logger.debug("HandleTcpPackage SUBSCRIPTION DECISION {} ({}), {}", result.decision, result.description, item);
+
+                        switch (result.decision) {
+                            case DoNothing:
+                                break;
+                            case EndOperation:
+                                subscriptionManager.removeSubscription(item);
+                                break;
+                            case Retry:
+                                subscriptionManager.scheduleSubscriptionRetry(item);
+                                break;
+                            case Reconnect:
+                                reconnectConsumer.ifPresent(c -> c.accept(new NodeEndPoints(result.address.orElse(null), result.secureAddress.orElse(null))));
+                                subscriptionManager.scheduleSubscriptionRetry(item);
+                                break;
+                            case Subscribed:
+                                item.isSubscribed = true;
+                                break;
+                            default:
+                                throw new ChannelException("Unknown InspectionDecision: " + result.decision);
+                        }
+                    } else {
+                        logger.debug("HandleTcpPackage UNMAPPED PACKAGE with CorrelationId {}, Command: {}", msg.correlationId, msg.command);
+                    }
+                }
         }
     }
 
