@@ -1,13 +1,6 @@
 package lt.msemys.esjc;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.ScheduledFuture;
 import lt.msemys.esjc.node.EndPointDiscoverer;
 import lt.msemys.esjc.node.NodeEndPoints;
@@ -15,18 +8,12 @@ import lt.msemys.esjc.node.cluster.ClusterDnsEndPointDiscoverer;
 import lt.msemys.esjc.node.static_.StaticEndPointDiscoverer;
 import lt.msemys.esjc.operation.*;
 import lt.msemys.esjc.operation.manager.OperationItem;
-import lt.msemys.esjc.operation.manager.OperationManager;
 import lt.msemys.esjc.subscription.VolatileSubscription;
 import lt.msemys.esjc.subscription.VolatileSubscriptionOperation;
 import lt.msemys.esjc.subscription.manager.SubscriptionItem;
-import lt.msemys.esjc.subscription.manager.SubscriptionManager;
 import lt.msemys.esjc.task.*;
 import lt.msemys.esjc.tcp.ChannelId;
-import lt.msemys.esjc.tcp.TcpPackageDecoder;
-import lt.msemys.esjc.tcp.TcpPackageEncoder;
-import lt.msemys.esjc.tcp.handler.AuthenticationHandler;
-import lt.msemys.esjc.tcp.handler.HeartbeatHandler;
-import lt.msemys.esjc.tcp.handler.OperationHandler;
+import lt.msemys.esjc.tcp.TcpPackage;
 import lt.msemys.esjc.transaction.TransactionManager;
 import lt.msemys.esjc.util.Strings;
 import org.slf4j.Logger;
@@ -39,92 +26,33 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.between;
 import static java.time.Instant.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static lt.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
-import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
+import static lt.msemys.esjc.util.Strings.*;
 
-public class EventStoreClient {
+public class EventStoreClient extends EventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStoreClient.class);
 
-    private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;
     private static final int MAX_READ_SIZE = 4 * 1024;
-
-    private enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
 
     private enum ConnectingPhase {INVALID, RECONNECTING, ENDPOINT_DISCOVERY, CONNECTION_ESTABLISHING, AUTHENTICATION, CONNECTED}
 
     private volatile ScheduledFuture timer;
-
-    private final EventLoopGroup group;
-    private final Bootstrap bootstrap;
-    private final EndPointDiscoverer discoverer;
-    private final OperationManager operationManager;
-    private final SubscriptionManager subscriptionManager;
-    private final TransactionManager transactionManager;
+    private final TransactionManager transactionManager = new TransactionManagerImpl();
     private final TaskQueue tasks;
-    private final Settings settings;
-
-    private final ReconnectionInfo reconnectionInfo;
-    private volatile Channel connection;
+    private final EndPointDiscoverer discoverer;
+    private final ReconnectionInfo reconnectionInfo = new ReconnectionInfo();
     private volatile ConnectingPhase connectingPhase = ConnectingPhase.INVALID;
     private Instant lastOperationTimeoutCheck = Instant.MIN;
 
     private final Executor executor = Executors.newCachedThreadPool();
 
     public EventStoreClient(Settings settings) {
-        checkNotNull(settings, "settings");
-
-        logger.debug(settings.toString());
-
-        group = new NioEventLoopGroup();
-
-        bootstrap = new Bootstrap()
-            .option(ChannelOption.SO_KEEPALIVE, settings.tcpSettings.keepAlive)
-            .option(ChannelOption.TCP_NODELAY, settings.tcpSettings.tcpNoDelay)
-            .option(ChannelOption.SO_SNDBUF, settings.tcpSettings.sendBufferSize)
-            .option(ChannelOption.SO_RCVBUF, settings.tcpSettings.receiveBufferSize)
-            .option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, settings.tcpSettings.writeBufferLowWaterMark)
-            .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, settings.tcpSettings.writeBufferHighWaterMark)
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) settings.tcpSettings.connectTimeout.toMillis())
-            .group(group)
-            .channel(NioSocketChannel.class)
-            .handler(new ChannelInitializer<SocketChannel>() {
-                @Override
-                protected void initChannel(SocketChannel ch) throws Exception {
-                    ChannelPipeline pipeline = ch.pipeline();
-
-                    // decoder
-                    pipeline.addLast("frame-decoder", new LengthFieldBasedFrameDecoder(LITTLE_ENDIAN, MAX_FRAME_LENGTH, 0, 4, 0, 4, true));
-                    pipeline.addLast("package-decoder", new TcpPackageDecoder());
-
-                    // encoder
-                    pipeline.addLast("frame-encoder", new LengthFieldPrepender(LITTLE_ENDIAN, 4, 0, false));
-                    pipeline.addLast("package-encoder", new TcpPackageEncoder());
-
-                    // logic
-                    pipeline.addLast("idle-state-handler", new IdleStateHandler(0, settings.heartbeatInterval.toMillis(), 0, MILLISECONDS));
-                    pipeline.addLast("heartbeat-handler", new HeartbeatHandler(settings.heartbeatTimeout));
-                    pipeline.addLast("authentication-handler", new AuthenticationHandler(settings.userCredentials, settings.operationTimeout)
-                        .whenComplete(status -> {
-                            if (status == AuthenticationStatus.SUCCESS || status == AuthenticationStatus.IGNORED) {
-                                gotoConnectedPhase();
-                            }
-                        }));
-                    pipeline.addLast("operation-handler", new OperationHandler(operationManager, subscriptionManager)
-                        .whenBadRequest(msg -> {
-                            String message = (msg.data != null) ? new String(msg.data, UTF_8) : "<no message>";
-                            handle(new CloseConnection("Connection-wide BadRequest received. Too dangerous to continue.",
-                                new EventStoreException("Bad request received from server. Error: " + message)));
-                        })
-                        .whenReconnect(nodeEndPoints -> reconnectTo(nodeEndPoints)));
-                }
-            });
+        super(settings);
 
         if (settings.staticNodeSettings.isPresent()) {
             discoverer = new StaticEndPointDiscoverer(settings.staticNodeSettings.get(), settings.ssl);
@@ -134,34 +62,15 @@ public class EventStoreClient {
             throw new IllegalStateException("Node settings not found");
         }
 
-        reconnectionInfo = new ReconnectionInfo();
-
-        operationManager = new OperationManager(settings);
-        subscriptionManager = new SubscriptionManager(settings);
-        transactionManager = new TransactionManagerImpl();
-
         tasks = new TaskQueue(executor);
         tasks.register(StartConnection.class, this::handle);
         tasks.register(CloseConnection.class, this::handle);
         tasks.register(EstablishTcpConnection.class, this::handle);
         tasks.register(StartOperation.class, this::handle);
         tasks.register(StartSubscription.class, this::handle);
-
-        this.settings = settings;
     }
 
-    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion) {
-        return deleteStream(stream, expectedVersion, false, null);
-    }
-
-    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion, UserCredentials userCredentials) {
-        return deleteStream(stream, expectedVersion, false, userCredentials);
-    }
-
-    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion, boolean hardDelete) {
-        return deleteStream(stream, expectedVersion, hardDelete, null);
-    }
-
+    @Override
     public CompletableFuture<DeleteResult> deleteStream(String stream,
                                                         ExpectedVersion expectedVersion,
                                                         boolean hardDelete,
@@ -174,12 +83,7 @@ public class EventStoreClient {
         return result;
     }
 
-    public CompletableFuture<WriteResult> appendToStream(String stream,
-                                                         ExpectedVersion expectedVersion,
-                                                         Iterable<EventData> events) {
-        return appendToStream(stream, expectedVersion, events, null);
-    }
-
+    @Override
     public CompletableFuture<WriteResult> appendToStream(String stream,
                                                          ExpectedVersion expectedVersion,
                                                          Iterable<EventData> events,
@@ -193,11 +97,10 @@ public class EventStoreClient {
         return result;
     }
 
-    public CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion) {
-        return startTransaction(stream, expectedVersion, null);
-    }
-
-    public CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion, UserCredentials userCredentials) {
+    @Override
+    public CompletableFuture<Transaction> startTransaction(String stream,
+                                                           ExpectedVersion expectedVersion,
+                                                           UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkNotNull(expectedVersion, "expectedVersion");
 
@@ -206,19 +109,16 @@ public class EventStoreClient {
         return result;
     }
 
-    public Transaction continueTransaction(long transactionId) {
-        return continueTransaction(transactionId, null);
-    }
-
+    @Override
     public Transaction continueTransaction(long transactionId, UserCredentials userCredentials) {
         return new Transaction(transactionId, userCredentials, transactionManager);
     }
 
-    public CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber, boolean resolveLinkTos) {
-        return readEvent(stream, eventNumber, resolveLinkTos, null);
-    }
-
-    public CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber, boolean resolveLinkTos, UserCredentials userCredentials) {
+    @Override
+    public CompletableFuture<EventReadResult> readEvent(String stream,
+                                                        int eventNumber,
+                                                        boolean resolveLinkTos,
+                                                        UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkArgument(eventNumber > -1, "Event number out of range");
 
@@ -227,11 +127,12 @@ public class EventStoreClient {
         return result;
     }
 
-    public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count, boolean resolveLinkTos) {
-        return readStreamEventsForward(stream, start, count, resolveLinkTos, null);
-    }
-
-    public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count, boolean resolveLinkTos, UserCredentials userCredentials) {
+    @Override
+    public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
+                                                                        int start,
+                                                                        int count,
+                                                                        boolean resolveLinkTos,
+                                                                        UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkArgument(start >= 0, "start should be non negative.");
         checkArgument(count > 0, "count should be positive.");
@@ -242,11 +143,12 @@ public class EventStoreClient {
         return result;
     }
 
-    public CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream, int start, int count, boolean resolveLinkTos) {
-        return readStreamEventsBackward(stream, start, count, resolveLinkTos, null);
-    }
-
-    public CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream, int start, int count, boolean resolveLinkTos, UserCredentials userCredentials) {
+    @Override
+    public CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
+                                                                         int start,
+                                                                         int count,
+                                                                         boolean resolveLinkTos,
+                                                                         UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkArgument(count > 0, "count should be positive.");
         checkArgument(count < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
@@ -256,12 +158,7 @@ public class EventStoreClient {
         return result;
     }
 
-    public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position,
-                                                                  int maxCount,
-                                                                  boolean resolveLinkTos) {
-        return readAllEventsForward(position, maxCount, resolveLinkTos, null);
-    }
-
+    @Override
     public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position,
                                                                   int maxCount,
                                                                   boolean resolveLinkTos,
@@ -270,23 +167,15 @@ public class EventStoreClient {
         checkArgument(maxCount < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
-
-        enqueue(new ReadAllEventsForwardOperation(
-            result,
-            position,
-            maxCount,
-            resolveLinkTos,
-            settings.requireMaster,
-            userCredentials));
-
+        enqueue(new ReadAllEventsForwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
         return result;
     }
 
-    public CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount, boolean resolveLinkTos) {
-        return readAllEventsBackward(position, maxCount, resolveLinkTos, null);
-    }
-
-    public CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount, boolean resolveLinkTos, UserCredentials userCredentials) {
+    @Override
+    public CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position,
+                                                                   int maxCount,
+                                                                   boolean resolveLinkTos,
+                                                                   UserCredentials userCredentials) {
         checkArgument(maxCount > 0, "Count should be positive.");
         checkArgument(maxCount < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
 
@@ -295,12 +184,7 @@ public class EventStoreClient {
         return result;
     }
 
-    public CompletableFuture<VolatileSubscription> subscribeToStream(String stream,
-                                                                     boolean resolveLinkTos,
-                                                                     SubscriptionListener listener) {
-        return subscribeToStream(stream, resolveLinkTos, listener, null);
-    }
-
+    @Override
     public CompletableFuture<VolatileSubscription> subscribeToStream(String stream,
                                                                      boolean resolveLinkTos,
                                                                      SubscriptionListener listener,
@@ -313,11 +197,7 @@ public class EventStoreClient {
         return result;
     }
 
-    public CompletableFuture<VolatileSubscription> subscribeToAll(boolean resolveLinkTos,
-                                                                  SubscriptionListener listener) {
-        return subscribeToAll(resolveLinkTos, listener, null);
-    }
-
+    @Override
     public CompletableFuture<VolatileSubscription> subscribeToAll(boolean resolveLinkTos,
                                                                   SubscriptionListener listener,
                                                                   UserCredentials userCredentials) {
@@ -326,6 +206,24 @@ public class EventStoreClient {
         CompletableFuture<VolatileSubscription> result = new CompletableFuture<>();
         enqueue(new StartSubscription(result, Strings.EMPTY, resolveLinkTos, userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
         return result;
+    }
+
+    @Override
+    protected void onAuthenticationCompleted(AuthenticationStatus status) {
+        if (status == AuthenticationStatus.SUCCESS || status == AuthenticationStatus.IGNORED) {
+            gotoConnectedPhase();
+        }
+    }
+
+    @Override
+    protected void onBadRequest(TcpPackage tcpPackage) {
+        handle(new CloseConnection("Connection-wide BadRequest received. Too dangerous to continue.",
+            new EventStoreException("Bad request received from server. Error: " + defaultIfEmpty(newString(tcpPackage.data), "<no message>"))));
+    }
+
+    @Override
+    protected void onReconnect(NodeEndPoints nodeEndPoints) {
+        reconnectTo(nodeEndPoints);
     }
 
     public void connect() {
@@ -457,16 +355,6 @@ public class EventStoreClient {
         connection = null;
         connectingPhase = ConnectingPhase.RECONNECTING;
         reconnectionInfo.touch();
-    }
-
-    private ConnectionState connectionState() {
-        if (connection == null) {
-            return ConnectionState.INIT;
-        } else if (connection.isOpen()) {
-            return connection.isActive() ? ConnectionState.CONNECTED : ConnectionState.CONNECTING;
-        } else {
-            return ConnectionState.CLOSED;
-        }
     }
 
     private void handle(StartConnection task) {
