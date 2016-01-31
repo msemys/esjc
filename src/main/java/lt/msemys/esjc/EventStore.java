@@ -23,8 +23,6 @@ import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import static java.time.Duration.between;
 import static java.time.Instant.now;
@@ -48,8 +46,6 @@ public class EventStore extends AbstractEventStore {
     private final ReconnectionInfo reconnectionInfo = new ReconnectionInfo();
     private volatile ConnectingPhase connectingPhase = ConnectingPhase.INVALID;
     private Instant lastOperationTimeoutCheck = Instant.MIN;
-
-    private final Executor executor = Executors.newCachedThreadPool();
 
     public EventStore(Settings settings) {
         super(settings);

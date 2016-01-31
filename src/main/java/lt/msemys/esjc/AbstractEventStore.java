@@ -8,6 +8,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import lt.msemys.esjc.node.NodeEndPoints;
 import lt.msemys.esjc.operation.UserCredentials;
 import lt.msemys.esjc.operation.manager.OperationManager;
@@ -22,6 +23,10 @@ import lt.msemys.esjc.tcp.handler.HeartbeatHandler;
 import lt.msemys.esjc.tcp.handler.OperationHandler;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -32,7 +37,8 @@ public abstract class AbstractEventStore {
 
     protected enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
 
-    protected final EventLoopGroup group;
+    protected final Executor executor = Executors.newCachedThreadPool(new EventStoreThreadFactory());
+    protected final EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("esio"));
     protected final Bootstrap bootstrap;
     protected final OperationManager operationManager;
     protected final SubscriptionManager subscriptionManager;
@@ -42,8 +48,6 @@ public abstract class AbstractEventStore {
 
     protected AbstractEventStore(Settings settings) {
         checkNotNull(settings, "settings");
-
-        group = new NioEventLoopGroup();
 
         bootstrap = new Bootstrap()
             .option(ChannelOption.SO_KEEPALIVE, settings.tcpSettings.keepAlive)
@@ -226,6 +230,34 @@ public abstract class AbstractEventStore {
             return connection.isActive() ? ConnectionState.CONNECTED : ConnectionState.CONNECTING;
         } else {
             return ConnectionState.CLOSED;
+        }
+    }
+
+    private static class EventStoreThreadFactory implements ThreadFactory {
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        private EventStoreThreadFactory() {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = "es-" + poolNumber.getAndIncrement() + "-";
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+
+            return t;
         }
     }
 
