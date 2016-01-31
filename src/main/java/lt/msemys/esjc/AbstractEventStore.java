@@ -9,6 +9,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lt.msemys.esjc.event.Event;
 import lt.msemys.esjc.node.NodeEndPoints;
 import lt.msemys.esjc.operation.UserCredentials;
 import lt.msemys.esjc.operation.manager.OperationManager;
@@ -22,10 +23,8 @@ import lt.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
 import lt.msemys.esjc.tcp.handler.HeartbeatHandler;
 import lt.msemys.esjc.tcp.handler.OperationHandler;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.Set;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
@@ -45,6 +44,8 @@ public abstract class AbstractEventStore {
     protected final Settings settings;
 
     protected volatile Channel connection;
+
+    private final Set<EventStoreListener> listeners = new CopyOnWriteArraySet<>();
 
     protected AbstractEventStore(Settings settings) {
         checkNotNull(settings, "settings");
@@ -216,6 +217,18 @@ public abstract class AbstractEventStore {
     public abstract CompletableFuture<VolatileSubscription> subscribeToAll(boolean resolveLinkTos,
                                                                            SubscriptionListener listener,
                                                                            UserCredentials userCredentials);
+
+    public void addListener(EventStoreListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(EventStoreListener listener) {
+        listeners.remove(listener);
+    }
+
+    protected void fireEvent(Event event) {
+        executor.execute(() -> listeners.forEach(l -> l.onEvent(event)));
+    }
 
     protected abstract void onAuthenticationCompleted(AuthenticationStatus status);
 

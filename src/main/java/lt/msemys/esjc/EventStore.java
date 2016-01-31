@@ -2,6 +2,7 @@ package lt.msemys.esjc;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.ScheduledFuture;
+import lt.msemys.esjc.event.Events;
 import lt.msemys.esjc.node.EndPointDiscoverer;
 import lt.msemys.esjc.node.NodeEndPoints;
 import lt.msemys.esjc.node.cluster.ClusterDnsEndPointDiscoverer;
@@ -208,6 +209,8 @@ public class EventStore extends AbstractEventStore {
     protected void onAuthenticationCompleted(AuthenticationStatus status) {
         if (status == AuthenticationStatus.SUCCESS || status == AuthenticationStatus.IGNORED) {
             gotoConnectedPhase();
+        } else {
+            fireEvent(Events.authenticationFailed());
         }
     }
 
@@ -247,6 +250,7 @@ public class EventStore extends AbstractEventStore {
             operationManager.cleanUp();
             subscriptionManager.cleanUp();
             closeTcpConnection(reason);
+            fireEvent(Events.clientDisconnected());
             logger.info("Disconnected, reason: {}", reason);
         }
     }
@@ -266,6 +270,7 @@ public class EventStore extends AbstractEventStore {
                     if (settings.maxReconnections >= 0 && reconnectionInfo.reconnectionAttempt > settings.maxReconnections) {
                         handle(new CloseConnection("Reconnection limit reached"));
                     } else {
+                        fireEvent(Events.clientReconnecting());
                         discoverEndPoint(Optional.empty());
                     }
                 }
@@ -290,6 +295,7 @@ public class EventStore extends AbstractEventStore {
         checkNotNull(connection, "connection");
         connectingPhase = ConnectingPhase.CONNECTED;
         reconnectionInfo.reset();
+        fireEvent(Events.clientConnected((InetSocketAddress) connection.remoteAddress()));
         checkOperationTimeout();
     }
 
@@ -346,6 +352,7 @@ public class EventStore extends AbstractEventStore {
     private void onTcpConnectionClosed() {
         if (connection != null) {
             subscriptionManager.purgeSubscribedAndDropped(ChannelId.of(connection));
+            fireEvent(Events.connectionClosed());
         }
 
         connection = null;
@@ -410,6 +417,11 @@ public class EventStore extends AbstractEventStore {
             logger.debug("CloseConnection IGNORED because connection is CLOSED, reason: " + task.reason, task.exception);
         } else {
             logger.debug("CloseConnection, reason: " + task.reason, task.exception);
+
+            if (task.exception != null) {
+                fireEvent(Events.errorOccurred(task.exception));
+            }
+
             disconnect(task.reason);
         }
     }
