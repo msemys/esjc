@@ -1,18 +1,16 @@
 package lt.msemys.esjc;
 
 
-import com.google.protobuf.ByteString;
 import lt.msemys.esjc.event.ClientConnected;
 import lt.msemys.esjc.operation.UserCredentials;
-import lt.msemys.esjc.proto.EventStoreClientMessages.EventRecord;
 import lt.msemys.esjc.util.Strings;
+import lt.msemys.esjc.util.Subscriptions.DropData;
 import lt.msemys.esjc.util.concurrent.ResettableLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -24,27 +22,11 @@ import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 import static lt.msemys.esjc.util.Strings.defaultIfEmpty;
 import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
-import static lt.msemys.esjc.util.UUIDConverter.toBytes;
+import static lt.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
+import static lt.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
 
 public abstract class CatchUpSubscription {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private static final ResolvedEvent DROP_SUBSCRIPTION_EVENT =
-        new ResolvedEvent(lt.msemys.esjc.proto.EventStoreClientMessages.ResolvedEvent.newBuilder()
-            .setEvent(EventRecord.newBuilder()
-                .setEventId(ByteString.copyFrom(toBytes(new UUID(0, 0))))
-                .setEventStreamId("dummy")
-                .setEventNumber(-1)
-                .setEventType("dummy")
-                .setDataContentType(0)
-                .setMetadataContentType(0)
-                .setData(ByteString.EMPTY)
-                .build())
-            .setCommitPosition(-1)
-            .setPreparePosition(-1)
-            .build());
-
-    private static final DropData UNKNOWN_DROP_DATA = new DropData(SubscriptionDropReason.Unknown, new Exception("Drop reason not specified."));
 
     private final EventStore eventstore;
     public final String streamId;
@@ -269,16 +251,6 @@ public abstract class CatchUpSubscription {
 
     protected String streamId() {
         return defaultIfEmpty(streamId, "<all>");
-    }
-
-    private static class DropData {
-        private final SubscriptionDropReason reason;
-        private final Exception exception;
-
-        private DropData(SubscriptionDropReason reason, Exception exception) {
-            this.reason = reason;
-            this.exception = exception;
-        }
     }
 
 }
