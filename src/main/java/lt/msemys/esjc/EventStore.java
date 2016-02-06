@@ -10,6 +10,7 @@ import lt.msemys.esjc.node.static_.StaticEndPointDiscoverer;
 import lt.msemys.esjc.operation.*;
 import lt.msemys.esjc.operation.manager.OperationItem;
 import lt.msemys.esjc.subscription.AllCatchUpSubscription;
+import lt.msemys.esjc.subscription.PersistentSubscriptionOperation;
 import lt.msemys.esjc.subscription.StreamCatchUpSubscription;
 import lt.msemys.esjc.subscription.VolatileSubscriptionOperation;
 import lt.msemys.esjc.subscription.manager.SubscriptionItem;
@@ -66,6 +67,7 @@ public class EventStore extends AbstractEventStore {
         tasks.register(EstablishTcpConnection.class, this::handle);
         tasks.register(StartOperation.class, this::handle);
         tasks.register(StartSubscription.class, this::handle);
+        tasks.register(StartPersistentSubscription.class, this::handle);
     }
 
     @Override
@@ -234,6 +236,37 @@ public class EventStore extends AbstractEventStore {
 
         CatchUpSubscription subscription = new AllCatchUpSubscription(this,
             fromPositionExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor);
+
+        subscription.start();
+
+        return subscription;
+    }
+
+    @Override
+    public PersistentSubscription subscribeToPersistent(String stream,
+                                                        String groupName,
+                                                        SubscriptionListener listener,
+                                                        UserCredentials userCredentials,
+                                                        int bufferSize,
+                                                        boolean autoAck) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(!isNullOrEmpty(groupName), "groupName");
+        checkNotNull(listener, "listener");
+        checkArgument(bufferSize > 0, "bufferSize should be positive");
+
+        PersistentSubscription subscription = new PersistentSubscription(groupName, stream, listener, userCredentials, bufferSize, autoAck, executor) {
+            @Override
+            protected CompletableFuture<Subscription> startSubscription(String subscriptionId,
+                                                                        String streamId,
+                                                                        int bufferSize,
+                                                                        SubscriptionListener listener,
+                                                                        UserCredentials userCredentials) {
+                CompletableFuture<Subscription> result = new CompletableFuture<>();
+                enqueue(new StartPersistentSubscription(result, subscriptionId, streamId, bufferSize,
+                    userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
+                return result;
+            }
+        };
 
         subscription.start();
 
@@ -498,6 +531,40 @@ public class EventStore extends AbstractEventStore {
                 VolatileSubscriptionOperation operation = new VolatileSubscriptionOperation(
                     task.result,
                     task.streamId, task.resolveLinkTos, task.userCredentials, task.listener,
+                    () -> connection, executor);
+
+                logger.debug("StartSubscription {} {}, {}, {}, {}.",
+                    state == ConnectionState.CONNECTED ? "fire" : "enqueue",
+                    operation.getClass().getSimpleName(), operation, task.maxRetries, task.timeout);
+
+                SubscriptionItem item = new SubscriptionItem(operation, task.maxRetries, task.timeout);
+
+                if (state == ConnectionState.CONNECTING) {
+                    subscriptionManager.enqueueSubscription(item);
+                } else {
+                    subscriptionManager.startSubscription(item, connection);
+                }
+                break;
+            case CLOSED:
+                task.result.completeExceptionally(new ConnectionClosedException("Connection is closed"));
+                break;
+            default:
+                throw new IllegalStateException("Unknown connection state");
+        }
+    }
+
+    private void handle(StartPersistentSubscription task) {
+        ConnectionState state = connectionState();
+
+        switch (state) {
+            case INIT:
+                task.result.completeExceptionally(new InvalidOperationException("No connection"));
+                break;
+            case CONNECTING:
+            case CONNECTED:
+                PersistentSubscriptionOperation operation = new PersistentSubscriptionOperation(
+                    task.result,
+                    task.subscriptionId, task.streamId, task.bufferSize, task.userCredentials, task.listener,
                     () -> connection, executor);
 
                 logger.debug("StartSubscription {} {}, {}, {}, {}.",

@@ -273,6 +273,26 @@ abstract class AbstractEventStore {
                                                            UserCredentials userCredentials,
                                                            int readBatchSize);
 
+    public PersistentSubscription subscribeToPersistent(String stream,
+                                                        String groupName,
+                                                        SubscriptionListener listener) {
+        return subscribeToPersistent(stream, groupName, listener, null, settings.persistentSubscriptionBufferSize, settings.persistentSubscriptionAutoAckEnabled);
+    }
+
+    public PersistentSubscription subscribeToPersistent(String stream,
+                                                        String groupName,
+                                                        SubscriptionListener listener,
+                                                        UserCredentials userCredentials) {
+        return subscribeToPersistent(stream, groupName, listener, userCredentials, settings.persistentSubscriptionBufferSize, settings.persistentSubscriptionAutoAckEnabled);
+    }
+
+    public abstract PersistentSubscription subscribeToPersistent(String stream,
+                                                                 String groupName,
+                                                                 SubscriptionListener listener,
+                                                                 UserCredentials userCredentials,
+                                                                 int bufferSize,
+                                                                 boolean autoAck);
+
     public void addListener(EventStoreListener listener) {
         listeners.add(listener);
     }

@@ -28,6 +28,8 @@ public class Settings {
     public final int maxReconnections;
     public final int maxPushQueueSize;
     public final int readBatchSize;
+    public final int persistentSubscriptionBufferSize;
+    public final boolean persistentSubscriptionAutoAckEnabled;
     public final boolean failOnNoServerResponse;
 
     @Override
@@ -50,6 +52,8 @@ public class Settings {
         sb.append(", maxReconnections=").append(maxReconnections);
         sb.append(", maxPushQueueSize=").append(maxPushQueueSize);
         sb.append(", readBatchSize=").append(readBatchSize);
+        sb.append(", persistentSubscriptionBufferSize=").append(persistentSubscriptionBufferSize);
+        sb.append(", persistentSubscriptionAutoAckEnabled=").append(persistentSubscriptionAutoAckEnabled);
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
         sb.append('}');
         return sb.toString();
@@ -73,6 +77,8 @@ public class Settings {
         maxReconnections = builder.maxReconnections;
         maxPushQueueSize = builder.maxPushQueueSize;
         readBatchSize = builder.readBatchSize;
+        persistentSubscriptionBufferSize = builder.persistentSubscriptionBufferSize;
+        persistentSubscriptionAutoAckEnabled = builder.persistentSubscriptionAutoAckEnabled;
         failOnNoServerResponse = builder.failOnNoServerResponse;
     }
 
@@ -98,6 +104,8 @@ public class Settings {
         private Integer maxReconnections;
         private Integer maxPushQueueSize;
         private Integer readBatchSize;
+        private Integer persistentSubscriptionBufferSize;
+        private Boolean persistentSubscriptionAutoAckEnabled;
         private Boolean failOnNoServerResponse;
 
         private Builder() {
@@ -188,6 +196,16 @@ public class Settings {
             return this;
         }
 
+        public Builder persistentSubscriptionBufferSize(int persistentSubscriptionBufferSize) {
+            this.persistentSubscriptionBufferSize = persistentSubscriptionBufferSize;
+            return this;
+        }
+
+        public Builder persistentSubscriptionAutoAckEnabled(boolean persistentSubscriptionAutoAckEnabled) {
+            this.persistentSubscriptionAutoAckEnabled = persistentSubscriptionAutoAckEnabled;
+            return this;
+        }
+
         public Builder failOnNoServerResponse(boolean failOnNoServerResponse) {
             this.failOnNoServerResponse = failOnNoServerResponse;
             return this;
@@ -257,6 +275,16 @@ public class Settings {
                 readBatchSize = 500;
             } else {
                 checkArgument(readBatchSize > 0, "readBatchSize should be positive");
+            }
+
+            if (persistentSubscriptionBufferSize == null) {
+                persistentSubscriptionBufferSize = 10;
+            } else {
+                checkArgument(persistentSubscriptionBufferSize > 0, "persistentSubscriptionBufferSize should be positive");
+            }
+
+            if (persistentSubscriptionAutoAckEnabled == null) {
+                persistentSubscriptionAutoAckEnabled = true;
             }
 
             if (failOnNoServerResponse == null) {
