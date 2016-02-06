@@ -26,6 +26,8 @@ public class Settings {
     public final int maxConcurrentOperations;
     public final int maxOperationRetries;
     public final int maxReconnections;
+    public final int maxPushQueueSize;
+    public final int readBatchSize;
     public final boolean failOnNoServerResponse;
 
     @Override
@@ -46,6 +48,8 @@ public class Settings {
         sb.append(", maxConcurrentOperations=").append(maxConcurrentOperations);
         sb.append(", maxOperationRetries=").append(maxOperationRetries);
         sb.append(", maxReconnections=").append(maxReconnections);
+        sb.append(", maxPushQueueSize=").append(maxPushQueueSize);
+        sb.append(", readBatchSize=").append(readBatchSize);
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
         sb.append('}');
         return sb.toString();
@@ -67,6 +71,8 @@ public class Settings {
         maxConcurrentOperations = builder.maxConcurrentOperations;
         maxOperationRetries = builder.maxOperationRetries;
         maxReconnections = builder.maxReconnections;
+        maxPushQueueSize = builder.maxPushQueueSize;
+        readBatchSize = builder.readBatchSize;
         failOnNoServerResponse = builder.failOnNoServerResponse;
     }
 
@@ -90,6 +96,8 @@ public class Settings {
         private Integer maxConcurrentOperations;
         private Integer maxOperationRetries;
         private Integer maxReconnections;
+        private Integer maxPushQueueSize;
+        private Integer readBatchSize;
         private Boolean failOnNoServerResponse;
 
         private Builder() {
@@ -170,6 +178,16 @@ public class Settings {
             return this;
         }
 
+        public Builder maxPushQueueSize(int maxPushQueueSize) {
+            this.maxPushQueueSize = maxPushQueueSize;
+            return this;
+        }
+
+        public Builder readBatchSize(int readBatchSize) {
+            this.readBatchSize = readBatchSize;
+            return this;
+        }
+
         public Builder failOnNoServerResponse(boolean failOnNoServerResponse) {
             this.failOnNoServerResponse = failOnNoServerResponse;
             return this;
@@ -227,6 +245,18 @@ public class Settings {
 
             if (maxReconnections == null) {
                 maxReconnections = 10;
+            }
+
+            if (maxPushQueueSize == null) {
+                maxPushQueueSize = 10000;
+            } else {
+                checkArgument(maxPushQueueSize > 0, "maxPushQueueSize should be positive");
+            }
+
+            if (readBatchSize == null) {
+                readBatchSize = 500;
+            } else {
+                checkArgument(readBatchSize > 0, "readBatchSize should be positive");
             }
 
             if (failOnNoServerResponse == null) {

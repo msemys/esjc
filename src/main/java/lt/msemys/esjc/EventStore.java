@@ -9,6 +9,8 @@ import lt.msemys.esjc.node.cluster.ClusterDnsEndPointDiscoverer;
 import lt.msemys.esjc.node.static_.StaticEndPointDiscoverer;
 import lt.msemys.esjc.operation.*;
 import lt.msemys.esjc.operation.manager.OperationItem;
+import lt.msemys.esjc.subscription.AllCatchUpSubscription;
+import lt.msemys.esjc.subscription.StreamCatchUpSubscription;
 import lt.msemys.esjc.subscription.VolatileSubscription;
 import lt.msemys.esjc.subscription.VolatileSubscriptionOperation;
 import lt.msemys.esjc.subscription.manager.SubscriptionItem;
@@ -36,7 +38,7 @@ import static lt.msemys.esjc.util.Strings.*;
 public class EventStore extends AbstractEventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStore.class);
 
-    private static final int MAX_READ_SIZE = 4 * 1024;
+    protected static final int MAX_READ_SIZE = 4 * 1024;
 
     private enum ConnectingPhase {INVALID, RECONNECTING, ENDPOINT_DISCOVERY, CONNECTION_ESTABLISHING, AUTHENTICATION, CONNECTED}
 
@@ -203,6 +205,40 @@ public class EventStore extends AbstractEventStore {
         CompletableFuture<VolatileSubscription> result = new CompletableFuture<>();
         enqueue(new StartSubscription(result, Strings.EMPTY, resolveLinkTos, userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
         return result;
+    }
+
+    @Override
+    public CatchUpSubscription subscribeToStreamFrom(String stream,
+                                                     Integer lastCheckpoint,
+                                                     boolean resolveLinkTos,
+                                                     CatchUpSubscriptionListener listener,
+                                                     UserCredentials userCredentials,
+                                                     int readBatchSize) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkNotNull(listener, "listener");
+
+        CatchUpSubscription subscription = new StreamCatchUpSubscription(this,
+            stream, lastCheckpoint, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor);
+
+        subscription.start();
+
+        return subscription;
+    }
+
+    @Override
+    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+                                                  boolean resolveLinkTos,
+                                                  CatchUpSubscriptionListener listener,
+                                                  UserCredentials userCredentials,
+                                                  int readBatchSize) {
+        checkNotNull(listener, "listener");
+
+        CatchUpSubscription subscription = new AllCatchUpSubscription(this,
+            fromPositionExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor);
+
+        subscription.start();
+
+        return subscription;
     }
 
     @Override

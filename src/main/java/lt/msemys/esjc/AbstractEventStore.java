@@ -218,6 +218,62 @@ public abstract class AbstractEventStore {
                                                                            SubscriptionListener listener,
                                                                            UserCredentials userCredentials);
 
+    public CatchUpSubscription subscribeToStreamFrom(String stream,
+                                                     Integer lastCheckpoint,
+                                                     boolean resolveLinkTos,
+                                                     CatchUpSubscriptionListener listener,
+                                                     int readBatchSize) {
+        return subscribeToStreamFrom(stream, lastCheckpoint, resolveLinkTos, listener, null, readBatchSize);
+    }
+
+    public CatchUpSubscription subscribeToStreamFrom(String stream,
+                                                     Integer lastCheckpoint,
+                                                     boolean resolveLinkTos,
+                                                     CatchUpSubscriptionListener listener) {
+        return subscribeToStreamFrom(stream, lastCheckpoint, resolveLinkTos, listener, null, settings.readBatchSize);
+    }
+
+    public CatchUpSubscription subscribeToStreamFrom(String stream,
+                                                     Integer lastCheckpoint,
+                                                     boolean resolveLinkTos,
+                                                     CatchUpSubscriptionListener listener,
+                                                     UserCredentials userCredentials) {
+        return subscribeToStreamFrom(stream, lastCheckpoint, resolveLinkTos, listener, userCredentials, settings.readBatchSize);
+    }
+
+    public abstract CatchUpSubscription subscribeToStreamFrom(String stream,
+                                                              Integer lastCheckpoint,
+                                                              boolean resolveLinkTos,
+                                                              CatchUpSubscriptionListener listener,
+                                                              UserCredentials userCredentials,
+                                                              int readBatchSize);
+
+    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+                                                  boolean resolveLinkTos,
+                                                  CatchUpSubscriptionListener listener) {
+        return subscribeToAllFrom(fromPositionExclusive, resolveLinkTos, listener, null, settings.readBatchSize);
+    }
+
+    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+                                                  boolean resolveLinkTos,
+                                                  CatchUpSubscriptionListener listener,
+                                                  int readBatchSize) {
+        return subscribeToAllFrom(fromPositionExclusive, resolveLinkTos, listener, null, readBatchSize);
+    }
+
+    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+                                                  boolean resolveLinkTos,
+                                                  CatchUpSubscriptionListener listener,
+                                                  UserCredentials userCredentials) {
+        return subscribeToAllFrom(fromPositionExclusive, resolveLinkTos, listener, userCredentials, settings.readBatchSize);
+    }
+
+    public abstract CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+                                                           boolean resolveLinkTos,
+                                                           CatchUpSubscriptionListener listener,
+                                                           UserCredentials userCredentials,
+                                                           int readBatchSize);
+
     public void addListener(EventStoreListener listener) {
         listeners.add(listener);
     }
