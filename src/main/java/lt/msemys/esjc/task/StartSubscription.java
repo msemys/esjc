@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
 public class StartSubscription implements Task {
-    public final CompletableFuture<? extends Subscription> result;
+    public final CompletableFuture<Subscription> result;
 
     public final String streamId;
     public final boolean resolveLinkTos;
@@ -20,7 +20,7 @@ public class StartSubscription implements Task {
     public final int maxRetries;
     public final Duration timeout;
 
-    public StartSubscription(CompletableFuture<? extends Subscription> result,
+    public StartSubscription(CompletableFuture<Subscription> result,
                              String streamId,
                              boolean resolveLinkTos,
                              UserCredentials userCredentials,

@@ -13,7 +13,6 @@ import lt.msemys.esjc.event.Event;
 import lt.msemys.esjc.node.NodeEndPoints;
 import lt.msemys.esjc.operation.UserCredentials;
 import lt.msemys.esjc.operation.manager.OperationManager;
-import lt.msemys.esjc.subscription.VolatileSubscription;
 import lt.msemys.esjc.subscription.manager.SubscriptionManager;
 import lt.msemys.esjc.tcp.TcpPackage;
 import lt.msemys.esjc.tcp.TcpPackageDecoder;
@@ -198,25 +197,25 @@ abstract class AbstractEventStore {
                                                                             boolean resolveLinkTos,
                                                                             UserCredentials userCredentials);
 
-    public CompletableFuture<VolatileSubscription> subscribeToStream(String stream,
-                                                                     boolean resolveLinkTos,
-                                                                     SubscriptionListener listener) {
+    public CompletableFuture<Subscription> subscribeToStream(String stream,
+                                                             boolean resolveLinkTos,
+                                                             SubscriptionListener listener) {
         return subscribeToStream(stream, resolveLinkTos, listener, null);
     }
 
-    public abstract CompletableFuture<VolatileSubscription> subscribeToStream(String stream,
-                                                                              boolean resolveLinkTos,
-                                                                              SubscriptionListener listener,
-                                                                              UserCredentials userCredentials);
+    public abstract CompletableFuture<Subscription> subscribeToStream(String stream,
+                                                                      boolean resolveLinkTos,
+                                                                      SubscriptionListener listener,
+                                                                      UserCredentials userCredentials);
 
-    public CompletableFuture<VolatileSubscription> subscribeToAll(boolean resolveLinkTos,
-                                                                  SubscriptionListener listener) {
+    public CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
+                                                          SubscriptionListener listener) {
         return subscribeToAll(resolveLinkTos, listener, null);
     }
 
-    public abstract CompletableFuture<VolatileSubscription> subscribeToAll(boolean resolveLinkTos,
-                                                                           SubscriptionListener listener,
-                                                                           UserCredentials userCredentials);
+    public abstract CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
+                                                                   SubscriptionListener listener,
+                                                                   UserCredentials userCredentials);
 
     public CatchUpSubscription subscribeToStreamFrom(String stream,
                                                      Integer lastCheckpoint,

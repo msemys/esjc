@@ -34,7 +34,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
 
     private static final int MAX_QUEUE_SIZE = 2000;
 
-    private final CompletableFuture<T> result;
+    private final CompletableFuture<Subscription> result;
     private final TcpCommand subscribeCommand;
     protected final String streamId;
     protected final boolean resolveLinkTos;
@@ -48,7 +48,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
     private final AtomicBoolean unsubscribed = new AtomicBoolean();
     protected UUID correlationId;
 
-    protected AbstractSubscriptionOperation(CompletableFuture<T> result,
+    protected AbstractSubscriptionOperation(CompletableFuture<Subscription> result,
                                             TcpCommand subscribeCommand,
                                             String streamId,
                                             boolean resolveLinkTos,

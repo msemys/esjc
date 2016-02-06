@@ -3,6 +3,7 @@ package lt.msemys.esjc.subscription;
 import com.google.protobuf.MessageLite;
 import io.netty.channel.Channel;
 import lt.msemys.esjc.ResolvedEvent;
+import lt.msemys.esjc.Subscription;
 import lt.msemys.esjc.SubscriptionListener;
 import lt.msemys.esjc.operation.InspectionDecision;
 import lt.msemys.esjc.operation.InspectionResult;
@@ -19,7 +20,7 @@ import java.util.function.Supplier;
 
 public class VolatileSubscriptionOperation extends AbstractSubscriptionOperation<VolatileSubscription> {
 
-    public VolatileSubscriptionOperation(CompletableFuture<VolatileSubscription> result,
+    public VolatileSubscriptionOperation(CompletableFuture<Subscription> result,
                                          String streamId,
                                          boolean resolveLinkTos,
                                          UserCredentials userCredentials,

@@ -11,7 +11,6 @@ import lt.msemys.esjc.operation.*;
 import lt.msemys.esjc.operation.manager.OperationItem;
 import lt.msemys.esjc.subscription.AllCatchUpSubscription;
 import lt.msemys.esjc.subscription.StreamCatchUpSubscription;
-import lt.msemys.esjc.subscription.VolatileSubscription;
 import lt.msemys.esjc.subscription.VolatileSubscriptionOperation;
 import lt.msemys.esjc.subscription.manager.SubscriptionItem;
 import lt.msemys.esjc.task.*;
@@ -184,25 +183,25 @@ public class EventStore extends AbstractEventStore {
     }
 
     @Override
-    public CompletableFuture<VolatileSubscription> subscribeToStream(String stream,
-                                                                     boolean resolveLinkTos,
-                                                                     SubscriptionListener listener,
-                                                                     UserCredentials userCredentials) {
+    public CompletableFuture<Subscription> subscribeToStream(String stream,
+                                                             boolean resolveLinkTos,
+                                                             SubscriptionListener listener,
+                                                             UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkNotNull(listener, "listener");
 
-        CompletableFuture<VolatileSubscription> result = new CompletableFuture<>();
+        CompletableFuture<Subscription> result = new CompletableFuture<>();
         enqueue(new StartSubscription(result, stream, resolveLinkTos, userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
         return result;
     }
 
     @Override
-    public CompletableFuture<VolatileSubscription> subscribeToAll(boolean resolveLinkTos,
-                                                                  SubscriptionListener listener,
-                                                                  UserCredentials userCredentials) {
+    public CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
+                                                          SubscriptionListener listener,
+                                                          UserCredentials userCredentials) {
         checkNotNull(listener, "listener");
 
-        CompletableFuture<VolatileSubscription> result = new CompletableFuture<>();
+        CompletableFuture<Subscription> result = new CompletableFuture<>();
         enqueue(new StartSubscription(result, Strings.EMPTY, resolveLinkTos, userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
         return result;
     }
@@ -497,7 +496,7 @@ public class EventStore extends AbstractEventStore {
             case CONNECTING:
             case CONNECTED:
                 VolatileSubscriptionOperation operation = new VolatileSubscriptionOperation(
-                    (CompletableFuture<VolatileSubscription>) task.result,
+                    task.result,
                     task.streamId, task.resolveLinkTos, task.userCredentials, task.listener,
                     () -> connection, executor);
 
