@@ -31,7 +31,7 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
-public abstract class AbstractEventStore {
+abstract class AbstractEventStore {
     private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;
 
     protected enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
