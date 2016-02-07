@@ -32,6 +32,29 @@ public class Settings {
     public final boolean persistentSubscriptionAutoAckEnabled;
     public final boolean failOnNoServerResponse;
 
+    private Settings(Builder builder) {
+        tcpSettings = builder.tcpSettings;
+        staticNodeSettings = Optional.ofNullable(builder.staticNodeSettings);
+        clusterNodeSettings = Optional.ofNullable(builder.clusterNodeSettings);
+        ssl = builder.ssl;
+        reconnectionDelay = builder.reconnectionDelay;
+        heartbeatInterval = builder.heartbeatInterval;
+        heartbeatTimeout = builder.heartbeatTimeout;
+        requireMaster = builder.requireMaster;
+        userCredentials = Optional.ofNullable(builder.userCredentials);
+        operationTimeout = builder.operationTimeout;
+        operationTimeoutCheckInterval = builder.operationTimeoutCheckInterval;
+        maxQueueSize = builder.maxQueueSize;
+        maxConcurrentOperations = builder.maxConcurrentOperations;
+        maxOperationRetries = builder.maxOperationRetries;
+        maxReconnections = builder.maxReconnections;
+        maxPushQueueSize = builder.maxPushQueueSize;
+        readBatchSize = builder.readBatchSize;
+        persistentSubscriptionBufferSize = builder.persistentSubscriptionBufferSize;
+        persistentSubscriptionAutoAckEnabled = builder.persistentSubscriptionAutoAckEnabled;
+        failOnNoServerResponse = builder.failOnNoServerResponse;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Settings{");
@@ -57,29 +80,6 @@ public class Settings {
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
         sb.append('}');
         return sb.toString();
-    }
-
-    private Settings(Builder builder) {
-        tcpSettings = builder.tcpSettings;
-        staticNodeSettings = Optional.ofNullable(builder.staticNodeSettings);
-        clusterNodeSettings = Optional.ofNullable(builder.clusterNodeSettings);
-        ssl = builder.ssl;
-        reconnectionDelay = builder.reconnectionDelay;
-        heartbeatInterval = builder.heartbeatInterval;
-        heartbeatTimeout = builder.heartbeatTimeout;
-        requireMaster = builder.requireMaster;
-        userCredentials = Optional.ofNullable(builder.userCredentials);
-        operationTimeout = builder.operationTimeout;
-        operationTimeoutCheckInterval = builder.operationTimeoutCheckInterval;
-        maxQueueSize = builder.maxQueueSize;
-        maxConcurrentOperations = builder.maxConcurrentOperations;
-        maxOperationRetries = builder.maxOperationRetries;
-        maxReconnections = builder.maxReconnections;
-        maxPushQueueSize = builder.maxPushQueueSize;
-        readBatchSize = builder.readBatchSize;
-        persistentSubscriptionBufferSize = builder.persistentSubscriptionBufferSize;
-        persistentSubscriptionAutoAckEnabled = builder.persistentSubscriptionAutoAckEnabled;
-        failOnNoServerResponse = builder.failOnNoServerResponse;
     }
 
     public static Builder newBuilder() {
