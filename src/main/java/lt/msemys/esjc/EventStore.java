@@ -288,6 +288,20 @@ public class EventStore extends AbstractEventStore {
     }
 
     @Override
+    public CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
+                                                                                              String groupName,
+                                                                                              PersistentSubscriptionSettings settings,
+                                                                                              UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(!isNullOrEmpty(groupName), "groupName");
+        checkNotNull(settings, "settings");
+
+        CompletableFuture<PersistentSubscriptionUpdateResult> result = new CompletableFuture<>();
+        enqueue(new UpdatePersistentSubscriptionOperation(result, stream, groupName, settings, userCredentials));
+        return result;
+    }
+
+    @Override
     protected void onAuthenticationCompleted(AuthenticationStatus status) {
         if (status == AuthenticationStatus.SUCCESS || status == AuthenticationStatus.IGNORED) {
             gotoConnectedPhase();
