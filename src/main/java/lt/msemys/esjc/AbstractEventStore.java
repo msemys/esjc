@@ -293,6 +293,28 @@ abstract class AbstractEventStore {
                                                                  int bufferSize,
                                                                  boolean autoAck);
 
+    public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+                                                                                              String groupName) {
+        return createPersistentSubscription(stream, groupName, PersistentSubscriptionSettings.DEFAULT, null);
+    }
+
+    public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+                                                                                              String groupName,
+                                                                                              UserCredentials userCredentials) {
+        return createPersistentSubscription(stream, groupName, PersistentSubscriptionSettings.DEFAULT, userCredentials);
+    }
+
+    public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+                                                                                              String groupName,
+                                                                                              PersistentSubscriptionSettings settings) {
+        return createPersistentSubscription(stream, groupName, settings, null);
+    }
+
+    public abstract CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+                                                                                                       String groupName,
+                                                                                                       PersistentSubscriptionSettings settings,
+                                                                                                       UserCredentials userCredentials);
+
     public void addListener(EventStoreListener listener) {
         listeners.add(listener);
     }
