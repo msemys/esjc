@@ -326,6 +326,15 @@ abstract class AbstractEventStore {
                                                                                                        PersistentSubscriptionSettings settings,
                                                                                                        UserCredentials userCredentials);
 
+    public CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
+                                                                                              String groupName) {
+        return deletePersistentSubscription(stream, groupName, null);
+    }
+
+    public abstract CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
+                                                                                                       String groupName,
+                                                                                                       UserCredentials userCredentials);
+
     public void addListener(EventStoreListener listener) {
         listeners.add(listener);
     }
