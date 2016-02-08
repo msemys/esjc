@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.stream.JsonReader;
-import lt.msemys.esjc.node.EndPointDiscoverer;
-import lt.msemys.esjc.node.NodeEndPoints;
+import lt.msemys.esjc.node.EndpointDiscoverer;
+import lt.msemys.esjc.node.NodeEndpoints;
 import lt.msemys.esjc.util.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
-public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
-    private final static Logger logger = LoggerFactory.getLogger(ClusterDnsEndPointDiscoverer.class);
+public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
+    private final static Logger logger = LoggerFactory.getLogger(ClusterDnsEndpointDiscoverer.class);
 
     private final Executor executor = Executors.newCachedThreadPool();
     private List<MemberInfoDto> oldGossip;
@@ -34,7 +34,7 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
     private final ClusterNodeSettings settings;
     private final Gson gson;
 
-    public ClusterDnsEndPointDiscoverer(ClusterNodeSettings settings) {
+    public ClusterDnsEndpointDiscoverer(ClusterNodeSettings settings) {
         checkNotNull(settings, "settings is null");
 
         this.settings = settings;
@@ -46,17 +46,17 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
     }
 
     @Override
-    public CompletableFuture<NodeEndPoints> discover(InetSocketAddress failedTcpEndPoint) {
-        CompletableFuture<NodeEndPoints> result = new CompletableFuture<>();
+    public CompletableFuture<NodeEndpoints> discover(InetSocketAddress failedTcpEndpoint) {
+        CompletableFuture<NodeEndpoints> result = new CompletableFuture<>();
 
         executor.execute(() -> {
             for (int attempt = 1; attempt <= settings.maxDiscoverAttempts; ++attempt) {
                 try {
-                    Optional<NodeEndPoints> nodeEndPoints = tryDiscover(failedTcpEndPoint);
+                    Optional<NodeEndpoints> nodeEndpoints = tryDiscover(failedTcpEndpoint);
 
-                    if (nodeEndPoints.isPresent()) {
-                        logger.info("Discovering attempt {}/{} successful: best candidate is {}.", attempt, settings.maxDiscoverAttempts, nodeEndPoints.get());
-                        result.complete(nodeEndPoints.get());
+                    if (nodeEndpoints.isPresent()) {
+                        logger.info("Discovering attempt {}/{} successful: best candidate is {}.", attempt, settings.maxDiscoverAttempts, nodeEndpoints.get());
+                        result.complete(nodeEndpoints.get());
                         return;
                     } else {
                         logger.info("Discovering attempt {}/{} failed: no candidate found.", attempt, settings.maxDiscoverAttempts);
@@ -78,7 +78,7 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
         return result;
     }
 
-    private Optional<NodeEndPoints> tryDiscover(InetSocketAddress failedEndPoint) {
+    private Optional<NodeEndpoints> tryDiscover(InetSocketAddress failedEndpoint) {
         oldGossipLock.lock();
         List<MemberInfoDto> oldGossipCopy;
         try {
@@ -89,7 +89,7 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
         }
 
         List<GossipSeed> gossipCandidates = (oldGossipCopy != null) ?
-            getGossipCandidatesFromOldGossip(oldGossipCopy, failedEndPoint) : getGossipCandidatesFromDns();
+            getGossipCandidatesFromOldGossip(oldGossipCopy, failedEndpoint) : getGossipCandidatesFromDns();
 
         Iterator<GossipSeed> iterator = gossipCandidates.iterator();
         while (iterator.hasNext()) {
@@ -97,7 +97,7 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
                 .filter(c -> c.members != null && !c.members.isEmpty());
 
             if (gossip.isPresent()) {
-                Optional<NodeEndPoints> bestNode = tryDetermineBestNode(gossip.get().members);
+                Optional<NodeEndpoints> bestNode = tryDetermineBestNode(gossip.get().members);
 
                 if (bestNode.isPresent()) {
                     oldGossipLock.lock();
@@ -146,11 +146,11 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
         }
     }
 
-    private List<GossipSeed> getGossipCandidatesFromOldGossip(List<MemberInfoDto> oldGossip, InetSocketAddress failedTcpEndPoint) {
-        List<MemberInfoDto> gossipCandidates = (failedTcpEndPoint == null) ? oldGossip : oldGossip.stream()
+    private List<GossipSeed> getGossipCandidatesFromOldGossip(List<MemberInfoDto> oldGossip, InetSocketAddress failedTcpEndpoint) {
+        List<MemberInfoDto> gossipCandidates = (failedTcpEndpoint == null) ? oldGossip : oldGossip.stream()
             .filter(m -> {
                 try {
-                    return !(m.externalTcpPort == failedTcpEndPoint.getPort() && InetAddress.getByName(m.externalTcpIp).equals(failedTcpEndPoint.getAddress()));
+                    return !(m.externalTcpPort == failedTcpEndpoint.getPort() && InetAddress.getByName(m.externalTcpIp).equals(failedTcpEndpoint.getAddress()));
                 } catch (UnknownHostException e) {
                     throw Throwables.propagate(e);
                 }
@@ -186,7 +186,7 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
 
     private Optional<ClusterInfoDto> tryGetGossipFrom(GossipSeed gossipSeed) {
         try {
-            URL url = new URL("http://" + gossipSeed.endPoint.getHostString() + ":" + gossipSeed.endPoint.getPort() + "/gossip?format=json");
+            URL url = new URL("http://" + gossipSeed.endpoint.getHostString() + ":" + gossipSeed.endpoint.getPort() + "/gossip?format=json");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout((int) settings.gossipTimeout.toMillis());
@@ -206,7 +206,7 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
         return Optional.empty();
     }
 
-    private Optional<NodeEndPoints> tryDetermineBestNode(List<MemberInfoDto> members) {
+    private Optional<NodeEndpoints> tryDetermineBestNode(List<MemberInfoDto> members) {
         Predicate<VNodeState> matchesNotAllowedStates = s ->
             s == VNodeState.Manager || s == VNodeState.ShuttingDown || s == VNodeState.Shutdown;
 
@@ -220,7 +220,7 @@ public class ClusterDnsEndPointDiscoverer implements EndPointDiscoverer {
 
                 logger.info("Discovering: found best choice [{},{}] ({}).", tcp, secureTcp == null ? "n/a" : secureTcp.toString(), n.state);
 
-                return new NodeEndPoints(tcp, secureTcp);
+                return new NodeEndpoints(tcp, secureTcp);
             });
     }
 

@@ -3,10 +3,10 @@ package lt.msemys.esjc;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.ScheduledFuture;
 import lt.msemys.esjc.event.Events;
-import lt.msemys.esjc.node.EndPointDiscoverer;
-import lt.msemys.esjc.node.NodeEndPoints;
-import lt.msemys.esjc.node.cluster.ClusterDnsEndPointDiscoverer;
-import lt.msemys.esjc.node.static_.StaticEndPointDiscoverer;
+import lt.msemys.esjc.node.EndpointDiscoverer;
+import lt.msemys.esjc.node.NodeEndpoints;
+import lt.msemys.esjc.node.cluster.ClusterDnsEndpointDiscoverer;
+import lt.msemys.esjc.node.static_.StaticEndpointDiscoverer;
 import lt.msemys.esjc.operation.*;
 import lt.msemys.esjc.operation.manager.OperationItem;
 import lt.msemys.esjc.subscription.AllCatchUpSubscription;
@@ -51,7 +51,7 @@ public class EventStore extends AbstractEventStore {
     private volatile ScheduledFuture timer;
     private final TransactionManager transactionManager = new TransactionManagerImpl();
     private final TaskQueue tasks;
-    private final EndPointDiscoverer discoverer;
+    private final EndpointDiscoverer discoverer;
     private final ReconnectionInfo reconnectionInfo = new ReconnectionInfo();
     private volatile ConnectingPhase connectingPhase = ConnectingPhase.INVALID;
     private Instant lastOperationTimeoutCheck = Instant.MIN;
@@ -60,9 +60,9 @@ public class EventStore extends AbstractEventStore {
         super(settings);
 
         if (settings.staticNodeSettings.isPresent()) {
-            discoverer = new StaticEndPointDiscoverer(settings.staticNodeSettings.get(), settings.ssl);
+            discoverer = new StaticEndpointDiscoverer(settings.staticNodeSettings.get(), settings.ssl);
         } else if (settings.clusterNodeSettings.isPresent()) {
-            discoverer = new ClusterDnsEndPointDiscoverer(settings.clusterNodeSettings.get());
+            discoverer = new ClusterDnsEndpointDiscoverer(settings.clusterNodeSettings.get());
         } else {
             throw new IllegalStateException("Node settings not found");
         }
@@ -419,8 +419,8 @@ public class EventStore extends AbstractEventStore {
     }
 
     @Override
-    protected void onReconnect(NodeEndPoints nodeEndPoints) {
-        reconnectTo(nodeEndPoints);
+    protected void onReconnect(NodeEndpoints nodeEndpoints) {
+        reconnectTo(nodeEndpoints);
     }
 
     public void connect() {
@@ -497,9 +497,9 @@ public class EventStore extends AbstractEventStore {
         checkOperationTimeout();
     }
 
-    private void reconnectTo(NodeEndPoints endPoints) {
-        InetSocketAddress endpoint = (settings.ssl && endPoints.secureTcpEndPoint != null) ?
-            endPoints.secureTcpEndPoint : endPoints.tcpEndPoint;
+    private void reconnectTo(NodeEndpoints endpoints) {
+        InetSocketAddress endpoint = (settings.ssl && endpoints.secureTcpEndpoint != null) ?
+            endpoints.secureTcpEndpoint : endpoints.tcpEndpoint;
 
         if (endpoint == null) {
             handle(new CloseConnection("No endpoint is specified while trying to reconnect."));
@@ -512,7 +512,7 @@ public class EventStore extends AbstractEventStore {
             closeTcpConnection(message);
 
             connectingPhase = ConnectingPhase.ENDPOINT_DISCOVERY;
-            handle(new EstablishTcpConnection(endPoints));
+            handle(new EstablishTcpConnection(endpoints));
         }
     }
 
@@ -523,9 +523,9 @@ public class EventStore extends AbstractEventStore {
             connectingPhase = ConnectingPhase.ENDPOINT_DISCOVERY;
 
             discoverer.discover(connection != null ? (InetSocketAddress) connection.remoteAddress() : null)
-                .whenComplete((nodeEndPoints, throwable) -> {
+                .whenComplete((nodeEndpoints, throwable) -> {
                     if (throwable == null) {
-                        tasks.enqueue(new EstablishTcpConnection(nodeEndPoints));
+                        tasks.enqueue(new EstablishTcpConnection(nodeEndpoints));
                         result.ifPresent(r -> r.complete(null));
                     } else {
                         result.ifPresent(r -> r.completeExceptionally(new CannotEstablishConnectionException("Cannot resolve target end point.", throwable)));
@@ -579,8 +579,8 @@ public class EventStore extends AbstractEventStore {
     }
 
     private void handle(EstablishTcpConnection task) {
-        InetSocketAddress endpoint = (settings.ssl && task.endPoints.secureTcpEndPoint != null) ?
-            task.endPoints.secureTcpEndPoint : task.endPoints.tcpEndPoint;
+        InetSocketAddress endpoint = (settings.ssl && task.endpoints.secureTcpEndpoint != null) ?
+            task.endpoints.secureTcpEndpoint : task.endpoints.tcpEndpoint;
 
         if (endpoint == null) {
             handle(new CloseConnection("No endpoint to node specified."));

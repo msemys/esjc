@@ -3,7 +3,7 @@ package lt.msemys.esjc.tcp.handler;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import lt.msemys.esjc.node.NodeEndPoints;
+import lt.msemys.esjc.node.NodeEndpoints;
 import lt.msemys.esjc.operation.InspectionResult;
 import lt.msemys.esjc.operation.manager.OperationItem;
 import lt.msemys.esjc.operation.manager.OperationManager;
@@ -22,7 +22,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
     private final OperationManager operationManager;
     private final SubscriptionManager subscriptionManager;
     private Optional<Consumer<TcpPackage>> badRequestConsumer;
-    private Optional<Consumer<NodeEndPoints>> reconnectConsumer;
+    private Optional<Consumer<NodeEndpoints>> reconnectConsumer;
 
     public OperationHandler(OperationManager operationManager, SubscriptionManager subscriptionManager) {
         this.operationManager = operationManager;
@@ -57,7 +57,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                             operationManager.scheduleOperationRetry(item);
                             break;
                         case Reconnect:
-                            reconnectConsumer.ifPresent(c -> c.accept(new NodeEndPoints(result.address.orElse(null), result.secureAddress.orElse(null))));
+                            reconnectConsumer.ifPresent(c -> c.accept(new NodeEndpoints(result.address.orElse(null), result.secureAddress.orElse(null))));
                             operationManager.scheduleOperationRetry(item);
                             break;
                         default:
@@ -84,7 +84,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                                 subscriptionManager.scheduleSubscriptionRetry(item);
                                 break;
                             case Reconnect:
-                                reconnectConsumer.ifPresent(c -> c.accept(new NodeEndPoints(result.address.orElse(null), result.secureAddress.orElse(null))));
+                                reconnectConsumer.ifPresent(c -> c.accept(new NodeEndpoints(result.address.orElse(null), result.secureAddress.orElse(null))));
                                 subscriptionManager.scheduleSubscriptionRetry(item);
                                 break;
                             case Subscribed:
@@ -105,7 +105,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
         return this;
     }
 
-    public OperationHandler whenReconnect(Consumer<NodeEndPoints> consumer) {
+    public OperationHandler whenReconnect(Consumer<NodeEndpoints> consumer) {
         reconnectConsumer = Optional.of(consumer);
         return this;
     }

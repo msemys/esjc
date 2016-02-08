@@ -1,11 +1,11 @@
 package lt.msemys.esjc.task;
 
-import lt.msemys.esjc.node.NodeEndPoints;
+import lt.msemys.esjc.node.NodeEndpoints;
 
 public class EstablishTcpConnection implements Task {
-    public final NodeEndPoints endPoints;
+    public final NodeEndpoints endpoints;
 
-    public EstablishTcpConnection(NodeEndPoints endPoints) {
-        this.endPoints = endPoints;
+    public EstablishTcpConnection(NodeEndpoints endpoints) {
+        this.endpoints = endpoints;
     }
 }

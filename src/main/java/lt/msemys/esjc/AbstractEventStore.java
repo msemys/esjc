@@ -10,7 +10,7 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lt.msemys.esjc.event.Event;
-import lt.msemys.esjc.node.NodeEndPoints;
+import lt.msemys.esjc.node.NodeEndpoints;
 import lt.msemys.esjc.operation.UserCredentials;
 import lt.msemys.esjc.operation.manager.OperationManager;
 import lt.msemys.esjc.subscription.manager.SubscriptionManager;
@@ -396,7 +396,7 @@ abstract class AbstractEventStore {
 
     protected abstract void onBadRequest(TcpPackage tcpPackage);
 
-    protected abstract void onReconnect(NodeEndPoints nodeEndPoints);
+    protected abstract void onReconnect(NodeEndpoints nodeEndpoints);
 
     protected ConnectionState connectionState() {
         if (connection == null) {
