@@ -86,6 +86,8 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
             }
         }
 
+        reader.endObject();
+
         return builder.build();
     }
 

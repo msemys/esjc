@@ -56,6 +56,8 @@ public class StreamAclJsonAdapter extends TypeAdapter<StreamAcl> {
             }
         }
 
+        reader.endObject();
+
         return new StreamAcl(readRoles, writeRoles, deleteRoles, metaReadRoles, metaWriteRoles);
     }
 
