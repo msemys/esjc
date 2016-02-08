@@ -395,6 +395,15 @@ public class EventStore extends AbstractEventStore {
     }
 
     @Override
+    public CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings, UserCredentials userCredentials) {
+        checkNotNull(settings, "settings");
+        return appendToStream(SystemStreams.SETTINGS_STREAM,
+            ExpectedVersion.any(),
+            asList(new EventData(UUID.randomUUID(), SystemEventTypes.SETTINGS, true, settings.toJson().getBytes(), null)),
+            userCredentials);
+    }
+
+    @Override
     protected void onAuthenticationCompleted(AuthenticationStatus status) {
         if (status == AuthenticationStatus.SUCCESS || status == AuthenticationStatus.IGNORED) {
             gotoConnectedPhase();

@@ -374,6 +374,12 @@ abstract class AbstractEventStore {
     public abstract CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream,
                                                                                            UserCredentials userCredentials);
 
+    public CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings) {
+        return setSystemSettings(settings, null);
+    }
+
+    public abstract CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings, UserCredentials userCredentials);
+
     public void addListener(EventStoreListener listener) {
         listeners.add(listener);
     }
