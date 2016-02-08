@@ -40,6 +40,7 @@ import static lt.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 import static lt.msemys.esjc.util.Strings.*;
+import static lt.msemys.esjc.util.Threads.sleepUninterruptibly;
 
 public class EventStore extends AbstractEventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStore.class);
@@ -719,11 +720,7 @@ public class EventStore extends AbstractEventStore {
 
     private void enqueue(Operation operation) {
         while (operationManager.totalOperationCount() >= settings.maxQueueSize) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                // ignore
-            }
+            sleepUninterruptibly(1);
         }
         enqueue(new StartOperation(operation));
     }

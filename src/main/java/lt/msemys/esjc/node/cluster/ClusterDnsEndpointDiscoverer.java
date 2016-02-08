@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
+import static lt.msemys.esjc.util.Threads.sleepUninterruptibly;
 
 public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
     private final static Logger logger = LoggerFactory.getLogger(ClusterDnsEndpointDiscoverer.class);
@@ -65,11 +66,7 @@ public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
                     logger.info("Discovering attempt {}/{} failed.", attempt, settings.maxDiscoverAttempts, e);
                 }
 
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
+                sleepUninterruptibly(500);
             }
 
             result.completeExceptionally(new ClusterException(String.format("Failed to discover candidate in %d attempts.", settings.maxDiscoverAttempts)));
