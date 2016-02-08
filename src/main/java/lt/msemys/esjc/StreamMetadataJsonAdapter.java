@@ -56,7 +56,7 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
 
         reader.beginObject();
 
-        while (reader.peek() != JsonToken.END_OBJECT) {
+        while (reader.peek() != JsonToken.END_OBJECT && reader.hasNext()) {
             String name = reader.nextName();
             switch (name) {
                 case SystemMetadata.MAX_COUNT:

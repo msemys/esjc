@@ -35,7 +35,7 @@ public class StreamAclJsonAdapter extends TypeAdapter<StreamAcl> {
 
         reader.beginObject();
 
-        while (reader.peek() != JsonToken.END_OBJECT) {
+        while (reader.peek() != JsonToken.END_OBJECT && reader.hasNext()) {
             String name = reader.nextName();
             switch (name) {
                 case SystemMetadata.ACL_READ:

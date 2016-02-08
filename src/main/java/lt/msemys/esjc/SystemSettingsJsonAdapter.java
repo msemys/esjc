@@ -39,7 +39,7 @@ public class SystemSettingsJsonAdapter extends TypeAdapter<SystemSettings> {
 
         reader.beginObject();
 
-        while (reader.peek() != JsonToken.END_OBJECT) {
+        while (reader.peek() != JsonToken.END_OBJECT && reader.hasNext()) {
             String name = reader.nextName();
             switch (name) {
                 case SystemMetadata.USER_STREAM_ACL:
