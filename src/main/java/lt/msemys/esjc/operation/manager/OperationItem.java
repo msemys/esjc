@@ -1,6 +1,7 @@
 package lt.msemys.esjc.operation.manager;
 
 import lt.msemys.esjc.operation.Operation;
+import lt.msemys.esjc.tcp.ChannelId;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -19,7 +20,7 @@ public class OperationItem implements Comparable<OperationItem> {
     public final Duration timeout;
     public final Instant createdTime;
 
-    public String connectionId;
+    public ChannelId connectionId;
     public UUID correlationId;
     public int retryCount;
     public Instant lastUpdated;

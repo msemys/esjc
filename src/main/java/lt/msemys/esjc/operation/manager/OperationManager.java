@@ -3,6 +3,7 @@ package lt.msemys.esjc.operation.manager;
 import io.netty.channel.Channel;
 import lt.msemys.esjc.ConnectionClosedException;
 import lt.msemys.esjc.Settings;
+import lt.msemys.esjc.tcp.ChannelId;
 import lt.msemys.esjc.tcp.TcpPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +56,10 @@ public class OperationManager {
         List<OperationItem> retryOperations = new ArrayList<>();
         List<OperationItem> removeOperations = new ArrayList<>();
 
+        final ChannelId connectionId = ChannelId.of(connection);
+
         activeOperations.values().forEach(item -> {
-            if (!item.connectionId.equals(connectionId(connection))) {
+            if (!item.connectionId.equals(connectionId)) {
                 retryOperations.add(item);
             } else if (!item.timeout.isZero() &&
                 Duration.between(Instant.now(), item.lastUpdated).compareTo(settings.operationTimeout) > 0) {
@@ -139,7 +142,7 @@ public class OperationManager {
             logger.debug("scheduleOperation WAITING for {}.", item);
             waitingOperations.offer(item);
         } else {
-            item.connectionId = connectionId(connection);
+            item.connectionId = ChannelId.of(connection);
             item.lastUpdated = Instant.now();
             activeOperations.put(item.correlationId, item);
 
@@ -151,10 +154,6 @@ public class OperationManager {
         }
 
         totalOperationCount = activeOperations.size() + waitingOperations.size();
-    }
-
-    private static String connectionId(Channel connection) {
-        return String.format("0x%08x", (int) connection.hashCode());
     }
 
 }
