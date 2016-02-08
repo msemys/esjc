@@ -14,6 +14,8 @@ import lt.msemys.esjc.subscription.PersistentSubscriptionOperation;
 import lt.msemys.esjc.subscription.StreamCatchUpSubscription;
 import lt.msemys.esjc.subscription.VolatileSubscriptionOperation;
 import lt.msemys.esjc.subscription.manager.SubscriptionItem;
+import lt.msemys.esjc.system.SystemEventTypes;
+import lt.msemys.esjc.system.SystemStreams;
 import lt.msemys.esjc.task.*;
 import lt.msemys.esjc.tcp.ChannelId;
 import lt.msemys.esjc.tcp.TcpPackage;
@@ -25,12 +27,16 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static java.time.Duration.between;
 import static java.time.Instant.now;
+import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static lt.msemys.esjc.system.SystemStreams.isMetastream;
 import static lt.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
+import static lt.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 import static lt.msemys.esjc.util.Strings.*;
@@ -120,7 +126,7 @@ public class EventStore extends AbstractEventStore {
                                                         boolean resolveLinkTos,
                                                         UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(eventNumber > -1, "Event number out of range");
+        checkArgument(eventNumber >= -1, "Event number out of range");
 
         CompletableFuture<EventReadResult> result = new CompletableFuture<>();
         enqueue(new ReadEventOperation(result, stream, eventNumber, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -310,6 +316,81 @@ public class EventStore extends AbstractEventStore {
 
         CompletableFuture<PersistentSubscriptionDeleteResult> result = new CompletableFuture<>();
         enqueue(new DeletePersistentSubscriptionOperation(result, stream, groupName, userCredentials));
+        return result;
+    }
+
+    @Override
+    public CompletableFuture<WriteResult> setStreamMetadata(String stream,
+                                                            ExpectedVersion expectedMetastreamVersion,
+                                                            byte[] metadata,
+                                                            UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(!isMetastream(stream), "Setting metadata for metastream '%s' is not supported.", stream);
+        checkNotNull(expectedMetastreamVersion, "expectedMetastreamVersion");
+        checkNotNull(metadata, "metadata");
+
+        CompletableFuture<WriteResult> result = new CompletableFuture<>();
+
+        EventData metaevent = new EventData(UUID.randomUUID(), SystemEventTypes.STREAM_METADATA, true,
+            (metadata == null) ? EMPTY_BYTES : metadata, null);
+
+        enqueue(new AppendToStreamOperation(result, settings.requireMaster, SystemStreams.metastreamOf(stream),
+            expectedMetastreamVersion.value, asList(metaevent), userCredentials));
+
+        return result;
+    }
+
+    @Override
+    public CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream, UserCredentials userCredentials) {
+        CompletableFuture<StreamMetadataResult> result = new CompletableFuture<>();
+
+        getStreamMetadataAsRawBytes(stream, userCredentials).whenComplete((r, t) -> {
+            if (t != null) {
+                result.completeExceptionally(t);
+            } else if (r.streamMetadata == null || r.streamMetadata.length == 0) {
+                result.complete(new StreamMetadataResult(r.stream, r.isStreamDeleted, r.metastreamVersion, StreamMetadata.empty()));
+            } else {
+                result.complete(new StreamMetadataResult(r.stream, r.isStreamDeleted, r.metastreamVersion, StreamMetadata.fromJson(r.streamMetadata)));
+            }
+        });
+
+        return result;
+    }
+
+    @Override
+    public CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream, UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+
+        CompletableFuture<RawStreamMetadataResult> result = new CompletableFuture<>();
+
+        readEvent(SystemStreams.metastreamOf(stream), -1, false, userCredentials).whenComplete((r, t) -> {
+            if (t != null) {
+                result.completeExceptionally(t);
+            } else {
+                switch (r.status) {
+                    case Success:
+                        if (r.event == null) {
+                            result.completeExceptionally(new Exception("Event is null while operation result is Success."));
+                        } else {
+                            RecordedEvent event = r.event.originalEvent();
+                            result.complete((event == null) ?
+                                new RawStreamMetadataResult(stream, false, -1, EMPTY_BYTES) :
+                                new RawStreamMetadataResult(stream, false, event.eventNumber, event.data));
+                        }
+                        break;
+                    case NotFound:
+                    case NoStream:
+                        result.complete(new RawStreamMetadataResult(stream, false, -1, EMPTY_BYTES));
+                        break;
+                    case StreamDeleted:
+                        result.complete(new RawStreamMetadataResult(stream, true, Integer.MAX_VALUE, EMPTY_BYTES));
+                        break;
+                    default:
+                        result.completeExceptionally(new IllegalStateException("Unexpected ReadEventResult: " + r.status));
+                }
+            }
+        });
+
         return result;
     }
 

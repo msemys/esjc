@@ -335,6 +335,45 @@ abstract class AbstractEventStore {
                                                                                                        String groupName,
                                                                                                        UserCredentials userCredentials);
 
+    public CompletableFuture<WriteResult> setStreamMetadata(String stream,
+                                                            ExpectedVersion expectedMetastreamVersion,
+                                                            StreamMetadata metadata) {
+        checkNotNull(metadata, "metadata");
+        return setStreamMetadata(stream, expectedMetastreamVersion, metadata.toJson().getBytes(), null);
+    }
+
+    public CompletableFuture<WriteResult> setStreamMetadata(String stream,
+                                                            ExpectedVersion expectedMetastreamVersion,
+                                                            StreamMetadata metadata,
+                                                            UserCredentials userCredentials) {
+        checkNotNull(metadata, "metadata");
+        return setStreamMetadata(stream, expectedMetastreamVersion, metadata.toJson().getBytes(), userCredentials);
+    }
+
+    public CompletableFuture<WriteResult> setStreamMetadata(String stream,
+                                                            ExpectedVersion expectedMetastreamVersion,
+                                                            byte[] metadata) {
+        return setStreamMetadata(stream, expectedMetastreamVersion, metadata, null);
+    }
+
+    public abstract CompletableFuture<WriteResult> setStreamMetadata(String stream,
+                                                                     ExpectedVersion expectedMetastreamVersion,
+                                                                     byte[] metadata,
+                                                                     UserCredentials userCredentials);
+
+    public CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream) {
+        return getStreamMetadata(stream, null);
+    }
+
+    public abstract CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream, UserCredentials userCredentials);
+
+    public CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream) {
+        return getStreamMetadataAsRawBytes(stream, null);
+    }
+
+    public abstract CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream,
+                                                                                           UserCredentials userCredentials);
+
     public void addListener(EventStoreListener listener) {
         listeners.add(listener);
     }
