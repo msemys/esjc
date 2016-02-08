@@ -59,4 +59,8 @@ public class Position implements Comparable<Position> {
         return String.format("%d/%d", commitPosition, preparePosition);
     }
 
+    public static Position of(long commitPosition, long preparePosition) {
+        return new Position(commitPosition, preparePosition);
+    }
+
 }
