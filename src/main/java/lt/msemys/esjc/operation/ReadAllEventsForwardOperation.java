@@ -12,9 +12,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static lt.msemys.esjc.util.Strings.defaultIfEmpty;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/ClientOperations/ReadAllEventsForwardOperation.cs">EventStore.ClientAPI/ClientOperations/ReadAllEventsForwardOperation.cs</a>
- */
 public class ReadAllEventsForwardOperation extends AbstractOperation<AllEventsSlice, ReadAllEventsCompleted> {
 
     private final Position position;

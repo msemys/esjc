@@ -10,9 +10,6 @@ import static java.time.Instant.ofEpochMilli;
 import static lt.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
 import static lt.msemys.esjc.util.UUIDConverter.toUUID;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/RecordedEvent.cs">EventStore.ClientAPI/RecordedEvent.cs</a>
- */
 public class RecordedEvent {
 
     public final String eventStreamId;

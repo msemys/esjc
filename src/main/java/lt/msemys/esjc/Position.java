@@ -2,9 +2,6 @@ package lt.msemys.esjc;
 
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/Position.cs">EventStore.ClientAPI/Position.cs</a>
- */
 public class Position implements Comparable<Position> {
 
     public static final Position START = new Position(0, 0);

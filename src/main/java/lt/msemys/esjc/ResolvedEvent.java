@@ -2,9 +2,6 @@ package lt.msemys.esjc;
 
 import lt.msemys.esjc.proto.EventStoreClientMessages;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/ResolvedEvent.cs">EventStore.ClientAPI/ResolvedEvent.cs</a>
- */
 public class ResolvedEvent {
 
     public final RecordedEvent event;

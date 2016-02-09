@@ -21,9 +21,6 @@ import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Strings.defaultIfEmpty;
 import static lt.msemys.esjc.util.Strings.newString;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/ClientOperations/OperationBase.cs">EventStore.ClientAPI/ClientOperations/OperationBase.cs</a>
- */
 public abstract class AbstractOperation<T, R extends MessageLite> implements Operation {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

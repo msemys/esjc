@@ -1,8 +1,5 @@
 package lt.msemys.esjc.tcp;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.Core/Services/Transport/Tcp/TcpPackage.cs">EventStore.Core/Services/Transport/Tcp/TcpPackage.cs</a>
- */
 public enum TcpFlag {
 
     None(0x00),

@@ -6,9 +6,6 @@ import java.util.Optional;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/SystemData/InspectionResult.cs">EventStore.ClientAPI/SystemData/InspectionResult.cs</a>
- */
 public class InspectionResult {
     public final InspectionDecision decision;
     public final String description;

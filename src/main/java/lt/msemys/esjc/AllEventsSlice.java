@@ -8,9 +8,6 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toCollection;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/AllEventsSlice.cs">EventStore.ClientAPI/AllEventsSlice.cs</a>
- */
 public class AllEventsSlice {
 
     public final ReadDirection readDirection;

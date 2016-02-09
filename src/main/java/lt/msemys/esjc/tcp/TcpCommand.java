@@ -1,8 +1,5 @@
 package lt.msemys.esjc.tcp;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.Core/Services/Transport/Tcp/TcpCommand.cs">EventStore.Core/Services/Transport/Tcp/TcpCommand.cs</a>
- */
 public enum TcpCommand {
 
     HeartbeatRequestCommand(0x01),

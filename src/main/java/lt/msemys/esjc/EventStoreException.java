@@ -1,8 +1,5 @@
 package lt.msemys.esjc;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/Exceptions/EventStoreConnectionException.cs">EventStore.ClientAPI/Exceptions/EventStoreConnectionException.cs</a>
- */
 public class EventStoreException extends RuntimeException {
 
     public EventStoreException() {

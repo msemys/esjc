@@ -10,9 +10,6 @@ import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 import static lt.msemys.esjc.util.UUIDConverter.toBytes;
 import static lt.msemys.esjc.util.UUIDConverter.toUUID;
 
-/**
- * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.Core/Services/Transport/Tcp/TcpPackage.cs">EventStore.Core/Services/Transport/Tcp/TcpPackage.cs</a>
- */
 public class TcpPackage {
     private static final int UUID_SIZE = 16;
 
