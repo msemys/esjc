@@ -427,7 +427,7 @@ public class EventStore extends AbstractEventStore {
     }
 
     public void connect() {
-        if (!isTimerTicking()) {
+        if (!isRunning()) {
             timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
             reconnectionInfo.reset();
         }
@@ -445,7 +445,7 @@ public class EventStore extends AbstractEventStore {
     }
 
     private void disconnect(String reason) {
-        if (isTimerTicking()) {
+        if (isRunning()) {
             timer.cancel(true);
             timer = null;
             operationManager.cleanUp();
@@ -456,7 +456,7 @@ public class EventStore extends AbstractEventStore {
         }
     }
 
-    private boolean isTimerTicking() {
+    private boolean isRunning() {
         return timer != null && !timer.isDone();
     }
 
@@ -728,7 +728,7 @@ public class EventStore extends AbstractEventStore {
     }
 
     private void enqueue(Task task) {
-        if (!isTimerTicking()) {
+        if (!isRunning()) {
             connect();
         }
         logger.trace("enqueueing task {}.", task.getClass().getSimpleName());
