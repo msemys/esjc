@@ -7,6 +7,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
+import static lt.msemys.esjc.util.Numbers.isPositive;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 
 public class ClusterNodeSettings {
@@ -137,7 +138,7 @@ public class ClusterNodeSettings {
             if (externalGossipPort == null) {
                 externalGossipPort = 0;
             } else {
-                checkArgument(externalGossipPort > 0, "externalGossipPort should be positive");
+                checkArgument(isPositive(externalGossipPort), "externalGossipPort should be positive");
             }
 
             if (gossipSeeds == null) {

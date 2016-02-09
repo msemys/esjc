@@ -18,6 +18,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static lt.msemys.esjc.util.Numbers.isPositive;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 import static lt.msemys.esjc.util.Strings.defaultIfEmpty;
@@ -59,9 +60,9 @@ public abstract class CatchUpSubscription {
         checkNotNull(eventstore, "eventstore");
         checkNotNull(listener, "listener");
         checkNotNull(listener, "executor");
-        checkArgument(readBatchSize > 0, "readBatchSize should be positive");
+        checkArgument(isPositive(readBatchSize), "readBatchSize should be positive");
         checkArgument(readBatchSize < EventStore.MAX_READ_SIZE, "Read batch size should be less than %d. For larger reads you should page.", EventStore.MAX_READ_SIZE);
-        checkArgument(maxPushQueueSize > 0, "maxPushQueueSize should be positive");
+        checkArgument(isPositive(maxPushQueueSize), "maxPushQueueSize should be positive");
 
         this.eventstore = eventstore;
         this.streamId = defaultIfEmpty(streamId, Strings.EMPTY);

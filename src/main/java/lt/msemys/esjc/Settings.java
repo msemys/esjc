@@ -8,6 +8,7 @@ import lt.msemys.esjc.tcp.TcpSettings;
 import java.time.Duration;
 import java.util.Optional;
 
+import static lt.msemys.esjc.util.Numbers.isPositive;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 
 public class Settings {
@@ -250,7 +251,7 @@ public class Settings {
             if (maxQueueSize == null) {
                 maxQueueSize = 5000;
             } else {
-                checkArgument(maxQueueSize > 0, "maxQueueSize should be positive");
+                checkArgument(isPositive(maxQueueSize), "maxQueueSize should be positive");
             }
 
             if (maxConcurrentOperations == null) {
@@ -268,19 +269,19 @@ public class Settings {
             if (maxPushQueueSize == null) {
                 maxPushQueueSize = 10000;
             } else {
-                checkArgument(maxPushQueueSize > 0, "maxPushQueueSize should be positive");
+                checkArgument(isPositive(maxPushQueueSize), "maxPushQueueSize should be positive");
             }
 
             if (readBatchSize == null) {
                 readBatchSize = 500;
             } else {
-                checkArgument(readBatchSize > 0, "readBatchSize should be positive");
+                checkArgument(isPositive(readBatchSize), "readBatchSize should be positive");
             }
 
             if (persistentSubscriptionBufferSize == null) {
                 persistentSubscriptionBufferSize = 10;
             } else {
-                checkArgument(persistentSubscriptionBufferSize > 0, "persistentSubscriptionBufferSize should be positive");
+                checkArgument(isPositive(persistentSubscriptionBufferSize), "persistentSubscriptionBufferSize should be positive");
             }
 
             if (persistentSubscriptionAutoAckEnabled == null) {

@@ -37,6 +37,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static lt.msemys.esjc.system.SystemStreams.isMetastream;
 import static lt.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
 import static lt.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
+import static lt.msemys.esjc.util.Numbers.isNegative;
+import static lt.msemys.esjc.util.Numbers.isPositive;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 import static lt.msemys.esjc.util.Strings.*;
@@ -141,8 +143,8 @@ public class EventStore extends AbstractEventStore {
                                                                         boolean resolveLinkTos,
                                                                         UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(start >= 0, "start should be non negative.");
-        checkArgument(count > 0, "count should be positive.");
+        checkArgument(!isNegative(start), "start should not be negative.");
+        checkArgument(isPositive(count), "count should be positive.");
         checkArgument(count < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
@@ -157,7 +159,7 @@ public class EventStore extends AbstractEventStore {
                                                                          boolean resolveLinkTos,
                                                                          UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(count > 0, "count should be positive.");
+        checkArgument(isPositive(count), "count should be positive.");
         checkArgument(count < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
@@ -170,7 +172,7 @@ public class EventStore extends AbstractEventStore {
                                                                   int maxCount,
                                                                   boolean resolveLinkTos,
                                                                   UserCredentials userCredentials) {
-        checkArgument(maxCount > 0, "Count should be positive.");
+        checkArgument(isPositive(maxCount), "count should be positive.");
         checkArgument(maxCount < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
@@ -183,7 +185,7 @@ public class EventStore extends AbstractEventStore {
                                                                    int maxCount,
                                                                    boolean resolveLinkTos,
                                                                    UserCredentials userCredentials) {
-        checkArgument(maxCount > 0, "Count should be positive.");
+        checkArgument(isPositive(maxCount), "count should be positive.");
         checkArgument(maxCount < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
@@ -259,7 +261,7 @@ public class EventStore extends AbstractEventStore {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkArgument(!isNullOrEmpty(groupName), "groupName");
         checkNotNull(listener, "listener");
-        checkArgument(bufferSize > 0, "bufferSize should be positive");
+        checkArgument(isPositive(bufferSize), "bufferSize should be positive");
 
         PersistentSubscription subscription = new PersistentSubscription(groupName, stream, listener, userCredentials, bufferSize, autoAck, executor) {
             @Override

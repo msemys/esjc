@@ -5,6 +5,7 @@ import lt.msemys.esjc.transaction.TransactionManager;
 
 import java.util.concurrent.CompletableFuture;
 
+import static lt.msemys.esjc.util.Numbers.isNegative;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 
 public class Transaction implements AutoCloseable {
@@ -16,7 +17,7 @@ public class Transaction implements AutoCloseable {
     private boolean isCommitted;
 
     public Transaction(long transactionId, UserCredentials userCredentials, TransactionManager transactionManager) {
-        checkArgument(transactionId >= 0, "transactionId should be non negative.");
+        checkArgument(!isNegative(transactionId), "transactionId should not be negative.");
 
         this.transactionId = transactionId;
         this.userCredentials = userCredentials;
