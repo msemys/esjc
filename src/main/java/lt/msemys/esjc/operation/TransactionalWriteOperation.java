@@ -97,6 +97,6 @@ public class TransactionalWriteOperation extends AbstractOperation<Void, Transac
 
     @Override
     public String toString() {
-        return String.format("TransactionId: %s", transactionId);
+        return "TransactionId: " + transactionId;
     }
 }

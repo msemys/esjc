@@ -88,7 +88,7 @@ public abstract class AbstractOperation<T, R extends MessageLite> implements Ope
             fail(e);
             return InspectionResult.newBuilder()
                     .decision(InspectionDecision.EndOperation)
-                    .description(String.format("Exception - %s", e.getMessage()))
+                    .description("Exception - " + e.getMessage())
                     .build();
         }
     }
@@ -107,7 +107,7 @@ public abstract class AbstractOperation<T, R extends MessageLite> implements Ope
         fail(new ServerErrorException(defaultIfEmpty(message, "<no message>")));
         return InspectionResult.newBuilder()
                 .decision(InspectionDecision.EndOperation)
-                .description(String.format("BadRequest - %s", message))
+                .description("BadRequest - " + message)
                 .build();
     }
 
@@ -160,7 +160,7 @@ public abstract class AbstractOperation<T, R extends MessageLite> implements Ope
 
         return InspectionResult.newBuilder()
                 .decision(InspectionDecision.EndOperation)
-                .description(String.format("Unexpected command - %s", tcpPackage.command))
+                .description("Unexpected command - " + tcpPackage.command)
                 .build();
     }
 

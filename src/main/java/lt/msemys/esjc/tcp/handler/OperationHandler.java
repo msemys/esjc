@@ -61,7 +61,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                             operationManager.scheduleOperationRetry(item);
                             break;
                         default:
-                            throw new ChannelException(String.format("Unknown InspectionDecision: {}", result.decision));
+                            throw new ChannelException("Unknown InspectionDecision: " + result.decision);
                     }
                     operationManager.scheduleWaitingOperations(ctx.channel());
                 } else {
