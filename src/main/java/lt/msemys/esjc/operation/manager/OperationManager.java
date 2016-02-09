@@ -17,7 +17,7 @@ import static java.util.stream.Stream.concat;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
 public class OperationManager {
-    private final static Logger logger = LoggerFactory.getLogger(OperationManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(OperationManager.class);
 
     private final Map<UUID, OperationItem> activeOperations = new ConcurrentHashMap<>();
     private final Queue<OperationItem> waitingOperations = new ArrayDeque<>();

@@ -20,7 +20,7 @@ import static java.util.stream.Stream.concat;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
 public class SubscriptionManager {
-    private final static Logger logger = LoggerFactory.getLogger(SubscriptionManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionManager.class);
 
     private final Map<UUID, SubscriptionItem> activeSubscriptions = new ConcurrentHashMap<>();
     private final Queue<SubscriptionItem> waitingSubscriptions = new ArrayDeque<>();

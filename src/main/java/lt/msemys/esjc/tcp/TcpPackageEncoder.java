@@ -11,7 +11,7 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 
 public class TcpPackageEncoder extends MessageToMessageEncoder<TcpPackage> {
 
-    private final static Logger logger = LoggerFactory.getLogger(TcpPackageEncoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(TcpPackageEncoder.class);
 
     @Override
     protected void encode(ChannelHandlerContext ctx, TcpPackage msg, List<Object> out) throws Exception {

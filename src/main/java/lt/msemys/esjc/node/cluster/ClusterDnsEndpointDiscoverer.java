@@ -27,7 +27,7 @@ import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 import static lt.msemys.esjc.util.Threads.sleepUninterruptibly;
 
 public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
-    private final static Logger logger = LoggerFactory.getLogger(ClusterDnsEndpointDiscoverer.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClusterDnsEndpointDiscoverer.class);
 
     private final Executor executor = Executors.newCachedThreadPool();
     private List<MemberInfoDto> oldGossip;

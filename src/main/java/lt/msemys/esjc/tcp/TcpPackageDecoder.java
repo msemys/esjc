@@ -10,7 +10,7 @@ import java.util.List;
 
 public class TcpPackageDecoder extends MessageToMessageDecoder<ByteBuf> {
 
-    private final static Logger logger = LoggerFactory.getLogger(TcpPackageDecoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(TcpPackageDecoder.class);
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
