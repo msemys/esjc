@@ -36,7 +36,7 @@ public class StaticNodeSettings {
         }
 
         public StaticNodeSettings build() {
-            checkNotNull(address, "address is null");
+            checkNotNull(address, "address");
             return new StaticNodeSettings(this);
         }
     }

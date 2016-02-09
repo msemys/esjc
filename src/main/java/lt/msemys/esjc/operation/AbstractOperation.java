@@ -147,7 +147,7 @@ public abstract class AbstractOperation<T, R extends MessageLite> implements Ope
     }
 
     private InspectionResult inspectUnexpectedCommand(TcpPackage tcpPackage, TcpCommand expectedCommand) {
-        checkArgument(tcpPackage.command != expectedCommand, String.format("Command should not be %s.", tcpPackage.command));
+        checkArgument(tcpPackage.command != expectedCommand, "Command should not be %s.", tcpPackage.command);
 
         logger.error("Unexpected TcpCommand received.\n" +
                         "Expected: {}, Actual: {}, Flags: {}, CorrelationId: {}\n" +

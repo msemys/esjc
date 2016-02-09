@@ -60,7 +60,7 @@ public abstract class CatchUpSubscription {
         checkNotNull(listener, "listener");
         checkNotNull(listener, "executor");
         checkArgument(readBatchSize > 0, "readBatchSize should be positive");
-        checkArgument(readBatchSize < EventStore.MAX_READ_SIZE, String.format("Read batch size should be less than %d. For larger reads you should page.", EventStore.MAX_READ_SIZE));
+        checkArgument(readBatchSize < EventStore.MAX_READ_SIZE, "Read batch size should be less than %d. For larger reads you should page.", EventStore.MAX_READ_SIZE);
         checkArgument(maxPushQueueSize > 0, "maxPushQueueSize should be positive");
 
         this.eventstore = eventstore;

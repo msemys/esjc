@@ -105,7 +105,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
                 correlationId, streamId(), reason), exception);
 
             if (reason != SubscriptionDropReason.UserInitiated) {
-                checkNotNull(exception, String.format("No exception provided for subscription drop reason '%s", reason));
+                checkNotNull(exception, "No exception provided for subscription drop reason '%s", reason);
                 result.completeExceptionally(exception);
             }
 
@@ -242,7 +242,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
     }
 
     protected void confirmSubscription(long lastCommitPosition, Integer lastEventNumber) {
-        checkArgument(lastCommitPosition >= -1, String.format("Invalid lastCommitPosition %d on subscription confirmation.", lastCommitPosition));
+        checkArgument(lastCommitPosition >= -1, "Invalid lastCommitPosition %d on subscription confirmation.", lastCommitPosition);
         checkState(subscription == null, "Double confirmation of subscription.");
 
         logger.trace("Subscription {} to {}: subscribed at CommitPosition: {}, EventNumber: {}.",

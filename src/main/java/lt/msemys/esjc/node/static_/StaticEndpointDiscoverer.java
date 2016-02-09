@@ -13,7 +13,7 @@ public class StaticEndpointDiscoverer implements EndpointDiscoverer {
     private final CompletableFuture<NodeEndpoints> result;
 
     public StaticEndpointDiscoverer(StaticNodeSettings settings, boolean ssl) {
-        checkNotNull(settings, "settings is null");
+        checkNotNull(settings, "settings");
         result = CompletableFuture.completedFuture(new NodeEndpoints(
             ssl ? null : settings.address,
             ssl ? settings.address : null));

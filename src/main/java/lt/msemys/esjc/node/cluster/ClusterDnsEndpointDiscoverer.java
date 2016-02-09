@@ -36,7 +36,7 @@ public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
     private final Gson gson;
 
     public ClusterDnsEndpointDiscoverer(ClusterNodeSettings settings) {
-        checkNotNull(settings, "settings is null");
+        checkNotNull(settings, "settings");
 
         this.settings = settings;
 

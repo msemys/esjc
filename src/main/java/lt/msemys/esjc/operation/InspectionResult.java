@@ -62,7 +62,7 @@ public class InspectionResult {
             if (decision == InspectionDecision.Reconnect) {
                 checkNotNull(address, "Address not specified.");
             } else {
-                checkArgument(address == null, String.format("Address is specified for decision %s.", decision));
+                checkArgument(address == null, "Address is specified for decision %s.", decision);
             }
 
             return new InspectionResult(this);

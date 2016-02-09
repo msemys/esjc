@@ -26,7 +26,7 @@ public class OperationItem implements Comparable<OperationItem> {
     public Instant lastUpdated;
 
     public OperationItem(Operation operation, int maxRetries, Duration timeout) {
-        checkNotNull(operation, "operation is null");
+        checkNotNull(operation, "operation");
 
         this.operation = operation;
         this.maxRetries = maxRetries;

@@ -143,7 +143,7 @@ public class EventStore extends AbstractEventStore {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkArgument(start >= 0, "start should be non negative.");
         checkArgument(count > 0, "count should be positive.");
-        checkArgument(count < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
+        checkArgument(count < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadStreamEventsForwardOperation(result, stream, start, count, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -158,7 +158,7 @@ public class EventStore extends AbstractEventStore {
                                                                          UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkArgument(count > 0, "count should be positive.");
-        checkArgument(count < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
+        checkArgument(count < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadStreamEventsBackwardOperation(result, stream, start, count, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -171,7 +171,7 @@ public class EventStore extends AbstractEventStore {
                                                                   boolean resolveLinkTos,
                                                                   UserCredentials userCredentials) {
         checkArgument(maxCount > 0, "Count should be positive.");
-        checkArgument(maxCount < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
+        checkArgument(maxCount < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsForwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -184,7 +184,7 @@ public class EventStore extends AbstractEventStore {
                                                                    boolean resolveLinkTos,
                                                                    UserCredentials userCredentials) {
         checkArgument(maxCount > 0, "Count should be positive.");
-        checkArgument(maxCount < MAX_READ_SIZE, String.format("Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE));
+        checkArgument(maxCount < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsBackwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));

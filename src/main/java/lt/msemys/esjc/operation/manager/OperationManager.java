@@ -51,7 +51,7 @@ public class OperationManager {
     }
 
     public void checkTimeoutsAndRetry(Channel connection) {
-        checkNotNull(connection, "connection is null");
+        checkNotNull(connection, "connection");
 
         List<OperationItem> retryOperations = new ArrayList<>();
         List<OperationItem> removeOperations = new ArrayList<>();
@@ -121,7 +121,7 @@ public class OperationManager {
     }
 
     public void scheduleWaitingOperations(Channel connection) {
-        checkNotNull(connection, "connection is null");
+        checkNotNull(connection, "connection");
 
         while (!waitingOperations.isEmpty() && activeOperations.size() < settings.maxConcurrentOperations) {
             scheduleOperation(waitingOperations.poll(), connection);
@@ -136,7 +136,7 @@ public class OperationManager {
     }
 
     public void scheduleOperation(OperationItem item, Channel connection) {
-        checkNotNull(connection, "connection is null");
+        checkNotNull(connection, "connection");
 
         if (activeOperations.size() >= settings.maxConcurrentOperations) {
             logger.debug("scheduleOperation WAITING for {}.", item);
