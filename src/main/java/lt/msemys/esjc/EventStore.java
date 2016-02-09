@@ -728,6 +728,9 @@ public class EventStore extends AbstractEventStore {
     }
 
     private void enqueue(Task task) {
+        if (!isTimerTicking()) {
+            connect();
+        }
         logger.trace("enqueueing task {}.", task.getClass().getSimpleName());
         tasks.enqueue(task);
     }
