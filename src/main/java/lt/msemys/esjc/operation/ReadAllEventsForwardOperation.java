@@ -10,7 +10,7 @@ import lt.msemys.esjc.tcp.TcpCommand;
 
 import java.util.concurrent.CompletableFuture;
 
-import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
+import static lt.msemys.esjc.util.Strings.defaultIfEmpty;
 
 /**
  * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/ClientOperations/ReadAllEventsForwardOperation.cs">EventStore.ClientAPI/ClientOperations/ReadAllEventsForwardOperation.cs</a>
@@ -61,7 +61,7 @@ public class ReadAllEventsForwardOperation extends AbstractOperation<AllEventsSl
                         .description("Success")
                         .build();
             case Error:
-                fail(new ServerErrorException(isNullOrEmpty(response.getError()) ? "<no message>" : response.getError()));
+                fail(new ServerErrorException(defaultIfEmpty(response.getError(), "<no message>")));
                 return InspectionResult.newBuilder()
                         .decision(InspectionDecision.EndOperation)
                         .description("Error")

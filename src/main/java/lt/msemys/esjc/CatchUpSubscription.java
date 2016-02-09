@@ -64,7 +64,7 @@ public abstract class CatchUpSubscription {
         checkArgument(maxPushQueueSize > 0, "maxPushQueueSize should be positive");
 
         this.eventstore = eventstore;
-        this.streamId = isNullOrEmpty(streamId) ? Strings.EMPTY : streamId;
+        this.streamId = defaultIfEmpty(streamId, Strings.EMPTY);
         this.resolveLinkTos = resolveLinkTos;
         this.listener = listener;
         this.userCredentials = userCredentials;

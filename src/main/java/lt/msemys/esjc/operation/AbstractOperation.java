@@ -17,8 +17,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.netty.buffer.ByteBufUtil.prettyHexDump;
 import static io.netty.buffer.Unpooled.wrappedBuffer;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
+import static lt.msemys.esjc.util.Strings.defaultIfEmpty;
+import static lt.msemys.esjc.util.Strings.newString;
 
 /**
  * @see <a href="https://github.com/EventStore/EventStore/blob/dev/src/EventStore.ClientAPI/ClientOperations/OperationBase.cs">EventStore.ClientAPI/ClientOperations/OperationBase.cs</a>
@@ -93,8 +94,8 @@ public abstract class AbstractOperation<T, R extends MessageLite> implements Ope
     }
 
     private InspectionResult inspectNotAuthenticated(TcpPackage tcpPackage) {
-        String message = new String(tcpPackage.data, UTF_8);
-        fail(new NotAuthenticatedException(message.isEmpty() ? "Authentication error" : message));
+        String message = newString(tcpPackage.data);
+        fail(new NotAuthenticatedException(defaultIfEmpty(message, "Authentication error")));
         return InspectionResult.newBuilder()
                 .decision(InspectionDecision.EndOperation)
                 .description("NotAuthenticated")
@@ -102,8 +103,8 @@ public abstract class AbstractOperation<T, R extends MessageLite> implements Ope
     }
 
     private InspectionResult inspectBadRequest(TcpPackage tcpPackage) {
-        String message = new String(tcpPackage.data, UTF_8);
-        fail(new ServerErrorException(message.isEmpty() ? "<no message>" : message));
+        String message = newString(tcpPackage.data);
+        fail(new ServerErrorException(defaultIfEmpty(message, "<no message>")));
         return InspectionResult.newBuilder()
                 .decision(InspectionDecision.EndOperation)
                 .description(String.format("BadRequest - %s", message))

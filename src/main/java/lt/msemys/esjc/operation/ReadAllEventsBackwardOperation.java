@@ -10,7 +10,7 @@ import lt.msemys.esjc.tcp.TcpCommand;
 
 import java.util.concurrent.CompletableFuture;
 
-import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
+import static lt.msemys.esjc.util.Strings.defaultIfEmpty;
 
 public class ReadAllEventsBackwardOperation extends AbstractOperation<AllEventsSlice, ReadAllEventsCompleted> {
 
@@ -58,7 +58,7 @@ public class ReadAllEventsBackwardOperation extends AbstractOperation<AllEventsS
                     .description("Success")
                     .build();
             case Error:
-                fail(new ServerErrorException(isNullOrEmpty(response.getError()) ? "<no message>" : response.getError()));
+                fail(new ServerErrorException(defaultIfEmpty(response.getError(), "<no message>")));
                 return InspectionResult.newBuilder()
                     .decision(InspectionDecision.EndOperation)
                     .description("Error")
