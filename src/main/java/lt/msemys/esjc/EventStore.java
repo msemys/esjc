@@ -456,7 +456,7 @@ public class EventStore extends AbstractEventStore {
         }
     }
 
-    private boolean isRunning() {
+    public boolean isRunning() {
         return timer != null && !timer.isDone();
     }
 
