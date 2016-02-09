@@ -8,6 +8,7 @@ import lt.msemys.esjc.tcp.TcpSettings;
 import java.time.Duration;
 import java.util.Optional;
 
+import static lt.msemys.esjc.util.Numbers.isNegative;
 import static lt.msemys.esjc.util.Numbers.isPositive;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 
@@ -32,6 +33,8 @@ public class Settings {
     public final int persistentSubscriptionBufferSize;
     public final boolean persistentSubscriptionAutoAckEnabled;
     public final boolean failOnNoServerResponse;
+    public final int minThreadPoolSize;
+    public final int maxThreadPoolSize;
 
     private Settings(Builder builder) {
         tcpSettings = builder.tcpSettings;
@@ -54,6 +57,8 @@ public class Settings {
         persistentSubscriptionBufferSize = builder.persistentSubscriptionBufferSize;
         persistentSubscriptionAutoAckEnabled = builder.persistentSubscriptionAutoAckEnabled;
         failOnNoServerResponse = builder.failOnNoServerResponse;
+        minThreadPoolSize = builder.minThreadPoolSize;
+        maxThreadPoolSize = builder.maxThreadPoolSize;
     }
 
     @Override
@@ -79,6 +84,8 @@ public class Settings {
         sb.append(", persistentSubscriptionBufferSize=").append(persistentSubscriptionBufferSize);
         sb.append(", persistentSubscriptionAutoAckEnabled=").append(persistentSubscriptionAutoAckEnabled);
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
+        sb.append(", minThreadPoolSize=").append(minThreadPoolSize);
+        sb.append(", maxThreadPoolSize=").append(maxThreadPoolSize);
         sb.append('}');
         return sb.toString();
     }
@@ -108,6 +115,8 @@ public class Settings {
         private Integer persistentSubscriptionBufferSize;
         private Boolean persistentSubscriptionAutoAckEnabled;
         private Boolean failOnNoServerResponse;
+        private Integer minThreadPoolSize;
+        private Integer maxThreadPoolSize;
 
         private Builder() {
         }
@@ -212,6 +221,16 @@ public class Settings {
             return this;
         }
 
+        public Builder minThreadPoolSize(int minThreadPoolSize) {
+            this.minThreadPoolSize = minThreadPoolSize;
+            return this;
+        }
+
+        public Builder maxThreadPoolSize(int maxThreadPoolSize) {
+            this.maxThreadPoolSize = maxThreadPoolSize;
+            return this;
+        }
+
         public Settings build() {
             checkArgument(staticNodeSettings != null || clusterNodeSettings != null, "Missing node settings");
             checkArgument(staticNodeSettings == null || clusterNodeSettings == null, "Usage of 'static' and 'cluster' settings at once is not allowed");
@@ -290,6 +309,18 @@ public class Settings {
 
             if (failOnNoServerResponse == null) {
                 failOnNoServerResponse = false;
+            }
+
+            if (minThreadPoolSize == null) {
+                minThreadPoolSize = 2;
+            } else {
+                checkArgument(!isNegative(minThreadPoolSize), "minThreadPoolSize should not be negative");
+            }
+
+            if (maxThreadPoolSize == null) {
+                maxThreadPoolSize = Runtime.getRuntime().availableProcessors() * 2;
+            } else {
+                checkArgument(isPositive(maxThreadPoolSize), "maxThreadPoolSize should be positive");
             }
 
             return new Settings(this);

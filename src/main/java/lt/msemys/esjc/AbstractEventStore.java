@@ -35,7 +35,7 @@ abstract class AbstractEventStore {
 
     protected enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
 
-    protected final Executor executor = Executors.newCachedThreadPool(new EventStoreThreadFactory());
+    protected final Executor executor;
     protected final EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("esio"));
     protected final Bootstrap bootstrap;
     protected final OperationManager operationManager;
@@ -82,6 +82,11 @@ abstract class AbstractEventStore {
                         .whenReconnect(AbstractEventStore.this::onReconnect));
                 }
             });
+
+        executor = new ThreadPoolExecutor(settings.minThreadPoolSize, settings.maxThreadPoolSize,
+            90L, TimeUnit.SECONDS,
+            new SynchronousQueue<>(),
+            new EventStoreThreadFactory());
 
         operationManager = new OperationManager(settings);
         subscriptionManager = new SubscriptionManager(settings);
