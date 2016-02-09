@@ -135,7 +135,7 @@ public abstract class AbstractOperation<T, R extends MessageLite> implements Ope
                             .secureAddress(masterInfo.getExternalSecureTcpAddress(), masterInfo.getExternalSecureTcpPort())
                             .build();
                 default:
-                    logger.error("Unknown NotHandledReason: %s.", message.getReason());
+                    logger.error("Unknown NotHandledReason: {}.", message.getReason());
                     return InspectionResult.newBuilder()
                             .decision(InspectionDecision.Retry)
                             .description("NotHandled - <unknown>")
