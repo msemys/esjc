@@ -49,14 +49,11 @@ public class EventStore extends AbstractEventStore {
 
     protected static final int MAX_READ_SIZE = 4 * 1024;
 
-    private enum ConnectingPhase {INVALID, RECONNECTING, ENDPOINT_DISCOVERY, CONNECTION_ESTABLISHING, AUTHENTICATION, CONNECTED}
-
     private volatile ScheduledFuture timer;
     private final TransactionManager transactionManager = new TransactionManagerImpl();
     private final TaskQueue tasks;
     private final EndpointDiscoverer discoverer;
     private final ReconnectionInfo reconnectionInfo = new ReconnectionInfo();
-    private volatile ConnectingPhase connectingPhase = ConnectingPhase.INVALID;
     private Instant lastOperationTimeoutCheck = Instant.MIN;
 
     public EventStore(Settings settings) {
@@ -477,9 +474,7 @@ public class EventStore extends AbstractEventStore {
                 }
                 break;
             case CONNECTED:
-                if (connectingPhase == ConnectingPhase.CONNECTED) {
-                    checkOperationTimeout();
-                }
+                checkOperationTimeout();
                 break;
         }
     }

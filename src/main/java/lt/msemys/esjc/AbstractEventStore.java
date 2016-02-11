@@ -35,6 +35,8 @@ abstract class AbstractEventStore {
 
     protected enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
 
+    protected enum ConnectingPhase {INVALID, RECONNECTING, ENDPOINT_DISCOVERY, CONNECTION_ESTABLISHING, AUTHENTICATION, CONNECTED}
+
     protected final Executor executor;
     protected final EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("esio"));
     protected final Bootstrap bootstrap;
@@ -43,6 +45,7 @@ abstract class AbstractEventStore {
     protected final Settings settings;
 
     protected volatile Channel connection;
+    protected volatile ConnectingPhase connectingPhase = ConnectingPhase.INVALID;
 
     private final Set<EventStoreListener> listeners = new CopyOnWriteArraySet<>();
 
@@ -407,7 +410,8 @@ abstract class AbstractEventStore {
         if (connection == null) {
             return ConnectionState.INIT;
         } else if (connection.isOpen()) {
-            return connection.isActive() ? ConnectionState.CONNECTED : ConnectionState.CONNECTING;
+            return (connection.isActive() && (connectingPhase == ConnectingPhase.CONNECTED)) ?
+                ConnectionState.CONNECTED : ConnectionState.CONNECTING;
         } else {
             return ConnectionState.CLOSED;
         }
