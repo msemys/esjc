@@ -610,12 +610,12 @@ public class EventStore extends AbstractEventStore {
 
     private void handle(CloseConnection task) {
         if (connectionState() == ConnectionState.CLOSED) {
-            logger.debug("CloseConnection IGNORED because connection is CLOSED, reason: " + task.reason, task.exception);
+            logger.debug("CloseConnection IGNORED because connection is CLOSED, reason: " + task.reason, task.throwable);
         } else {
-            logger.debug("CloseConnection, reason: " + task.reason, task.exception);
+            logger.debug("CloseConnection, reason: " + task.reason, task.throwable);
 
-            if (task.exception != null) {
-                fireEvent(Events.errorOccurred(task.exception));
+            if (task.throwable != null) {
+                fireEvent(Events.errorOccurred(task.throwable));
             }
 
             disconnect(task.reason);

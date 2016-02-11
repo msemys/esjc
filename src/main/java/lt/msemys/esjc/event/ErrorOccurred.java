@@ -2,10 +2,10 @@ package lt.msemys.esjc.event;
 
 public class ErrorOccurred implements Event {
 
-    public final Exception exception;
+    public final Throwable throwable;
 
-    public ErrorOccurred(Exception exception) {
-        this.exception = exception;
+    public ErrorOccurred(Throwable throwable) {
+        this.throwable = throwable;
     }
 
 }

@@ -2,14 +2,14 @@ package lt.msemys.esjc.task;
 
 public class CloseConnection implements Task {
     public final String reason;
-    public final Exception exception;
+    public final Throwable throwable;
 
     public CloseConnection(String reason) {
         this(reason, null);
     }
 
-    public CloseConnection(String reason, Exception exception) {
+    public CloseConnection(String reason, Throwable throwable) {
         this.reason = reason;
-        this.exception = exception;
+        this.throwable = throwable;
     }
 }

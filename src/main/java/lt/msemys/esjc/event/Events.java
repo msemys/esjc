@@ -31,8 +31,8 @@ public class Events {
         return CONNECTION_CLOSED_EVENT;
     }
 
-    public static ErrorOccurred errorOccurred(Exception exception) {
-        return new ErrorOccurred(exception);
+    public static ErrorOccurred errorOccurred(Throwable throwable) {
+        return new ErrorOccurred(throwable);
     }
 
 }
