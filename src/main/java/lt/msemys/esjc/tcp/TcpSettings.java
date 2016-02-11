@@ -2,6 +2,10 @@ package lt.msemys.esjc.tcp;
 
 import java.time.Duration;
 
+import static lt.msemys.esjc.util.Numbers.isNegative;
+import static lt.msemys.esjc.util.Numbers.isPositive;
+import static lt.msemys.esjc.util.Preconditions.checkArgument;
+
 public class TcpSettings {
     public final Duration connectTimeout;
     public final Duration closeTimeout;
@@ -111,18 +115,26 @@ public class TcpSettings {
 
             if (sendBufferSize == null) {
                 sendBufferSize = 65536;
+            } else {
+                checkArgument(isPositive(sendBufferSize), "sendBufferSize should be positive");
             }
 
             if (receiveBufferSize == null) {
                 receiveBufferSize = 65536;
+            } else {
+                checkArgument(isPositive(receiveBufferSize), "receiveBufferSize should be positive");
             }
 
             if (writeBufferHighWaterMark == null) {
                 writeBufferHighWaterMark = 65536;
+            } else {
+                checkArgument(!isNegative(writeBufferHighWaterMark), "writeBufferHighWaterMark should not be negative");
             }
 
             if (writeBufferLowWaterMark == null) {
                 writeBufferLowWaterMark = 1024;
+            } else {
+                checkArgument(!isNegative(writeBufferLowWaterMark), "writeBufferLowWaterMark should not be negative");
             }
 
             return new TcpSettings(this);
