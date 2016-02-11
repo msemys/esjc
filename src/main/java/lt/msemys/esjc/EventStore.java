@@ -526,6 +526,7 @@ public class EventStore extends AbstractEventStore {
                         tasks.enqueue(new EstablishTcpConnection(nodeEndpoints));
                         result.ifPresent(r -> r.complete(null));
                     } else {
+                        tasks.enqueue(new CloseConnection("Failed to resolve TCP endpoint to which to connect.", throwable));
                         result.ifPresent(r -> r.completeExceptionally(new CannotEstablishConnectionException("Cannot resolve target end point.", throwable)));
                     }
                 });
