@@ -503,7 +503,7 @@ public class EventStore extends AbstractEventStore {
             handle(new CloseConnection("No endpoint is specified while trying to reconnect."));
         } else if (connectionState() == ConnectionState.CONNECTED && !connection.remoteAddress().equals(endpoint)) {
             String message = String.format("Connection '%s': going to reconnect to [%s]. Current endpoint: [%s, L%s].",
-                connection.hashCode(), endpoint, connection.remoteAddress(), connection.localAddress());
+                ChannelId.of(connection), endpoint, connection.remoteAddress(), connection.localAddress());
 
             logger.trace(message);
 
