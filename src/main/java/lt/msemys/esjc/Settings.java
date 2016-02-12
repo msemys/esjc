@@ -275,14 +275,20 @@ public class Settings {
 
             if (maxConcurrentOperations == null) {
                 maxConcurrentOperations = 5000;
+            } else {
+                checkArgument(isPositive(maxConcurrentOperations), "maxConcurrentOperations should be positive");
             }
 
             if (maxOperationRetries == null) {
                 maxOperationRetries = 10;
+            } else {
+                checkArgument(maxOperationRetries >= -1, "maxOperationRetries value is out of range: %d. Allowed range: [-1, infinity].", maxOperationRetries);
             }
 
             if (maxReconnections == null) {
                 maxReconnections = 10;
+            } else {
+                checkArgument(maxReconnections >= -1, "maxReconnections value is out of range: %d. Allowed range: [-1, infinity].", maxReconnections);
             }
 
             if (maxPushQueueSize == null) {
