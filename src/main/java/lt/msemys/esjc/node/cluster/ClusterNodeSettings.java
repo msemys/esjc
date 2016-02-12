@@ -9,6 +9,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static lt.msemys.esjc.util.Numbers.isPositive;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
+import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
 
 public class ClusterNodeSettings {
     public final String clusterDns;
@@ -104,7 +105,7 @@ public class ClusterNodeSettings {
 
         @Override
         public ClusterNodeSettings build() {
-            checkArgument(super.clusterDns != null && !super.clusterDns.isEmpty(), "clusterDns is empty");
+            checkArgument(!isNullOrEmpty(super.clusterDns), "clusterDns is empty");
 
             if (super.externalGossipPort == null) {
                 super.externalGossipPort = 30778;
