@@ -62,7 +62,7 @@ public class EventStore extends AbstractEventStore {
         if (settings.staticNodeSettings.isPresent()) {
             discoverer = new StaticEndpointDiscoverer(settings.staticNodeSettings.get(), settings.ssl);
         } else if (settings.clusterNodeSettings.isPresent()) {
-            discoverer = new ClusterDnsEndpointDiscoverer(settings.clusterNodeSettings.get(), executor);
+            discoverer = new ClusterDnsEndpointDiscoverer(settings.clusterNodeSettings.get(), group);
         } else {
             throw new IllegalStateException("Node settings not found");
         }

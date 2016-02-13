@@ -16,30 +16,30 @@ import java.net.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
-import static lt.msemys.esjc.util.Threads.sleepUninterruptibly;
 
 public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
     private static final Logger logger = LoggerFactory.getLogger(ClusterDnsEndpointDiscoverer.class);
 
-    private final Executor executor;
+    private final ScheduledExecutorService scheduler;
     private List<MemberInfoDto> oldGossip;
     private final ReentrantLock oldGossipLock = new ReentrantLock();
     private final ClusterNodeSettings settings;
     private final Gson gson;
 
-    public ClusterDnsEndpointDiscoverer(ClusterNodeSettings settings, Executor executor) {
+    public ClusterDnsEndpointDiscoverer(ClusterNodeSettings settings, ScheduledExecutorService scheduler) {
         checkNotNull(settings, "settings");
-        checkNotNull(executor, "executor");
+        checkNotNull(scheduler, "scheduler");
 
         this.settings = settings;
-        this.executor = executor;
+        this.scheduler = scheduler;
 
         gson = new GsonBuilder()
             .registerTypeAdapter(Instant.class,
@@ -51,29 +51,37 @@ public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
     public CompletableFuture<NodeEndpoints> discover(InetSocketAddress failedTcpEndpoint) {
         CompletableFuture<NodeEndpoints> result = new CompletableFuture<>();
 
-        executor.execute(() -> {
-            for (int attempt = 1; attempt <= settings.maxDiscoverAttempts; ++attempt) {
-                try {
-                    Optional<NodeEndpoints> nodeEndpoints = tryDiscover(failedTcpEndpoint);
-
-                    if (nodeEndpoints.isPresent()) {
-                        logger.info("Discovering attempt {}/{} successful: best candidate is {}.", attempt, settings.maxDiscoverAttempts, nodeEndpoints.get());
-                        result.complete(nodeEndpoints.get());
-                        return;
-                    } else {
-                        logger.info("Discovering attempt {}/{} failed: no candidate found.", attempt, settings.maxDiscoverAttempts);
-                    }
-                } catch (Exception e) {
-                    logger.info("Discovering attempt {}/{} failed.", attempt, settings.maxDiscoverAttempts, e);
-                }
-
-                sleepUninterruptibly(500);
-            }
-
-            result.completeExceptionally(new ClusterException(String.format("Failed to discover candidate in %d attempts.", settings.maxDiscoverAttempts)));
-        });
+        if (settings.maxDiscoverAttempts != 0) {
+            scheduler.execute(() -> discover(result, failedTcpEndpoint, 1));
+        } else {
+            result.completeExceptionally(new ClusterException("Cluster endpoint discover is not enabled."));
+        }
 
         return result;
+    }
+
+    private void discover(CompletableFuture<NodeEndpoints> result, InetSocketAddress failedEndpoint, int attempt) {
+        final String attemptInfo = (settings.maxDiscoverAttempts != -1) ?
+            String.format("%d/%d", attempt, settings.maxDiscoverAttempts) : String.valueOf(attempt);
+
+        try {
+            Optional<NodeEndpoints> nodeEndpoints = tryDiscover(failedEndpoint);
+
+            if (nodeEndpoints.isPresent()) {
+                logger.info("Discovering attempt {} successful: best candidate is {}.", attemptInfo, nodeEndpoints.get());
+                result.complete(nodeEndpoints.get());
+            } else {
+                logger.info("Discovering attempt {} failed: no candidate found.", attemptInfo);
+            }
+        } catch (Exception e) {
+            logger.info("Discovering attempt {} failed.", attemptInfo, e);
+        }
+
+        if (!result.isDone() && (attempt < settings.maxDiscoverAttempts || settings.maxDiscoverAttempts == -1)) {
+            scheduler.schedule(() -> discover(result, failedEndpoint, attempt + 1), 500, MILLISECONDS);
+        } else {
+            result.completeExceptionally(new ClusterException(String.format("Failed to discover candidate in %d attempts.", attempt)));
+        }
     }
 
     private Optional<NodeEndpoints> tryDiscover(InetSocketAddress failedEndpoint) {
