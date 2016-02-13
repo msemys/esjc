@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -17,10 +16,6 @@ public class TaskQueue {
     private final Queue<Task> queue = new ConcurrentLinkedQueue<>();
     private final Map<Class<? extends Task>, Consumer<Task>> handlers = new HashMap<>();
     private final AtomicBoolean processing = new AtomicBoolean();
-
-    public TaskQueue() {
-        this(Executors.newCachedThreadPool());
-    }
 
     public TaskQueue(Executor executor) {
         this.executor = executor;
