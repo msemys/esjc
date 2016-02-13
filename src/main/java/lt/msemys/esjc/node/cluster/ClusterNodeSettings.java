@@ -14,6 +14,7 @@ import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
 public class ClusterNodeSettings {
     public final String clusterDns;
     public final int maxDiscoverAttempts;
+    public final Duration discoverAttemptInterval;
     public final int externalGossipPort;
     public final List<GossipSeed> gossipSeeds;
     public final Duration gossipTimeout;
@@ -21,6 +22,7 @@ public class ClusterNodeSettings {
     private ClusterNodeSettings(Builder builder) {
         clusterDns = builder.clusterDns;
         maxDiscoverAttempts = builder.maxDiscoverAttempts;
+        discoverAttemptInterval = builder.discoverAttemptInterval;
         externalGossipPort = builder.externalGossipPort;
         gossipSeeds = builder.gossipSeeds;
         gossipTimeout = builder.gossipTimeout;
@@ -39,6 +41,7 @@ public class ClusterNodeSettings {
         final StringBuilder sb = new StringBuilder("ClusterNodeSettings{");
         sb.append("clusterDns='").append(clusterDns).append('\'');
         sb.append(", maxDiscoverAttempts=").append(maxDiscoverAttempts);
+        sb.append(", discoverAttemptInterval=").append(discoverAttemptInterval);
         sb.append(", externalGossipPort=").append(externalGossipPort);
         sb.append(", gossipSeeds=").append(gossipSeeds);
         sb.append(", gossipTimeout=").append(gossipTimeout);
@@ -54,6 +57,11 @@ public class ClusterNodeSettings {
 
         public BuilderForGossipSeedDiscoverer maxDiscoverAttempts(int maxDiscoverAttempts) {
             super.maxDiscoverAttempts = maxDiscoverAttempts;
+            return this;
+        }
+
+        public BuilderForGossipSeedDiscoverer discoverAttemptInterval(Duration discoverAttemptInterval) {
+            super.discoverAttemptInterval = discoverAttemptInterval;
             return this;
         }
 
@@ -93,6 +101,11 @@ public class ClusterNodeSettings {
             return this;
         }
 
+        public BuilderForDnsDiscoverer discoverAttemptInterval(Duration discoverAttemptInterval) {
+            super.discoverAttemptInterval = discoverAttemptInterval;
+            return this;
+        }
+
         public BuilderForDnsDiscoverer externalGossipPort(int externalGossipPort) {
             super.externalGossipPort = externalGossipPort;
             return this;
@@ -121,6 +134,7 @@ public class ClusterNodeSettings {
     private static class Builder {
         private String clusterDns;
         private Integer maxDiscoverAttempts;
+        private Duration discoverAttemptInterval;
         private Integer externalGossipPort;
         private List<GossipSeed> gossipSeeds;
         private Duration gossipTimeout;
@@ -134,6 +148,10 @@ public class ClusterNodeSettings {
                 maxDiscoverAttempts = 10;
             } else {
                 checkArgument(maxDiscoverAttempts >= -1, "maxDiscoverAttempts value is out of range: %d. Allowed range: [-1, infinity].", maxDiscoverAttempts);
+            }
+
+            if (discoverAttemptInterval == null) {
+                discoverAttemptInterval = Duration.ofMillis(500);
             }
 
             if (externalGossipPort == null) {

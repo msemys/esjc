@@ -78,7 +78,7 @@ public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
         }
 
         if (!result.isDone() && (attempt < settings.maxDiscoverAttempts || settings.maxDiscoverAttempts == -1)) {
-            scheduler.schedule(() -> discover(result, failedEndpoint, attempt + 1), 500, MILLISECONDS);
+            scheduler.schedule(() -> discover(result, failedEndpoint, attempt + 1), settings.discoverAttemptInterval.toMillis(), MILLISECONDS);
         } else {
             result.completeExceptionally(new ClusterException(String.format("Failed to discover candidate in %d attempts.", attempt)));
         }
