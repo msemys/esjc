@@ -17,7 +17,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -29,16 +28,18 @@ import static lt.msemys.esjc.util.Threads.sleepUninterruptibly;
 public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
     private static final Logger logger = LoggerFactory.getLogger(ClusterDnsEndpointDiscoverer.class);
 
-    private final Executor executor = Executors.newCachedThreadPool();
+    private final Executor executor;
     private List<MemberInfoDto> oldGossip;
     private final ReentrantLock oldGossipLock = new ReentrantLock();
     private final ClusterNodeSettings settings;
     private final Gson gson;
 
-    public ClusterDnsEndpointDiscoverer(ClusterNodeSettings settings) {
+    public ClusterDnsEndpointDiscoverer(ClusterNodeSettings settings, Executor executor) {
         checkNotNull(settings, "settings");
+        checkNotNull(executor, "executor");
 
         this.settings = settings;
+        this.executor = executor;
 
         gson = new GsonBuilder()
             .registerTypeAdapter(Instant.class,
