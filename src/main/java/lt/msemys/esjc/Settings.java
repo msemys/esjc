@@ -24,7 +24,7 @@ public class Settings {
     public final Optional<UserCredentials> userCredentials;
     public final Duration operationTimeout;
     public final Duration operationTimeoutCheckInterval;
-    public final int maxQueueSize;
+    public final int maxOperationQueueSize;
     public final int maxConcurrentOperations;
     public final int maxOperationRetries;
     public final int maxReconnections;
@@ -48,7 +48,7 @@ public class Settings {
         userCredentials = Optional.ofNullable(builder.userCredentials);
         operationTimeout = builder.operationTimeout;
         operationTimeoutCheckInterval = builder.operationTimeoutCheckInterval;
-        maxQueueSize = builder.maxQueueSize;
+        maxOperationQueueSize = builder.maxOperationQueueSize;
         maxConcurrentOperations = builder.maxConcurrentOperations;
         maxOperationRetries = builder.maxOperationRetries;
         maxReconnections = builder.maxReconnections;
@@ -75,7 +75,7 @@ public class Settings {
         sb.append(", userCredentials=").append(userCredentials);
         sb.append(", operationTimeout=").append(operationTimeout);
         sb.append(", operationTimeoutCheckInterval=").append(operationTimeoutCheckInterval);
-        sb.append(", maxQueueSize=").append(maxQueueSize);
+        sb.append(", maxOperationQueueSize=").append(maxOperationQueueSize);
         sb.append(", maxConcurrentOperations=").append(maxConcurrentOperations);
         sb.append(", maxOperationRetries=").append(maxOperationRetries);
         sb.append(", maxReconnections=").append(maxReconnections);
@@ -106,7 +106,7 @@ public class Settings {
         private UserCredentials userCredentials;
         private Duration operationTimeout;
         private Duration operationTimeoutCheckInterval;
-        private Integer maxQueueSize;
+        private Integer maxOperationQueueSize;
         private Integer maxConcurrentOperations;
         private Integer maxOperationRetries;
         private Integer maxReconnections;
@@ -176,8 +176,8 @@ public class Settings {
             return this;
         }
 
-        public Builder maxQueueSize(int maxQueueSize) {
-            this.maxQueueSize = maxQueueSize;
+        public Builder maxQueueSize(int maxOperationQueueSize) {
+            this.maxOperationQueueSize = maxOperationQueueSize;
             return this;
         }
 
@@ -267,10 +267,10 @@ public class Settings {
                 operationTimeoutCheckInterval = Duration.ofSeconds(1);
             }
 
-            if (maxQueueSize == null) {
-                maxQueueSize = 5000;
+            if (maxOperationQueueSize == null) {
+                maxOperationQueueSize = 5000;
             } else {
-                checkArgument(isPositive(maxQueueSize), "maxQueueSize should be positive");
+                checkArgument(isPositive(maxOperationQueueSize), "maxOperationQueueSize should be positive");
             }
 
             if (maxConcurrentOperations == null) {

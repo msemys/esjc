@@ -717,7 +717,7 @@ public class EventStore extends AbstractEventStore {
     }
 
     private void enqueue(Operation operation) {
-        while (operationManager.totalOperationCount() >= settings.maxQueueSize) {
+        while (operationManager.totalOperationCount() >= settings.maxOperationQueueSize) {
             sleepUninterruptibly(1);
         }
         enqueue(new StartOperation(operation));
