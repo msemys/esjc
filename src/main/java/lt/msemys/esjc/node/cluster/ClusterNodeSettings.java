@@ -65,7 +65,7 @@ public class ClusterNodeSettings {
             return this;
         }
 
-        public BuilderForGossipSeedDiscoverer gossipSeedEndPoints(List<InetSocketAddress> endpoints) {
+        public BuilderForGossipSeedDiscoverer gossipSeedEndpoints(List<InetSocketAddress> endpoints) {
             return gossipSeeds(endpoints.stream().map(GossipSeed::new).collect(toList()));
         }
 
