@@ -8,6 +8,34 @@
     <artifactId>esjc</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
+    <name>EventStore Java Client</name>
+    <description>EventStore client for Java 8 that uses Netty for network communication.</description>
+    <url>https://bitbucket.org/msemys/esjc</url>
+    <inceptionYear>2016</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>msemys</id>
+            <name>Mindaugas Šėmys</name>
+            <email>mindaugas.semys@gmail.com</email>
+            <organizationUrl>https://bitbucket.org/msemys</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/msemys/esjc.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/msemys/esjc.git</developerConnection>
+        <url>https://bitbucket.org/msemys/esjc</url>
+    </scm>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netty.version>4.0.34.Final</netty.version>
