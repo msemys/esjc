@@ -82,7 +82,7 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<TcpPackag
     }
 
     private void complete(ChannelHandlerContext ctx, AuthenticationStatus status) {
-        logger.debug("Authentication {}", status);
+        logger.info("Authentication {}", status);
         ctx.channel().pipeline().remove(this);
         completionConsumer.ifPresent(c -> c.accept(status));
     }
