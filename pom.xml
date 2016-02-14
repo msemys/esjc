@@ -78,24 +78,6 @@
                 <version>1.8</version>
                 <executions>
                     <execution>
-                        <id>download-proto</id>
-                        <phase>none</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <get src="https://raw.githubusercontent.com/EventStore/EventStore/release-v3.5.0/src/Protos/ClientAPI/ClientMessageDtos.proto"
-                                     dest="${project.basedir}/src/main/protobuf/EventStoreClientMessages.proto"
-                                     verbose="false"
-                                     usetimestamp="true"/>
-                                <replace file="${project.basedir}/src/main/protobuf/EventStoreClientMessages.proto"
-                                         token="package EventStore.Client.Messages;"
-                                         value="package lt.msemys.esjc.proto;"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>compile-proto</id>
                         <phase>generate-sources</phase>
                         <goals>
