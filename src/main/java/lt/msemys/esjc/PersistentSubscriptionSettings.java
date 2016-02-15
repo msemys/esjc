@@ -80,7 +80,7 @@ public class PersistentSubscriptionSettings {
         private Integer maxSubscriberCount;
         private String namedConsumerStrategies;
 
-        private Builder resolveLinkTos(boolean resolveLinkTos) {
+        public Builder resolveLinkTos(boolean resolveLinkTos) {
             this.resolveLinkTos = resolveLinkTos;
             return this;
         }
