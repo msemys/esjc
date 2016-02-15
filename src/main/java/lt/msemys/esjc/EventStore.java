@@ -448,6 +448,7 @@ public class EventStore extends AbstractEventStore {
             operationManager.cleanUp();
             subscriptionManager.cleanUp();
             closeTcpConnection(reason);
+            connectingPhase = ConnectingPhase.INVALID;
             fireEvent(Events.clientDisconnected());
             logger.info("Disconnected, reason: {}", reason);
         }
@@ -653,8 +654,10 @@ public class EventStore extends AbstractEventStore {
 
         switch (state) {
             case INIT:
-                task.result.completeExceptionally(new InvalidOperationException("No connection"));
-                break;
+                if (connectingPhase == ConnectingPhase.INVALID) {
+                    task.result.completeExceptionally(new InvalidOperationException("No connection"));
+                    break;
+                }
             case CONNECTING:
             case CONNECTED:
                 VolatileSubscriptionOperation operation = new VolatileSubscriptionOperation(
@@ -668,10 +671,10 @@ public class EventStore extends AbstractEventStore {
 
                 SubscriptionItem item = new SubscriptionItem(operation, task.maxRetries, task.timeout);
 
-                if (state == ConnectionState.CONNECTING) {
-                    subscriptionManager.enqueueSubscription(item);
-                } else {
+                if (state == ConnectionState.CONNECTED) {
                     subscriptionManager.startSubscription(item, connection);
+                } else {
+                    subscriptionManager.enqueueSubscription(item);
                 }
                 break;
             case CLOSED:
@@ -687,8 +690,10 @@ public class EventStore extends AbstractEventStore {
 
         switch (state) {
             case INIT:
-                task.result.completeExceptionally(new InvalidOperationException("No connection"));
-                break;
+                if (connectingPhase == ConnectingPhase.INVALID) {
+                    task.result.completeExceptionally(new InvalidOperationException("No connection"));
+                    break;
+                }
             case CONNECTING:
             case CONNECTED:
                 PersistentSubscriptionOperation operation = new PersistentSubscriptionOperation(
@@ -702,10 +707,10 @@ public class EventStore extends AbstractEventStore {
 
                 SubscriptionItem item = new SubscriptionItem(operation, task.maxRetries, task.timeout);
 
-                if (state == ConnectionState.CONNECTING) {
-                    subscriptionManager.enqueueSubscription(item);
-                } else {
+                if (state == ConnectionState.CONNECTED) {
                     subscriptionManager.startSubscription(item, connection);
+                } else {
+                    subscriptionManager.enqueueSubscription(item);
                 }
                 break;
             case CLOSED:
