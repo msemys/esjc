@@ -1,5 +1,7 @@
 # EventStore Java Client
 
+This is [`EventStore`](https://geteventstore.com/) driver for Java, that uses [`Netty`](http://netty.io/) for network communication and [`GSON`](https://github.com/google/gson) for object serialization/deserialization to JSON (e.g.: stream metadata, cluster information dto). Client logic implementation is the same as in the original client for .NET platform.
+
 
 ## Requirements
 
@@ -58,9 +60,23 @@ EventStore eventstore = new EventStore(Settings.newBuilder()
 
 Driver uses full-duplex communication channel to server. It is recommended that only one instance per application is created.
 
-### API
+### API Examples
 
 All operations are handled fully asynchronously and returns [`CompletableFuture<T>`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html). For asynchronous result handling you could use [`whenComplete((result, throwable) -> { ... })`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#whenComplete-java.util.function.BiConsumer-) or [`thenAccept(result -> { ... })`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#thenAccept-java.util.function.Consumer-) methods on created future object. To handle result synchronously simply use [`get()`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#get--) method on future object.
+
+```java
+// handles result asynchronously
+eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
+    EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build(),
+    EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build())
+).thenAccept(r -> System.out.println(r.logPosition));
+
+// handles result synchronously
+eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
+    EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build(),
+    EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build())
+).thenAccept(r -> System.out.println(r.logPosition)).get();
+```
 
 #### Writing events
 
@@ -80,7 +96,7 @@ eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
         .type("qux")
         .jsonData("{ a : 1 }")
         .build()))
-    .thenAccept(r -> System.out.format("log position %s", r.logPosition));
+    .thenAccept(r -> System.out.println(r.logPosition));
 ```
 
 #### Transactional writes
