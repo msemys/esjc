@@ -4,6 +4,7 @@ import lt.msemys.esjc.system.SystemConsumerStrategies;
 
 import java.time.Duration;
 
+import static lt.msemys.esjc.util.Numbers.isNegative;
 import static lt.msemys.esjc.util.Numbers.isPositive;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
@@ -215,7 +216,7 @@ public class PersistentSubscriptionSettings {
             if (maxSubscriberCount == null) {
                 maxSubscriberCount = 0;
             } else {
-                checkArgument(isPositive(maxSubscriberCount), "maxSubscriberCount should be positive");
+                checkArgument(!isNegative(maxSubscriberCount), "maxSubscriberCount should not be negative.");
             }
 
             if (namedConsumerStrategies == null) {
