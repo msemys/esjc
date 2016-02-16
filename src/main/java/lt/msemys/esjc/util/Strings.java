@@ -13,6 +13,16 @@ public class Strings {
         return (bytes == null || bytes.length == 0) ? EMPTY : new String(bytes, UTF_8);
     }
 
+    public static byte[] toBytes(String string) {
+        if (string == null) {
+            return null;
+        } else if (string.isEmpty()) {
+            return EmptyArrays.EMPTY_BYTES;
+        } else {
+            return string.getBytes(UTF_8);
+        }
+    }
+
     public static String defaultIfEmpty(String string, String defaultString) {
         return isNullOrEmpty(string) ? defaultString : string;
     }
