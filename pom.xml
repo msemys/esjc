@@ -10,7 +10,7 @@
 
     <name>EventStore Java Client</name>
     <description>EventStore client for Java 8 that uses Netty for network communication.</description>
-    <url>https://bitbucket.org/msemys/esjc</url>
+    <url>https://github.com/msemys/esjc</url>
     <inceptionYear>2016</inceptionYear>
 
     <licenses>
@@ -26,14 +26,14 @@
             <id>msemys</id>
             <name>Mindaugas Šėmys</name>
             <email>mindaugas.semys@gmail.com</email>
-            <organizationUrl>https://bitbucket.org/msemys</organizationUrl>
+            <organizationUrl>https://github.com/msemys</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:ssh://git@bitbucket.org/msemys/esjc.git</connection>
-        <developerConnection>scm:git:ssh://git@bitbucket.org/msemys/esjc.git</developerConnection>
-        <url>https://bitbucket.org/msemys/esjc</url>
+        <connection>scm:git:git@github.com:msemys/esjc.git</connection>
+        <developerConnection>scm:git:git@github.com:msemys/esjc.git</developerConnection>
+        <url>git@github.com:msemys/esjc.git</url>
     </scm>
 
     <properties>
