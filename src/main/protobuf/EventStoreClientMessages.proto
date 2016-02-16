@@ -1,4 +1,4 @@
-package lt.msemys.esjc.proto;
+package com.github.msemys.esjc.proto;
 
 enum OperationResult
 {

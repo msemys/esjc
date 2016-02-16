@@ -1,6 +1,0 @@
-package lt.msemys.esjc.subscription;
-
-import lt.msemys.esjc.EventStoreException;
-
-public class PersistentSubscriptionDeletedException extends EventStoreException {
-}

@@ -5,7 +5,7 @@
         </encoder>
     </appender>
 
-    <logger name="lt.msemys" level="TRACE"/>
+    <logger name="com.github.msemys" level="TRACE"/>
     <logger name="io.netty" level="DEBUG"/>
 
     <root level="INFO">
