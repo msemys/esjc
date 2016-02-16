@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
+import static lt.msemys.esjc.util.Strings.toBytes;
 
 abstract class AbstractEventStore {
     private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;
@@ -347,7 +348,7 @@ abstract class AbstractEventStore {
                                                             ExpectedVersion expectedMetastreamVersion,
                                                             StreamMetadata metadata) {
         checkNotNull(metadata, "metadata");
-        return setStreamMetadata(stream, expectedMetastreamVersion, metadata.toJson().getBytes(), null);
+        return setStreamMetadata(stream, expectedMetastreamVersion, toBytes(metadata.toJson()), null);
     }
 
     public CompletableFuture<WriteResult> setStreamMetadata(String stream,
@@ -355,7 +356,7 @@ abstract class AbstractEventStore {
                                                             StreamMetadata metadata,
                                                             UserCredentials userCredentials) {
         checkNotNull(metadata, "metadata");
-        return setStreamMetadata(stream, expectedMetastreamVersion, metadata.toJson().getBytes(), userCredentials);
+        return setStreamMetadata(stream, expectedMetastreamVersion, toBytes(metadata.toJson()), userCredentials);
     }
 
     public CompletableFuture<WriteResult> setStreamMetadata(String stream,

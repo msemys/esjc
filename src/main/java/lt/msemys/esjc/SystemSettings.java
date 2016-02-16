@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import static lt.msemys.esjc.util.Preconditions.checkArgument;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 import static lt.msemys.esjc.util.Strings.isNullOrEmpty;
+import static lt.msemys.esjc.util.Strings.toBytes;
 
 public class SystemSettings {
     private static final Gson gson = new GsonBuilder()
@@ -33,7 +34,7 @@ public class SystemSettings {
 
     public static SystemSettings fromJson(String json) {
         checkArgument(!isNullOrEmpty(json), "json");
-        return fromJson(json.getBytes());
+        return fromJson(toBytes(json));
     }
 
     public static SystemSettings fromJson(byte[] bytes) {
