@@ -13,7 +13,7 @@ This is [`EventStore`](https://geteventstore.com/) driver for Java, that uses [`
 
 ### Creating a Client Instance
 
-There are two ways to create a new client instance. The examples below demonstrates how to create default client with singe-node and cluster-node configuration in both ways.
+There are two ways to create a new client instance. The examples below demonstrate how to create default client with singe-node and cluster-node configuration in both ways.
 
 
 * creates a client using builder class
