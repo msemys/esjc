@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static lt.msemys.esjc.util.Preconditions.checkNotNull;
 
 public class OperationItem implements Comparable<OperationItem> {
-    private static AtomicLong sequencer = new AtomicLong(-1);
+    private static final AtomicLong sequencer = new AtomicLong(-1);
 
     public final long sequenceNo = sequencer.incrementAndGet();
 
