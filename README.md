@@ -66,8 +66,20 @@ All operations are handled fully asynchronously and returns [`CompletableFuture<
 
 ```java
 eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
-    new EventData(UUID.randomUUID(), "bar", false, "1234567890".getBytes(), null),
-    new EventData(UUID.randomUUID(), "baz", true, "{ a : 1 }".getBytes(), null)))
+    EventData.newBuilder()
+        .type("bar")
+        .data(new byte[]{1, 2, 3, 4, 5})
+        .metadata(new byte[]{6, 7, 8, 9, 0})
+        .build(),
+    EventData.newBuilder()
+        .eventId(UUID.randomUUID())
+        .type("baz")
+        .data("dummy content")
+        .build(),
+    EventData.newBuilder()
+        .type("qux")
+        .jsonData("{ a : 1 }")
+        .build()))
     .thenAccept(r -> System.out.format("log position %s", r.logPosition));
 ```
 
@@ -75,8 +87,8 @@ eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
 
 ```java
 try (Transaction t = eventstore.startTransaction("foo", ExpectedVersion.any()).get()) {
-    t.write(asList(new EventData(UUID.randomUUID(), "bar", true, "{ a : 1 }".getBytes(), null)));
-    t.write(asList(new EventData(UUID.randomUUID(), "baz", true, "{ b : 2 }".getBytes(), null)));
+    t.write(asList(EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build()));
+    t.write(asList(EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build()));
     t.commit();
 } catch (Exception e) {
     e.printStackTrace();
@@ -85,8 +97,8 @@ try (Transaction t = eventstore.startTransaction("foo", ExpectedVersion.any()).g
 
 ```java
 eventstore.startTransaction("foo", ExpectedVersion.any()).thenAccept(t -> {
-    t.write(asList(new EventData(UUID.randomUUID(), "bar", true, "{ a : 1 }".getBytes(), null)));
-    t.write(asList(new EventData(UUID.randomUUID(), "baz", true, "{ b : 2 }".getBytes(), null)));
+    t.write(asList(EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build()));
+    t.write(asList(EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build()));
     t.rollback();
 });
 ```

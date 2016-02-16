@@ -47,8 +47,8 @@ public class AppendToStreamOperation extends AbstractOperation<WriteResult, Writ
         events.forEach(e -> newEvents.add(NewEvent.newBuilder()
             .setEventId(ByteString.copyFrom(toBytes(e.eventId)))
             .setEventType(e.type)
-            .setDataContentType(e.isJson ? 1 : 0)
-            .setMetadataContentType(0)
+            .setDataContentType(e.isJsonData ? 1 : 0)
+            .setMetadataContentType(e.isJsonMetadata ? 1 : 0)
             .setData(ByteString.copyFrom(e.data))
             .setMetadata(ByteString.copyFrom(e.metadata))
             .build()));

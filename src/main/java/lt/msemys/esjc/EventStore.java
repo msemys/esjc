@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static java.time.Duration.between;
@@ -331,8 +330,10 @@ public class EventStore extends AbstractEventStore {
 
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
 
-        EventData metaevent = new EventData(UUID.randomUUID(), SystemEventTypes.STREAM_METADATA, true,
-            (metadata == null) ? EMPTY_BYTES : metadata, null);
+        EventData metaevent = EventData.newBuilder()
+            .type(SystemEventTypes.STREAM_METADATA)
+            .jsonData(metadata)
+            .build();
 
         enqueue(new AppendToStreamOperation(result, settings.requireMaster, SystemStreams.metastreamOf(stream),
             expectedMetastreamVersion.value, asList(metaevent), userCredentials));
@@ -399,7 +400,10 @@ public class EventStore extends AbstractEventStore {
         checkNotNull(settings, "settings");
         return appendToStream(SystemStreams.SETTINGS_STREAM,
             ExpectedVersion.any(),
-            asList(new EventData(UUID.randomUUID(), SystemEventTypes.SETTINGS, true, settings.toJson().getBytes(), null)),
+            asList(EventData.newBuilder()
+                .type(SystemEventTypes.SETTINGS)
+                .jsonData(settings.toJson())
+                .build()),
             userCredentials);
     }
 
