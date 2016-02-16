@@ -5,10 +5,10 @@ import com.github.msemys.esjc.proto.EventStoreClientMessages.ResolvedIndexedEven
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toCollection;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toCollection;
 
 public class StreamEventsSlice {
     public final SliceReadStatus status;

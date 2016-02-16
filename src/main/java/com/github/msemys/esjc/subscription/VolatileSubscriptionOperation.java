@@ -1,7 +1,5 @@
 package com.github.msemys.esjc.subscription;
 
-import com.google.protobuf.MessageLite;
-import io.netty.channel.Channel;
 import com.github.msemys.esjc.ResolvedEvent;
 import com.github.msemys.esjc.Subscription;
 import com.github.msemys.esjc.SubscriptionListener;
@@ -13,6 +11,8 @@ import com.github.msemys.esjc.proto.EventStoreClientMessages.SubscribeToStream;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.SubscriptionConfirmation;
 import com.github.msemys.esjc.tcp.TcpCommand;
 import com.github.msemys.esjc.tcp.TcpPackage;
+import com.google.protobuf.MessageLite;
+import io.netty.channel.Channel;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;

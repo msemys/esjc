@@ -1,12 +1,12 @@
 package com.github.msemys.esjc.operation;
 
-import com.google.protobuf.MessageLite;
 import com.github.msemys.esjc.InvalidOperationException;
 import com.github.msemys.esjc.PersistentSubscriptionDeleteResult;
 import com.github.msemys.esjc.PersistentSubscriptionDeleteStatus;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.DeletePersistentSubscription;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.DeletePersistentSubscriptionCompleted;
 import com.github.msemys.esjc.tcp.TcpCommand;
+import com.google.protobuf.MessageLite;
 
 import java.util.concurrent.CompletableFuture;
 

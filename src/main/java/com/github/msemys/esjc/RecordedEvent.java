@@ -6,9 +6,9 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.time.Instant.ofEpochMilli;
 import static com.github.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
 import static com.github.msemys.esjc.util.UUIDConverter.toUUID;
+import static java.time.Instant.ofEpochMilli;
 
 public class RecordedEvent {
 

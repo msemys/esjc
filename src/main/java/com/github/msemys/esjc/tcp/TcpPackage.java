@@ -3,12 +3,12 @@ package com.github.msemys.esjc.tcp;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Arrays.copyOfRange;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.UUIDConverter.toBytes;
 import static com.github.msemys.esjc.util.UUIDConverter.toUUID;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.copyOfRange;
 
 public class TcpPackage {
     private static final int UUID_SIZE = 16;

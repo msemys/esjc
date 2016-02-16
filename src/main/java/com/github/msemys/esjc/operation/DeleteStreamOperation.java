@@ -1,10 +1,10 @@
 package com.github.msemys.esjc.operation;
 
-import com.google.protobuf.MessageLite;
 import com.github.msemys.esjc.DeleteResult;
 import com.github.msemys.esjc.Position;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.DeleteStreamCompleted;
 import com.github.msemys.esjc.tcp.TcpCommand;
+import com.google.protobuf.MessageLite;
 
 import java.util.concurrent.CompletableFuture;
 

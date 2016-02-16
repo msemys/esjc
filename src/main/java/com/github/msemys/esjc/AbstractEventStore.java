@@ -1,14 +1,5 @@
 package com.github.msemys.esjc;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.concurrent.DefaultThreadFactory;
 import com.github.msemys.esjc.event.Event;
 import com.github.msemys.esjc.node.NodeEndpoints;
 import com.github.msemys.esjc.operation.UserCredentials;
@@ -21,15 +12,24 @@ import com.github.msemys.esjc.tcp.handler.AuthenticationHandler;
 import com.github.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
 import com.github.msemys.esjc.tcp.handler.HeartbeatHandler;
 import com.github.msemys.esjc.tcp.handler.OperationHandler;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.toBytes;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 abstract class AbstractEventStore {
     private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;

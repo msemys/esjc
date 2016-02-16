@@ -1,10 +1,10 @@
 package com.github.msemys.esjc.util;
 
-import com.google.protobuf.ByteString;
 import com.github.msemys.esjc.ResolvedEvent;
 import com.github.msemys.esjc.StreamPosition;
 import com.github.msemys.esjc.SubscriptionDropReason;
 import com.github.msemys.esjc.proto.EventStoreClientMessages;
+import com.google.protobuf.ByteString;
 
 import java.util.UUID;
 

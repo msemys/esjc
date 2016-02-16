@@ -1,11 +1,11 @@
 package com.github.msemys.esjc.tcp.handler;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import com.github.msemys.esjc.operation.UserCredentials;
 import com.github.msemys.esjc.tcp.TcpCommand;
 import com.github.msemys.esjc.tcp.TcpFlag;
 import com.github.msemys.esjc.tcp.TcpPackage;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

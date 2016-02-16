@@ -1,6 +1,5 @@
 package com.github.msemys.esjc.operation;
 
-import com.google.protobuf.MessageLite;
 import com.github.msemys.esjc.InvalidOperationException;
 import com.github.msemys.esjc.PersistentSubscriptionCreateResult;
 import com.github.msemys.esjc.PersistentSubscriptionCreateStatus;
@@ -9,6 +8,7 @@ import com.github.msemys.esjc.proto.EventStoreClientMessages.CreatePersistentSub
 import com.github.msemys.esjc.proto.EventStoreClientMessages.CreatePersistentSubscriptionCompleted;
 import com.github.msemys.esjc.system.SystemConsumerStrategies;
 import com.github.msemys.esjc.tcp.TcpCommand;
+import com.google.protobuf.MessageLite;
 
 import java.util.concurrent.CompletableFuture;
 

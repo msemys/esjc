@@ -1,10 +1,10 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.system.SystemMetadata;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.github.msemys.esjc.system.SystemMetadata;
 
 import java.io.IOException;
 

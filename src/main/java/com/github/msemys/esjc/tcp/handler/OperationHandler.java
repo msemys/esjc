@@ -1,8 +1,5 @@
 package com.github.msemys.esjc.tcp.handler;
 
-import io.netty.channel.ChannelException;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import com.github.msemys.esjc.node.NodeEndpoints;
 import com.github.msemys.esjc.operation.InspectionResult;
 import com.github.msemys.esjc.operation.manager.OperationItem;
@@ -10,6 +7,9 @@ import com.github.msemys.esjc.operation.manager.OperationManager;
 import com.github.msemys.esjc.subscription.manager.SubscriptionItem;
 import com.github.msemys.esjc.subscription.manager.SubscriptionManager;
 import com.github.msemys.esjc.tcp.TcpPackage;
+import io.netty.channel.ChannelException;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

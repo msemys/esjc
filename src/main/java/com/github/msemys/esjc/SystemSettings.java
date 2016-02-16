@@ -1,9 +1,9 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.util.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import com.github.msemys.esjc.util.Throwables;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

@@ -1,10 +1,10 @@
 package com.github.msemys.esjc.operation.manager;
 
-import io.netty.channel.Channel;
 import com.github.msemys.esjc.ConnectionClosedException;
 import com.github.msemys.esjc.Settings;
 import com.github.msemys.esjc.tcp.ChannelId;
 import com.github.msemys.esjc.tcp.TcpPackage;
+import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +13,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.util.stream.Stream.concat;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+import static java.util.stream.Stream.concat;
 
 public class OperationManager {
     private static final Logger logger = LoggerFactory.getLogger(OperationManager.class);

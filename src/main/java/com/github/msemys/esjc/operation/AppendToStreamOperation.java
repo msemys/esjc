@@ -1,7 +1,5 @@
 package com.github.msemys.esjc.operation;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.MessageLite;
 import com.github.msemys.esjc.EventData;
 import com.github.msemys.esjc.Position;
 import com.github.msemys.esjc.WriteResult;
@@ -9,6 +7,8 @@ import com.github.msemys.esjc.proto.EventStoreClientMessages.NewEvent;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.WriteEvents;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.WriteEventsCompleted;
 import com.github.msemys.esjc.tcp.TcpCommand;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.MessageLite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

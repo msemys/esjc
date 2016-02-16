@@ -9,9 +9,9 @@ import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.toList;
 
 public class EventStoreBuilder {
     private final Settings.Builder settingsBuilder = Settings.newBuilder();

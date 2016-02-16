@@ -1,8 +1,5 @@
 package com.github.msemys.esjc.subscription;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.MessageLite;
-import io.netty.channel.Channel;
 import com.github.msemys.esjc.ResolvedEvent;
 import com.github.msemys.esjc.Subscription;
 import com.github.msemys.esjc.SubscriptionDropReason;
@@ -17,6 +14,9 @@ import com.github.msemys.esjc.proto.EventStoreClientMessages.PersistentSubscript
 import com.github.msemys.esjc.tcp.TcpCommand;
 import com.github.msemys.esjc.tcp.TcpFlag;
 import com.github.msemys.esjc.tcp.TcpPackage;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.MessageLite;
+import io.netty.channel.Channel;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,9 +24,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-import static java.util.stream.Collectors.toList;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.UUIDConverter.toBytes;
+import static java.util.stream.Collectors.toList;
 
 public class PersistentSubscriptionOperation extends AbstractSubscriptionOperation<PersistentSubscriptionChannel> implements PersistentSubscriptionProtocol {
     private final String groupName;

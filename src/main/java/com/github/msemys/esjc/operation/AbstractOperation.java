@@ -1,13 +1,13 @@
 package com.github.msemys.esjc.operation;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.MessageLite;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NotHandled;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NotHandled.MasterInfo;
 import com.github.msemys.esjc.tcp.TcpCommand;
 import com.github.msemys.esjc.tcp.TcpFlag;
 import com.github.msemys.esjc.tcp.TcpPackage;
 import com.github.msemys.esjc.util.Throwables;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.MessageLite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,11 +15,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.netty.buffer.ByteBufUtil.prettyHexDump;
-import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Strings.defaultIfEmpty;
 import static com.github.msemys.esjc.util.Strings.newString;
+import static io.netty.buffer.ByteBufUtil.prettyHexDump;
+import static io.netty.buffer.Unpooled.wrappedBuffer;
 
 public abstract class AbstractOperation<T, R extends MessageLite> implements Operation {
 

@@ -1,10 +1,10 @@
 package com.github.msemys.esjc.tcp.handler;
 
+import com.github.msemys.esjc.tcp.TcpCommand;
+import com.github.msemys.esjc.tcp.TcpPackage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateEvent;
-import com.github.msemys.esjc.tcp.TcpCommand;
-import com.github.msemys.esjc.tcp.TcpPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

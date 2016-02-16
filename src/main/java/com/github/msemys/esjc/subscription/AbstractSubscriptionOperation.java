@@ -1,8 +1,5 @@
 package com.github.msemys.esjc.subscription;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.MessageLite;
-import io.netty.channel.Channel;
 import com.github.msemys.esjc.*;
 import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NotHandled;
@@ -14,6 +11,9 @@ import com.github.msemys.esjc.tcp.TcpCommand;
 import com.github.msemys.esjc.tcp.TcpFlag;
 import com.github.msemys.esjc.tcp.TcpPackage;
 import com.github.msemys.esjc.util.Throwables;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.MessageLite;
+import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

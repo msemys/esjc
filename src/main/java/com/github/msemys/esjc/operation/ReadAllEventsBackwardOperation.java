@@ -1,12 +1,12 @@
 package com.github.msemys.esjc.operation;
 
-import com.google.protobuf.MessageLite;
 import com.github.msemys.esjc.AllEventsSlice;
 import com.github.msemys.esjc.Position;
 import com.github.msemys.esjc.ReadDirection;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.ReadAllEvents;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.ReadAllEventsCompleted;
 import com.github.msemys.esjc.tcp.TcpCommand;
+import com.google.protobuf.MessageLite;
 
 import java.util.concurrent.CompletableFuture;
 

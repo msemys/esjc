@@ -1,12 +1,12 @@
 package com.github.msemys.esjc.node.cluster;
 
+import com.github.msemys.esjc.node.EndpointDiscoverer;
+import com.github.msemys.esjc.node.NodeEndpoints;
+import com.github.msemys.esjc.util.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.stream.JsonReader;
-import com.github.msemys.esjc.node.EndpointDiscoverer;
-import com.github.msemys.esjc.node.NodeEndpoints;
-import com.github.msemys.esjc.util.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +21,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 
 public class ClusterDnsEndpointDiscoverer implements EndpointDiscoverer {
     private static final Logger logger = LoggerFactory.getLogger(ClusterDnsEndpointDiscoverer.class);

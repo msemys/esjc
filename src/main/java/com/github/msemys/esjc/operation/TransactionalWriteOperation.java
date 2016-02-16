@@ -1,12 +1,12 @@
 package com.github.msemys.esjc.operation;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.MessageLite;
 import com.github.msemys.esjc.EventData;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NewEvent;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.TransactionWrite;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.TransactionWriteCompleted;
 import com.github.msemys.esjc.tcp.TcpCommand;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.MessageLite;
 
 import java.util.ArrayList;
 import java.util.List;

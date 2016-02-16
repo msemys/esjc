@@ -16,11 +16,11 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
 import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 public abstract class PersistentSubscription {
     private static final Logger logger = LoggerFactory.getLogger(PersistentSubscription.class);

@@ -1,7 +1,5 @@
 package com.github.msemys.esjc;
 
-import io.netty.channel.ChannelFuture;
-import io.netty.util.concurrent.ScheduledFuture;
 import com.github.msemys.esjc.event.Events;
 import com.github.msemys.esjc.node.EndpointDiscoverer;
 import com.github.msemys.esjc.node.NodeEndpoints;
@@ -21,6 +19,8 @@ import com.github.msemys.esjc.tcp.ChannelId;
 import com.github.msemys.esjc.tcp.TcpPackage;
 import com.github.msemys.esjc.transaction.TransactionManager;
 import com.github.msemys.esjc.util.Strings;
+import io.netty.channel.ChannelFuture;
+import io.netty.util.concurrent.ScheduledFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +29,6 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static java.time.Duration.between;
-import static java.time.Instant.now;
-import static java.util.Arrays.asList;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static com.github.msemys.esjc.system.SystemStreams.isMetastream;
 import static com.github.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
 import static com.github.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
@@ -42,6 +38,10 @@ import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.*;
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
+import static java.time.Duration.between;
+import static java.time.Instant.now;
+import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class EventStore extends AbstractEventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStore.class);

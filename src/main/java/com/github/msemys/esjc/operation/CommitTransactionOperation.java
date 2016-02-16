@@ -1,10 +1,10 @@
 package com.github.msemys.esjc.operation;
 
-import com.google.protobuf.MessageLite;
 import com.github.msemys.esjc.WriteResult;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.TransactionCommit;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.TransactionCommitCompleted;
 import com.github.msemys.esjc.tcp.TcpCommand;
+import com.google.protobuf.MessageLite;
 
 import java.util.concurrent.CompletableFuture;
 

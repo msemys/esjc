@@ -1,9 +1,9 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.util.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import com.github.msemys.esjc.util.Throwables;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -13,13 +13,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Strings.toBytes;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 
 public class StreamMetadata {
     private static final StreamMetadata EMPTY = newBuilder().build();
