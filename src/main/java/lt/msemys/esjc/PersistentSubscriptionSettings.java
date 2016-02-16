@@ -86,11 +86,11 @@ public class PersistentSubscriptionSettings {
         }
 
         public Builder startFromBeginning() {
-            return startFrom(0);
+            return startFrom(StreamPosition.START);
         }
 
         public Builder startFromCurrent() {
-            return startFrom(-1);
+            return startFrom(StreamPosition.END);
         }
 
         public Builder startFrom(int startFrom) {
@@ -159,7 +159,7 @@ public class PersistentSubscriptionSettings {
             }
 
             if (startFrom == null) {
-                startFrom = -1;
+                startFrom = StreamPosition.END;
             } else {
                 checkArgument(startFrom >= -1, "startFrom should be >= -1");
             }

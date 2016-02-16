@@ -25,8 +25,8 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
                                      Executor executor) {
         super(eventstore, streamId, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, executor);
         checkArgument(!isNullOrEmpty(streamId), "streamId");
-        lastProcessedEventNumber = (fromEventNumberExclusive == null) ? -1 : fromEventNumberExclusive;
-        nextReadEventNumber = (fromEventNumberExclusive == null) ? 0 : fromEventNumberExclusive;
+        lastProcessedEventNumber = (fromEventNumberExclusive == null) ? StreamPosition.END : fromEventNumberExclusive;
+        nextReadEventNumber = (fromEventNumberExclusive == null) ? StreamPosition.START : fromEventNumberExclusive;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
                     done = (lastEventNumber == null) ? slice.isEndOfStream : (slice.nextEventNumber > lastEventNumber);
                     break;
                 case StreamNotFound:
-                    if (lastEventNumber != null && lastEventNumber != -1) {
+                    if (lastEventNumber != null && lastEventNumber != StreamPosition.END) {
                         throw new Exception(String.format("Impossible: stream %s disappeared in the middle of catching up subscription.", streamId));
                     }
                     done = true;

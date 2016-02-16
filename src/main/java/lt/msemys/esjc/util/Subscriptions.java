@@ -2,6 +2,7 @@ package lt.msemys.esjc.util;
 
 import com.google.protobuf.ByteString;
 import lt.msemys.esjc.ResolvedEvent;
+import lt.msemys.esjc.StreamPosition;
 import lt.msemys.esjc.SubscriptionDropReason;
 import lt.msemys.esjc.proto.EventStoreClientMessages;
 
@@ -15,7 +16,7 @@ public class Subscriptions {
             .setEvent(EventStoreClientMessages.EventRecord.newBuilder()
                 .setEventId(ByteString.copyFrom(toBytes(new UUID(0, 0))))
                 .setEventStreamId("dummy")
-                .setEventNumber(-1)
+                .setEventNumber(StreamPosition.END)
                 .setEventType("dummy")
                 .setDataContentType(0)
                 .setMetadataContentType(0)

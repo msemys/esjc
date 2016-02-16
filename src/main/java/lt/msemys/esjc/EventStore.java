@@ -363,7 +363,7 @@ public class EventStore extends AbstractEventStore {
 
         CompletableFuture<RawStreamMetadataResult> result = new CompletableFuture<>();
 
-        readEvent(SystemStreams.metastreamOf(stream), -1, false, userCredentials).whenComplete((r, t) -> {
+        readEvent(SystemStreams.metastreamOf(stream), StreamPosition.END, false, userCredentials).whenComplete((r, t) -> {
             if (t != null) {
                 result.completeExceptionally(t);
             } else {
