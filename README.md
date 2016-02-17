@@ -9,6 +9,17 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 * EventStore Server >= 3.2.0 (tested with 3.3.1, 3.4.0)
 
 
+## Maven Dependency
+
+```.xml
+<dependency>
+    <groupId>com.github.msemys</groupId>
+    <artifactId>esjc</artifactId>
+    <version>1.1.0</version>
+</dependency>
+```
+
+
 ## Usage
 
 ### Creating a Client Instance
