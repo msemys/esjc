@@ -3,7 +3,7 @@ package com.github.msemys.esjc.util;
 import com.github.msemys.esjc.ResolvedEvent;
 import com.github.msemys.esjc.StreamPosition;
 import com.github.msemys.esjc.SubscriptionDropReason;
-import com.github.msemys.esjc.proto.EventStoreClientMessages;
+import com.github.msemys.esjc.proto.EventStoreClientMessages.EventRecord;
 import com.google.protobuf.ByteString;
 
 import java.util.UUID;
@@ -13,7 +13,7 @@ import static com.github.msemys.esjc.util.UUIDConverter.toBytes;
 public class Subscriptions {
     public static final ResolvedEvent DROP_SUBSCRIPTION_EVENT =
         new ResolvedEvent(com.github.msemys.esjc.proto.EventStoreClientMessages.ResolvedEvent.newBuilder()
-            .setEvent(EventStoreClientMessages.EventRecord.newBuilder()
+            .setEvent(EventRecord.newBuilder()
                 .setEventId(ByteString.copyFrom(toBytes(new UUID(0, 0))))
                 .setEventStreamId("dummy")
                 .setEventNumber(StreamPosition.END)

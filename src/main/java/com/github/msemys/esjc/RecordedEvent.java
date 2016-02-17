@@ -1,6 +1,6 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.proto.EventStoreClientMessages;
+import com.github.msemys.esjc.proto.EventStoreClientMessages.EventRecord;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class RecordedEvent {
     public final boolean isJson;
     public final Optional<Instant> created;
 
-    public RecordedEvent(EventStoreClientMessages.EventRecord systemRecord) {
+    public RecordedEvent(EventRecord systemRecord) {
         eventStreamId = systemRecord.getEventStreamId();
 
         eventId = toUUID(systemRecord.getEventId().toByteArray());

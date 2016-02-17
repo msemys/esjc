@@ -8,7 +8,6 @@ import com.github.msemys.esjc.operation.AccessDeniedException;
 import com.github.msemys.esjc.operation.InspectionDecision;
 import com.github.msemys.esjc.operation.InspectionResult;
 import com.github.msemys.esjc.operation.UserCredentials;
-import com.github.msemys.esjc.proto.EventStoreClientMessages;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.*;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.PersistentSubscriptionNakEvents.NakAction;
 import com.github.msemys.esjc.tcp.TcpCommand;
@@ -48,7 +47,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
 
     @Override
     protected MessageLite createSubscribeMessage() {
-        return EventStoreClientMessages.ConnectToPersistentSubscription.newBuilder()
+        return ConnectToPersistentSubscription.newBuilder()
             .setSubscriptionId(groupName)
             .setEventStreamId(streamId)
             .setAllowedInFlightMessages(bufferSize)
