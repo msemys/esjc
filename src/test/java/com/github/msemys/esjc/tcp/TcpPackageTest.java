@@ -1,10 +1,10 @@
 package com.github.msemys.esjc.tcp;
 
+import com.github.msemys.esjc.util.UUIDConverter;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -34,7 +34,7 @@ public class TcpPackageTest {
 
         assertEquals(TcpCommand.HeartbeatRequestCommand.value, result[0]);
         assertEquals(TcpFlag.None.value, result[1]);
-        assertEquals(tcpPackage.correlationId, convertByteArrayToUUID(copyOfRange(result, 2, 18)));
+        assertEquals(tcpPackage.correlationId, UUIDConverter.toUUID(copyOfRange(result, 2, 18)));
         assertEquals(DATA, new String(result, 1 + 1 + 16, DATA.length(), UTF_8));
     }
 
@@ -60,7 +60,7 @@ public class TcpPackageTest {
 
         assertEquals(TcpCommand.HeartbeatRequestCommand.value, result[0]);
         assertEquals(TcpFlag.Authenticated.value, result[1]);
-        assertEquals(tcpPackage.correlationId, convertByteArrayToUUID(copyOfRange(result, 2, 18)));
+        assertEquals(tcpPackage.correlationId, UUIDConverter.toUUID(copyOfRange(result, 2, 18)));
 
         assertEquals(user.length(), result[2 + 16]);
         assertEquals(user, new String(result, 2 + 16 + 1, user.length(), UTF_8));
@@ -100,13 +100,6 @@ public class TcpPackageTest {
         assertEquals("admin", tcpPackage.login);
         assertEquals("secret", tcpPackage.password);
         assertEquals(DATA, new String(tcpPackage.data, UTF_8));
-    }
-
-    private static UUID convertByteArrayToUUID(byte[] bytes) {
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-        long mostSignificantBits = bb.getLong();
-        long leastSignificantBits = bb.getLong();
-        return new UUID(mostSignificantBits, leastSignificantBits);
     }
 
 }
