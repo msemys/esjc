@@ -1,6 +1,7 @@
 package com.github.msemys.esjc.tcp;
 
 import com.github.msemys.esjc.util.EmptyArrays;
+import com.github.msemys.esjc.util.Strings;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -47,20 +48,20 @@ public class TcpPackage {
         byte[] result;
 
         if (flag == TcpFlag.Authenticated) {
-            int loginLength = login.getBytes(UTF_8).length;
-            int passwordLength = password.getBytes(UTF_8).length;
+            byte[] loginBytes = Strings.toBytes(login);
+            byte[] passwordBytes = Strings.toBytes(password);
 
-            checkArgument(loginLength < 256, "Login serialized length should be less than 256 bytes (but is %d).", loginLength);
-            checkArgument(passwordLength < 256, "Password serialized length should be less than 256 bytes (but is %d).", passwordLength);
+            checkArgument(loginBytes.length < 256, "Login serialized length should be less than 256 bytes (but is %d).", loginBytes.length);
+            checkArgument(passwordBytes.length < 256, "Password serialized length should be less than 256 bytes (but is %d).", passwordBytes.length);
 
-            result = createTcpPackage(MANDATORY_SIZE + 2 + loginLength + passwordLength + data.length);
+            result = createTcpPackage(MANDATORY_SIZE + 2 + loginBytes.length + passwordBytes.length + data.length);
 
-            result[AUTH_OFFSET] = (byte) loginLength;
-            System.arraycopy(login.getBytes(UTF_8), 0, result, AUTH_OFFSET + 1, loginLength);
+            result[AUTH_OFFSET] = (byte) loginBytes.length;
+            System.arraycopy(loginBytes, 0, result, AUTH_OFFSET + 1, loginBytes.length);
 
-            final int passwordOffset = AUTH_OFFSET + 1 + loginLength;
-            result[passwordOffset] = (byte) passwordLength;
-            System.arraycopy(password.getBytes(UTF_8), 0, result, passwordOffset + 1, passwordLength);
+            final int passwordOffset = AUTH_OFFSET + 1 + loginBytes.length;
+            result[passwordOffset] = (byte) passwordBytes.length;
+            System.arraycopy(passwordBytes, 0, result, passwordOffset + 1, passwordBytes.length);
         } else {
             result = createTcpPackage(MANDATORY_SIZE + data.length);
         }
