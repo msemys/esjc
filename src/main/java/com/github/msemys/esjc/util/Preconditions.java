@@ -10,7 +10,10 @@ public class Preconditions {
     }
 
     public static <T> T checkNotNull(T reference, String errorMessage, Object... errorMessageArgs) {
-        return checkNotNull(reference, String.format(errorMessage, errorMessageArgs));
+        if (reference == null) {
+            throw new NullPointerException(String.format(errorMessage, errorMessageArgs));
+        }
+        return reference;
     }
 
     public static void checkArgument(boolean expression, String errorMessage) {
@@ -20,7 +23,9 @@ public class Preconditions {
     }
 
     public static void checkArgument(boolean expression, String errorMessage, Object... errorMessageArgs) {
-        checkArgument(expression, String.format(errorMessage, errorMessageArgs));
+        if (!expression) {
+            throw new IllegalArgumentException(String.format(errorMessage, errorMessageArgs));
+        }
     }
 
     public static void checkState(boolean expression, String errorMessage) {
@@ -30,7 +35,9 @@ public class Preconditions {
     }
 
     public static void checkState(boolean expression, String errorMessage, Object... errorMessageArgs) {
-        checkState(expression, String.format(errorMessage, errorMessageArgs));
+        if (!expression) {
+            throw new IllegalStateException(String.format(errorMessage, errorMessageArgs));
+        }
     }
 
 }
