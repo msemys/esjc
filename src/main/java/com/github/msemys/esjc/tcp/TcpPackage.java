@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+import static com.github.msemys.esjc.util.Preconditions.checkState;
 import static com.github.msemys.esjc.util.UUIDConverter.toBytes;
 import static com.github.msemys.esjc.util.UUIDConverter.toUUID;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -47,12 +48,8 @@ public class TcpPackage {
             int loginLength = login.getBytes(UTF_8).length;
             int passwordLength = password.getBytes(UTF_8).length;
 
-            if (loginLength > 255) {
-                throw new IllegalArgumentException(String.format("Login serialized length should be less than 256 bytes (but is %d).", loginLength));
-            }
-            if (passwordLength > 255) {
-                throw new IllegalArgumentException(String.format("Password serialized length should be less than 256 bytes (but is %d).", passwordLength));
-            }
+            checkArgument(loginLength < 256, "Login serialized length should be less than 256 bytes (but is %d).", loginLength);
+            checkArgument(passwordLength < 256, "Password serialized length should be less than 256 bytes (but is %d).", passwordLength);
 
             result = createTcpPackage(MANDATORY_SIZE + 2 + loginLength + passwordLength + data.length);
 
@@ -72,9 +69,7 @@ public class TcpPackage {
     }
 
     public static TcpPackage of(byte[] data) {
-        if (data.length < MANDATORY_SIZE) {
-            throw new IllegalArgumentException(String.format("Data too short, length: %d", data.length));
-        }
+        checkArgument(data.length >= MANDATORY_SIZE, "Data too short, length: %d", data.length);
 
         TcpCommand command = TcpCommand.of(data[COMMAND_OFFSET]);
         TcpFlag flag = TcpFlag.of(data[FLAG_OFFSET]);
@@ -88,20 +83,14 @@ public class TcpPackage {
         if (flag == TcpFlag.Authenticated) {
             final int loginLength = data[AUTH_OFFSET];
 
-            if (AUTH_OFFSET + 1 + loginLength + 1 >= data.length) {
-                throw new RuntimeException("Login length is too big, it doesn't fit into TcpPackage.");
-            } else {
-                login = new String(data, AUTH_OFFSET + 1, loginLength, UTF_8);
-            }
+            checkState(AUTH_OFFSET + 1 + loginLength + 1 < data.length, "Login length is too big, it doesn't fit into TcpPackage.");
+            login = new String(data, AUTH_OFFSET + 1, loginLength, UTF_8);
 
             final int passwordOffset = AUTH_OFFSET + 1 + loginLength;
             final int passwordLength = data[passwordOffset];
 
-            if (passwordOffset + 1 + passwordLength > data.length) {
-                throw new RuntimeException("Password length is too big, it doesn't fit into TcpPackage.");
-            } else {
-                password = new String(data, passwordOffset + 1, passwordLength, UTF_8);
-            }
+            checkState(passwordOffset + 1 + passwordLength <= data.length, "Password length is too big, it doesn't fit into TcpPackage.");
+            password = new String(data, passwordOffset + 1, passwordLength, UTF_8);
 
             headerSize += 1 + loginLength + 1 + passwordLength;
         }
