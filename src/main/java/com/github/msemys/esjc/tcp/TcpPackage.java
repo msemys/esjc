@@ -1,5 +1,7 @@
 package com.github.msemys.esjc.tcp;
 
+import com.github.msemys.esjc.util.EmptyArrays;
+
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -188,7 +190,7 @@ public class TcpPackage {
             }
 
             if (data == null) {
-                data = new byte[0];
+                data = EmptyArrays.EMPTY_BYTES;
             }
 
             return new TcpPackage(this);
