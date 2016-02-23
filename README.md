@@ -1,4 +1,4 @@
-# EventStore Java Client [![Build Status](https://api.travis-ci.org/msemys/esjc.svg)](https://travis-ci.org/msemys/esjc) [![Version](https://img.shields.io/maven-central/v/com.github.msemys/esjc.svg?label=version)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.msemys%22%20AND%20a%3A%22esjc%22)
+# EventStore Java Client [![Build Status](https://api.travis-ci.org/msemys/esjc.svg)](https://travis-ci.org/msemys/esjc) [![Version](https://img.shields.io/maven-central/v/com.github.msemys/esjc.svg?label=version)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.msemys%22%20AND%20a%3A%22esjc%22) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.msemys/esjc/badge.svg)](http://www.javadoc.io/doc/com.github.msemys/esjc) 
 
 This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Netty](http://netty.io/) for network communication and [GSON](https://github.com/google/gson) for object serialization/deserialization to JSON (e.g.: stream metadata, cluster information dto). Client logic implementation is the same as in the original client for .NET platform.
 
