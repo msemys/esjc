@@ -219,7 +219,7 @@ public class EventStore extends AbstractEventStore {
 
     @Override
     public CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                     Integer lastCheckpoint,
+                                                     Integer fromEventNumberExclusive,
                                                      boolean resolveLinkTos,
                                                      CatchUpSubscriptionListener listener,
                                                      UserCredentials userCredentials,
@@ -228,7 +228,7 @@ public class EventStore extends AbstractEventStore {
         checkNotNull(listener, "listener");
 
         CatchUpSubscription subscription = new StreamCatchUpSubscription(this,
-            stream, lastCheckpoint, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor);
+            stream, fromEventNumberExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor);
 
         subscription.start();
 
