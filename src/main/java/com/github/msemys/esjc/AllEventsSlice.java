@@ -41,7 +41,7 @@ public class AllEventsSlice {
         this.fromPosition = fromPosition;
         this.nextPosition = nextPosition;
         this.events = (events == null) ? emptyList() : events.stream()
-                .map(e -> new ResolvedEvent(e))
+                .map(ResolvedEvent::new)
                 .collect(toCollection(() -> new ArrayList(events.size())));
     }
 
