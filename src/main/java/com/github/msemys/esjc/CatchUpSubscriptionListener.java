@@ -3,12 +3,14 @@ package com.github.msemys.esjc;
 /**
  * The listener interface for receiving catch-up subscription action events.
  */
-public interface CatchUpSubscriptionListener extends SubscriptionListener {
+public interface CatchUpSubscriptionListener extends SubscriptionListener<CatchUpSubscription> {
 
     /**
      * Invoked when the subscription switches from the reading phase to the live subscription phase.
+     *
+     * @param subscription target subscription.
      */
-    default void onLiveProcessingStarted() {
+    default void onLiveProcessingStarted(CatchUpSubscription subscription) {
 
     }
 

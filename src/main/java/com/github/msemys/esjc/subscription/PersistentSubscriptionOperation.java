@@ -1,13 +1,10 @@
 package com.github.msemys.esjc.subscription;
 
 import com.github.msemys.esjc.ResolvedEvent;
-import com.github.msemys.esjc.Subscription;
-import com.github.msemys.esjc.SubscriptionDropReason;
-import com.github.msemys.esjc.SubscriptionListener;
+import com.github.msemys.esjc.*;
 import com.github.msemys.esjc.operation.AccessDeniedException;
 import com.github.msemys.esjc.operation.InspectionDecision;
 import com.github.msemys.esjc.operation.InspectionResult;
-import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.*;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.PersistentSubscriptionNakEvents.NakAction;
 import com.github.msemys.esjc.tcp.TcpCommand;
@@ -38,7 +35,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
                                            String streamId,
                                            int bufferSize,
                                            UserCredentials userCredentials,
-                                           SubscriptionListener listener,
+                                           SubscriptionListener<PersistentSubscriptionChannel> listener,
                                            Supplier<Channel> connectionSupplier,
                                            Executor executor) {
         super(result, TcpCommand.ConnectToPersistentSubscription, streamId, false, userCredentials, listener, connectionSupplier, executor);

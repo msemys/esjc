@@ -402,11 +402,11 @@ abstract class AbstractEventStore {
      * @param resolveLinkTos whether to resolve link events automatically.
      * @param listener       subscription listener.
      * @return subscription
-     * @see #subscribeToStream(String, boolean, SubscriptionListener, UserCredentials)
+     * @see #subscribeToStream(String, boolean, VolatileSubscriptionListener, UserCredentials)
      */
     public CompletableFuture<Subscription> subscribeToStream(String stream,
                                                              boolean resolveLinkTos,
-                                                             SubscriptionListener listener) {
+                                                             VolatileSubscriptionListener listener) {
         return subscribeToStream(stream, resolveLinkTos, listener, null);
     }
 
@@ -422,7 +422,7 @@ abstract class AbstractEventStore {
      */
     public abstract CompletableFuture<Subscription> subscribeToStream(String stream,
                                                                       boolean resolveLinkTos,
-                                                                      SubscriptionListener listener,
+                                                                      VolatileSubscriptionListener listener,
                                                                       UserCredentials userCredentials);
 
     /**
@@ -432,10 +432,10 @@ abstract class AbstractEventStore {
      * @param resolveLinkTos whether to resolve link events automatically.
      * @param listener       subscription listener.
      * @return subscription
-     * @see #subscribeToAll(boolean, SubscriptionListener, UserCredentials)
+     * @see #subscribeToAll(boolean, VolatileSubscriptionListener, UserCredentials)
      */
     public CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
-                                                          SubscriptionListener listener) {
+                                                          VolatileSubscriptionListener listener) {
         return subscribeToAll(resolveLinkTos, listener, null);
     }
 
@@ -449,7 +449,7 @@ abstract class AbstractEventStore {
      * @return subscription
      */
     public abstract CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
-                                                                   SubscriptionListener listener,
+                                                                   VolatileSubscriptionListener listener,
                                                                    UserCredentials userCredentials);
 
     /**
@@ -705,11 +705,11 @@ abstract class AbstractEventStore {
      * @param groupName the subscription group to connect to.
      * @param listener  subscription listener.
      * @return persistent subscription
-     * @see #subscribeToPersistent(String, String, SubscriptionListener, UserCredentials, int, boolean)
+     * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
     public PersistentSubscription subscribeToPersistent(String stream,
                                                         String groupName,
-                                                        SubscriptionListener listener) {
+                                                        PersistentSubscriptionListener listener) {
         return subscribeToPersistent(stream, groupName, listener, null, settings.persistentSubscriptionBufferSize, settings.persistentSubscriptionAutoAckEnabled);
     }
 
@@ -730,11 +730,11 @@ abstract class AbstractEventStore {
      * @param listener        subscription listener.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return persistent subscription
-     * @see #subscribeToPersistent(String, String, SubscriptionListener, UserCredentials, int, boolean)
+     * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
     public PersistentSubscription subscribeToPersistent(String stream,
                                                         String groupName,
-                                                        SubscriptionListener listener,
+                                                        PersistentSubscriptionListener listener,
                                                         UserCredentials userCredentials) {
         return subscribeToPersistent(stream, groupName, listener, userCredentials, settings.persistentSubscriptionBufferSize, settings.persistentSubscriptionAutoAckEnabled);
     }
@@ -761,7 +761,7 @@ abstract class AbstractEventStore {
      */
     public abstract PersistentSubscription subscribeToPersistent(String stream,
                                                                  String groupName,
-                                                                 SubscriptionListener listener,
+                                                                 PersistentSubscriptionListener listener,
                                                                  UserCredentials userCredentials,
                                                                  int bufferSize,
                                                                  boolean autoAck);

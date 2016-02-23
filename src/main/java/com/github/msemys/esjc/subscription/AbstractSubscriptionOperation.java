@@ -39,7 +39,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
     protected final String streamId;
     protected final boolean resolveLinkTos;
     protected final UserCredentials userCredentials;
-    protected final SubscriptionListener listener;
+    protected final SubscriptionListener<T> listener;
     protected final Supplier<Channel> connectionSupplier;
     private final Executor executor;
     private final Queue<Runnable> actionQueue = new ConcurrentLinkedQueue<>();
@@ -53,7 +53,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
                                             String streamId,
                                             boolean resolveLinkTos,
                                             UserCredentials userCredentials,
-                                            SubscriptionListener listener,
+                                            SubscriptionListener<T> listener,
                                             Supplier<Channel> connectionSupplier,
                                             Executor executor) {
         checkNotNull(result, "result");
@@ -118,7 +118,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
             }
 
             if (subscription != null) {
-                action(() -> listener.onClose(reason, exception));
+                action(() -> listener.onClose(subscription, reason, exception));
             }
         }
     }
@@ -259,7 +259,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
             logger.trace("Subscription {} to {}: event appeared ({}, {}, {} @ {}).",
                 correlationId, streamId(), event.originalStreamId(), event.originalEventNumber(), event.originalEvent().eventType, event.originalPosition);
 
-            action(() -> listener.onEvent(event));
+            action(() -> listener.onEvent(subscription, event));
         }
     }
 

@@ -1,8 +1,8 @@
 package com.github.msemys.esjc.task;
 
 import com.github.msemys.esjc.Subscription;
-import com.github.msemys.esjc.SubscriptionListener;
 import com.github.msemys.esjc.UserCredentials;
+import com.github.msemys.esjc.VolatileSubscriptionListener;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -15,7 +15,7 @@ public class StartSubscription implements Task {
     public final String streamId;
     public final boolean resolveLinkTos;
     public final UserCredentials userCredentials;
-    public final SubscriptionListener listener;
+    public final VolatileSubscriptionListener listener;
 
     public final int maxRetries;
     public final Duration timeout;
@@ -24,7 +24,7 @@ public class StartSubscription implements Task {
                              String streamId,
                              boolean resolveLinkTos,
                              UserCredentials userCredentials,
-                             SubscriptionListener listener,
+                             VolatileSubscriptionListener listener,
                              int maxRetries,
                              Duration timeout) {
         checkNotNull(result, "result");

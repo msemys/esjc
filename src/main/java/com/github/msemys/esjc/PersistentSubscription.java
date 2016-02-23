@@ -32,7 +32,7 @@ public abstract class PersistentSubscription {
 
     private final String subscriptionId;
     private final String streamId;
-    private final SubscriptionListener listener;
+    private final PersistentSubscriptionListener listener;
     private final UserCredentials userCredentials;
     private final boolean autoAck;
 
@@ -47,7 +47,7 @@ public abstract class PersistentSubscription {
 
     protected PersistentSubscription(String subscriptionId,
                                      String streamId,
-                                     SubscriptionListener listener,
+                                     PersistentSubscriptionListener listener,
                                      UserCredentials userCredentials,
                                      int bufferSize,
                                      boolean autoAck,
@@ -64,14 +64,14 @@ public abstract class PersistentSubscription {
     protected void start() {
         stopped.reset();
 
-        SubscriptionListener subscriptionListener = new SubscriptionListener() {
+        SubscriptionListener<PersistentSubscriptionChannel> subscriptionListener = new SubscriptionListener<PersistentSubscriptionChannel>() {
             @Override
-            public void onEvent(ResolvedEvent event) {
+            public void onEvent(PersistentSubscriptionChannel subscription, ResolvedEvent event) {
                 enqueue(event);
             }
 
             @Override
-            public void onClose(SubscriptionDropReason reason, Exception exception) {
+            public void onClose(PersistentSubscriptionChannel subscription, SubscriptionDropReason reason, Exception exception) {
                 enqueueSubscriptionDropNotification(reason, exception);
             }
         };
@@ -82,7 +82,7 @@ public abstract class PersistentSubscription {
     protected abstract CompletableFuture<Subscription> startSubscription(String subscriptionId,
                                                                          String streamId,
                                                                          int bufferSize,
-                                                                         SubscriptionListener listener,
+                                                                         SubscriptionListener<PersistentSubscriptionChannel> listener,
                                                                          UserCredentials userCredentials);
 
     /**
@@ -187,7 +187,7 @@ public abstract class PersistentSubscription {
                 }
 
                 try {
-                    listener.onEvent(event);
+                    listener.onEvent(this, event);
 
                     if (autoAck) {
                         subscription.notifyEventsProcessed(asList(event.originalEvent().eventId));
@@ -213,7 +213,7 @@ public abstract class PersistentSubscription {
                 subscription.unsubscribe();
             }
 
-            listener.onClose(reason, exception);
+            listener.onClose(this, reason, exception);
 
             stopped.release();
         }

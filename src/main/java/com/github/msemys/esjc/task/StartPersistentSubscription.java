@@ -3,6 +3,7 @@ package com.github.msemys.esjc.task;
 import com.github.msemys.esjc.Subscription;
 import com.github.msemys.esjc.SubscriptionListener;
 import com.github.msemys.esjc.UserCredentials;
+import com.github.msemys.esjc.subscription.PersistentSubscriptionChannel;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +17,7 @@ public class StartPersistentSubscription implements Task {
     public final String streamId;
     public final int bufferSize;
     public final UserCredentials userCredentials;
-    public final SubscriptionListener listener;
+    public final SubscriptionListener<PersistentSubscriptionChannel> listener;
     public final int maxRetries;
     public final Duration timeout;
 
@@ -25,7 +26,7 @@ public class StartPersistentSubscription implements Task {
                                        String streamId,
                                        int bufferSize,
                                        UserCredentials userCredentials,
-                                       SubscriptionListener listener,
+                                       SubscriptionListener<PersistentSubscriptionChannel> listener,
                                        int maxRetries,
                                        Duration timeout) {
         checkNotNull(result, "result");

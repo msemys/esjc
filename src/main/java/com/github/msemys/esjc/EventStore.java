@@ -7,10 +7,7 @@ import com.github.msemys.esjc.node.cluster.ClusterDnsEndpointDiscoverer;
 import com.github.msemys.esjc.node.static_.StaticEndpointDiscoverer;
 import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.operation.manager.OperationItem;
-import com.github.msemys.esjc.subscription.AllCatchUpSubscription;
-import com.github.msemys.esjc.subscription.PersistentSubscriptionOperation;
-import com.github.msemys.esjc.subscription.StreamCatchUpSubscription;
-import com.github.msemys.esjc.subscription.VolatileSubscriptionOperation;
+import com.github.msemys.esjc.subscription.*;
 import com.github.msemys.esjc.subscription.manager.SubscriptionItem;
 import com.github.msemys.esjc.system.SystemEventTypes;
 import com.github.msemys.esjc.system.SystemStreams;
@@ -196,7 +193,7 @@ public class EventStore extends AbstractEventStore {
     @Override
     public CompletableFuture<Subscription> subscribeToStream(String stream,
                                                              boolean resolveLinkTos,
-                                                             SubscriptionListener listener,
+                                                             VolatileSubscriptionListener listener,
                                                              UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkNotNull(listener, "listener");
@@ -208,7 +205,7 @@ public class EventStore extends AbstractEventStore {
 
     @Override
     public CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
-                                                          SubscriptionListener listener,
+                                                          VolatileSubscriptionListener listener,
                                                           UserCredentials userCredentials) {
         checkNotNull(listener, "listener");
 
@@ -254,7 +251,7 @@ public class EventStore extends AbstractEventStore {
     @Override
     public PersistentSubscription subscribeToPersistent(String stream,
                                                         String groupName,
-                                                        SubscriptionListener listener,
+                                                        PersistentSubscriptionListener listener,
                                                         UserCredentials userCredentials,
                                                         int bufferSize,
                                                         boolean autoAck) {
@@ -268,7 +265,7 @@ public class EventStore extends AbstractEventStore {
             protected CompletableFuture<Subscription> startSubscription(String subscriptionId,
                                                                         String streamId,
                                                                         int bufferSize,
-                                                                        SubscriptionListener listener,
+                                                                        SubscriptionListener<PersistentSubscriptionChannel> listener,
                                                                         UserCredentials userCredentials) {
                 CompletableFuture<Subscription> result = new CompletableFuture<>();
                 enqueue(new StartPersistentSubscription(result, subscriptionId, streamId, bufferSize,

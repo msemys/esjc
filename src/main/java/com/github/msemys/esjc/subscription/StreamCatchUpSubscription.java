@@ -2,7 +2,6 @@ package com.github.msemys.esjc.subscription;
 
 import com.github.msemys.esjc.*;
 import com.github.msemys.esjc.operation.StreamDeletedException;
-import com.github.msemys.esjc.UserCredentials;
 
 import java.util.concurrent.Executor;
 
@@ -71,7 +70,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
         boolean processed = false;
 
         if (event.originalEventNumber() > lastProcessedEventNumber) {
-            listener.onEvent(event);
+            listener.onEvent(this, event);
             lastProcessedEventNumber = event.originalEventNumber();
             processed = true;
         }

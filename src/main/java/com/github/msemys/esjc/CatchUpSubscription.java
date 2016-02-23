@@ -141,9 +141,9 @@ public abstract class CatchUpSubscription {
                 if (!shouldStop) {
                     logger.trace("Catch-up Subscription to {}: subscribing...", streamId());
 
-                    SubscriptionListener subscriptionListener = new SubscriptionListener() {
+                    VolatileSubscriptionListener subscriptionListener = new VolatileSubscriptionListener() {
                         @Override
-                        public void onEvent(ResolvedEvent event) {
+                        public void onEvent(Subscription s, ResolvedEvent event) {
                             logger.trace("Catch-up Subscription to {}: event appeared ({}, {}, {} @ {}).",
                                 streamId(), event.originalStreamId(), event.originalEventNumber(),
                                 event.originalEvent().eventType, event.originalPosition);
@@ -160,7 +160,7 @@ public abstract class CatchUpSubscription {
                         }
 
                         @Override
-                        public void onClose(SubscriptionDropReason reason, Exception exception) {
+                        public void onClose(Subscription s, SubscriptionDropReason reason, Exception exception) {
                             enqueueSubscriptionDropNotification(reason, exception);
                         }
                     };
@@ -183,7 +183,7 @@ public abstract class CatchUpSubscription {
             }
 
             logger.trace("Catch-up Subscription to {}: processing live events...", streamId());
-            listener.onLiveProcessingStarted();
+            listener.onLiveProcessingStarted(this);
 
             logger.trace("Catch-up Subscription to {}: hooking to connection. Connected", streamId());
             eventstore.addListener(reconnectionHook);
@@ -246,7 +246,7 @@ public abstract class CatchUpSubscription {
                 subscription.unsubscribe();
             }
 
-            listener.onClose(reason, exception);
+            listener.onClose(this, reason, exception);
 
             stopped.release();
         }

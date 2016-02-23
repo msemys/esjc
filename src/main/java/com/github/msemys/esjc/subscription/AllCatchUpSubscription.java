@@ -1,7 +1,6 @@
 package com.github.msemys.esjc.subscription;
 
 import com.github.msemys.esjc.*;
-import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.util.Strings;
 
 import java.util.concurrent.Executor;
@@ -62,7 +61,7 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
         boolean processed = false;
 
         if (event.originalPosition.compareTo(lastProcessedPosition) > 0) {
-            listener.onEvent(event);
+            listener.onEvent(this, event);
             lastProcessedPosition = event.originalPosition;
             processed = true;
         }
