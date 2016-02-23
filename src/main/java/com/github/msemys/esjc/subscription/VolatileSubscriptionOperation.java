@@ -5,7 +5,7 @@ import com.github.msemys.esjc.Subscription;
 import com.github.msemys.esjc.SubscriptionListener;
 import com.github.msemys.esjc.operation.InspectionDecision;
 import com.github.msemys.esjc.operation.InspectionResult;
-import com.github.msemys.esjc.operation.UserCredentials;
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.StreamEventAppeared;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.SubscribeToStream;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.SubscriptionConfirmation;

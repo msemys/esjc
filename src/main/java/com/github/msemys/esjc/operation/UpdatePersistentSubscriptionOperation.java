@@ -3,6 +3,7 @@ package com.github.msemys.esjc.operation;
 import com.github.msemys.esjc.PersistentSubscriptionSettings;
 import com.github.msemys.esjc.PersistentSubscriptionUpdateResult;
 import com.github.msemys.esjc.PersistentSubscriptionUpdateStatus;
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.UpdatePersistentSubscription;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.UpdatePersistentSubscriptionCompleted;
 import com.github.msemys.esjc.system.SystemConsumerStrategies;

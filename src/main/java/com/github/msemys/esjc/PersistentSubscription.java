@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.operation.UserCredentials;
 import com.github.msemys.esjc.subscription.PersistentSubscriptionChannel;
 import com.github.msemys.esjc.subscription.PersistentSubscriptionNakEventAction;
 import com.github.msemys.esjc.util.Subscriptions.DropData;

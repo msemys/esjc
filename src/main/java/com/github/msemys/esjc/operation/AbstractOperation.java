@@ -1,5 +1,6 @@
 package com.github.msemys.esjc.operation;
 
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NotHandled;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NotHandled.MasterInfo;
 import com.github.msemys.esjc.tcp.TcpCommand;

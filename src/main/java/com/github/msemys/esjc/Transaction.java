@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.operation.UserCredentials;
 import com.github.msemys.esjc.transaction.TransactionManager;
 
 import java.util.concurrent.CompletableFuture;

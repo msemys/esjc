@@ -2,7 +2,7 @@ package com.github.msemys.esjc.task;
 
 import com.github.msemys.esjc.Subscription;
 import com.github.msemys.esjc.SubscriptionListener;
-import com.github.msemys.esjc.operation.UserCredentials;
+import com.github.msemys.esjc.UserCredentials;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;

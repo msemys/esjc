@@ -2,7 +2,6 @@ package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.event.Event;
 import com.github.msemys.esjc.node.NodeEndpoints;
-import com.github.msemys.esjc.operation.UserCredentials;
 import com.github.msemys.esjc.operation.manager.OperationManager;
 import com.github.msemys.esjc.subscription.manager.SubscriptionManager;
 import com.github.msemys.esjc.tcp.TcpPackage;

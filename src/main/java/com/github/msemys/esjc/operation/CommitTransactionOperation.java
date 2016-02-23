@@ -1,5 +1,6 @@
 package com.github.msemys.esjc.operation;
 
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.WriteResult;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.TransactionCommit;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.TransactionCommitCompleted;

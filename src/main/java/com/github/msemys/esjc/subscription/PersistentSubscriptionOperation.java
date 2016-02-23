@@ -7,7 +7,7 @@ import com.github.msemys.esjc.SubscriptionListener;
 import com.github.msemys.esjc.operation.AccessDeniedException;
 import com.github.msemys.esjc.operation.InspectionDecision;
 import com.github.msemys.esjc.operation.InspectionResult;
-import com.github.msemys.esjc.operation.UserCredentials;
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.*;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.PersistentSubscriptionNakEvents.NakAction;
 import com.github.msemys.esjc.tcp.TcpCommand;

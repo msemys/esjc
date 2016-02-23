@@ -1,4 +1,4 @@
-package com.github.msemys.esjc.operation;
+package com.github.msemys.esjc;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 

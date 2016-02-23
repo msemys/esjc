@@ -2,6 +2,7 @@ package com.github.msemys.esjc.operation;
 
 import com.github.msemys.esjc.EventReadResult;
 import com.github.msemys.esjc.EventReadStatus;
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.ReadEvent;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.ReadEventCompleted;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.ReadEventCompleted.ReadEventResult;

@@ -2,6 +2,7 @@ package com.github.msemys.esjc.operation;
 
 import com.github.msemys.esjc.EventData;
 import com.github.msemys.esjc.Position;
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.WriteResult;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NewEvent;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.WriteEvents;

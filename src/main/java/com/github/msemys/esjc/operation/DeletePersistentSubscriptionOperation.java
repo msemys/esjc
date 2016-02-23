@@ -2,6 +2,7 @@ package com.github.msemys.esjc.operation;
 
 import com.github.msemys.esjc.PersistentSubscriptionDeleteResult;
 import com.github.msemys.esjc.PersistentSubscriptionDeleteStatus;
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.DeletePersistentSubscription;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.DeletePersistentSubscriptionCompleted;
 import com.github.msemys.esjc.tcp.TcpCommand;

@@ -2,7 +2,6 @@ package com.github.msemys.esjc;
 
 
 import com.github.msemys.esjc.event.ClientConnected;
-import com.github.msemys.esjc.operation.UserCredentials;
 import com.github.msemys.esjc.util.Strings;
 import com.github.msemys.esjc.util.Subscriptions.DropData;
 import com.github.msemys.esjc.util.concurrent.ResettableLatch;
