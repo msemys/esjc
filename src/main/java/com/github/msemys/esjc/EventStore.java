@@ -43,6 +43,10 @@ import static java.time.Instant.now;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+/**
+ * An Event Store client with full duplex connection to server.
+ * It is recommended that only one instance per application is created.
+ */
 public class EventStore extends AbstractEventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStore.class);
 
@@ -427,6 +431,9 @@ public class EventStore extends AbstractEventStore {
         reconnectTo(nodeEndpoints);
     }
 
+    /**
+     * Connects to server asynchronously.
+     */
     public void connect() {
         if (!isRunning()) {
             timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
@@ -441,6 +448,9 @@ public class EventStore extends AbstractEventStore {
         tasks.enqueue(new StartConnection(result, discoverer));
     }
 
+    /**
+     * Disconnects client from server.
+     */
     public void disconnect() {
         disconnect("exit");
     }
@@ -458,6 +468,11 @@ public class EventStore extends AbstractEventStore {
         }
     }
 
+    /**
+     * Check whether this client is currently running.
+     *
+     * @return {@code true} if client is running, otherwise {@code false}
+     */
     public boolean isRunning() {
         return timer != null && !timer.isDone();
     }

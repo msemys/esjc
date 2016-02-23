@@ -6,14 +6,49 @@ import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 
+/**
+ * TCP settings.
+ */
 public class TcpSettings {
+
+    /**
+     * Specifies connection establishment timeout.
+     */
     public final Duration connectTimeout;
+
+    /**
+     * Specifies connection closing timeout.
+     */
     public final Duration closeTimeout;
+
+    /**
+     * Whether the socket keep-alive option is enabled.
+     */
     public final boolean keepAlive;
+
+    /**
+     * Whether the socket no-delay option is enabled.
+     */
     public final boolean tcpNoDelay;
+
+    /**
+     * The maximum socket send buffer in bytes.
+     */
     public final int sendBufferSize;
+
+    /**
+     * The maximum socket receive buffer in bytes.
+     */
     public final int receiveBufferSize;
+
+    /**
+     * Write buffer low watermark in bytes.
+     */
     public final int writeBufferLowWaterMark;
+
+    /**
+     * Write buffer high watermark in bytes.
+     */
     public final int writeBufferHighWaterMark;
 
     private TcpSettings(Builder builder) {
@@ -42,10 +77,18 @@ public class TcpSettings {
         return sb.toString();
     }
 
+    /**
+     * Creates a new TCP settings builder.
+     *
+     * @return TCP settings builder
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
 
+    /**
+     * TCP settings builder.
+     */
     public static class Builder {
         private Duration connectTimeout;
         private Duration closeTimeout;
@@ -56,46 +99,102 @@ public class TcpSettings {
         private Integer writeBufferHighWaterMark;
         private Integer writeBufferLowWaterMark;
 
+        /**
+         * Sets connection establishment timeout.
+         *
+         * @param connectTimeout connection establishment timeout.
+         * @return the builder reference
+         */
         public Builder connectTimeout(Duration connectTimeout) {
             this.connectTimeout = connectTimeout;
             return this;
         }
 
+        /**
+         * Sets connection closing timeout.
+         *
+         * @param closeTimeout connection closing timeout.
+         * @return the builder reference
+         */
         public Builder closeTimeout(Duration closeTimeout) {
             this.closeTimeout = closeTimeout;
             return this;
         }
 
+        /**
+         * Specifies socket keep-alive option.
+         *
+         * @param keepAlive {@code true} to enable.
+         * @return the builder reference
+         */
         public Builder keepAlive(boolean keepAlive) {
             this.keepAlive = keepAlive;
             return this;
         }
 
+        /**
+         * Specifies socket no-delay option.
+         * <p>
+         * When no-delay is enabled, Nagle's algorithm will not be use.
+         * </p>
+         *
+         * @param tcpNoDelay {@code true} to enable.
+         * @return the builder reference
+         */
         public Builder tcpNoDelay(boolean tcpNoDelay) {
             this.tcpNoDelay = tcpNoDelay;
             return this;
         }
 
+        /**
+         * Sets the maximum socket send buffer in bytes.
+         *
+         * @param sendBufferSize the maximum socket send buffer in bytes.
+         * @return the builder reference
+         */
         public Builder sendBufferSize(int sendBufferSize) {
             this.sendBufferSize = sendBufferSize;
             return this;
         }
 
+        /**
+         * Sets the maximum socket receive buffer in bytes.
+         *
+         * @param receiveBufferSize the maximum socket receive buffer in bytes.
+         * @return the builder reference
+         */
         public Builder receiveBufferSize(int receiveBufferSize) {
             this.receiveBufferSize = receiveBufferSize;
             return this;
         }
 
+        /**
+         * Sets write buffer high watermark in bytes.
+         *
+         * @param writeBufferHighWaterMark write buffer high watermark in bytes.
+         * @return the builder reference
+         */
         public Builder writeBufferHighWaterMark(int writeBufferHighWaterMark) {
             this.writeBufferHighWaterMark = writeBufferHighWaterMark;
             return this;
         }
 
+        /**
+         * Sets write buffer low watermark in bytes.
+         *
+         * @param writeBufferLowWaterMark write buffer low watermark in bytes.
+         * @return the builder reference
+         */
         public Builder writeBufferLowWaterMark(int writeBufferLowWaterMark) {
             this.writeBufferLowWaterMark = writeBufferLowWaterMark;
             return this;
         }
 
+        /**
+         * Builds a TCP settings.
+         *
+         * @return TCP settings
+         */
         public TcpSettings build() {
             if (connectTimeout == null) {
                 connectTimeout = Duration.ofSeconds(10);

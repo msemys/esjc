@@ -2,6 +2,9 @@ package com.github.msemys.esjc.operation;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 
+/**
+ * A username/password pair used for authentication and authorization operations.
+ */
 public class UserCredentials {
 
     public final String username;

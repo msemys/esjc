@@ -26,11 +26,18 @@ import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
 import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
 
+/**
+ * Catch-up subscription.
+ */
 public abstract class CatchUpSubscription {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final EventStore eventstore;
+    /**
+     * The name of the stream to which the subscription is subscribed (empty if subscribed to $all stream).
+     */
     public final String streamId;
+
+    private final EventStore eventstore;
     private final boolean resolveLinkTos;
     private final UserCredentials userCredentials;
     protected final CatchUpSubscriptionListener listener;
@@ -246,6 +253,11 @@ public abstract class CatchUpSubscription {
         }
     }
 
+    /**
+     * Determines whether or not this subscription is to $all stream or to a specific stream.
+     *
+     * @return {@code true} if this subscription is to $all stream, otherwise {@code false}
+     */
     public boolean isSubscribedToAll() {
         return isNullOrEmpty(streamId);
     }

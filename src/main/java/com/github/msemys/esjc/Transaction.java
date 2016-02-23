@@ -8,7 +8,16 @@ import java.util.concurrent.CompletableFuture;
 import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 
+/**
+ * Represents a multi-request transaction with the Event Store.
+ * It allows the calling of multiple writes with multiple round trips
+ * over long periods of time between the client and server.
+ */
 public class Transaction implements AutoCloseable {
+
+    /**
+     * The ID of the transaction. This can be used to recover a transaction later.
+     */
     public final long transactionId;
 
     private final UserCredentials userCredentials;
@@ -16,6 +25,13 @@ public class Transaction implements AutoCloseable {
     private boolean isRolledBack;
     private boolean isCommitted;
 
+    /**
+     * Creates a new instance with the specified transaction id, user credentials and transaction manager.
+     *
+     * @param transactionId      the transaction id.
+     * @param userCredentials    user credentials under which transaction is committed (use {@code null} for default user credentials).
+     * @param transactionManager transaction manager, that performs commit and write operations.
+     */
     public Transaction(long transactionId, UserCredentials userCredentials, TransactionManager transactionManager) {
         checkArgument(!isNegative(transactionId), "transactionId should not be negative.");
 
@@ -24,6 +40,11 @@ public class Transaction implements AutoCloseable {
         this.transactionManager = transactionManager;
     }
 
+    /**
+     * Commits this transaction asynchronously.
+     *
+     * @return write result
+     */
     public CompletableFuture<WriteResult> commit() {
         if (isRolledBack) {
             throw new InvalidOperationException("Cannot commit a rolled-back transaction");
@@ -35,6 +56,12 @@ public class Transaction implements AutoCloseable {
         }
     }
 
+    /**
+     * Writes events to a transaction in the Event Store asynchronously.
+     *
+     * @param events the events to write.
+     * @return the future that retrieves {@code null} as success value, when it completes.
+     */
     public CompletableFuture<Void> write(Iterable<EventData> events) {
         if (isRolledBack) {
             throw new InvalidOperationException("Cannot write to a rolled-back transaction");
@@ -45,6 +72,9 @@ public class Transaction implements AutoCloseable {
         }
     }
 
+    /**
+     * Rollbacks this transaction.
+     */
     public void rollback() {
         if (isCommitted) {
             throw new InvalidOperationException("Transaction is already committed");
@@ -53,6 +83,11 @@ public class Transaction implements AutoCloseable {
         }
     }
 
+    /**
+     * Closes this transaction by rolling it back if not already committed.
+     *
+     * @throws Exception if any error occurs
+     */
     @Override
     public void close() throws Exception {
         if (!isCommitted) {

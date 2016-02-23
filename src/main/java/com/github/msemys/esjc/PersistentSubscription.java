@@ -22,6 +22,9 @@ import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Persistent subscription.
+ */
 public abstract class PersistentSubscription {
     private static final Logger logger = LoggerFactory.getLogger(PersistentSubscription.class);
 
@@ -82,24 +85,56 @@ public abstract class PersistentSubscription {
                                                                          SubscriptionListener listener,
                                                                          UserCredentials userCredentials);
 
+    /**
+     * Acknowledge that the specified message have completed processing (this will tell the server it has been processed).
+     * <p><u>NOTE:</u> there is no need to ack a message if you have Auto Ack enabled.</p>
+     *
+     * @param event the event to acknowledge.
+     */
     public void acknowledge(ResolvedEvent event) {
         subscription.notifyEventsProcessed(asList(event.originalEvent().eventId));
     }
 
+    /**
+     * Acknowledge that the specified messages have completed processing (this will tell the server it has been processed).
+     * <p><u>NOTE:</u> there is no need to ack a message if you have Auto Ack enabled.</p>
+     *
+     * @param events the events to acknowledge.
+     */
     public void acknowledge(List<ResolvedEvent> events) {
         checkArgument(events.size() <= MAX_EVENTS, "events is limited to %d to ack at a time", MAX_EVENTS);
         subscription.notifyEventsProcessed(events.stream().map(e -> e.originalEvent().eventId).collect(toList()));
     }
 
+    /**
+     * Marks that the specified message failed processing. The server will be take action based upon the action parameter.
+     *
+     * @param event  the event to mark as failed.
+     * @param action the action to take.
+     * @param reason an error message as to why the failure is occurring.
+     */
     public void fail(ResolvedEvent event, PersistentSubscriptionNakEventAction action, String reason) {
         subscription.notifyEventsFailed(asList(event.originalEvent().eventId), action, reason);
     }
 
+    /**
+     * Marks that the specified messages have failed processing. The server will take action based upon the action parameter.
+     *
+     * @param events the events to mark as failed.
+     * @param action the action to take.
+     * @param reason an error message as to why the failure is occurring.
+     */
     public void fail(List<ResolvedEvent> events, PersistentSubscriptionNakEventAction action, String reason) {
         checkArgument(events.size() <= MAX_EVENTS, "events is limited to %d to ack at a time", MAX_EVENTS);
         subscription.notifyEventsFailed(events.stream().map(e -> e.originalEvent().eventId).collect(toList()), action, reason);
     }
 
+    /**
+     * Unsubscribes from the the persistent subscriptions.
+     *
+     * @param timeout the maximum wait time before it should timeout.
+     * @throws TimeoutException when timeouts
+     */
     public void stop(Duration timeout) throws TimeoutException {
         logger.trace("Persistent Subscription to {}: requesting stop...", streamId);
         enqueueSubscriptionDropNotification(SubscriptionDropReason.UserInitiated, null);

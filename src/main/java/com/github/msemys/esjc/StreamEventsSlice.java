@@ -10,14 +10,49 @@ import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toCollection;
 
+/**
+ * Result type of a single read operation to the Event Store, that retrieves event list from stream.
+ */
 public class StreamEventsSlice {
+
+    /**
+     * Status of read attempt.
+     */
     public final SliceReadStatus status;
+
+    /**
+     * The name of the stream read.
+     */
     public final String stream;
+
+    /**
+     * The starting point (represented as a sequence number) of the read operation.
+     */
     public final int fromEventNumber;
+
+    /**
+     * The direction of read request.
+     */
     public final ReadDirection readDirection;
+
+    /**
+     * The events read.
+     */
     public final List<ResolvedEvent> events;
+
+    /**
+     * The next event number that can be read.
+     */
     public final int nextEventNumber;
+
+    /**
+     * The last event number in the stream.
+     */
     public final int lastEventNumber;
+
+    /**
+     * Indicating whether or not this is the end of the stream.
+     */
     public final boolean isEndOfStream;
 
     public StreamEventsSlice(SliceReadStatus status,

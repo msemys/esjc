@@ -7,12 +7,39 @@ import java.util.UUID;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.toBytes;
 
+/**
+ * Represents an event to be written.
+ */
 public class EventData {
+
+    /**
+     * The ID of the event (used as part of the idempotent write check).
+     */
     public final UUID eventId;
+
+    /**
+     * The name of the event type.
+     */
     public final String type;
+
+    /**
+     * Flag indicating whether the data is JSON.
+     */
     public final boolean isJsonData;
+
+    /**
+     * The raw bytes of the event data.
+     */
     public final byte[] data;
+
+    /**
+     * Flag indicating whether the metadata is JSON.
+     */
     public final boolean isJsonMetadata;
+
+    /**
+     * The raw bytes of the event metadata.
+     */
     public final byte[] metadata;
 
     private EventData(Builder builder) {
@@ -24,10 +51,18 @@ public class EventData {
         metadata = builder.metadata;
     }
 
+    /**
+     * Creates a new event data builder.
+     *
+     * @return event data builder
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
 
+    /**
+     * Event data builder.
+     */
     public static class Builder {
         private UUID eventId;
         private String type;
@@ -39,56 +74,125 @@ public class EventData {
         private Builder() {
         }
 
+        /**
+         * Sets event id (used as part of the idempotent write check).
+         *
+         * @param eventId event id.
+         * @return the builder reference
+         */
         public Builder eventId(UUID eventId) {
             this.eventId = eventId;
             return this;
         }
 
+        /**
+         * Sets name of the event type.
+         * <p>
+         * It is strongly recommended that these use lowerCamelCase if projections are to be used.
+         * </p>
+         *
+         * @param type the name of the event type.
+         * @return the builder reference
+         */
         public Builder type(String type) {
             this.type = type;
             return this;
         }
 
+        /**
+         * Sets event data.
+         *
+         * @param data event data.
+         * @return the builder reference
+         */
         public Builder data(String data) {
             return data(toBytes(data));
         }
 
+        /**
+         * Sets event data.
+         *
+         * @param data event data.
+         * @return the builder reference
+         */
         public Builder data(byte[] data) {
             this.data = data;
             this.isJsonData = false;
             return this;
         }
 
+        /**
+         * Sets event data and marks it as JSON.
+         *
+         * @param data json event data.
+         * @return the builder reference
+         */
         public Builder jsonData(String data) {
             return jsonData(toBytes(data));
         }
 
+        /**
+         * Sets event data and marks it as JSON.
+         *
+         * @param data json event data.
+         * @return the builder reference
+         */
         public Builder jsonData(byte[] data) {
             this.data = data;
             this.isJsonData = true;
             return this;
         }
 
+        /**
+         * Sets event metadata.
+         *
+         * @param metadata event metadata.
+         * @return the builder reference
+         */
         public Builder metadata(String metadata) {
             return metadata(toBytes(metadata));
         }
 
+        /**
+         * Sets event metadata.
+         *
+         * @param metadata event metadata.
+         * @return the builder reference
+         */
         public Builder metadata(byte[] metadata) {
             this.metadata = metadata;
             this.isJsonMetadata = false;
             return this;
         }
 
+        /**
+         * Sets event metadata and marks it as JSON.
+         *
+         * @param metadata json event metadata.
+         * @return the builder reference
+         */
         public Builder jsonMetadata(String metadata) {
             return jsonMetadata(toBytes(metadata));
         }
 
+        /**
+         * Sets event metadata and marks it as JSON.
+         *
+         * @param metadata json event metadata.
+         * @return the builder reference
+         */
         public Builder jsonMetadata(byte[] metadata) {
             this.metadata = metadata;
             this.isJsonMetadata = true;
             return this;
         }
 
+        /**
+         * Builds an event data.
+         * <p>If event id is not specified, the random id will be generated.</p>
+         *
+         * @return an event data
+         */
         public EventData build() {
             if (eventId == null) {
                 eventId = UUID.randomUUID();

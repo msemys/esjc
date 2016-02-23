@@ -5,13 +5,45 @@ import java.util.List;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.joining;
 
+/**
+ * Represents an access-control-list for a stream.
+ */
 public class StreamAcl {
+
+    /**
+     * Roles and users permitted to read the stream.
+     */
     public final List<String> readRoles;
+
+    /**
+     * Roles and users permitted to write to the stream.
+     */
     public final List<String> writeRoles;
+
+    /**
+     * Roles and users permitted to delete the stream.
+     */
     public final List<String> deleteRoles;
+
+    /**
+     * Roles and users permitted to read stream metadata.
+     */
     public final List<String> metaReadRoles;
+
+    /**
+     * Roles and users permitted to write stream metadata.
+     */
     public final List<String> metaWriteRoles;
 
+    /**
+     * Creates a new stream access-control-list.
+     *
+     * @param readRoles      roles and users permitted to read the stream.
+     * @param writeRoles     roles and users permitted to write to the stream.
+     * @param deleteRoles    roles and users permitted to delete the stream.
+     * @param metaReadRoles  roles and users permitted to read stream metadata.
+     * @param metaWriteRoles roles and users permitted to write stream metadata.
+     */
     public StreamAcl(List<String> readRoles,
                      List<String> writeRoles,
                      List<String> deleteRoles,
