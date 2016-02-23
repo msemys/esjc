@@ -1,6 +1,5 @@
 package com.github.msemys.esjc.operation;
 
-import com.github.msemys.esjc.InvalidOperationException;
 import com.github.msemys.esjc.PersistentSubscriptionSettings;
 import com.github.msemys.esjc.PersistentSubscriptionUpdateResult;
 import com.github.msemys.esjc.PersistentSubscriptionUpdateStatus;
@@ -65,7 +64,7 @@ public class UpdatePersistentSubscriptionOperation extends AbstractOperation<Per
                     .description("Success")
                     .build();
             case Fail:
-                fail(new InvalidOperationException(String.format("Subscription group %s on stream %s failed '%s'", groupName, stream, response.getReason())));
+                fail(new IllegalStateException(String.format("Subscription group %s on stream %s failed '%s'", groupName, stream, response.getReason())));
                 return InspectionResult.newBuilder()
                     .decision(InspectionDecision.EndOperation)
                     .description("Fail")
@@ -77,7 +76,7 @@ public class UpdatePersistentSubscriptionOperation extends AbstractOperation<Per
                     .description("AccessDenied")
                     .build();
             case DoesNotExist:
-                fail(new InvalidOperationException(String.format("Subscription group %s on stream %s does not exist", groupName, stream)));
+                fail(new IllegalStateException(String.format("Subscription group %s on stream %s does not exist", groupName, stream)));
                 return InspectionResult.newBuilder()
                     .decision(InspectionDecision.EndOperation)
                     .description("DoesNotExist")

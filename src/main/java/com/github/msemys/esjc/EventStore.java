@@ -587,7 +587,7 @@ public class EventStore extends AbstractEventStore {
                 break;
             case CONNECTING:
             case CONNECTED:
-                task.result.completeExceptionally(new InvalidOperationException(String.format("Connection %s is already active.", connection)));
+                task.result.completeExceptionally(new IllegalStateException(String.format("Connection %s is already active.", connection)));
                 break;
             case CLOSED:
                 task.result.completeExceptionally(new ConnectionClosedException("Connection is closed"));
@@ -649,7 +649,7 @@ public class EventStore extends AbstractEventStore {
         switch (connectionState()) {
             case INIT:
                 if (connectingPhase == ConnectingPhase.INVALID) {
-                    operation.fail(new InvalidOperationException("No connection"));
+                    operation.fail(new IllegalStateException("No connection"));
                     break;
                 }
             case CONNECTING:
@@ -674,7 +674,7 @@ public class EventStore extends AbstractEventStore {
         switch (state) {
             case INIT:
                 if (connectingPhase == ConnectingPhase.INVALID) {
-                    task.result.completeExceptionally(new InvalidOperationException("No connection"));
+                    task.result.completeExceptionally(new IllegalStateException("No connection"));
                     break;
                 }
             case CONNECTING:
@@ -710,7 +710,7 @@ public class EventStore extends AbstractEventStore {
         switch (state) {
             case INIT:
                 if (connectingPhase == ConnectingPhase.INVALID) {
-                    task.result.completeExceptionally(new InvalidOperationException("No connection"));
+                    task.result.completeExceptionally(new IllegalStateException("No connection"));
                     break;
                 }
             case CONNECTING:

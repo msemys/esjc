@@ -47,9 +47,9 @@ public class Transaction implements AutoCloseable {
      */
     public CompletableFuture<WriteResult> commit() {
         if (isRolledBack) {
-            throw new InvalidOperationException("Cannot commit a rolled-back transaction");
+            throw new IllegalStateException("Cannot commit a rolled-back transaction");
         } else if (isCommitted) {
-            throw new InvalidOperationException("Transaction is already committed");
+            throw new IllegalStateException("Transaction is already committed");
         } else {
             isCommitted = true;
             return transactionManager.commit(this, userCredentials);
@@ -64,9 +64,9 @@ public class Transaction implements AutoCloseable {
      */
     public CompletableFuture<Void> write(Iterable<EventData> events) {
         if (isRolledBack) {
-            throw new InvalidOperationException("Cannot write to a rolled-back transaction");
+            throw new IllegalStateException("Cannot write to a rolled-back transaction");
         } else if (isCommitted) {
-            throw new InvalidOperationException("Transaction is already committed");
+            throw new IllegalStateException("Transaction is already committed");
         } else {
             return transactionManager.write(this, events);
         }
@@ -77,7 +77,7 @@ public class Transaction implements AutoCloseable {
      */
     public void rollback() {
         if (isCommitted) {
-            throw new InvalidOperationException("Transaction is already committed");
+            throw new IllegalStateException("Transaction is already committed");
         } else {
             isRolledBack = true;
         }
