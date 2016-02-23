@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
@@ -19,7 +20,7 @@ import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
 import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * Persistent subscription.
@@ -102,7 +103,9 @@ public abstract class PersistentSubscription {
      */
     public void acknowledge(List<ResolvedEvent> events) {
         checkArgument(events.size() <= MAX_EVENTS, "events is limited to %d to ack at a time", MAX_EVENTS);
-        subscription.notifyEventsProcessed(events.stream().map(e -> e.originalEvent().eventId).collect(toList()));
+        subscription.notifyEventsProcessed(events.stream()
+            .map(e -> e.originalEvent().eventId)
+            .collect(toCollection(() -> new ArrayList(events.size()))));
     }
 
     /**
@@ -125,7 +128,11 @@ public abstract class PersistentSubscription {
      */
     public void fail(List<ResolvedEvent> events, PersistentSubscriptionNakEventAction action, String reason) {
         checkArgument(events.size() <= MAX_EVENTS, "events is limited to %d to ack at a time", MAX_EVENTS);
-        subscription.notifyEventsFailed(events.stream().map(e -> e.originalEvent().eventId).collect(toList()), action, reason);
+        subscription.notifyEventsFailed(events.stream()
+                .map(e -> e.originalEvent().eventId)
+                .collect(toCollection(() -> new ArrayList(events.size()))),
+            action,
+            reason);
     }
 
     /**

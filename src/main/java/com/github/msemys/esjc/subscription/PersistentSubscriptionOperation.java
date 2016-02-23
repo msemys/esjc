@@ -17,6 +17,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageLite;
 import io.netty.channel.Channel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +26,7 @@ import java.util.function.Supplier;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.UUIDConverter.toBytes;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toCollection;
 
 public class PersistentSubscriptionOperation extends AbstractSubscriptionOperation<PersistentSubscriptionChannel> implements PersistentSubscriptionProtocol {
     private final String groupName;
@@ -109,7 +110,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
             .setSubscriptionId(subscriptionId)
             .addAllProcessedEventIds(processedEvents.stream()
                 .map(uuid -> ByteString.copyFrom(toBytes(uuid)))
-                .collect(toList()))
+                .collect(toCollection(() -> new ArrayList(processedEvents.size()))))
             .build();
 
         send(TcpPackage.newBuilder()
@@ -131,7 +132,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
             .setSubscriptionId(subscriptionId)
             .addAllProcessedEventIds(processedEvents.stream()
                 .map(uuid -> ByteString.copyFrom(toBytes(uuid)))
-                .collect(toList()))
+                .collect(toCollection(() -> new ArrayList(processedEvents.size()))))
             .setMessage(reason)
             .setAction(NakAction.valueOf(action.name()))
             .build();
