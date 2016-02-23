@@ -58,21 +58,21 @@ public class RecordedEvent {
     /**
      * Creates new instance from proto message.
      *
-     * @param systemRecord event record.
+     * @param eventRecord event record.
      */
-    public RecordedEvent(EventRecord systemRecord) {
-        eventStreamId = systemRecord.getEventStreamId();
+    public RecordedEvent(EventRecord eventRecord) {
+        eventStreamId = eventRecord.getEventStreamId();
 
-        eventId = toUUID(systemRecord.getEventId().toByteArray());
-        eventNumber = systemRecord.getEventNumber();
+        eventId = toUUID(eventRecord.getEventId().toByteArray());
+        eventNumber = eventRecord.getEventNumber();
 
-        eventType = systemRecord.getEventType();
+        eventType = eventRecord.getEventType();
 
-        data = (systemRecord.hasData()) ? systemRecord.getData().toByteArray() : EMPTY_BYTES;
-        metadata = (systemRecord.hasMetadata()) ? systemRecord.getMetadata().toByteArray() : EMPTY_BYTES;
-        isJson = systemRecord.getDataContentType() == 1;
+        data = (eventRecord.hasData()) ? eventRecord.getData().toByteArray() : EMPTY_BYTES;
+        metadata = (eventRecord.hasMetadata()) ? eventRecord.getMetadata().toByteArray() : EMPTY_BYTES;
+        isJson = eventRecord.getDataContentType() == 1;
 
-        created = systemRecord.hasCreatedEpoch() ? Optional.of(ofEpochMilli(systemRecord.getCreatedEpoch())) : Optional.empty();
+        created = eventRecord.hasCreatedEpoch() ? Optional.of(ofEpochMilli(eventRecord.getCreatedEpoch())) : Optional.empty();
     }
 
 }
