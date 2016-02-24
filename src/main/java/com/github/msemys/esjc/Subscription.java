@@ -5,7 +5,7 @@ import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 /**
  * Subscription to a single stream or to the stream of all events in the Event Store.
  */
-public abstract class Subscription {
+public abstract class Subscription implements AutoCloseable {
 
     /**
      * The name of the stream to which the subscription is subscribed.
@@ -42,4 +42,8 @@ public abstract class Subscription {
      */
     public abstract void unsubscribe();
 
+    @Override
+    public void close() throws Exception {
+        unsubscribe();
+    }
 }

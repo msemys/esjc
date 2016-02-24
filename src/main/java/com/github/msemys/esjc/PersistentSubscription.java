@@ -25,7 +25,7 @@ import static java.util.stream.Collectors.toCollection;
 /**
  * Persistent subscription.
  */
-public abstract class PersistentSubscription {
+public abstract class PersistentSubscription implements AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(PersistentSubscription.class);
 
     private static final int MAX_EVENTS = 2000;
@@ -147,6 +147,11 @@ public abstract class PersistentSubscription {
         if (!stopped.await(timeout.toMillis(), TimeUnit.MILLISECONDS)) {
             throw new TimeoutException(String.format("Could not stop %s in time.", getClass().getSimpleName()));
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        stop(Duration.ofSeconds(2));
     }
 
     private void enqueueSubscriptionDropNotification(SubscriptionDropReason reason, Exception exception) {

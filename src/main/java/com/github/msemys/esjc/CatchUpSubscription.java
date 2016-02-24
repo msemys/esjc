@@ -28,7 +28,7 @@ import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
 /**
  * Catch-up subscription.
  */
-public abstract class CatchUpSubscription {
+public abstract class CatchUpSubscription implements AutoCloseable {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
@@ -115,6 +115,11 @@ public abstract class CatchUpSubscription {
 
         shouldStop = true;
         enqueueSubscriptionDropNotification(SubscriptionDropReason.UserInitiated, null);
+    }
+
+    @Override
+    public void close() throws Exception {
+        stop(Duration.ofSeconds(2));
     }
 
     private void onReconnect() {
