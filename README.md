@@ -346,7 +346,7 @@ eventstore.createPersistentSubscription("foo", "group", PersistentSubscriptionSe
     .readBatchSize(500)
     .startFromCurrent()
     .timingStatistics(false)
-    .namedConsumerStrategies(SystemConsumerStrategy.ROUND_ROBIN)
+    .namedConsumerStrategy(SystemConsumerStrategy.ROUND_ROBIN)
     .build()
 ).thenAccept(r -> System.out.println(r.status));
 ```
