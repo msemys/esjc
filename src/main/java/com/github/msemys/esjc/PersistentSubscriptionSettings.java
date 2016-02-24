@@ -83,7 +83,7 @@ public class PersistentSubscriptionSettings {
      *
      * @see SystemConsumerStrategy
      */
-    public SystemConsumerStrategy namedConsumerStrategies;
+    public SystemConsumerStrategy namedConsumerStrategy;
 
     private PersistentSubscriptionSettings(Builder builder) {
         resolveLinkTos = builder.resolveLinkTos;
@@ -98,7 +98,7 @@ public class PersistentSubscriptionSettings {
         minCheckPointCount = builder.minCheckPointCount;
         maxCheckPointCount = builder.maxCheckPointCount;
         maxSubscriberCount = builder.maxSubscriberCount;
-        namedConsumerStrategies = builder.namedConsumerStrategies;
+        namedConsumerStrategy = builder.namedConsumerStrategy;
     }
 
     @Override
@@ -116,7 +116,7 @@ public class PersistentSubscriptionSettings {
         sb.append(", minCheckPointCount=").append(minCheckPointCount);
         sb.append(", maxCheckPointCount=").append(maxCheckPointCount);
         sb.append(", maxSubscriberCount=").append(maxSubscriberCount);
-        sb.append(", namedConsumerStrategies='").append(namedConsumerStrategies).append('\'');
+        sb.append(", namedConsumerStrategy='").append(namedConsumerStrategy).append('\'');
         sb.append('}');
         return sb.toString();
     }
@@ -146,7 +146,7 @@ public class PersistentSubscriptionSettings {
         private Integer minCheckPointCount;
         private Integer maxCheckPointCount;
         private Integer maxSubscriberCount;
-        private SystemConsumerStrategy namedConsumerStrategies;
+        private SystemConsumerStrategy namedConsumerStrategy;
 
         /**
          * Specifies whether or not to resolve link events automatically.
@@ -338,12 +338,12 @@ public class PersistentSubscriptionSettings {
         /**
          * Sets the consumer strategy for distributing event to clients.
          *
-         * @param namedConsumerStrategies the consumer strategy name.
+         * @param namedConsumerStrategy the consumer strategy name.
          * @return the builder reference
          * @see SystemConsumerStrategy
          */
-        public Builder namedConsumerStrategies(SystemConsumerStrategy namedConsumerStrategies) {
-            this.namedConsumerStrategies = namedConsumerStrategies;
+        public Builder namedConsumerStrategy(SystemConsumerStrategy namedConsumerStrategy) {
+            this.namedConsumerStrategy = namedConsumerStrategy;
             return this;
         }
 
@@ -417,8 +417,8 @@ public class PersistentSubscriptionSettings {
                 checkArgument(!isNegative(maxSubscriberCount), "maxSubscriberCount should not be negative.");
             }
 
-            if (namedConsumerStrategies == null) {
-                namedConsumerStrategies = SystemConsumerStrategy.ROUND_ROBIN;
+            if (namedConsumerStrategy == null) {
+                namedConsumerStrategy = SystemConsumerStrategy.ROUND_ROBIN;
             }
 
             return new PersistentSubscriptionSettings(this);

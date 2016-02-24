@@ -41,12 +41,12 @@ public class CreatePersistentSubscriptionOperation extends AbstractOperation<Per
             .setMaxRetryCount(settings.maxRetryCount)
             .setLiveBufferSize(settings.liveBufferSize)
             .setBufferSize(settings.historyBufferSize)
-            .setPreferRoundRobin(settings.namedConsumerStrategies == SystemConsumerStrategy.ROUND_ROBIN)
+            .setPreferRoundRobin(settings.namedConsumerStrategy == SystemConsumerStrategy.ROUND_ROBIN)
             .setCheckpointAfterTime((int) settings.checkPointAfter.toMillis())
             .setCheckpointMinCount(settings.minCheckPointCount)
             .setCheckpointMaxCount(settings.maxCheckPointCount)
             .setSubscriberMaxCount(settings.maxSubscriberCount)
-            .setNamedConsumerStrategy(settings.namedConsumerStrategies.value)
+            .setNamedConsumerStrategy(settings.namedConsumerStrategy.value)
             .build();
     }
 
