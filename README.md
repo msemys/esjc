@@ -2,6 +2,7 @@
 
 This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Netty](http://netty.io/) for network communication and [GSON](https://github.com/google/gson) for object serialization/deserialization to JSON (e.g.: stream metadata, cluster information dto). Client logic implementation is the same as in the original client for .NET platform.
 
+NOTE: connection encryption using SSL is not implemented yet.
 
 ## Requirements
 
@@ -15,7 +16,7 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 <dependency>
     <groupId>com.github.msemys</groupId>
     <artifactId>esjc</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -187,146 +188,146 @@ eventstore.readAllEventsBackward(Position.END, 10, false).thenAccept(e ->
 #### Subscribes to stream (volatile subscription)
 
 ```java
-CompletableFuture<Subscription> subscription = eventstore.subscribeToStream("foo", false, 
-    new SubscriptionListener() {
+CompletableFuture<Subscription> volatileSubscription = eventstore.subscribeToStream("foo", false,
+    new VolatileSubscriptionListener() {
         @Override
-        public void onEvent(ResolvedEvent event) {
+        public void onEvent(Subscription subscription, ResolvedEvent event) {
             System.out.println(event.originalEvent().eventType);
         }
-    
+
         @Override
-        public void onClose(SubscriptionDropReason reason, Exception exception) {
+        public void onClose(Subscription subscription, SubscriptionDropReason reason, Exception exception) {
             System.out.println("Subscription closed: " + reason);
         }
     });
 
-subscription.get().unsubscribe();
+volatileSubscription.get().close();
 ```
 
 ```java
-CompletableFuture<Subscription> subscription = eventstore.subscribeToStream("foo", false, event -> 
-    System.out.println(event.originalEvent().eventType)
+CompletableFuture<Subscription> volatileSubscription = eventstore.subscribeToStream("foo", false, (s, e) ->
+    System.out.println(e.originalEvent().eventType)
 );
 
-subscription.get().unsubscribe();
+volatileSubscription.get().close();
 ```
 
 #### Subscribes to ALL stream (volatile subscription)
 
 ```java
-CompletableFuture<Subscription> subscription = eventstore.subscribeToAll(false,
-    new SubscriptionListener() {
+CompletableFuture<Subscription> volatileSubscription = eventstore.subscribeToAll(false,
+    new VolatileSubscriptionListener() {
         @Override
-        public void onEvent(ResolvedEvent event) {
+        public void onEvent(Subscription subscription, ResolvedEvent event) {
             System.out.println(event.originalEvent().eventType);
         }
 
         @Override
-        public void onClose(SubscriptionDropReason reason, Exception exception) {
+        public void onClose(Subscription subscription, SubscriptionDropReason reason, Exception exception) {
             System.out.println("Subscription closed: " + reason);
         }
     });
 
-subscription.get().unsubscribe();
+volatileSubscription.get().close();
 ```
 
 ```java
-CompletableFuture<Subscription> subscription = eventstore.subscribeToAll(false, event -> 
-    System.out.println(event.originalEvent().eventType)
+CompletableFuture<Subscription> volatileSubscription = eventstore.subscribeToAll(false, (s, e) -> 
+    System.out.println(e.originalEvent().eventType)
 );
 
-subscription.get().unsubscribe();
+volatileSubscription.get().close();
 ```
 
 #### Subscribes to stream from event number (catch-up subscription)
 
 ```java
-CatchUpSubscription subscription = eventstore.subscribeToStreamFrom("foo", 3, false,
+CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3, false,
     new CatchUpSubscriptionListener() {
         @Override
-        public void onLiveProcessingStarted() {
+        public void onLiveProcessingStarted(CatchUpSubscription subscription) {
             System.out.println("Live processing started!");
         }
 
         @Override
-        public void onEvent(ResolvedEvent event) {
+        public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
             System.out.println(event.originalEvent().eventType);
         }
 
         @Override
-        public void onClose(SubscriptionDropReason reason, Exception exception) {
+        public void onClose(CatchUpSubscription subscription, SubscriptionDropReason reason, Exception exception) {
             System.out.println("Subscription closed: " + reason);
         }
     });
 
-subscription.stop();
+catchupSubscription.close();
 ```
 
 ```java
-CatchUpSubscription subscription = eventstore.subscribeToStreamFrom("foo", 3, false, event ->
-    System.out.println(event.originalEvent().eventType)
+CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3, false, (s, e) ->
+    System.out.println(e.originalEvent().eventType)
 );
 
-subscription.stop();
+catchupSubscription.close();
 ```
 
 #### Subscribes to ALL stream from event position (catch-up subscription)
 
 ```java
-CatchUpSubscription subscription = eventstore.subscribeToAllFrom(Position.START, false,
+CatchUpSubscription catchupSubscription = eventstore.subscribeToAllFrom(Position.START, false,
     new CatchUpSubscriptionListener() {
         @Override
-        public void onLiveProcessingStarted() {
+        public void onLiveProcessingStarted(CatchUpSubscription subscription) {
             System.out.println("Live processing started!");
         }
 
         @Override
-        public void onEvent(ResolvedEvent event) {
+        public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
             System.out.println(event.originalEvent().eventType);
         }
 
         @Override
-        public void onClose(SubscriptionDropReason reason, Exception exception) {
+        public void onClose(CatchUpSubscription subscription, SubscriptionDropReason reason, Exception exception) {
             System.out.println("Subscription closed: " + reason);
         }
     });
 
-subscription.stop();
+catchupSubscription.close();
 ```
 
 ```java
-CatchUpSubscription subscription = eventstore.subscribeToAllFrom(Position.of(1, 1), false, event ->
-    System.out.println(event.originalEvent().eventType)
+CatchUpSubscription catchupSubscription = eventstore.subscribeToAllFrom(Position.of(1, 1), false, (s, e) ->
+    System.out.println(e.originalEvent().eventType)
 );
 
-subscription.stop();
+catchupSubscription.close();
 ```
 
 #### Subscribes to persistent subscription
 
 ```java
-PersistentSubscription subscription = eventstore.subscribeToPersistent("foo", "group", 
-    new SubscriptionListener() {
+PersistentSubscription persistentSubscription = eventstore.subscribeToPersistent("foo", "group", 
+    new PersistentSubscriptionListener() {
         @Override
-        public void onEvent(ResolvedEvent event) {
+        public void onEvent(PersistentSubscription subscription, ResolvedEvent event) {
             System.out.println(event.originalEvent().eventType);
         }
     
         @Override
-        public void onClose(SubscriptionDropReason reason, Exception exception) {
+        public void onClose(PersistentSubscription subscription, SubscriptionDropReason reason, Exception exception) {
             System.out.println("Subscription closed: " + reason);
         }
     });
 
-subscription.stop(Duration.ofSeconds(3));
+persistentSubscription.close();
 ```
 
 ```java
-PersistentSubscription subscription = eventstore.subscribeToPersistent("foo", "group", event ->
-    System.out.println(event.originalEvent().eventType)
+PersistentSubscription persistentSubscription = eventstore.subscribeToPersistent("foo", "group", (s, e) ->
+    System.out.println(e.originalEvent().eventType)
 );
 
-subscription.stop(Duration.ofSeconds(3));
+persistentSubscription.stop(Duration.ofSeconds(3));
 ```
 
 #### Creates persistent subscription
@@ -345,7 +346,7 @@ eventstore.createPersistentSubscription("foo", "group", PersistentSubscriptionSe
     .readBatchSize(500)
     .startFromCurrent()
     .timingStatistics(false)
-    .namedConsumerStrategies(SystemConsumerStrategies.ROUND_ROBIN)
+    .namedConsumerStrategies(SystemConsumerStrategy.ROUND_ROBIN)
     .build()
 ).thenAccept(r -> System.out.println(r.status));
 ```
