@@ -3,17 +3,17 @@ package com.github.msemys.esjc.system;
 /**
  * System supported consumer strategies for use with persistent subscriptions.
  */
-public class SystemConsumerStrategies {
+public enum SystemConsumerStrategy {
 
     /**
      * Distributes events to a single client until it is full. Then round robin to the next client.
      */
-    public static final String DISPATCH_TO_SINGLE = "DispatchToSingle";
+    DISPATCH_TO_SINGLE("DispatchToSingle"),
 
     /**
      * Distribute events to each client in a round robin fashion.
      */
-    public static final String ROUND_ROBIN = "RoundRobin";
+    ROUND_ROBIN("RoundRobin"),
 
     /**
      * Distribute events of the same streamId to the same client until it disconnects on a best efforts basis.
@@ -21,9 +21,12 @@ public class SystemConsumerStrategies {
      * Designed to be used with indexes such as the category projection.
      * </p>
      */
-    public static final String PINNED = "Pinned";
+    PINNED("Pinned");
 
-    private SystemConsumerStrategies() {
+    public final String value;
+
+    SystemConsumerStrategy(String value) {
+        this.value = value;
     }
 
 }

@@ -6,7 +6,7 @@ import com.github.msemys.esjc.PersistentSubscriptionUpdateStatus;
 import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.UpdatePersistentSubscription;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.UpdatePersistentSubscriptionCompleted;
-import com.github.msemys.esjc.system.SystemConsumerStrategies;
+import com.github.msemys.esjc.system.SystemConsumerStrategy;
 import com.github.msemys.esjc.tcp.TcpCommand;
 import com.google.protobuf.MessageLite;
 
@@ -41,12 +41,12 @@ public class UpdatePersistentSubscriptionOperation extends AbstractOperation<Per
             .setMaxRetryCount(settings.maxRetryCount)
             .setLiveBufferSize(settings.liveBufferSize)
             .setBufferSize(settings.historyBufferSize)
-            .setPreferRoundRobin(settings.namedConsumerStrategies.equals(SystemConsumerStrategies.ROUND_ROBIN))
+            .setPreferRoundRobin(settings.namedConsumerStrategies == SystemConsumerStrategy.ROUND_ROBIN)
             .setCheckpointAfterTime((int) settings.checkPointAfter.toMillis())
             .setCheckpointMinCount(settings.minCheckPointCount)
             .setCheckpointMaxCount(settings.maxCheckPointCount)
             .setSubscriberMaxCount(settings.maxSubscriberCount)
-            .setNamedConsumerStrategy(settings.namedConsumerStrategies)
+            .setNamedConsumerStrategy(settings.namedConsumerStrategies.value)
             .build();
     }
 

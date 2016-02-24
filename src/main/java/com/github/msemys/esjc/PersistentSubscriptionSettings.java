@@ -1,13 +1,12 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.system.SystemConsumerStrategies;
+import com.github.msemys.esjc.system.SystemConsumerStrategy;
 
 import java.time.Duration;
 
 import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
-import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 
 /**
  * Persistent subscription settings.
@@ -82,9 +81,9 @@ public class PersistentSubscriptionSettings {
     /**
      * The strategy to use for distributing events to client consumers.
      *
-     * @see SystemConsumerStrategies
+     * @see SystemConsumerStrategy
      */
-    public String namedConsumerStrategies;
+    public SystemConsumerStrategy namedConsumerStrategies;
 
     private PersistentSubscriptionSettings(Builder builder) {
         resolveLinkTos = builder.resolveLinkTos;
@@ -147,7 +146,7 @@ public class PersistentSubscriptionSettings {
         private Integer minCheckPointCount;
         private Integer maxCheckPointCount;
         private Integer maxSubscriberCount;
-        private String namedConsumerStrategies;
+        private SystemConsumerStrategy namedConsumerStrategies;
 
         /**
          * Specifies whether or not to resolve link events automatically.
@@ -341,9 +340,9 @@ public class PersistentSubscriptionSettings {
          *
          * @param namedConsumerStrategies the consumer strategy name.
          * @return the builder reference
-         * @see SystemConsumerStrategies
+         * @see SystemConsumerStrategy
          */
-        public Builder namedConsumerStrategies(String namedConsumerStrategies) {
+        public Builder namedConsumerStrategies(SystemConsumerStrategy namedConsumerStrategies) {
             this.namedConsumerStrategies = namedConsumerStrategies;
             return this;
         }
@@ -419,9 +418,7 @@ public class PersistentSubscriptionSettings {
             }
 
             if (namedConsumerStrategies == null) {
-                namedConsumerStrategies = SystemConsumerStrategies.ROUND_ROBIN;
-            } else {
-                checkArgument(!isNullOrEmpty(namedConsumerStrategies), "namedConsumerStrategies");
+                namedConsumerStrategies = SystemConsumerStrategy.ROUND_ROBIN;
             }
 
             return new PersistentSubscriptionSettings(this);
