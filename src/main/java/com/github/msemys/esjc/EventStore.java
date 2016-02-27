@@ -9,7 +9,7 @@ import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.operation.manager.OperationItem;
 import com.github.msemys.esjc.subscription.*;
 import com.github.msemys.esjc.subscription.manager.SubscriptionItem;
-import com.github.msemys.esjc.system.SystemEventTypes;
+import com.github.msemys.esjc.system.SystemEventType;
 import com.github.msemys.esjc.system.SystemStreams;
 import com.github.msemys.esjc.task.*;
 import com.github.msemys.esjc.tcp.ChannelId;
@@ -332,7 +332,7 @@ public class EventStore extends AbstractEventStore {
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
 
         EventData metaevent = EventData.newBuilder()
-            .type(SystemEventTypes.STREAM_METADATA)
+            .type(SystemEventType.STREAM_METADATA.value)
             .jsonData(metadata)
             .build();
 
@@ -402,7 +402,7 @@ public class EventStore extends AbstractEventStore {
         return appendToStream(SystemStreams.SETTINGS_STREAM,
             ExpectedVersion.any(),
             asList(EventData.newBuilder()
-                .type(SystemEventTypes.SETTINGS)
+                .type(SystemEventType.SETTINGS.value)
                 .jsonData(settings.toJson())
                 .build()),
             userCredentials);
