@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.system.SystemMetadata;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -13,15 +12,20 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class StreamAclJsonAdapter extends TypeAdapter<StreamAcl> {
+    private static final String ACL_READ = "$r";
+    private static final String ACL_WRITE = "$w";
+    private static final String ACL_DELETE = "$d";
+    private static final String ACL_META_READ = "$mr";
+    private static final String ACL_META_WRITE = "$mw";
 
     @Override
     public void write(JsonWriter writer, StreamAcl value) throws IOException {
         writer.beginObject();
-        writeRoles(writer, SystemMetadata.ACL_READ, value.readRoles);
-        writeRoles(writer, SystemMetadata.ACL_WRITE, value.writeRoles);
-        writeRoles(writer, SystemMetadata.ACL_DELETE, value.deleteRoles);
-        writeRoles(writer, SystemMetadata.ACL_META_READ, value.metaReadRoles);
-        writeRoles(writer, SystemMetadata.ACL_META_WRITE, value.metaWriteRoles);
+        writeRoles(writer, ACL_READ, value.readRoles);
+        writeRoles(writer, ACL_WRITE, value.writeRoles);
+        writeRoles(writer, ACL_DELETE, value.deleteRoles);
+        writeRoles(writer, ACL_META_READ, value.metaReadRoles);
+        writeRoles(writer, ACL_META_WRITE, value.metaWriteRoles);
         writer.endObject();
     }
 
@@ -38,19 +42,19 @@ public class StreamAclJsonAdapter extends TypeAdapter<StreamAcl> {
         while (reader.peek() != JsonToken.END_OBJECT && reader.hasNext()) {
             String name = reader.nextName();
             switch (name) {
-                case SystemMetadata.ACL_READ:
+                case ACL_READ:
                     readRoles = readRoles(reader);
                     break;
-                case SystemMetadata.ACL_WRITE:
+                case ACL_WRITE:
                     writeRoles = readRoles(reader);
                     break;
-                case SystemMetadata.ACL_DELETE:
+                case ACL_DELETE:
                     deleteRoles = readRoles(reader);
                     break;
-                case SystemMetadata.ACL_META_READ:
+                case ACL_META_READ:
                     metaReadRoles = readRoles(reader);
                     break;
-                case SystemMetadata.ACL_META_WRITE:
+                case ACL_META_WRITE:
                     metaWriteRoles = readRoles(reader);
                     break;
             }

@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.system.SystemMetadata;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -9,6 +8,9 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 public class SystemSettingsJsonAdapter extends TypeAdapter<SystemSettings> {
+    private static final String USER_STREAM_ACL = "$userStreamAcl";
+    private static final String SYSTEM_STREAM_ACL = "$systemStreamAcl";
+
     private final StreamAclJsonAdapter streamAclJsonAdapter = new StreamAclJsonAdapter();
 
     @Override
@@ -16,12 +18,12 @@ public class SystemSettingsJsonAdapter extends TypeAdapter<SystemSettings> {
         writer.beginObject();
 
         if (value.userStreamAcl != null) {
-            writer.name(SystemMetadata.USER_STREAM_ACL);
+            writer.name(USER_STREAM_ACL);
             streamAclJsonAdapter.write(writer, value.userStreamAcl);
         }
 
         if (value.systemStreamAcl != null) {
-            writer.name(SystemMetadata.SYSTEM_STREAM_ACL);
+            writer.name(SYSTEM_STREAM_ACL);
             streamAclJsonAdapter.write(writer, value.systemStreamAcl);
         }
 
@@ -42,10 +44,10 @@ public class SystemSettingsJsonAdapter extends TypeAdapter<SystemSettings> {
         while (reader.peek() != JsonToken.END_OBJECT && reader.hasNext()) {
             String name = reader.nextName();
             switch (name) {
-                case SystemMetadata.USER_STREAM_ACL:
+                case USER_STREAM_ACL:
                     userStreamAcl = streamAclJsonAdapter.read(reader);
                     break;
-                case SystemMetadata.SYSTEM_STREAM_ACL:
+                case SYSTEM_STREAM_ACL:
                     systemStreamAcl = streamAclJsonAdapter.read(reader);
                     break;
             }

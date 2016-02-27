@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.system.SystemMetadata;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -10,6 +9,12 @@ import java.io.IOException;
 import java.time.Duration;
 
 public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
+    private static final String MAX_AGE = "$maxAge";
+    private static final String MAX_COUNT = "$maxCount";
+    private static final String TRUNCATE_BEFORE = "$tb";
+    private static final String CACHE_CONTROL = "$cacheControl";
+    private static final String ACL = "$acl";
+
     private final StreamAclJsonAdapter streamAclJsonAdapter = new StreamAclJsonAdapter();
 
     @Override
@@ -17,23 +22,23 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
         writer.beginObject();
 
         if (value.maxCount != null) {
-            writer.name(SystemMetadata.MAX_COUNT).value(value.maxCount);
+            writer.name(MAX_COUNT).value(value.maxCount);
         }
 
         if (value.maxAge != null) {
-            writer.name(SystemMetadata.MAX_AGE).value(value.maxAge.getSeconds());
+            writer.name(MAX_AGE).value(value.maxAge.getSeconds());
         }
 
         if (value.truncateBefore != null) {
-            writer.name(SystemMetadata.TRUNCATE_BEFORE).value(value.truncateBefore);
+            writer.name(TRUNCATE_BEFORE).value(value.truncateBefore);
         }
 
         if (value.cacheControl != null) {
-            writer.name(SystemMetadata.CACHE_CONTROL).value(value.cacheControl.getSeconds());
+            writer.name(CACHE_CONTROL).value(value.cacheControl.getSeconds());
         }
 
         if (value.acl != null) {
-            writer.name(SystemMetadata.ACL);
+            writer.name(ACL);
             streamAclJsonAdapter.write(writer, value.acl);
         }
 
@@ -59,19 +64,19 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
         while (reader.peek() != JsonToken.END_OBJECT && reader.hasNext()) {
             String name = reader.nextName();
             switch (name) {
-                case SystemMetadata.MAX_COUNT:
+                case MAX_COUNT:
                     builder.maxCount(reader.nextInt());
                     break;
-                case SystemMetadata.MAX_AGE:
+                case MAX_AGE:
                     builder.maxAge(Duration.ofSeconds(reader.nextLong()));
                     break;
-                case SystemMetadata.TRUNCATE_BEFORE:
+                case TRUNCATE_BEFORE:
                     builder.truncateBefore(reader.nextInt());
                     break;
-                case SystemMetadata.CACHE_CONTROL:
+                case CACHE_CONTROL:
                     builder.cacheControl(Duration.ofSeconds(reader.nextLong()));
                     break;
-                case SystemMetadata.ACL:
+                case ACL:
                     StreamAcl acl = streamAclJsonAdapter.read(reader);
                     if (acl != null) {
                         builder.aclReadRoles(acl.readRoles);
