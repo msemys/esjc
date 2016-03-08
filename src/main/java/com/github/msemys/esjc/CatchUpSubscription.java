@@ -95,7 +95,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
     protected abstract void tryProcess(ResolvedEvent event);
 
     void start() {
-        logger.trace("Catch-up Subscription to {}: starting...", streamId());
+        logger.trace("Catch-up subscription to {}: starting...", streamId());
         runSubscription();
     }
 
@@ -108,9 +108,9 @@ public abstract class CatchUpSubscription implements AutoCloseable {
     }
 
     public void stop() {
-        logger.trace("Catch-up Subscription to {}: requesting stop...", streamId());
+        logger.trace("Catch-up subscription to {}: requesting stop...", streamId());
 
-        logger.trace("Catch-up Subscription to {}: unhooking from connection. Connected.", streamId());
+        logger.trace("Catch-up subscription to {}: unhooking from connection. Connected.", streamId());
         eventstore.removeListener(reconnectionHook);
 
         shouldStop = true;
@@ -123,9 +123,9 @@ public abstract class CatchUpSubscription implements AutoCloseable {
     }
 
     private void onReconnect() {
-        logger.trace("Catch-up Subscription to {}: recovering after reconnection.", streamId());
+        logger.trace("Catch-up subscription to {}: recovering after reconnection.", streamId());
 
-        logger.trace("Catch-up Subscription to {}: unhooking from connection. Connected.", streamId());
+        logger.trace("Catch-up subscription to {}: unhooking from connection. Connected.", streamId());
         eventstore.removeListener(reconnectionHook);
 
         runSubscription();
@@ -133,23 +133,23 @@ public abstract class CatchUpSubscription implements AutoCloseable {
 
     private void runSubscription() {
         executor.execute(() -> {
-            logger.trace("Catch-up Subscription to {}: running...", streamId());
+            logger.trace("Catch-up subscription to {}: running...", streamId());
 
             stopped.reset();
 
             try {
                 if (!shouldStop) {
-                    logger.trace("Catch-up Subscription to {}: pulling events...", streamId());
+                    logger.trace("Catch-up subscription to {}: pulling events...", streamId());
                     readEventsTill(eventstore, resolveLinkTos, userCredentials, null, null);
                 }
 
                 if (!shouldStop) {
-                    logger.trace("Catch-up Subscription to {}: subscribing...", streamId());
+                    logger.trace("Catch-up subscription to {}: subscribing...", streamId());
 
                     VolatileSubscriptionListener subscriptionListener = new VolatileSubscriptionListener() {
                         @Override
                         public void onEvent(Subscription s, ResolvedEvent event) {
-                            logger.trace("Catch-up Subscription to {}: event appeared ({}, {}, {} @ {}).",
+                            logger.trace("Catch-up subscription to {}: event appeared ({}, {}, {} @ {}).",
                                 streamId(), event.originalStreamId(), event.originalEventNumber(),
                                 event.originalEvent().eventType, event.originalPosition);
 
@@ -174,7 +174,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                         eventstore.subscribeToAll(resolveLinkTos, subscriptionListener, userCredentials).get() :
                         eventstore.subscribeToStream(streamId, resolveLinkTos, subscriptionListener, userCredentials).get();
 
-                    logger.trace("Catch-up Subscription to {}: pulling events (if left)...", streamId());
+                    logger.trace("Catch-up subscription to {}: pulling events (if left)...", streamId());
                     readEventsTill(eventstore, resolveLinkTos, userCredentials, subscription.lastCommitPosition, subscription.lastEventNumber);
                 }
             } catch (Exception e) {
@@ -187,10 +187,10 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                 return;
             }
 
-            logger.trace("Catch-up Subscription to {}: processing live events...", streamId());
+            logger.trace("Catch-up subscription to {}: processing live events...", streamId());
             listener.onLiveProcessingStarted(this);
 
-            logger.trace("Catch-up Subscription to {}: hooking to connection. Connected", streamId());
+            logger.trace("Catch-up subscription to {}: hooking to connection. Connected", streamId());
             eventstore.addListener(reconnectionHook);
 
             allowProcessing = true;
@@ -245,7 +245,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
 
     private void dropSubscription(SubscriptionDropReason reason, Exception exception) {
         if (isDropped.compareAndSet(false, true)) {
-            logger.trace("Catch-up Subscription to {}: dropping subscription, reason: {}.", streamId(), reason, exception);
+            logger.trace("Catch-up subscription to {}: dropping subscription, reason: {}.", streamId(), reason, exception);
 
             if (subscription != null) {
                 subscription.unsubscribe();

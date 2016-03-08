@@ -142,7 +142,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
      * @throws TimeoutException when timeouts
      */
     public void stop(Duration timeout) throws TimeoutException {
-        logger.trace("Persistent Subscription to {}: requesting stop...", streamId);
+        logger.trace("Persistent subscription to {}: requesting stop...", streamId);
         enqueueSubscriptionDropNotification(SubscriptionDropReason.UserInitiated, null);
         if (!stopped.await(timeout.toMillis(), TimeUnit.MILLISECONDS)) {
             throw new TimeoutException(String.format("Could not stop %s in time.", getClass().getSimpleName()));
@@ -198,7 +198,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
                         subscription.notifyEventsProcessed(asList(event.originalEvent().eventId));
                     }
 
-                    logger.trace("Persistent Subscription to {}: processed event ({}, {}, {} @ {}).", streamId,
+                    logger.trace("Persistent subscription to {}: processed event ({}, {}, {} @ {}).", streamId,
                         event.originalEvent().eventStreamId, event.originalEvent().eventNumber,
                         event.originalEvent().eventType, event.originalEventNumber());
                 } catch (Exception e) {
@@ -212,7 +212,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
 
     private void dropSubscription(SubscriptionDropReason reason, Exception exception) {
         if (isDropped.compareAndSet(false, true)) {
-            logger.trace("Persistent Subscription to {}: dropping subscription, reason: {}", streamId, reason, exception);
+            logger.trace("Persistent subscription to {}: dropping subscription, reason: {}", streamId, reason, exception);
 
             if (subscription != null) {
                 subscription.unsubscribe();

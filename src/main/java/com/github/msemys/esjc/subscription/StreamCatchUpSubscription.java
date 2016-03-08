@@ -62,7 +62,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
             }
         } while (!done && !shouldStop);
 
-        logger.trace("Catch-up Subscription to {}: finished reading events, nextReadEventNumber = {}.", streamId(), nextReadEventNumber);
+        logger.trace("Catch-up subscription to {}: finished reading events, nextReadEventNumber = {}.", streamId(), nextReadEventNumber);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
             processed = true;
         }
 
-        logger.trace("Catch-up Subscription to {}: {} event ({}, {}, {} @ {}).", streamId(), processed ? "processed" : "skipping",
+        logger.trace("Catch-up subscription to {}: {} event ({}, {}, {} @ {}).", streamId(), processed ? "processed" : "skipping",
             event.originalEvent().eventStreamId, event.originalEvent().eventNumber, event.originalEvent().eventType, event.originalEventNumber());
     }
 
