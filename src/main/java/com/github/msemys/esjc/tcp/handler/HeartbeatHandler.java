@@ -34,14 +34,16 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TcpPackage> {
                     .build());
                 break;
             case HeartbeatResponseCommand:
-                if (timeoutTask != null) {
-                    timeoutTask.cancel(true);
-                    timeoutTask = null;
-                }
+                cancelTimeoutTask();
                 break;
             default:
                 ctx.fireChannelRead(msg);
         }
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        cancelTimeoutTask();
     }
 
     @Override
@@ -55,6 +57,13 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TcpPackage> {
                 logger.info("Closing TCP connection [{}, L{}] due to HEARTBEAT TIMEOUT.", ctx.channel().remoteAddress(), ctx.channel().localAddress());
                 ctx.close();
             }, timeoutMillis, MILLISECONDS);
+        }
+    }
+
+    private void cancelTimeoutTask() {
+        if (timeoutTask != null) {
+            timeoutTask.cancel(true);
+            timeoutTask = null;
         }
     }
 
