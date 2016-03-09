@@ -3,6 +3,7 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.event.Event;
 import com.github.msemys.esjc.node.NodeEndpoints;
 import com.github.msemys.esjc.operation.manager.OperationManager;
+import com.github.msemys.esjc.ssl.CommonNameTrustManagerFactory;
 import com.github.msemys.esjc.subscription.manager.SubscriptionManager;
 import com.github.msemys.esjc.tcp.TcpPackage;
 import com.github.msemys.esjc.tcp.TcpPackageDecoder;
@@ -18,6 +19,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
@@ -66,6 +70,15 @@ abstract class AbstractEventStore {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
                     ChannelPipeline pipeline = ch.pipeline();
+
+                    if (settings.sslSettings.useSslConnection) {
+                        SslContext sslContext = SslContextBuilder.forClient()
+                            .trustManager(settings.sslSettings.validateServerCertificate ?
+                                new CommonNameTrustManagerFactory(settings.sslSettings.certificateCommonName) :
+                                InsecureTrustManagerFactory.INSTANCE)
+                            .build();
+                        pipeline.addLast("ssl", sslContext.newHandler(ch.alloc()));
+                    }
 
                     // decoder
                     pipeline.addLast("frame-decoder", new LengthFieldBasedFrameDecoder(LITTLE_ENDIAN, MAX_FRAME_LENGTH, 0, 4, 0, 4, true));

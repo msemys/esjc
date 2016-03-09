@@ -60,7 +60,7 @@ public class EventStore extends AbstractEventStore {
         super(settings);
 
         if (settings.staticNodeSettings.isPresent()) {
-            discoverer = new StaticEndpointDiscoverer(settings.staticNodeSettings.get(), settings.ssl);
+            discoverer = new StaticEndpointDiscoverer(settings.staticNodeSettings.get(), settings.sslSettings.useSslConnection);
         } else if (settings.clusterNodeSettings.isPresent()) {
             discoverer = new ClusterDnsEndpointDiscoverer(settings.clusterNodeSettings.get(), group);
         } else {
@@ -513,7 +513,7 @@ public class EventStore extends AbstractEventStore {
     }
 
     private void reconnectTo(NodeEndpoints endpoints) {
-        InetSocketAddress endpoint = (settings.ssl && endpoints.secureTcpEndpoint != null) ?
+        InetSocketAddress endpoint = (settings.sslSettings.useSslConnection && endpoints.secureTcpEndpoint != null) ?
             endpoints.secureTcpEndpoint : endpoints.tcpEndpoint;
 
         if (endpoint == null) {
@@ -595,7 +595,7 @@ public class EventStore extends AbstractEventStore {
     }
 
     private void handle(EstablishTcpConnection task) {
-        InetSocketAddress endpoint = (settings.ssl && task.endpoints.secureTcpEndpoint != null) ?
+        InetSocketAddress endpoint = (settings.sslSettings.useSslConnection && task.endpoints.secureTcpEndpoint != null) ?
             task.endpoints.secureTcpEndpoint : task.endpoints.tcpEndpoint;
 
         if (endpoint == null) {

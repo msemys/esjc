@@ -3,6 +3,7 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.cluster.GossipSeed;
 import com.github.msemys.esjc.node.static_.StaticNodeSettings;
+import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
 
 import java.net.InetSocketAddress;
@@ -262,22 +263,23 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Enable connection encryption using SSL.
+     * Enables connection encryption using SSL and trusts an X.509 server certificate whose Common Name (CN) matches.
      *
+     * @param certificateCommonName server certificate common name (CN)
      * @return the builder reference
      */
-    public EventStoreBuilder sslEnabled() {
-        settingsBuilder.ssl(true);
+    public EventStoreBuilder useSslConnection(String certificateCommonName) {
+        settingsBuilder.sslSettings(SslSettings.trustCertificateCN(certificateCommonName));
         return this;
     }
 
     /**
-     * Disable connection encryption using SSL.
+     * Enables connection encryption using SSL and trusts all X.509 server certificates without any verification.
      *
      * @return the builder reference
      */
-    public EventStoreBuilder sslDisabled() {
-        settingsBuilder.ssl(false);
+    public EventStoreBuilder useSslConnectionWithAnyCertificate() {
+        settingsBuilder.sslSettings(SslSettings.trustAllCertificates());
         return this;
     }
 

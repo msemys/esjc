@@ -2,6 +2,7 @@ package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.static_.StaticNodeSettings;
+import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
 
 import java.time.Duration;
@@ -32,9 +33,9 @@ public class Settings {
     public final Optional<ClusterNodeSettings> clusterNodeSettings;
 
     /**
-     * Whether or not the connection is encrypted using SSL.
+     * SSL settings.
      */
-    public final boolean ssl;
+    public final SslSettings sslSettings;
 
     /**
      * The amount of time to delay before attempting to reconnect.
@@ -134,7 +135,7 @@ public class Settings {
         tcpSettings = builder.tcpSettings;
         staticNodeSettings = Optional.ofNullable(builder.staticNodeSettings);
         clusterNodeSettings = Optional.ofNullable(builder.clusterNodeSettings);
-        ssl = builder.ssl;
+        sslSettings = builder.sslSettings;
         reconnectionDelay = builder.reconnectionDelay;
         heartbeatInterval = builder.heartbeatInterval;
         heartbeatTimeout = builder.heartbeatTimeout;
@@ -161,7 +162,7 @@ public class Settings {
         sb.append("tcpSettings=").append(tcpSettings);
         sb.append(", staticNodeSettings=").append(staticNodeSettings);
         sb.append(", clusterNodeSettings=").append(clusterNodeSettings);
-        sb.append(", ssl=").append(ssl);
+        sb.append(", sslSettings=").append(sslSettings);
         sb.append(", reconnectionDelay=").append(reconnectionDelay);
         sb.append(", heartbeatInterval=").append(heartbeatInterval);
         sb.append(", heartbeatTimeout=").append(heartbeatTimeout);
@@ -200,7 +201,7 @@ public class Settings {
         private TcpSettings tcpSettings;
         private StaticNodeSettings staticNodeSettings;
         private ClusterNodeSettings clusterNodeSettings;
-        private Boolean ssl;
+        private SslSettings sslSettings;
         private Duration reconnectionDelay;
         private Duration heartbeatInterval;
         private Duration heartbeatTimeout;
@@ -257,13 +258,13 @@ public class Settings {
         }
 
         /**
-         * Specifies whether or not the connection is encrypted using SSL.
+         * Sets SSL settings.
          *
-         * @param ssl {@code true} to enable ssl.
+         * @param sslSettings ssl settings.
          * @return the builder reference
          */
-        public Builder ssl(boolean ssl) {
-            this.ssl = ssl;
+        public Builder sslSettings(SslSettings sslSettings) {
+            this.sslSettings = sslSettings;
             return this;
         }
 
@@ -484,8 +485,8 @@ public class Settings {
                 tcpSettings = TcpSettings.newBuilder().build();
             }
 
-            if (ssl == null) {
-                ssl = false;
+            if (sslSettings == null) {
+                sslSettings = SslSettings.noSsl();
             }
 
             if (reconnectionDelay == null) {
