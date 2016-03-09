@@ -4,11 +4,15 @@ import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.static_.StaticNodeSettings;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
+import com.github.msemys.esjc.util.concurrent.DefaultThreadFactory;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 
@@ -122,14 +126,9 @@ public class Settings {
     public final boolean failOnNoServerResponse;
 
     /**
-     * The minimum number of client thread pool size.
+     * The executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
      */
-    public final int minThreadPoolSize;
-
-    /**
-     * The maximum number of client thread pool size.
-     */
-    public final int maxThreadPoolSize;
+    public final Executor executor;
 
     private Settings(Builder builder) {
         tcpSettings = builder.tcpSettings;
@@ -152,8 +151,7 @@ public class Settings {
         persistentSubscriptionBufferSize = builder.persistentSubscriptionBufferSize;
         persistentSubscriptionAutoAckEnabled = builder.persistentSubscriptionAutoAckEnabled;
         failOnNoServerResponse = builder.failOnNoServerResponse;
-        minThreadPoolSize = builder.minThreadPoolSize;
-        maxThreadPoolSize = builder.maxThreadPoolSize;
+        executor = builder.executor;
     }
 
     @Override
@@ -179,8 +177,7 @@ public class Settings {
         sb.append(", persistentSubscriptionBufferSize=").append(persistentSubscriptionBufferSize);
         sb.append(", persistentSubscriptionAutoAckEnabled=").append(persistentSubscriptionAutoAckEnabled);
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
-        sb.append(", minThreadPoolSize=").append(minThreadPoolSize);
-        sb.append(", maxThreadPoolSize=").append(maxThreadPoolSize);
+        sb.append(", executor=").append(executor);
         sb.append('}');
         return sb.toString();
     }
@@ -218,8 +215,7 @@ public class Settings {
         private Integer persistentSubscriptionBufferSize;
         private Boolean persistentSubscriptionAutoAckEnabled;
         private Boolean failOnNoServerResponse;
-        private Integer minThreadPoolSize;
-        private Integer maxThreadPoolSize;
+        private Executor executor;
 
         private Builder() {
         }
@@ -451,24 +447,13 @@ public class Settings {
         }
 
         /**
-         * Sets the minimum number of client thread pool size.
+         * Sets the executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
          *
-         * @param minThreadPoolSize the minimum number of client thread pool size.
+         * @param executor the executor to execute client internal tasks and run subscriptions.
          * @return the builder reference
          */
-        public Builder minThreadPoolSize(int minThreadPoolSize) {
-            this.minThreadPoolSize = minThreadPoolSize;
-            return this;
-        }
-
-        /**
-         * Sets the maximum number of client thread pool size.
-         *
-         * @param maxThreadPoolSize the maximum number of client thread pool size.
-         * @return the builder reference
-         */
-        public Builder maxThreadPoolSize(int maxThreadPoolSize) {
-            this.maxThreadPoolSize = maxThreadPoolSize;
+        public Builder executor(Executor executor) {
+            this.executor = executor;
             return this;
         }
 
@@ -563,16 +548,11 @@ public class Settings {
                 failOnNoServerResponse = false;
             }
 
-            if (minThreadPoolSize == null) {
-                minThreadPoolSize = 2;
-            } else {
-                checkArgument(!isNegative(minThreadPoolSize), "minThreadPoolSize should not be negative");
-            }
-
-            if (maxThreadPoolSize == null) {
-                maxThreadPoolSize = Runtime.getRuntime().availableProcessors() * 2;
-            } else {
-                checkArgument(isPositive(maxThreadPoolSize), "maxThreadPoolSize should be positive");
+            if (executor == null) {
+                executor = new ThreadPoolExecutor(2, Integer.MAX_VALUE,
+                    60L, TimeUnit.SECONDS,
+                    new SynchronousQueue<>(),
+                    new DefaultThreadFactory("es"));
             }
 
             return new Settings(this);

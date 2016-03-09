@@ -9,6 +9,7 @@ import com.github.msemys.esjc.tcp.TcpSettings;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
@@ -515,24 +516,13 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the minimum number of client thread pool size.
+     * Sets the executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
      *
-     * @param size the minimum number of client thread pool size.
+     * @param executor the executor to execute client internal tasks and run subscriptions.
      * @return the builder reference
      */
-    public EventStoreBuilder minThreadPoolSize(int size) {
-        settingsBuilder.minThreadPoolSize(size);
-        return this;
-    }
-
-    /**
-     * Sets the maximum number of client thread pool size.
-     *
-     * @param size the maximum number of client thread pool size.
-     * @return the builder reference
-     */
-    public EventStoreBuilder maxThreadPoolSize(int size) {
-        settingsBuilder.maxThreadPoolSize(size);
+    public EventStoreBuilder executor(Executor executor) {
+        this.settingsBuilder.executor(executor);
         return this;
     }
 

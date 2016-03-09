@@ -26,8 +26,9 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.util.Set;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.toBytes;
@@ -41,7 +42,6 @@ abstract class AbstractEventStore {
 
     protected enum ConnectingPhase {INVALID, RECONNECTING, ENDPOINT_DISCOVERY, CONNECTION_ESTABLISHING, AUTHENTICATION, CONNECTED}
 
-    protected final Executor executor;
     protected final EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("esio"));
     protected final Bootstrap bootstrap;
     protected final OperationManager operationManager;
@@ -98,11 +98,6 @@ abstract class AbstractEventStore {
                         .whenReconnect(AbstractEventStore.this::onReconnect));
                 }
             });
-
-        executor = new ThreadPoolExecutor(settings.minThreadPoolSize, settings.maxThreadPoolSize,
-            90L, TimeUnit.SECONDS,
-            new SynchronousQueue<>(),
-            new EventStoreThreadFactory());
 
         operationManager = new OperationManager(settings);
         subscriptionManager = new SubscriptionManager(settings);
@@ -1033,8 +1028,12 @@ abstract class AbstractEventStore {
         listeners.remove(listener);
     }
 
+    protected Executor executor() {
+        return settings.executor;
+    }
+
     protected void fireEvent(Event event) {
-        executor.execute(() -> listeners.forEach(l -> l.onEvent(event)));
+        executor().execute(() -> listeners.forEach(l -> l.onEvent(event)));
     }
 
     protected abstract void onAuthenticationCompleted(AuthenticationStatus status);
@@ -1051,34 +1050,6 @@ abstract class AbstractEventStore {
                 ConnectionState.CONNECTED : ConnectionState.CONNECTING;
         } else {
             return ConnectionState.CLOSED;
-        }
-    }
-
-    private static class EventStoreThreadFactory implements ThreadFactory {
-        private static final AtomicInteger poolNumber = new AtomicInteger(1);
-        private final ThreadGroup group;
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
-        private final String namePrefix;
-
-        private EventStoreThreadFactory() {
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-            namePrefix = "es-" + poolNumber.getAndIncrement() + "-";
-        }
-
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-
-            if (t.isDaemon()) {
-                t.setDaemon(false);
-            }
-
-            if (t.getPriority() != Thread.NORM_PRIORITY) {
-                t.setPriority(Thread.NORM_PRIORITY);
-            }
-
-            return t;
         }
     }
 

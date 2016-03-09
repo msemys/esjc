@@ -67,7 +67,7 @@ public class EventStore extends AbstractEventStore {
             throw new IllegalStateException("Node settings not found");
         }
 
-        tasks = new TaskQueue(executor);
+        tasks = new TaskQueue(executor());
         tasks.register(StartConnection.class, this::handle);
         tasks.register(CloseConnection.class, this::handle);
         tasks.register(EstablishTcpConnection.class, this::handle);
@@ -225,7 +225,7 @@ public class EventStore extends AbstractEventStore {
         checkNotNull(listener, "listener");
 
         CatchUpSubscription subscription = new StreamCatchUpSubscription(this,
-            stream, fromEventNumberExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor);
+            stream, fromEventNumberExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor());
 
         subscription.start();
 
@@ -241,7 +241,7 @@ public class EventStore extends AbstractEventStore {
         checkNotNull(listener, "listener");
 
         CatchUpSubscription subscription = new AllCatchUpSubscription(this,
-            fromPositionExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor);
+            fromPositionExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor());
 
         subscription.start();
 
@@ -260,7 +260,7 @@ public class EventStore extends AbstractEventStore {
         checkNotNull(listener, "listener");
         checkArgument(isPositive(bufferSize), "bufferSize should be positive");
 
-        PersistentSubscription subscription = new PersistentSubscription(groupName, stream, listener, userCredentials, bufferSize, autoAck, executor) {
+        PersistentSubscription subscription = new PersistentSubscription(groupName, stream, listener, userCredentials, bufferSize, autoAck, executor()) {
             @Override
             protected CompletableFuture<Subscription> startSubscription(String subscriptionId,
                                                                         String streamId,
@@ -679,7 +679,7 @@ public class EventStore extends AbstractEventStore {
                 VolatileSubscriptionOperation operation = new VolatileSubscriptionOperation(
                     task.result,
                     task.streamId, task.resolveLinkTos, task.userCredentials, task.listener,
-                    () -> connection, executor);
+                    () -> connection, executor());
 
                 logger.debug("StartSubscription {} {}, {}, {}, {}.",
                     state == ConnectionState.CONNECTED ? "fire" : "enqueue",
@@ -715,7 +715,7 @@ public class EventStore extends AbstractEventStore {
                 PersistentSubscriptionOperation operation = new PersistentSubscriptionOperation(
                     task.result,
                     task.subscriptionId, task.streamId, task.bufferSize, task.userCredentials, task.listener,
-                    () -> connection, executor);
+                    () -> connection, executor());
 
                 logger.debug("StartSubscription {} {}, {}, {}, {}.",
                     state == ConnectionState.CONNECTED ? "fire" : "enqueue",
