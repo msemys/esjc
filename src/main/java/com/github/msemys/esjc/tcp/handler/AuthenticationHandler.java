@@ -76,6 +76,11 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<TcpPackag
         }
     }
 
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        cancelTimeoutTask();
+    }
+
     public AuthenticationHandler whenComplete(Consumer<AuthenticationStatus> consumer) {
         completionConsumer = Optional.of(consumer);
         return this;
