@@ -49,6 +49,8 @@ public class EventStore extends AbstractEventStore {
 
     protected static final int MAX_READ_SIZE = 4 * 1024;
 
+    private final Object mutex = new Object();
+
     private volatile ScheduledFuture timer;
     private final TransactionManager transactionManager = new TransactionManagerImpl();
     private final TaskQueue tasks;
@@ -745,8 +747,10 @@ public class EventStore extends AbstractEventStore {
     }
 
     private void enqueue(Task task) {
-        if (!isRunning()) {
-            connect();
+        synchronized (mutex) {
+            if (!isRunning()) {
+                connect();
+            }
         }
         logger.trace("enqueueing task {}.", task.getClass().getSimpleName());
         tasks.enqueue(task);
