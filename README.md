@@ -2,12 +2,10 @@
 
 This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Netty](http://netty.io/) for network communication and [GSON](https://github.com/google/gson) for object serialization/deserialization to JSON (e.g.: stream metadata, cluster information dto). Client logic implementation is the same as in the original client for .NET platform.
 
-NOTE: connection encryption using SSL is not implemented yet.
-
 ## Requirements
 
 * Java 8
-* EventStore Server >= 3.2.0 (tested with 3.3.1, 3.4.0)
+* EventStore Server >= 3.2.0 (tested with 3.3.1, 3.4.0, 3.5.0)
 
 
 ## Maven Dependency
@@ -16,7 +14,7 @@ NOTE: connection encryption using SSL is not implemented yet.
 <dependency>
     <groupId>com.github.msemys</groupId>
     <artifactId>esjc</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
@@ -71,6 +69,48 @@ EventStore eventstore = new EventStore(Settings.newBuilder()
 ```
 
 Driver uses full-duplex communication channel to server. It is recommended that only one instance per application is created.
+
+### SSL
+
+In order to use secure channel between the cient and server, first of all we need to enable SSL on server side by providing TCP secure port and server certificate.
+
+* create private key file and self-signed certificate request (for testing purposes)
+
+```
+openssl req \
+  -x509 -sha256 -nodes -days 365 -subj "/CN=test.com" \
+  -newkey rsa:2048 -keyout domain.pem -out domain.csr
+```
+
+* export private key file and self-signed certificate request to PKCS#12 archive
+
+```
+openssl pkcs12 -export -inkey domain.pem -in domain.csr -out domain.p12
+```
+
+* start server with encrypted TCP connection 
+
+```
+./run-node.sh --ext-secure-tcp-port 1119 --certificate-file domain.p12
+```
+
+Now we are ready to connect to single-node or cluster-node using secure channel. On the client side we are able to verify server certificate (check CN and expiration date) or accept any server certificate without verification.
+
+```java
+// creates a client with secure connection to server whose certificate Common Name (CN) matches 'test.com'
+EventStore eventstore = EventStoreBuilder.newBuilder()
+    .singleNodeAddress("127.0.0.1", 1119)
+    .useSslConnection("test.com")
+    .userCredentials("admin", "changeit")
+    .build();
+
+// creates a client with secure connection to server without certificate verification
+EventStore eventstore = EventStoreBuilder.newBuilder()
+    .singleNodeAddress("127.0.0.1", 1119)
+    .useSslConnectionWithAnyCertificate()
+    .userCredentials("admin", "changeit")
+    .build();
+```
 
 ### API Examples
 
