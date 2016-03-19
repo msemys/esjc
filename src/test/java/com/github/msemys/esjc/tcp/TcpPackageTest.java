@@ -8,8 +8,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Base64;
 import java.util.UUID;
 
+import static com.github.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.copyOfRange;
+import static java.util.Collections.nCopies;
+import static java.util.stream.Collectors.joining;
 import static org.junit.Assert.*;
 
 public class TcpPackageTest {
@@ -17,6 +20,7 @@ public class TcpPackageTest {
     private static final Logger logger = LoggerFactory.getLogger(TcpPackageTest.class);
 
     private static final String DATA = "{ test : 123 }";
+    private static final byte[] BYTES = new byte[]{1, 2, 3};
 
     @Test
     public void convertsNonAuthorizedTcpPackageToByteArray() {
@@ -100,6 +104,112 @@ public class TcpPackageTest {
         assertEquals("admin", tcpPackage.login);
         assertEquals("secret", tcpPackage.password);
         assertEquals(DATA, new String(tcpPackage.data, UTF_8));
+    }
+
+    @Test
+    public void serializesAndDeserializesNonAuthorizedTcpPackageWithEmptyData() {
+        UUID correlationId = UUID.randomUUID();
+        TcpPackage tcpPackage = TcpPackage.of(TcpPackage.newBuilder()
+            .command(TcpCommand.BadRequest)
+            .flag(TcpFlag.None)
+            .correlationId(correlationId)
+            .data(EMPTY_BYTES)
+            .build().toByteArray());
+
+        assertEquals(TcpCommand.BadRequest, tcpPackage.command);
+        assertEquals(TcpFlag.None, tcpPackage.flag);
+        assertEquals(correlationId, tcpPackage.correlationId);
+        assertNull(tcpPackage.login);
+        assertNull(tcpPackage.password);
+        assertEquals(0, tcpPackage.data.length);
+    }
+
+    @Test
+    public void serializesAndDeserializesAuthorizedTcpPackageWithEmptyData() {
+        UUID correlationId = UUID.randomUUID();
+        TcpPackage tcpPackage = TcpPackage.of(TcpPackage.newBuilder()
+            .command(TcpCommand.BadRequest)
+            .flag(TcpFlag.Authenticated)
+            .correlationId(correlationId)
+            .login("admin")
+            .password("secret")
+            .data(EMPTY_BYTES)
+            .build().toByteArray());
+
+        assertEquals(TcpCommand.BadRequest, tcpPackage.command);
+        assertEquals(TcpFlag.Authenticated, tcpPackage.flag);
+        assertEquals(correlationId, tcpPackage.correlationId);
+        assertEquals("admin", tcpPackage.login);
+        assertEquals("secret", tcpPackage.password);
+        assertEquals(0, tcpPackage.data.length);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failsToDeserializeAuthorizedTcpPackageWhenLoginTooLong() {
+        TcpPackage.of(TcpPackage.newBuilder()
+            .command(TcpCommand.BadRequest)
+            .flag(TcpFlag.Authenticated)
+            .correlationId(UUID.randomUUID())
+            .login(nCopies(256, "*").stream().collect(joining()))
+            .password("secret")
+            .data(BYTES)
+            .build().toByteArray());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failsToDeserializeAuthorizedTcpPackageWhenPasswordTooLong() {
+        TcpPackage.of(TcpPackage.newBuilder()
+            .command(TcpCommand.BadRequest)
+            .flag(TcpFlag.Authenticated)
+            .correlationId(UUID.randomUUID())
+            .login("admin")
+            .password(nCopies(256, "*").stream().collect(joining()))
+            .data(BYTES)
+            .build().toByteArray());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void failsToCreateAuthorizedTcpPackageWithoutLogin() {
+        TcpPackage.newBuilder()
+            .command(TcpCommand.BadRequest)
+            .flag(TcpFlag.Authenticated)
+            .correlationId(UUID.randomUUID())
+            .password("secret")
+            .data(BYTES)
+            .build();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void failsToCreateAuthorizedTcpPackageWithoutPassword() {
+        TcpPackage.newBuilder()
+            .command(TcpCommand.BadRequest)
+            .flag(TcpFlag.Authenticated)
+            .correlationId(UUID.randomUUID())
+            .login("admin")
+            .data(BYTES)
+            .build();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failsToCreateNonAuthorizedTcpPackageWithLogin() {
+        TcpPackage.newBuilder()
+            .command(TcpCommand.BadRequest)
+            .flag(TcpFlag.None)
+            .correlationId(UUID.randomUUID())
+            .login("admin")
+            .data(BYTES)
+            .build();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failsToCreateNonAuthorizedTcpPackageWithPassword() {
+        TcpPackage.newBuilder()
+            .command(TcpCommand.BadRequest)
+            .flag(TcpFlag.None)
+            .correlationId(UUID.randomUUID())
+            .password("secret")
+            .data(BYTES)
+            .build();
     }
 
 }
