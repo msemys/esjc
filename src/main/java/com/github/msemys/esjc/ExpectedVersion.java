@@ -16,6 +16,21 @@ public class ExpectedVersion {
         this.value = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ExpectedVersion that = (ExpectedVersion) o;
+
+        return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return value;
+    }
+
     /**
      * Creates expected version of the specified event number (idempotence is guaranteed).
      *
