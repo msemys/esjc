@@ -7,7 +7,7 @@ import org.junit.Before;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public abstract class EventStoreIntegrationTest {
+public abstract class AbstractIntegrationTest {
 
     protected static final Supplier<EventStore> eventstoreSupplier = () -> EventStoreBuilder.newBuilder()
         .singleNodeAddress("127.0.0.1", 7773)

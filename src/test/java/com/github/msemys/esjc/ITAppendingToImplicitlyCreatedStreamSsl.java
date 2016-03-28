@@ -1,6 +1,6 @@
 package com.github.msemys.esjc;
 
-public class ITEventStoreAppendingToImplicitlyCreatedStreamSsl extends ITEventStoreAppendingToImplicitlyCreatedStream {
+public class ITAppendingToImplicitlyCreatedStreamSsl extends ITAppendingToImplicitlyCreatedStream {
 
     @Override
     protected EventStore createEventStore() {

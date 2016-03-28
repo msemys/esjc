@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-public class ITEventStoreAppendToStream extends EventStoreIntegrationTest {
+public class ITAppendToStream extends AbstractIntegrationTest {
 
     @Override
     protected EventStore createEventStore() {

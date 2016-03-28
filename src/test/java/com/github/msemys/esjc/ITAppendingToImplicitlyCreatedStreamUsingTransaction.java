@@ -14,7 +14,7 @@ import static java.util.stream.Stream.concat;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITEventStoreAppendingToImplicitlyCreatedStreamUsingTransaction extends EventStoreIntegrationTest {
+public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends AbstractIntegrationTest {
 
     @Override
     protected EventStore createEventStore() {
