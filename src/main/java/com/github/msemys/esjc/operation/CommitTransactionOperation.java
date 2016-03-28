@@ -1,5 +1,6 @@
 package com.github.msemys.esjc.operation;
 
+import com.github.msemys.esjc.Position;
 import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.WriteResult;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.TransactionCommit;
@@ -91,7 +92,9 @@ public class CommitTransactionOperation extends AbstractOperation<WriteResult, T
 
     @Override
     protected WriteResult transformResponseMessage(TransactionCommitCompleted response) {
-        return null;
+        long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
+        long commitPosition = response.hasCommitPosition() ? response.getCommitPosition() : -1;
+        return new WriteResult(response.getLastEventNumber(), new Position(preparePosition, commitPosition));
     }
 
     @Override
