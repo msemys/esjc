@@ -30,11 +30,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_0em1_1e0_2e1_3e2_4e3_5e4_0em1_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 6).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 6).mapToObj(i -> newTestEvent()).collect(toList());
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
@@ -47,11 +43,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_0em1_1e0_2e1_3e2_4e3_4e4_0any_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 6).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 6).mapToObj(i -> newTestEvent()).collect(toList());
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
@@ -64,11 +56,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_0em1_1e0_2e1_3e2_4e3_5e4_0e5_non_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 6).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 6).mapToObj(i -> newTestEvent()).collect(toList());
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
@@ -81,11 +69,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_0em1_1e0_2e1_3e2_4e3_5e4_0e6_wev() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 6).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 6).mapToObj(i -> newTestEvent()).collect(toList());
 
         TailWriter writer = newStreamWriter(stream, ExpectedVersion.of(-1)).append(events);
 
@@ -101,11 +85,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void append_0em1_1e0_2e1_3e2_4e3_5e4_0e4_wev() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 6).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 6).mapToObj(i -> newTestEvent()).collect(toList());
 
         TailWriter writer = newStreamWriter(stream, ExpectedVersion.of(-1)).append(events);
 
@@ -121,11 +101,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void append_0em1_0e0_non_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 1).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 1).mapToObj(i -> newTestEvent()).collect(toList());
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
@@ -138,11 +114,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_0em1_0any_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 1).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 1).mapToObj(i -> newTestEvent()).collect(toList());
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
@@ -155,11 +127,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_0em1_0em1_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 1).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 1).mapToObj(i -> newTestEvent()).collect(toList());
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
@@ -172,11 +140,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_0em1_1e0_2e1_1any_1any_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 3).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 3).mapToObj(i -> newTestEvent()).collect(toList());
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
@@ -190,11 +154,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_S_0em1_1em1_E_S_0em1_E_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 2).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 2).mapToObj(i -> newTestEvent()).collect(toList());
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
@@ -210,11 +170,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_S_0em1_1em1_E_S_0any_E_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 2).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 2).mapToObj(i -> newTestEvent()).collect(toList());
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
@@ -230,11 +186,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_S_0em1_1em1_E_S_1e0_E_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 2).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 2).mapToObj(i -> newTestEvent()).collect(toList());
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
@@ -250,11 +202,7 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_S_0em1_1em1_E_S_1any_E_idempotent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 2).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 2).mapToObj(i -> newTestEvent()).collect(toList());
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
@@ -270,16 +218,12 @@ public class ITEventStoreAppendingToImplicitlyCreatedStream extends EventStoreIn
     public void appends_S_0em1_1em1_E_S_0em1_1em1_2em1_E_idempotancy_fail() {
         final String stream = generateStreamName();
 
-        List<EventData> events = range(0, 2).mapToObj(i -> EventData.newBuilder()
-            .type("test")
-            .data(String.valueOf(i))
-            .metadata(String.valueOf(i))
-            .build()).collect(toList());
+        List<EventData> events = range(0, 2).mapToObj(i -> newTestEvent()).collect(toList());
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
             eventstore.appendToStream(stream, ExpectedVersion.any(),
-                concat(events.stream(), Stream.of(EventData.newBuilder().type("test").build())).collect(toList())).get();
+                concat(events.stream(), Stream.of(newTestEvent())).collect(toList())).get();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
