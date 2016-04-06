@@ -201,11 +201,11 @@ public class EventData {
             checkNotNull(type, "type");
 
             if (data == null) {
-                data(EmptyArrays.EMPTY_BYTES);
+                data = EmptyArrays.EMPTY_BYTES;
             }
 
             if (metadata == null) {
-                metadata(EmptyArrays.EMPTY_BYTES);
+                metadata = EmptyArrays.EMPTY_BYTES;
             }
 
             return new EventData(this);
