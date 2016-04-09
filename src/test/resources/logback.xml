@@ -5,8 +5,8 @@
         </encoder>
     </appender>
 
-    <logger name="com.github.msemys" level="TRACE"/>
-    <logger name="io.netty" level="DEBUG"/>
+    <logger name="com.github.msemys" level="WARN"/>
+    <logger name="io.netty" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
