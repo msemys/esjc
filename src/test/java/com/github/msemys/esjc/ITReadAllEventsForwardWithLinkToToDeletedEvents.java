@@ -25,48 +25,11 @@ public class ITReadAllEventsForwardWithLinkToToDeletedEvents extends AbstractInt
         StreamEventsSlice slice = eventstore.readStreamEventsForward(linkedStreamName, 0, 1, true).join();
 
         assertEquals(1, slice.events.size());
-    }
 
-    @Test
-    public void linkedEventIsNotResolved() {
-        final String deletedStreamName = generateStreamName();
-        final String linkedStreamName = generateStreamName();
-
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), asList(newTestEvent())).join();
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(), asList(newLinkEvent(deletedStreamName, 0))).join();
-        eventstore.deleteStream(deletedStreamName, ExpectedVersion.any()).join();
-
-        StreamEventsSlice slice = eventstore.readStreamEventsForward(linkedStreamName, 0, 1, true).join();
-
-        assertNull(slice.events.get(0).event);
-    }
-
-    @Test
-    public void linkedEventIsIncluded() {
-        final String deletedStreamName = generateStreamName();
-        final String linkedStreamName = generateStreamName();
-
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), asList(newTestEvent())).join();
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(), asList(newLinkEvent(deletedStreamName, 0))).join();
-        eventstore.deleteStream(deletedStreamName, ExpectedVersion.any()).join();
-
-        StreamEventsSlice slice = eventstore.readStreamEventsForward(linkedStreamName, 0, 1, true).join();
-
-        assertNotNull(slice.events.get(0).originalEvent());
-    }
-
-    @Test
-    public void eventIsNotResolved() {
-        final String deletedStreamName = generateStreamName();
-        final String linkedStreamName = generateStreamName();
-
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), asList(newTestEvent())).join();
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(), asList(newLinkEvent(deletedStreamName, 0))).join();
-        eventstore.deleteStream(deletedStreamName, ExpectedVersion.any()).join();
-
-        StreamEventsSlice slice = eventstore.readStreamEventsForward(linkedStreamName, 0, 1, true).join();
-
-        assertFalse(slice.events.get(0).isResolved());
+        ResolvedEvent resolvedEvent = slice.events.get(0);
+        assertNull("Linked event was resolved", resolvedEvent.event);
+        assertNotNull("Linked event is not included", resolvedEvent.originalEvent());
+        assertFalse("Event was resolved", resolvedEvent.isResolved());
     }
 
     private static EventData newLinkEvent(String stream, int eventNumber) {
