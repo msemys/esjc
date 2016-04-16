@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
@@ -270,7 +271,7 @@ public class StreamMetadata {
             }
 
             if (truncateBefore != null) {
-                checkArgument(isPositive(truncateBefore), "truncateBefore should be positive");
+                checkArgument(!isNegative(truncateBefore), "truncateBefore should not be negative");
             }
 
             if (cacheControl != null) {
