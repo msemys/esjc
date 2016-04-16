@@ -354,7 +354,11 @@ public class EventStore extends AbstractEventStore {
             } else if (r.streamMetadata == null || r.streamMetadata.length == 0) {
                 result.complete(new StreamMetadataResult(r.stream, r.isStreamDeleted, r.metastreamVersion, StreamMetadata.empty()));
             } else {
-                result.complete(new StreamMetadataResult(r.stream, r.isStreamDeleted, r.metastreamVersion, StreamMetadata.fromJson(r.streamMetadata)));
+                try {
+                    result.complete(new StreamMetadataResult(r.stream, r.isStreamDeleted, r.metastreamVersion, StreamMetadata.fromJson(r.streamMetadata)));
+                } catch (Exception e) {
+                    result.completeExceptionally(e);
+                }
             }
         });
 
