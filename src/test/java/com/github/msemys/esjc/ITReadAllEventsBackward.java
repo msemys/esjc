@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
-import static java.util.Collections.reverse;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.core.Is.is;
@@ -41,8 +40,7 @@ public class ITReadAllEventsBackward extends AbstractIntegrationTest {
 
         AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, events.size(), false).join();
 
-        reverse(events);
-        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), hasItems(events));
+        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), hasItems(reverse(events)));
     }
 
     @Test
@@ -56,8 +54,7 @@ public class ITReadAllEventsBackward extends AbstractIntegrationTest {
 
         assertTrue(slice.events.size() <= 4095);
 
-        reverse(events);
-        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), hasItems(events));
+        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), hasItems(reverse(events)));
     }
 
     @Test
@@ -76,8 +73,7 @@ public class ITReadAllEventsBackward extends AbstractIntegrationTest {
             position = slice.nextPosition;
         }
 
-        reverse(events);
-        assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(events));
+        assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(reverse(events)));
     }
 
     @Test
@@ -96,8 +92,7 @@ public class ITReadAllEventsBackward extends AbstractIntegrationTest {
             position = slice.nextPosition;
         }
 
-        reverse(events);
-        assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(events));
+        assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(reverse(events)));
     }
 
     @Test(expected = IllegalArgumentException.class)

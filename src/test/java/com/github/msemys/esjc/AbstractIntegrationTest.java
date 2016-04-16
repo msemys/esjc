@@ -4,6 +4,9 @@ import com.github.msemys.esjc.util.Throwables;
 import org.junit.After;
 import org.junit.Before;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -41,6 +44,12 @@ public abstract class AbstractIntegrationTest {
         return EventData.newBuilder()
             .type("test")
             .build();
+    }
+
+    protected static <T> List<T> reverse(List<T> list) {
+        List<T> reversedList = new ArrayList<>(list);
+        Collections.reverse(reversedList);
+        return reversedList;
     }
 
     /**

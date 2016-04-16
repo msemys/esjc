@@ -6,7 +6,6 @@ import java.util.List;
 
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.equalTo;
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
-import static java.util.Collections.reverse;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
@@ -73,8 +72,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, StreamPosition.END, events.size(), false).join();
 
-        reverse(events);
-        assertThat(slice.events.stream().map(e -> e.event).collect(toList()), hasItems(events));
+        assertThat(slice.events.stream().map(e -> e.event).collect(toList()), hasItems(reverse(events)));
     }
 
     @Test
@@ -121,9 +119,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, 3, 2, false).join();
 
-        List<EventData> expectedEvents = events.stream().skip(2).limit(2).collect(toList());
-        reverse(expectedEvents);
-
+        List<EventData> expectedEvents = reverse(events.stream().skip(2).limit(2).collect(toList()));
         assertThat(slice.events.stream().map(e -> e.event).collect(toList()), hasItems(expectedEvents));
     }
 
