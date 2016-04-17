@@ -44,7 +44,17 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
 
         if (value.customProperties != null) {
             for (StreamMetadata.Property property : value.customProperties) {
-                writer.name(property.name).value(property.value);
+                JsonWriter propertyWriter = writer.name(property.name);
+
+                if (property.value == null) {
+                    propertyWriter.nullValue();
+                } else if (property.value instanceof Number) {
+                    propertyWriter.value((Number) property.value);
+                } else if (property.value instanceof Boolean) {
+                    propertyWriter.value((Boolean) property.value);
+                } else {
+                    propertyWriter.value(property.value.toString());
+                }
             }
         }
 
@@ -87,7 +97,19 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
                     }
                     break;
                 default:
-                    builder.customProperty(name, reader.nextString());
+                    switch (reader.peek()) {
+                        case NULL:
+                            reader.nextNull();
+                            builder.customProperty(name, (String) null);
+                            break;
+                        case BOOLEAN:
+                            builder.customProperty(name, reader.nextBoolean());
+                            break;
+                        case NUMBER:
+                        case STRING:
+                        default:
+                            builder.customProperty(name, reader.nextString());
+                    }
             }
         }
 

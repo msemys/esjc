@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.StreamMetadata.Property;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -41,12 +40,22 @@ public class StreamMetadataJsonAdapterTest {
         StreamMetadata streamMetadata = StreamMetadata.newBuilder()
             .maxAge(Duration.ofSeconds(2))
             .truncateBefore(17)
-            .customProperty("foo", "1")
-            .customProperty("bar", "2")
-            .customProperty("baz", "dummy text")
+            .customProperty("customString", "a string")
+            .customProperty("customInt", -179)
+            .customProperty("customDouble", 1.7)
+            .customProperty("customLong", 123123123123123123l)
+            .customProperty("customBoolean", true)
+            .customProperty("customNullable", (String) null)
             .build();
 
-        assertEquals("{\"$maxAge\":2,\"$tb\":17,\"foo\":\"1\",\"bar\":\"2\",\"baz\":\"dummy text\"}", streamMetadata.toJson());
+        assertEquals("{\"$maxAge\":2," +
+            "\"$tb\":17," +
+            "\"customString\":\"a string\"," +
+            "\"customInt\":-179," +
+            "\"customDouble\":1.7," +
+            "\"customLong\":123123123123123123," +
+            "\"customBoolean\":true," +
+            "\"customNullable\":null}", streamMetadata.toJson());
     }
 
     @Test
@@ -84,7 +93,14 @@ public class StreamMetadataJsonAdapterTest {
     @Test
     public void deserializesWithCustomProperties() {
         StreamMetadata streamMetadata = StreamMetadata
-            .fromJson("{\"$maxAge\":2,\"foo\":\"1\",\"$tb\":17,\"bar\":\"2\",\"baz\":\"dummy text\"}");
+            .fromJson("{\"$maxAge\":2," +
+                "\"$tb\":17," +
+                "\"customString\":\"a string\"," +
+                "\"customInt\":-179," +
+                "\"customDouble\":1.7," +
+                "\"customLong\":123123123123123123," +
+                "\"customBoolean\":true," +
+                "\"customNullable\":null}");
 
         assertNull(streamMetadata.maxCount);
         assertEquals(Duration.ofSeconds(2), streamMetadata.maxAge);
@@ -92,8 +108,16 @@ public class StreamMetadataJsonAdapterTest {
         assertNull(streamMetadata.cacheControl);
         assertNull(streamMetadata.acl);
         assertNotNull(streamMetadata.customProperties);
-        assertEquals(asList(Property.of("foo", "1"), Property.of("bar", "2"), Property.of("baz", "dummy text")),
-            streamMetadata.customProperties);
+        assertEquals("a string", streamMetadata.getCustomProperty("customString").toString());
+        assertEquals(Integer.valueOf(-179), streamMetadata.getCustomProperty("customInt").toInteger());
+        assertEquals(Double.valueOf(1.7), streamMetadata.getCustomProperty("customDouble").toDouble());
+        assertEquals(Long.valueOf(123123123123123123l), streamMetadata.getCustomProperty("customLong").toLong());
+        assertTrue(streamMetadata.getCustomProperty("customBoolean").toBoolean());
+        assertNull(streamMetadata.getCustomProperty("customNullable").toString());
+        assertNull(streamMetadata.getCustomProperty("customNullable").toInteger());
+        assertNull(streamMetadata.getCustomProperty("customNullable").toLong());
+        assertNull(streamMetadata.getCustomProperty("customNullable").toDouble());
+        assertNull(streamMetadata.getCustomProperty("customNullable").toBoolean());
     }
 
 }

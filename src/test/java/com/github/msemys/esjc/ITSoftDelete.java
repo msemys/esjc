@@ -119,8 +119,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
                 .truncateBefore(Integer.MAX_VALUE)
                 .maxCount(100)
                 .aclDeleteRoles(asList("some-role"))
-                .customProperty("key1", "true")
-                .customProperty("key2", "17")
+                .customProperty("key1", true)
+                .customProperty("key2", 17)
                 .customProperty("key3", "some value")
                 .build()
         ).join();
@@ -143,18 +143,9 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(2, streamMetadataResult.streamMetadata.truncateBefore.intValue());
         assertEquals(100, streamMetadataResult.streamMetadata.maxCount.intValue());
         assertEquals("some-role", streamMetadataResult.streamMetadata.acl.deleteRoles.get(0));
-        assertEquals(true, Boolean.parseBoolean(streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key1"))
-            .findFirst()
-            .get().value));
-        assertEquals(17, Integer.parseInt(streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key2"))
-            .findFirst()
-            .get().value));
-        assertEquals("some value", streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key3"))
-            .findFirst()
-            .get().value);
+        assertTrue(streamMetadataResult.streamMetadata.getCustomProperty("key1").toBoolean());
+        assertEquals(Integer.valueOf(17), streamMetadataResult.streamMetadata.getCustomProperty("key2").toInteger());
+        assertEquals("some value", streamMetadataResult.streamMetadata.getCustomProperty("key3").toString());
     }
 
     @Test
@@ -249,8 +240,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
             StreamMetadata.newBuilder()
                 .maxCount(100)
                 .aclDeleteRoles(asList("some-role"))
-                .customProperty("key1", "true")
-                .customProperty("key2", "17")
+                .customProperty("key1", true)
+                .customProperty("key2", 17)
                 .customProperty("key3", "some value")
                 .build())
             .join().nextExpectedVersion);
@@ -265,18 +256,9 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(0, streamMetadataResult.streamMetadata.truncateBefore.intValue());
         assertEquals(100, streamMetadataResult.streamMetadata.maxCount.intValue());
         assertEquals("some-role", streamMetadataResult.streamMetadata.acl.deleteRoles.get(0));
-        assertEquals(true, Boolean.parseBoolean(streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key1"))
-            .findFirst()
-            .get().value));
-        assertEquals(17, Integer.parseInt(streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key2"))
-            .findFirst()
-            .get().value));
-        assertEquals("some value", streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key3"))
-            .findFirst()
-            .get().value);
+        assertTrue(streamMetadataResult.streamMetadata.getCustomProperty("key1").toBoolean());
+        assertEquals(Integer.valueOf(17), streamMetadataResult.streamMetadata.getCustomProperty("key2").toInteger());
+        assertEquals("some value", streamMetadataResult.streamMetadata.getCustomProperty("key3").toString());
     }
 
     @Test
@@ -291,8 +273,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
             StreamMetadata.newBuilder()
                 .maxCount(100)
                 .aclDeleteRoles(asList("some-role"))
-                .customProperty("key1", "true")
-                .customProperty("key2", "17")
+                .customProperty("key1", true)
+                .customProperty("key2", 17)
                 .customProperty("key3", "some value")
                 .build())
             .join().nextExpectedVersion);
@@ -307,18 +289,9 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(2, streamMetadataResult.streamMetadata.truncateBefore.intValue());
         assertEquals(100, streamMetadataResult.streamMetadata.maxCount.intValue());
         assertEquals("some-role", streamMetadataResult.streamMetadata.acl.deleteRoles.get(0));
-        assertEquals(true, Boolean.parseBoolean(streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key1"))
-            .findFirst()
-            .get().value));
-        assertEquals(17, Integer.parseInt(streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key2"))
-            .findFirst()
-            .get().value));
-        assertEquals("some value", streamMetadataResult.streamMetadata.customProperties.stream()
-            .filter(p -> p.name.equals("key3"))
-            .findFirst()
-            .get().value);
+        assertTrue(streamMetadataResult.streamMetadata.getCustomProperty("key1").toBoolean());
+        assertEquals(Integer.valueOf(17), streamMetadataResult.streamMetadata.getCustomProperty("key2").toInteger());
+        assertEquals("some value", streamMetadataResult.streamMetadata.getCustomProperty("key3").toString());
     }
 
     @Test

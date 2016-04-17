@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
@@ -23,14 +24,14 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
 /**
- * Represents stream metadata with strongly typed properties for system values and
- * a text based properties for custom values.
+ * Represents stream metadata with strongly typed properties for system values and custom values.
  */
 public class StreamMetadata {
     private static final StreamMetadata EMPTY = newBuilder().build();
 
     private static final Gson gson = new GsonBuilder()
         .registerTypeAdapter(StreamMetadata.class, new StreamMetadataJsonAdapter())
+        .serializeNulls()
         .create();
 
     /**
@@ -71,6 +72,20 @@ public class StreamMetadata {
         cacheControl = builder.cacheControl;
         acl = builder.acl;
         customProperties = (builder.customProperties != null) ? unmodifiableList(builder.customProperties) : emptyList();
+    }
+
+    /**
+     * Gets custom property.
+     *
+     * @param name property name.
+     * @return custom property
+     * @throws NoSuchElementException if custom property not found
+     */
+    public Property getCustomProperty(String name) throws NoSuchElementException {
+        return customProperties.stream()
+            .filter(p -> p.name.equals(name))
+            .findFirst()
+            .get();
     }
 
     /**
@@ -245,14 +260,38 @@ public class StreamMetadata {
         }
 
         /**
-         * Sets a custom metadata property.
+         * Sets text based custom metadata property.
          *
          * @param name  property name.
          * @param value property value.
          * @return the builder reference
          */
         public Builder customProperty(String name, String value) {
-            customProperties.add(Property.of(name, value));
+            customProperties.add(new Property(name, value));
+            return this;
+        }
+
+        /**
+         * Sets number type custom metadata property.
+         *
+         * @param name  property name.
+         * @param value property value.
+         * @return the builder reference
+         */
+        public Builder customProperty(String name, Number value) {
+            customProperties.add(new Property(name, value));
+            return this;
+        }
+
+        /**
+         * Sets boolean type custom metadata property.
+         *
+         * @param name  property name.
+         * @param value property value.
+         * @return the builder reference
+         */
+        public Builder customProperty(String name, Boolean value) {
+            customProperties.add(new Property(name, value));
             return this;
         }
 
@@ -294,9 +333,9 @@ public class StreamMetadata {
      */
     public static class Property {
         public final String name;
-        public final String value;
+        public final Object value;
 
-        private Property(String name, String value) {
+        private Property(String name, Object value) {
             checkArgument(!isNullOrEmpty(name), "name");
             this.name = name;
             this.value = value;
@@ -321,15 +360,45 @@ public class StreamMetadata {
             return result;
         }
 
-        /**
-         * Creates a new user-defined property.
-         *
-         * @param name  property name.
-         * @param value property value.
-         * @return user-defined property
-         */
-        public static Property of(String name, String value) {
-            return new Property(name, value);
+        @Override
+        public String toString() {
+            if (value instanceof String) {
+                return (String) value;
+            } else {
+                return (value != null) ? value.toString() : null;
+            }
+        }
+
+        public Integer toInteger() {
+            if (value instanceof Integer) {
+                return (Integer) value;
+            } else {
+                return (value != null) ? Integer.parseInt(toString()) : null;
+            }
+        }
+
+        public Long toLong() {
+            if (value instanceof Long) {
+                return (Long) value;
+            } else {
+                return (value != null) ? Long.parseLong(toString()) : null;
+            }
+        }
+
+        public Double toDouble() {
+            if (value instanceof Double) {
+                return (Double) value;
+            } else {
+                return (value != null) ? Double.parseDouble(toString()) : null;
+            }
+        }
+
+        public Boolean toBoolean() {
+            if (value instanceof Boolean) {
+                return (Boolean) value;
+            } else {
+                return (value != null) ? Boolean.parseBoolean(toString()) : null;
+            }
         }
     }
 
