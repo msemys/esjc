@@ -4,6 +4,7 @@ import com.github.msemys.esjc.util.EmptyArrays;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -24,7 +25,7 @@ public class ITWhenWorkingWithMetadata extends AbstractIntegrationTest {
         assertEquals(stream, metadata.stream);
         assertFalse(metadata.isStreamDeleted);
         assertEquals(-1, metadata.metastreamVersion);
-        assertEquals(EmptyArrays.EMPTY_BYTES, metadata.streamMetadata);
+        assertArrayEquals(EmptyArrays.EMPTY_BYTES, metadata.streamMetadata);
     }
 
 }
