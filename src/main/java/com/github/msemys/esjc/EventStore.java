@@ -329,7 +329,6 @@ public class EventStore extends AbstractEventStore {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkArgument(!isMetastream(stream), "Setting metadata for metastream '%s' is not supported.", stream);
         checkNotNull(expectedMetastreamVersion, "expectedMetastreamVersion");
-        checkNotNull(metadata, "metadata");
 
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
 
