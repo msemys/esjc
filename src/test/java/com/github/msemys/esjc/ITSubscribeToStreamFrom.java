@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.subscription.StreamCatchUpSubscription;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -267,8 +266,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         subscription.stop(Duration.ofSeconds(10));
         assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
 
-        assertEquals(events.get(events.size() - 1).originalEventNumber(),
-            ((StreamCatchUpSubscription) subscription).lastProcessedEventNumber());
+        assertEquals(events.get(events.size() - 1).originalEventNumber(), subscription.lastProcessedEventNumber());
     }
 
     @Test
@@ -311,8 +309,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         subscription.stop(Duration.ofSeconds(10));
         assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
 
-        assertEquals(events.get(events.size() - 1).originalEventNumber(),
-            ((StreamCatchUpSubscription) subscription).lastProcessedEventNumber());
+        assertEquals(events.get(events.size() - 1).originalEventNumber(), subscription.lastProcessedEventNumber());
     }
 
 }
