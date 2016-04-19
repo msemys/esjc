@@ -266,6 +266,20 @@ public abstract class CatchUpSubscription implements AutoCloseable {
         return isNullOrEmpty(streamId);
     }
 
+    /**
+     * The last event number processed on the subscription.
+     *
+     * @return event number
+     */
+    public abstract int lastProcessedEventNumber();
+
+    /**
+     * The last position processed on the subscription.
+     *
+     * @return position
+     */
+    public abstract Position lastProcessedPosition();
+
     protected String streamId() {
         return defaultIfEmpty(streamId, "<all>");
     }

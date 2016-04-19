@@ -70,6 +70,7 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
             event.originalEvent().eventStreamId, event.originalEvent().eventNumber, event.originalEvent().eventType, event.originalPosition);
     }
 
+    @Override
     public Position lastProcessedPosition() {
         Position oldPosition = lastProcessedPosition;
         Position currentPosition;
@@ -79,4 +80,8 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
         return currentPosition;
     }
 
+    @Override
+    public int lastProcessedEventNumber() {
+        throw new UnsupportedOperationException("The last processed event number is not available to ALL stream catch-up subscriptions.");
+    }
 }
