@@ -56,8 +56,8 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         sleepUninterruptibly(100);
 
         assertFalse("Some event appeared.", eventSignal.await(0, SECONDS));
-        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
 
+        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
         subscription.stop(Duration.ofSeconds(10));
         assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
     }
@@ -89,8 +89,8 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
-        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
 
+        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
         subscription.stop(Duration.ofSeconds(10));
         assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
     }
@@ -140,12 +140,12 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
-        assertFalse("Subscription1 was dropped prematurely.", closeSignal1.await(0, SECONDS));
-        assertFalse("Subscription2 was dropped prematurely.", closeSignal2.await(0, SECONDS));
 
+        assertFalse("Subscription1 was dropped prematurely.", closeSignal1.await(0, SECONDS));
         subscription1.stop(Duration.ofSeconds(10));
         assertTrue("Subscription1 onClose timeout", closeSignal1.await(10, SECONDS));
 
+        assertFalse("Subscription2 was dropped prematurely.", closeSignal2.await(0, SECONDS));
         subscription2.stop(Duration.ofSeconds(10));
         assertTrue("Subscription2 onClose timeout", closeSignal2.await(10, SECONDS));
     }
@@ -173,7 +173,6 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         });
 
         assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
-
         subscription.stop(Duration.ofSeconds(10));
         assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
     }
@@ -214,10 +213,10 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         ).join());
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
-        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
 
         range(0, 20).forEach(i -> assertEquals("et-" + i, events.get(i).originalEvent().eventType));
 
+        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
         subscription.stop(Duration.ofSeconds(10));
         assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
     }
@@ -258,11 +257,11 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         ).join());
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
-        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
 
         assertEquals(20, events.size());
         range(0, 20).forEach(i -> assertEquals("et-" + (i + 10), events.get(i).originalEvent().eventType));
 
+        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
         subscription.stop(Duration.ofSeconds(10));
         assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
 
@@ -301,11 +300,11 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         });
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
-        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
 
         assertEquals(10, events.size());
         range(0, 10).forEach(i -> assertEquals("et-" + (i + 10), events.get(i).originalEvent().eventType));
 
+        assertFalse("Subscription was dropped prematurely.", closeSignal.await(0, SECONDS));
         subscription.stop(Duration.ofSeconds(10));
         assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
 
