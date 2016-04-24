@@ -3,7 +3,6 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.subscription.PersistentSubscriptionChannel;
 import com.github.msemys.esjc.subscription.PersistentSubscriptionNakEventAction;
 import com.github.msemys.esjc.util.Subscriptions.DropData;
-import com.github.msemys.esjc.util.Throwables;
 import com.github.msemys.esjc.util.concurrent.ResettableLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
         this.executor = executor;
     }
 
-    protected void start() {
+    protected CompletableFuture<PersistentSubscription> start() {
         stopped.reset();
 
         SubscriptionListener<PersistentSubscriptionChannel> subscriptionListener = new SubscriptionListener<PersistentSubscriptionChannel>() {
@@ -76,7 +75,10 @@ public abstract class PersistentSubscription implements AutoCloseable {
             }
         };
 
-        subscription = await(startSubscription(subscriptionId, streamId, bufferSize, subscriptionListener, userCredentials));
+        return startSubscription(subscriptionId, streamId, bufferSize, subscriptionListener, userCredentials).thenApply(s -> {
+            subscription = (PersistentSubscriptionChannel) s;
+            return PersistentSubscription.this;
+        });
     }
 
     protected abstract CompletableFuture<Subscription> startSubscription(String subscriptionId,
@@ -221,14 +223,6 @@ public abstract class PersistentSubscription implements AutoCloseable {
             listener.onClose(this, reason, exception);
 
             stopped.release();
-        }
-    }
-
-    private static <T> T await(CompletableFuture<Subscription> subscriptionFuture) {
-        try {
-            return (T) subscriptionFuture.get();
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
         }
     }
 

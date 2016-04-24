@@ -251,12 +251,12 @@ public class EventStore extends AbstractEventStore {
     }
 
     @Override
-    public PersistentSubscription subscribeToPersistent(String stream,
-                                                        String groupName,
-                                                        PersistentSubscriptionListener listener,
-                                                        UserCredentials userCredentials,
-                                                        int bufferSize,
-                                                        boolean autoAck) {
+    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
+                                                                           String groupName,
+                                                                           PersistentSubscriptionListener listener,
+                                                                           UserCredentials userCredentials,
+                                                                           int bufferSize,
+                                                                           boolean autoAck) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkArgument(!isNullOrEmpty(groupName), "groupName");
         checkNotNull(listener, "listener");
@@ -276,9 +276,7 @@ public class EventStore extends AbstractEventStore {
             }
         };
 
-        subscription.start();
-
-        return subscription;
+        return subscription.start();
     }
 
     @Override

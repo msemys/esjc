@@ -698,7 +698,7 @@ abstract class AbstractEventStore {
                                                            int readBatchSize);
 
     /**
-     * Subscribes to a persistent subscription using default buffer size, auto-ack setting and default user credentials.
+     * Subscribes to a persistent subscription asynchronously using default buffer size, auto-ack setting and default user credentials.
      * <p>
      * This will connect you to a persistent subscription group for a stream. The subscription group must first be created.
      * Many connections can connect to the same group and they will be treated as competing consumers within the group.
@@ -715,14 +715,14 @@ abstract class AbstractEventStore {
      * @return persistent subscription
      * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
-    public PersistentSubscription subscribeToPersistent(String stream,
-                                                        String groupName,
-                                                        PersistentSubscriptionListener listener) {
+    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
+                                                                           String groupName,
+                                                                           PersistentSubscriptionListener listener) {
         return subscribeToPersistent(stream, groupName, listener, null, settings.persistentSubscriptionBufferSize, settings.persistentSubscriptionAutoAckEnabled);
     }
 
     /**
-     * Subscribes to a persistent subscription using default buffer size and auto-ack setting.
+     * Subscribes to a persistent subscription asynchronously using default buffer size and auto-ack setting.
      * <p>
      * This will connect you to a persistent subscription group for a stream. The subscription group must first be created.
      * Many connections can connect to the same group and they will be treated as competing consumers within the group.
@@ -740,15 +740,15 @@ abstract class AbstractEventStore {
      * @return persistent subscription
      * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
-    public PersistentSubscription subscribeToPersistent(String stream,
-                                                        String groupName,
-                                                        PersistentSubscriptionListener listener,
-                                                        UserCredentials userCredentials) {
+    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
+                                                                           String groupName,
+                                                                           PersistentSubscriptionListener listener,
+                                                                           UserCredentials userCredentials) {
         return subscribeToPersistent(stream, groupName, listener, userCredentials, settings.persistentSubscriptionBufferSize, settings.persistentSubscriptionAutoAckEnabled);
     }
 
     /**
-     * Subscribes to a persistent subscription.
+     * Subscribes to a persistent subscription asynchronously.
      * <p>
      * This will connect you to a persistent subscription group for a stream. The subscription group must first be created.
      * Many connections can connect to the same group and they will be treated as competing consumers within the group.
@@ -767,12 +767,12 @@ abstract class AbstractEventStore {
      * @param autoAck         whether the subscription should automatically acknowledge messages processed.
      * @return persistent subscription
      */
-    public abstract PersistentSubscription subscribeToPersistent(String stream,
-                                                                 String groupName,
-                                                                 PersistentSubscriptionListener listener,
-                                                                 UserCredentials userCredentials,
-                                                                 int bufferSize,
-                                                                 boolean autoAck);
+    public abstract CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
+                                                                                    String groupName,
+                                                                                    PersistentSubscriptionListener listener,
+                                                                                    UserCredentials userCredentials,
+                                                                                    int bufferSize,
+                                                                                    boolean autoAck);
 
     /**
      * Creates a persistent subscription group on a stream asynchronously using
