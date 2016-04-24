@@ -9,7 +9,7 @@ before_install:
 install:
 - mkdir tools
 - cd tools
-- wget http://download.geteventstore.com/binaries/EventStore-OSS-Ubuntu-14.04-v3.5.0.tar.gz
+- wget http://download.geteventstore.com/binaries/EventStore-OSS-Ubuntu-14.04-v3.6.0.tar.gz
 - tar -xzf EventStore-OSS-Ubuntu-14.04-v3.5.0.tar.gz
 - cd EventStore-OSS-Ubuntu-14.04-v3.5.0
 - openssl req -x509 -sha256 -nodes -days 365 -subj "/CN=test.com" -newkey rsa:2048 -keyout domain.pem -out domain.csr
