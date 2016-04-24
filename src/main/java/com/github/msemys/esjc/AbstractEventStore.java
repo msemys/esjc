@@ -46,7 +46,7 @@ abstract class AbstractEventStore {
     protected final Bootstrap bootstrap;
     protected final OperationManager operationManager;
     protected final SubscriptionManager subscriptionManager;
-    protected final Settings settings;
+    public final Settings settings;
 
     protected volatile Channel connection;
     protected volatile ConnectingPhase connectingPhase = ConnectingPhase.INVALID;
