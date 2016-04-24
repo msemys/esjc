@@ -31,7 +31,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(1);
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 eventSignal.countDown();
@@ -69,7 +69,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(1);
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 eventSignal.countDown();
@@ -103,7 +103,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch closeSignal1 = new CountDownLatch(1);
         CountDownLatch closeSignal2 = new CountDownLatch(1);
 
-        CatchUpSubscription subscription1 = eventstore.subscribeToStreamFrom(stream, null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription1 = eventstore.subscribeToStreamFrom(stream, null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 eventSignal.countDown();
@@ -120,7 +120,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             }
         });
 
-        CatchUpSubscription subscription2 = eventstore.subscribeToStreamFrom(stream, null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription2 = eventstore.subscribeToStreamFrom(stream, null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 eventSignal.countDown();
@@ -156,7 +156,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
 
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
             }
@@ -190,7 +190,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             asList(EventData.newBuilder().type("et-" + i).build())
         ).join());
 
-        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 events.add(event);
@@ -234,7 +234,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             asList(EventData.newBuilder().type("et-" + i).build())
         ).join());
 
-        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 events.add(event);
@@ -281,7 +281,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             asList(EventData.newBuilder().type("et-" + i).build())
         ).join());
 
-        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 events.add(event);

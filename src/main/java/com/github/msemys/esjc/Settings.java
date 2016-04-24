@@ -101,16 +101,6 @@ public class Settings {
     public final int maxReconnections;
 
     /**
-     * The maximum number of events allowed to be pushed in the catchup subscription live queue.
-     */
-    public final int maxPushQueueSize;
-
-    /**
-     * The batch size to use during the read phase of the catchup subscription.
-     */
-    public final int readBatchSize;
-
-    /**
      * The default buffer size to use for the persistent subscription.
      */
     public final int persistentSubscriptionBufferSize;
@@ -146,8 +136,6 @@ public class Settings {
         maxConcurrentOperations = builder.maxConcurrentOperations;
         maxOperationRetries = builder.maxOperationRetries;
         maxReconnections = builder.maxReconnections;
-        maxPushQueueSize = builder.maxPushQueueSize;
-        readBatchSize = builder.readBatchSize;
         persistentSubscriptionBufferSize = builder.persistentSubscriptionBufferSize;
         persistentSubscriptionAutoAckEnabled = builder.persistentSubscriptionAutoAckEnabled;
         failOnNoServerResponse = builder.failOnNoServerResponse;
@@ -172,8 +160,6 @@ public class Settings {
         sb.append(", maxConcurrentOperations=").append(maxConcurrentOperations);
         sb.append(", maxOperationRetries=").append(maxOperationRetries);
         sb.append(", maxReconnections=").append(maxReconnections);
-        sb.append(", maxPushQueueSize=").append(maxPushQueueSize);
-        sb.append(", readBatchSize=").append(readBatchSize);
         sb.append(", persistentSubscriptionBufferSize=").append(persistentSubscriptionBufferSize);
         sb.append(", persistentSubscriptionAutoAckEnabled=").append(persistentSubscriptionAutoAckEnabled);
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
@@ -210,8 +196,6 @@ public class Settings {
         private Integer maxConcurrentOperations;
         private Integer maxOperationRetries;
         private Integer maxReconnections;
-        private Integer maxPushQueueSize;
-        private Integer readBatchSize;
         private Integer persistentSubscriptionBufferSize;
         private Boolean persistentSubscriptionAutoAckEnabled;
         private Boolean failOnNoServerResponse;
@@ -392,28 +376,6 @@ public class Settings {
         }
 
         /**
-         * Sets the maximum number of events allowed to be pushed in the catchup subscription live queue.
-         *
-         * @param maxPushQueueSize the maximum number of events allowed to be pushed in the catchup subscription live queue.
-         * @return the builder reference
-         */
-        public Builder maxPushQueueSize(int maxPushQueueSize) {
-            this.maxPushQueueSize = maxPushQueueSize;
-            return this;
-        }
-
-        /**
-         * Sets the batch size to use during the read phase of the catchup subscription.
-         *
-         * @param readBatchSize the batch size to use during the read phase of the catchup subscription.
-         * @return the builder reference
-         */
-        public Builder readBatchSize(int readBatchSize) {
-            this.readBatchSize = readBatchSize;
-            return this;
-        }
-
-        /**
          * Sets the default buffer size to use for the persistent subscription.
          *
          * @param persistentSubscriptionBufferSize the default buffer size to use for the persistent subscription.
@@ -520,18 +482,6 @@ public class Settings {
                 maxReconnections = 10;
             } else {
                 checkArgument(maxReconnections >= -1, "maxReconnections value is out of range: %d. Allowed range: [-1, infinity].", maxReconnections);
-            }
-
-            if (maxPushQueueSize == null) {
-                maxPushQueueSize = 10000;
-            } else {
-                checkArgument(isPositive(maxPushQueueSize), "maxPushQueueSize should be positive");
-            }
-
-            if (readBatchSize == null) {
-                readBatchSize = 500;
-            } else {
-                checkArgument(isPositive(readBatchSize), "readBatchSize should be positive");
             }
 
             if (persistentSubscriptionBufferSize == null) {

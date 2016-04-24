@@ -443,28 +443,6 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the maximum number of events allowed to be pushed in the catchup subscription live queue.
-     *
-     * @param size the maximum number of events allowed to be pushed in the catchup subscription live queue.
-     * @return the builder reference
-     */
-    public EventStoreBuilder catchupSubscriptionMaxPushQueueSize(int size) {
-        settingsBuilder.maxPushQueueSize(size);
-        return this;
-    }
-
-    /**
-     * Sets the batch size to use during the read phase of the catchup subscription.
-     *
-     * @param size the batch size to use during the read phase of the catchup subscription.
-     * @return the builder reference
-     */
-    public EventStoreBuilder catchupSubscriptionReadBatchSize(int size) {
-        settingsBuilder.readBatchSize(size);
-        return this;
-    }
-
-    /**
      * Sets the default buffer size to use for the persistent subscription.
      *
      * @param size the default buffer size to use for the persistent subscription.

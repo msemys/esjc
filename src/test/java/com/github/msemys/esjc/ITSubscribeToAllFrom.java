@@ -28,7 +28,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
     public void triggersOnCloseCallbackAfterStopMethodCall() throws TimeoutException, InterruptedException {
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
             }
@@ -55,7 +55,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         CountDownLatch liveSignal = new CountDownLatch(1);
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 if (liveSignal.getCount() == 0) {
@@ -105,7 +105,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
             asList(EventData.newBuilder().type("et-" + i).build())
         ).join());
 
-        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(null, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 if (event.originalPosition.compareTo(lastPosition) > 0) {
@@ -155,7 +155,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 1, false).join();
         Position lastPosition = slice.events.get(0).originalPosition;
 
-        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(lastPosition, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(lastPosition, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 events.add(event);
@@ -205,7 +205,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 2, false).join();
         Position position = slice.events.get(1).originalPosition;
 
-        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(position, false, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToAllFrom(position, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 events.add(event);

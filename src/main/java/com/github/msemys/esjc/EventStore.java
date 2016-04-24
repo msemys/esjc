@@ -219,15 +219,15 @@ public class EventStore extends AbstractEventStore {
     @Override
     public CatchUpSubscription subscribeToStreamFrom(String stream,
                                                      Integer fromEventNumberExclusive,
-                                                     boolean resolveLinkTos,
+                                                     CatchUpSubscriptionSettings settings,
                                                      CatchUpSubscriptionListener listener,
-                                                     UserCredentials userCredentials,
-                                                     int readBatchSize) {
+                                                     UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream");
         checkNotNull(listener, "listener");
+        checkNotNull(settings, "settings");
 
         CatchUpSubscription subscription = new StreamCatchUpSubscription(this,
-            stream, fromEventNumberExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor());
+            stream, fromEventNumberExclusive, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
 
         subscription.start();
 
@@ -236,14 +236,14 @@ public class EventStore extends AbstractEventStore {
 
     @Override
     public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
-                                                  boolean resolveLinkTos,
+                                                  CatchUpSubscriptionSettings settings,
                                                   CatchUpSubscriptionListener listener,
-                                                  UserCredentials userCredentials,
-                                                  int readBatchSize) {
+                                                  UserCredentials userCredentials) {
         checkNotNull(listener, "listener");
+        checkNotNull(settings, "settings");
 
         CatchUpSubscription subscription = new AllCatchUpSubscription(this,
-            fromPositionExclusive, resolveLinkTos, listener, userCredentials, readBatchSize, settings.maxPushQueueSize, executor());
+            fromPositionExclusive, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
 
         subscription.start();
 

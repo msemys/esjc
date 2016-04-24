@@ -477,23 +477,21 @@ abstract class AbstractEventStore {
      *
      * @param stream                   the stream to subscribe to.
      * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
-     * @param resolveLinkTos           whether to resolve link events automatically.
+     * @param settings                 subscription settings.
      * @param listener                 subscription listener.
-     * @param readBatchSize            the batch size to use during the read phase.
      * @return catch-up subscription
-     * @see #subscribeToStreamFrom(String, Integer, boolean, CatchUpSubscriptionListener, UserCredentials, int)
+     * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     public CatchUpSubscription subscribeToStreamFrom(String stream,
                                                      Integer fromEventNumberExclusive,
-                                                     boolean resolveLinkTos,
-                                                     CatchUpSubscriptionListener listener,
-                                                     int readBatchSize) {
-        return subscribeToStreamFrom(stream, fromEventNumberExclusive, resolveLinkTos, listener, null, readBatchSize);
+                                                     CatchUpSubscriptionSettings settings,
+                                                     CatchUpSubscriptionListener listener) {
+        return subscribeToStreamFrom(stream, fromEventNumberExclusive, settings, listener, null);
     }
 
     /**
      * Subscribes to a stream from the specified event number (exclusive) asynchronously
-     * using default user credentials and default batch size for read phase.
+     * using default catch-up subscription settings and default user credentials.
      * Existing events from {@code fromEventNumberExclusive} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
@@ -509,20 +507,18 @@ abstract class AbstractEventStore {
      *
      * @param stream                   the stream to subscribe to.
      * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
-     * @param resolveLinkTos           whether to resolve link events automatically.
      * @param listener                 subscription listener.
      * @return catch-up subscription
-     * @see #subscribeToStreamFrom(String, Integer, boolean, CatchUpSubscriptionListener, UserCredentials, int)
+     * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     public CatchUpSubscription subscribeToStreamFrom(String stream,
                                                      Integer fromEventNumberExclusive,
-                                                     boolean resolveLinkTos,
                                                      CatchUpSubscriptionListener listener) {
-        return subscribeToStreamFrom(stream, fromEventNumberExclusive, resolveLinkTos, listener, null, settings.readBatchSize);
+        return subscribeToStreamFrom(stream, fromEventNumberExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, null);
     }
 
     /**
-     * Subscribes to a stream from the specified event number (exclusive) asynchronously using default batch size for read phase.
+     * Subscribes to a stream from the specified event number (exclusive) asynchronously using default catch-up subscription settings.
      * Existing events from {@code fromEventNumberExclusive} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
@@ -538,18 +534,16 @@ abstract class AbstractEventStore {
      *
      * @param stream                   the stream to subscribe to.
      * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
-     * @param resolveLinkTos           whether to resolve link events automatically.
      * @param listener                 subscription listener.
      * @param userCredentials          user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return catch-up subscription
-     * @see #subscribeToStreamFrom(String, Integer, boolean, CatchUpSubscriptionListener, UserCredentials, int)
+     * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     public CatchUpSubscription subscribeToStreamFrom(String stream,
                                                      Integer fromEventNumberExclusive,
-                                                     boolean resolveLinkTos,
                                                      CatchUpSubscriptionListener listener,
                                                      UserCredentials userCredentials) {
-        return subscribeToStreamFrom(stream, fromEventNumberExclusive, resolveLinkTos, listener, userCredentials, settings.readBatchSize);
+        return subscribeToStreamFrom(stream, fromEventNumberExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
     }
 
     /**
@@ -569,22 +563,21 @@ abstract class AbstractEventStore {
      *
      * @param stream                   the stream to subscribe to.
      * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
-     * @param resolveLinkTos           whether to resolve link events automatically.
+     * @param settings                 subscription settings.
      * @param listener                 subscription listener.
      * @param userCredentials          user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @param readBatchSize            the batch size to use during the read phase.
      * @return catch-up subscription
      */
     public abstract CatchUpSubscription subscribeToStreamFrom(String stream,
                                                               Integer fromEventNumberExclusive,
-                                                              boolean resolveLinkTos,
+                                                              CatchUpSubscriptionSettings settings,
                                                               CatchUpSubscriptionListener listener,
-                                                              UserCredentials userCredentials,
-                                                              int readBatchSize);
+                                                              UserCredentials userCredentials);
+
 
     /**
-     * Subscribes to the $all stream from the specified event position (exclusive) asynchronously
-     * using default user credentials and default batch size for read phase.
+     * Subscribes to the $all stream from the specified event position (exclusive) asynchronously using
+     * default catch-up subscription settings and default user credentials.
      * Existing events from {@code fromPositionExclusive} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
@@ -599,15 +592,13 @@ abstract class AbstractEventStore {
      * </p>
      *
      * @param fromPositionExclusive the position (exclusive) from which to start (use {@code null} to receive all events).
-     * @param resolveLinkTos        whether to resolve link events automatically.
      * @param listener              subscription listener.
      * @return catch-up subscription
-     * @see AbstractEventStore#subscribeToAllFrom(Position, boolean, CatchUpSubscriptionListener, UserCredentials, int)
+     * @see AbstractEventStore#subscribeToAllFrom(Position, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
-                                                  boolean resolveLinkTos,
                                                   CatchUpSubscriptionListener listener) {
-        return subscribeToAllFrom(fromPositionExclusive, resolveLinkTos, listener, null, settings.readBatchSize);
+        return subscribeToAllFrom(fromPositionExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, null);
     }
 
     /**
@@ -626,22 +617,20 @@ abstract class AbstractEventStore {
      * </p>
      *
      * @param fromPositionExclusive the position (exclusive) from which to start (use {@code null} to receive all events).
-     * @param resolveLinkTos        whether to resolve link events automatically.
+     * @param settings              subscription settings.
      * @param listener              subscription listener.
-     * @param readBatchSize         the batch size to use during the read phase.
      * @return catch-up subscription
-     * @see AbstractEventStore#subscribeToAllFrom(Position, boolean, CatchUpSubscriptionListener, UserCredentials, int)
+     * @see AbstractEventStore#subscribeToAllFrom(Position, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
-                                                  boolean resolveLinkTos,
-                                                  CatchUpSubscriptionListener listener,
-                                                  int readBatchSize) {
-        return subscribeToAllFrom(fromPositionExclusive, resolveLinkTos, listener, null, readBatchSize);
+                                                  CatchUpSubscriptionSettings settings,
+                                                  CatchUpSubscriptionListener listener) {
+        return subscribeToAllFrom(fromPositionExclusive, settings, listener, null);
     }
 
     /**
      * Subscribes to the $all stream from the specified event position (exclusive) asynchronously
-     * using default batch size for read phase.
+     * using default catch-up subscription settings.
      * Existing events from {@code fromPositionExclusive} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
@@ -656,17 +645,15 @@ abstract class AbstractEventStore {
      * </p>
      *
      * @param fromPositionExclusive the position (exclusive) from which to start (use {@code null} to receive all events).
-     * @param resolveLinkTos        whether to resolve link events automatically.
      * @param listener              subscription listener.
      * @param userCredentials       user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return catch-up subscription
-     * @see AbstractEventStore#subscribeToAllFrom(Position, boolean, CatchUpSubscriptionListener, UserCredentials, int)
+     * @see AbstractEventStore#subscribeToAllFrom(Position, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
-                                                  boolean resolveLinkTos,
                                                   CatchUpSubscriptionListener listener,
                                                   UserCredentials userCredentials) {
-        return subscribeToAllFrom(fromPositionExclusive, resolveLinkTos, listener, userCredentials, settings.readBatchSize);
+        return subscribeToAllFrom(fromPositionExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
     }
 
     /**
@@ -685,17 +672,15 @@ abstract class AbstractEventStore {
      * </p>
      *
      * @param fromPositionExclusive the position (exclusive) from which to start (use {@code null} to receive all events).
-     * @param resolveLinkTos        whether to resolve link events automatically.
+     * @param settings              subscription settings.
      * @param listener              subscription listener.
      * @param userCredentials       user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @param readBatchSize         the batch size to use during the read phase.
      * @return catch-up subscription
      */
     public abstract CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
-                                                           boolean resolveLinkTos,
+                                                           CatchUpSubscriptionSettings settings,
                                                            CatchUpSubscriptionListener listener,
-                                                           UserCredentials userCredentials,
-                                                           int readBatchSize);
+                                                           UserCredentials userCredentials);
 
     /**
      * Subscribes to a persistent subscription asynchronously using default buffer size, auto-ack setting and default user credentials.
