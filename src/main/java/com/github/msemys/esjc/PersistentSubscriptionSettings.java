@@ -372,25 +372,25 @@ public class PersistentSubscriptionSettings {
             }
 
             if (readBatchSize == null) {
-                readBatchSize = 500;
+                readBatchSize = 20;
             } else {
                 checkArgument(isPositive(readBatchSize), "readBatchSize should be positive");
             }
 
             if (maxRetryCount == null) {
-                maxRetryCount = 500;
+                maxRetryCount = 10;
             } else {
                 checkArgument(isPositive(maxRetryCount), "maxRetryCount should be positive");
             }
 
             if (liveBufferSize == null) {
-                liveBufferSize = 10;
+                liveBufferSize = 500;
             } else {
                 checkArgument(isPositive(liveBufferSize), "liveBufferSize should be positive");
             }
 
             if (historyBufferSize == null) {
-                historyBufferSize = 20;
+                historyBufferSize = 500;
             } else {
                 checkArgument(isPositive(historyBufferSize), "historyBufferSize should be positive");
             }
