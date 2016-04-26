@@ -489,7 +489,7 @@ public class EventStore extends AbstractEventStore {
                         handle(new CloseConnection("Reconnection limit reached"));
                     } else {
                         fireEvent(Events.clientReconnecting());
-                        discoverEndPoint(Optional.empty());
+                        discoverEndpoint(Optional.empty());
                     }
                 }
                 break;
@@ -534,7 +534,7 @@ public class EventStore extends AbstractEventStore {
         }
     }
 
-    private void discoverEndPoint(Optional<CompletableFuture<Void>> result) {
+    private void discoverEndpoint(Optional<CompletableFuture<Void>> result) {
         logger.debug("Discovering endpoint...");
 
         if (connectionState() == ConnectionState.INIT && connectingPhase == ConnectingPhase.RECONNECTING) {
@@ -583,7 +583,7 @@ public class EventStore extends AbstractEventStore {
         switch (connectionState()) {
             case INIT:
                 connectingPhase = ConnectingPhase.RECONNECTING;
-                discoverEndPoint(Optional.of(task.result));
+                discoverEndpoint(Optional.of(task.result));
                 break;
             case CONNECTING:
             case CONNECTED:
