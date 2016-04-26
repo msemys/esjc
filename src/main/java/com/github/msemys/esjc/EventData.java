@@ -1,10 +1,13 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.system.SystemEventType;
 import com.github.msemys.esjc.util.EmptyArrays;
 
 import java.util.UUID;
 
+import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Strings.toBytes;
 
 /**
@@ -185,6 +188,18 @@ public class EventData {
             this.metadata = metadata;
             this.isJsonMetadata = true;
             return this;
+        }
+
+        /**
+         * Sets event data as link to the specified event in target stream.
+         *
+         * @param eventNumber event number in target stream.
+         * @param stream      target stream name.
+         * @return the builder reference
+         */
+        public Builder linkTo(int eventNumber, String stream) {
+            checkArgument(!isNullOrEmpty(stream), "stream");
+            return type(SystemEventType.LINK_TO.value).data(eventNumber + "@" + stream);
         }
 
         /**
