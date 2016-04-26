@@ -733,6 +733,34 @@ abstract class AbstractEventStore {
     }
 
     /**
+     * Subscribes to a persistent subscription asynchronously using default user credentials.
+     * <p>
+     * This will connect you to a persistent subscription group for a stream. The subscription group must first be created.
+     * Many connections can connect to the same group and they will be treated as competing consumers within the group.
+     * If one connection dies, work will be balanced across the rest of the consumers in the group.
+     * If you attempt to connect to a group that does not exist you will be given an exception.
+     * </p>
+     * <p>
+     * When auto-ack is disabled, the receiver is required to explicitly acknowledge messages through the subscription.
+     * </p>
+     *
+     * @param stream     the stream to subscribe to.
+     * @param groupName  the subscription group to connect to.
+     * @param listener   subscription listener.
+     * @param bufferSize the buffer size to use for the persistent subscription.
+     * @param autoAck    whether the subscription should automatically acknowledge messages processed.
+     * @return persistent subscription
+     * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
+     */
+    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
+                                                                           String groupName,
+                                                                           PersistentSubscriptionListener listener,
+                                                                           int bufferSize,
+                                                                           boolean autoAck) {
+        return subscribeToPersistent(stream, groupName, listener, null, bufferSize, autoAck);
+    }
+
+    /**
      * Subscribes to a persistent subscription asynchronously.
      * <p>
      * This will connect you to a persistent subscription group for a stream. The subscription group must first be created.
