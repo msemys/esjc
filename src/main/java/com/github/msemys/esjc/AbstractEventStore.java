@@ -95,6 +95,7 @@ abstract class AbstractEventStore {
                         .whenComplete(AbstractEventStore.this::onAuthenticationCompleted));
                     pipeline.addLast("operation-handler", new OperationHandler(operationManager, subscriptionManager)
                         .whenBadRequest(AbstractEventStore.this::onBadRequest)
+                        .whenChannelError(AbstractEventStore.this::onChannelError)
                         .whenReconnect(AbstractEventStore.this::onReconnect));
                 }
             });
@@ -1052,6 +1053,8 @@ abstract class AbstractEventStore {
     protected abstract void onAuthenticationCompleted(AuthenticationStatus status);
 
     protected abstract void onBadRequest(TcpPackage tcpPackage);
+
+    protected abstract void onChannelError(Throwable throwable);
 
     protected abstract void onReconnect(NodeEndpoints nodeEndpoints);
 

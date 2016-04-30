@@ -426,6 +426,10 @@ public class EventStore extends AbstractEventStore {
             new EventStoreException("Bad request received from server. Error: " + defaultIfEmpty(newString(tcpPackage.data), "<no message>"))));
     }
 
+    protected void onChannelError(Throwable throwable) {
+        fireEvent(Events.errorOccurred(throwable));
+    }
+
     @Override
     protected void onReconnect(NodeEndpoints nodeEndpoints) {
         reconnectTo(nodeEndpoints);

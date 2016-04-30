@@ -22,6 +22,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
     private final OperationManager operationManager;
     private final SubscriptionManager subscriptionManager;
     private Optional<Consumer<TcpPackage>> badRequestConsumer;
+    private Optional<Consumer<Throwable>> channelErrorConsumer;
     private Optional<Consumer<NodeEndpoints>> reconnectConsumer;
 
     public OperationHandler(OperationManager operationManager, SubscriptionManager subscriptionManager) {
@@ -100,8 +101,19 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
         }
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ctx.fireExceptionCaught(cause);
+        channelErrorConsumer.ifPresent(c -> c.accept(cause));
+    }
+
     public OperationHandler whenBadRequest(Consumer<TcpPackage> consumer) {
         badRequestConsumer = Optional.of(consumer);
+        return this;
+    }
+
+    public OperationHandler whenChannelError(Consumer<Throwable> consumer) {
+        channelErrorConsumer = Optional.of(consumer);
         return this;
     }
 
