@@ -3,6 +3,8 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.util.Throwables;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +28,9 @@ public abstract class AbstractIntegrationTest {
         .build();
 
     protected EventStore eventstore;
+
+    @Rule
+    public TestName name = new TestName();
 
     @Before
     public void setUp() throws Exception {
@@ -60,7 +65,7 @@ public abstract class AbstractIntegrationTest {
     protected String generateStreamName() {
         return new StringBuilder()
             .append(getClass().getSimpleName()).append("-")
-            .append(Thread.currentThread().getStackTrace()[2].getMethodName()).append("-")
+            .append(name.getMethodName()).append("-")
             .append(UUID.randomUUID().toString())
             .toString();
     }
