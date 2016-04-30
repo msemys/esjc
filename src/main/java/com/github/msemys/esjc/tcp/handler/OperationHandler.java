@@ -21,9 +21,9 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
 
     private final OperationManager operationManager;
     private final SubscriptionManager subscriptionManager;
-    private Optional<Consumer<TcpPackage>> badRequestConsumer;
-    private Optional<Consumer<Throwable>> channelErrorConsumer;
-    private Optional<Consumer<NodeEndpoints>> reconnectConsumer;
+    private Optional<Consumer<TcpPackage>> badRequestConsumer = Optional.empty();
+    private Optional<Consumer<Throwable>> channelErrorConsumer = Optional.empty();
+    private Optional<Consumer<NodeEndpoints>> reconnectConsumer = Optional.empty();
 
     public OperationHandler(OperationManager operationManager, SubscriptionManager subscriptionManager) {
         this.operationManager = operationManager;
