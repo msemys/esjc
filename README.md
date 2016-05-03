@@ -5,7 +5,7 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 ## Requirements
 
 * Java 8
-* EventStore Server >= 3.2.0 (tested with 3.3.1, 3.4.0, 3.5.0)
+* EventStore Server >= 3.2.0 (tested with 3.3.1 - 3.6.0)
 
 
 ## Maven Dependency
@@ -114,7 +114,7 @@ EventStore eventstore = EventStoreBuilder.newBuilder()
 
 ### API Examples
 
-All operations are handled fully asynchronously and returns [`CompletableFuture<T>`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html). For asynchronous result handling you could use [`whenComplete((result, throwable) -> { ... })`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#whenComplete-java.util.function.BiConsumer-) or [`thenAccept(result -> { ... })`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#thenAccept-java.util.function.Consumer-) methods on created future object. To handle result synchronously simply use [`get()`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#get--) method on future object.
+All operations are handled fully asynchronously and returns [`CompletableFuture<T>`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html). For asynchronous result handling you could use [`whenComplete((result, throwable) -> { ... })`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#whenComplete-java.util.function.BiConsumer-) or [`thenAccept(result -> { ... })`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#thenAccept-java.util.function.Consumer-) methods on created future object. To handle result synchronously simply use [`get()`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#get--) or [`join()`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html#join--) methods on future object.
 
 ```java
 // handles result asynchronously
@@ -282,7 +282,7 @@ volatileSubscription.get().close();
 #### Subscribes to stream from event number (catch-up subscription)
 
 ```java
-CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3, false,
+CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3,
     new CatchUpSubscriptionListener() {
         @Override
         public void onLiveProcessingStarted(CatchUpSubscription subscription) {
@@ -304,7 +304,7 @@ catchupSubscription.close();
 ```
 
 ```java
-CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3, false, (s, e) ->
+CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3, (s, e) ->
     System.out.println(e.originalEvent().eventType)
 );
 
@@ -314,7 +314,7 @@ catchupSubscription.close();
 #### Subscribes to ALL stream from event position (catch-up subscription)
 
 ```java
-CatchUpSubscription catchupSubscription = eventstore.subscribeToAllFrom(Position.START, false,
+CatchUpSubscription catchupSubscription = eventstore.subscribeToAllFrom(Position.START,
     new CatchUpSubscriptionListener() {
         @Override
         public void onLiveProcessingStarted(CatchUpSubscription subscription) {
@@ -336,7 +336,7 @@ catchupSubscription.close();
 ```
 
 ```java
-CatchUpSubscription catchupSubscription = eventstore.subscribeToAllFrom(Position.of(1, 1), false, (s, e) ->
+CatchUpSubscription catchupSubscription = eventstore.subscribeToAllFrom(Position.of(1, 1), (s, e) ->
     System.out.println(e.originalEvent().eventType)
 );
 
@@ -346,7 +346,7 @@ catchupSubscription.close();
 #### Subscribes to persistent subscription
 
 ```java
-PersistentSubscription persistentSubscription = eventstore.subscribeToPersistent("foo", "group", 
+CompletableFuture<PersistentSubscription> persistentSubscription = eventstore.subscribeToPersistent("foo", "group", 
     new PersistentSubscriptionListener() {
         @Override
         public void onEvent(PersistentSubscription subscription, ResolvedEvent event) {
@@ -359,15 +359,15 @@ PersistentSubscription persistentSubscription = eventstore.subscribeToPersistent
         }
     });
 
-persistentSubscription.close();
+persistentSubscription.get().close();
 ```
 
 ```java
-PersistentSubscription persistentSubscription = eventstore.subscribeToPersistent("foo", "group", (s, e) ->
+CompletableFuture<PersistentSubscription> persistentSubscription = eventstore.subscribeToPersistent("foo", "group", (s, e) ->
     System.out.println(e.originalEvent().eventType)
 );
 
-persistentSubscription.stop(Duration.ofSeconds(3));
+persistentSubscription.get().stop(Duration.ofSeconds(3));
 ```
 
 #### Creates persistent subscription
@@ -424,8 +424,10 @@ eventstore.setStreamMetadata("foo", ExpectedVersion.any(), StreamMetadata.newBui
     .aclReadRoles(asList("eric", "kyle", "stan", "kenny"))
     .cacheControl(Duration.ofMinutes(10))
     .maxAge(Duration.ofDays(1))
-    .customProperty("baz", "1")
-    .customProperty("bar", "2")
+    .customProperty("baz", "dummy text")
+    .customProperty("bar", 2)
+    .customProperty("quux", 3.4)
+    .customProperty("quuux", true)
     .build()
 ).thenAccept(r -> System.out.println(r.logPosition));
 ```
