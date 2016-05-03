@@ -2,8 +2,11 @@ package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.event.Event;
 import com.github.msemys.esjc.node.NodeEndpoints;
+import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.operation.manager.OperationManager;
 import com.github.msemys.esjc.ssl.CommonNameTrustManagerFactory;
+import com.github.msemys.esjc.subscription.MaximumSubscribersReachedException;
+import com.github.msemys.esjc.subscription.PersistentSubscriptionDeletedException;
 import com.github.msemys.esjc.subscription.manager.SubscriptionManager;
 import com.github.msemys.esjc.tcp.TcpPackage;
 import com.github.msemys.esjc.tcp.TcpPackageDecoder;
@@ -111,7 +114,11 @@ abstract class AbstractEventStore {
      *
      * @param stream          the name of the stream to delete.
      * @param expectedVersion the expected version that the streams should have when being deleted.
-     * @return delete result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean, UserCredentials)
      */
     public CompletableFuture<DeleteResult> deleteStream(String stream,
@@ -125,7 +132,11 @@ abstract class AbstractEventStore {
      * @param stream          the name of the stream to delete.
      * @param expectedVersion the expected version that the streams should have when being deleted.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return delete result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean, UserCredentials)
      */
     public CompletableFuture<DeleteResult> deleteStream(String stream,
@@ -144,7 +155,11 @@ abstract class AbstractEventStore {
      * @param stream          the name of the stream to delete.
      * @param expectedVersion the expected version that the streams should have when being deleted.
      * @param hardDelete      use {@code true} for "hard delete" or {@code false} for "soft delete" mode.
-     * @return delete result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean, UserCredentials)
      */
     public CompletableFuture<DeleteResult> deleteStream(String stream,
@@ -164,7 +179,11 @@ abstract class AbstractEventStore {
      * @param expectedVersion the expected version that the streams should have when being deleted.
      * @param hardDelete      use {@code true} for "hard delete" or {@code false} for "soft delete" mode.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return delete result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<DeleteResult> deleteStream(String stream,
                                                                  ExpectedVersion expectedVersion,
@@ -177,7 +196,11 @@ abstract class AbstractEventStore {
      * @param stream          the name of the stream to append events to.
      * @param expectedVersion the version at which we currently expect the stream to be, in order that an optimistic concurrency check can be performed.
      * @param events          the events to append.
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #appendToStream(String, ExpectedVersion, Iterable, UserCredentials)
      */
     public CompletableFuture<WriteResult> appendToStream(String stream,
@@ -193,7 +216,11 @@ abstract class AbstractEventStore {
      * @param expectedVersion the version at which we currently expect the stream to be, in order that an optimistic concurrency check can be performed.
      * @param events          the events to append.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<WriteResult> appendToStream(String stream,
                                                                   ExpectedVersion expectedVersion,
@@ -205,7 +232,11 @@ abstract class AbstractEventStore {
      *
      * @param stream          the stream to start a transaction on.
      * @param expectedVersion the expected version of the stream at the time of starting the transaction.
-     * @return transaction
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #startTransaction(String, ExpectedVersion, UserCredentials)
      */
     public CompletableFuture<Transaction> startTransaction(String stream,
@@ -219,7 +250,11 @@ abstract class AbstractEventStore {
      * @param stream          the stream to start a transaction on.
      * @param expectedVersion the expected version of the stream at the time of starting the transaction.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return transaction
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<Transaction> startTransaction(String stream,
                                                                     ExpectedVersion expectedVersion,
@@ -252,7 +287,10 @@ abstract class AbstractEventStore {
      * @param stream         the stream to read from.
      * @param eventNumber    the event number to read (use {@link StreamPosition#END} to read the last event in the stream).
      * @param resolveLinkTos whether to resolve link events automatically.
-     * @return event read result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #readEvent(String, int, boolean, UserCredentials)
      */
     public CompletableFuture<EventReadResult> readEvent(String stream,
@@ -268,7 +306,10 @@ abstract class AbstractEventStore {
      * @param eventNumber     the event number to read (use {@link StreamPosition#END} to read the last event in the stream).
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return event read result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<EventReadResult> readEvent(String stream,
                                                                  int eventNumber,
@@ -283,7 +324,10 @@ abstract class AbstractEventStore {
      * @param start          the starting point to read from.
      * @param count          the count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
-     * @return stream events slice
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #readStreamEventsForward(String, int, int, boolean, UserCredentials)
      */
     public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
@@ -302,7 +346,10 @@ abstract class AbstractEventStore {
      * @param count           the count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return stream events slice
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
                                                                                  int start,
@@ -318,7 +365,10 @@ abstract class AbstractEventStore {
      * @param start          the starting point to read from.
      * @param count          the count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
-     * @return stream events slice
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #readStreamEventsBackward(String, int, int, boolean, UserCredentials)
      */
     public CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
@@ -337,7 +387,10 @@ abstract class AbstractEventStore {
      * @param count           the count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return stream events slice
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
                                                                                   int start,
@@ -351,7 +404,10 @@ abstract class AbstractEventStore {
      * @param position       the position to start reading from.
      * @param maxCount       the maximum count to read.
      * @param resolveLinkTos whether to resolve link events automatically.
-     * @return all events slice
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #readAllEventsForward(Position, int, boolean, UserCredentials)
      */
     public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position,
@@ -367,7 +423,10 @@ abstract class AbstractEventStore {
      * @param maxCount        the maximum count to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return all events slice
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<AllEventsSlice> readAllEventsForward(Position position,
                                                                            int maxCount,
@@ -380,7 +439,10 @@ abstract class AbstractEventStore {
      * @param position       the position to start reading from.
      * @param maxCount       the maximum count to read.
      * @param resolveLinkTos whether to resolve link events automatically.
-     * @return all events slice
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #readAllEventsBackward(Position, int, boolean, UserCredentials)
      */
     public CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position,
@@ -396,7 +458,10 @@ abstract class AbstractEventStore {
      * @param maxCount        the maximum count to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return all events slice
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position,
                                                                             int maxCount,
@@ -410,7 +475,10 @@ abstract class AbstractEventStore {
      * @param stream         the stream to subscribe to.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @param listener       subscription listener.
-     * @return subscription
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #subscribeToStream(String, boolean, VolatileSubscriptionListener, UserCredentials)
      */
     public CompletableFuture<Subscription> subscribeToStream(String stream,
@@ -427,7 +495,10 @@ abstract class AbstractEventStore {
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param listener        subscription listener.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return subscription
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      */
     public abstract CompletableFuture<Subscription> subscribeToStream(String stream,
                                                                       boolean resolveLinkTos,
@@ -440,7 +511,10 @@ abstract class AbstractEventStore {
      *
      * @param resolveLinkTos whether to resolve link events automatically.
      * @param listener       subscription listener.
-     * @return subscription
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #subscribeToAll(boolean, VolatileSubscriptionListener, UserCredentials)
      */
     public CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
@@ -455,7 +529,10 @@ abstract class AbstractEventStore {
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param listener        subscription listener.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return subscription
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      */
     public abstract CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
                                                                    VolatileSubscriptionListener listener,
@@ -698,7 +775,11 @@ abstract class AbstractEventStore {
      * @param stream    the stream to subscribe to.
      * @param groupName the subscription group to connect to.
      * @param listener  subscription listener.
-     * @return persistent subscription
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link PersistentSubscriptionDeletedException}, {@link MaximumSubscribersReachedException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
     public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
@@ -723,7 +804,11 @@ abstract class AbstractEventStore {
      * @param groupName       the subscription group to connect to.
      * @param listener        subscription listener.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return persistent subscription
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link PersistentSubscriptionDeletedException}, {@link MaximumSubscribersReachedException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
     public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
@@ -750,7 +835,11 @@ abstract class AbstractEventStore {
      * @param listener   subscription listener.
      * @param bufferSize the buffer size to use for the persistent subscription.
      * @param autoAck    whether the subscription should automatically acknowledge messages processed.
-     * @return persistent subscription
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link PersistentSubscriptionDeletedException}, {@link MaximumSubscribersReachedException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
     public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
@@ -779,7 +868,11 @@ abstract class AbstractEventStore {
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @param bufferSize      the buffer size to use for the persistent subscription.
      * @param autoAck         whether the subscription should automatically acknowledge messages processed.
-     * @return persistent subscription
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link PersistentSubscriptionDeletedException}, {@link MaximumSubscribersReachedException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      */
     public abstract CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
                                                                                     String groupName,
@@ -794,7 +887,10 @@ abstract class AbstractEventStore {
      *
      * @param stream    the name of the stream to create the persistent subscription on.
      * @param groupName the name of the group to create.
-     * @return persistent subscription create result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalStateException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #createPersistentSubscription(String, String, PersistentSubscriptionSettings, UserCredentials)
      */
     public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
@@ -808,7 +904,10 @@ abstract class AbstractEventStore {
      * @param stream          the name of the stream to create the persistent subscription on.
      * @param groupName       the name of the group to create.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return persistent subscription create result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalStateException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #createPersistentSubscription(String, String, PersistentSubscriptionSettings, UserCredentials)
      */
     public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
@@ -823,7 +922,10 @@ abstract class AbstractEventStore {
      * @param stream    the name of the stream to create the persistent subscription on.
      * @param groupName the name of the group to create.
      * @param settings  persistent subscription settings.
-     * @return persistent subscription create result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalStateException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #createPersistentSubscription(String, String, PersistentSubscriptionSettings, UserCredentials)
      */
     public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
@@ -839,7 +941,10 @@ abstract class AbstractEventStore {
      * @param groupName       the name of the group to create.
      * @param settings        persistent subscription settings.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return persistent subscription create result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalStateException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      */
     public abstract CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
                                                                                                        String groupName,
@@ -852,7 +957,10 @@ abstract class AbstractEventStore {
      * @param stream    the name of the stream to update the persistent subscription on.
      * @param groupName the name of the group to update.
      * @param settings  persistent subscription settings.
-     * @return persistent subscription update result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalStateException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #updatePersistentSubscription(String, String, PersistentSubscriptionSettings, UserCredentials)
      */
     public CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
@@ -868,7 +976,10 @@ abstract class AbstractEventStore {
      * @param groupName       the name of the group to update.
      * @param settings        persistent subscription settings.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return persistent subscription update result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalStateException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      */
     public abstract CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
                                                                                                        String groupName,
@@ -880,7 +991,10 @@ abstract class AbstractEventStore {
      *
      * @param stream    the name of the stream to delete the persistent subscription on.
      * @param groupName the name of the group to delete.
-     * @return persistent subscription delete result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalStateException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      * @see #deletePersistentSubscription(String, String, UserCredentials)
      */
     public CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
@@ -894,7 +1008,10 @@ abstract class AbstractEventStore {
      * @param stream          the name of the stream to delete the persistent subscription on.
      * @param groupName       the name of the group to delete.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return persistent subscription delete result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalStateException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
      */
     public abstract CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
                                                                                                        String groupName,
@@ -906,7 +1023,11 @@ abstract class AbstractEventStore {
      * @param stream                    the name of the stream for which to set metadata.
      * @param expectedMetastreamVersion the expected version for the write to the metadata stream.
      * @param metadata                  metadata to set.
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
     public CompletableFuture<WriteResult> setStreamMetadata(String stream,
@@ -923,7 +1044,11 @@ abstract class AbstractEventStore {
      * @param expectedMetastreamVersion the expected version for the write to the metadata stream.
      * @param metadata                  metadata to set.
      * @param userCredentials           user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
     public CompletableFuture<WriteResult> setStreamMetadata(String stream,
@@ -940,7 +1065,11 @@ abstract class AbstractEventStore {
      * @param stream                    the name of the stream for which to set metadata.
      * @param expectedMetastreamVersion the expected version for the write to the metadata stream.
      * @param metadata                  metadata to set.
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
     public CompletableFuture<WriteResult> setStreamMetadata(String stream,
@@ -956,7 +1085,11 @@ abstract class AbstractEventStore {
      * @param expectedMetastreamVersion the expected version for the write to the metadata stream.
      * @param metadata                  metadata to set.
      * @param userCredentials           user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<WriteResult> setStreamMetadata(String stream,
                                                                      ExpectedVersion expectedMetastreamVersion,
@@ -967,7 +1100,10 @@ abstract class AbstractEventStore {
      * Gets the metadata for a stream asynchronously using default user credentials.
      *
      * @param stream the name of the stream for which to read metadata.
-     * @return stream metadata result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #getStreamMetadata(String, UserCredentials)
      */
     public CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream) {
@@ -979,7 +1115,10 @@ abstract class AbstractEventStore {
      *
      * @param stream          the name of the stream for which to read metadata.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return stream metadata result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream, UserCredentials userCredentials);
 
@@ -987,7 +1126,10 @@ abstract class AbstractEventStore {
      * Gets the metadata for a stream as a byte array asynchronously using default user credentials.
      *
      * @param stream the name of the stream for which to read metadata.
-     * @return raw stream metadata result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #getStreamMetadataAsRawBytes(String, UserCredentials)
      */
     public CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream) {
@@ -999,7 +1141,10 @@ abstract class AbstractEventStore {
      *
      * @param stream          the name of the stream for which to read metadata.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return raw stream metadata result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream,
                                                                                            UserCredentials userCredentials);
@@ -1008,7 +1153,11 @@ abstract class AbstractEventStore {
      * Sets the global settings for the server or cluster asynchronously using default user credentials.
      *
      * @param settings system settings to apply.
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      * @see #setSystemSettings(SystemSettings, UserCredentials)
      */
     public CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings) {
@@ -1020,7 +1169,11 @@ abstract class AbstractEventStore {
      *
      * @param settings        system settings to apply.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public abstract CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings, UserCredentials userCredentials);
 

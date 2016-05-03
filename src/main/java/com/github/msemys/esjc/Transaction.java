@@ -1,5 +1,6 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.transaction.TransactionManager;
 
 import java.util.concurrent.CompletableFuture;
@@ -42,7 +43,11 @@ public class Transaction implements AutoCloseable {
     /**
      * Commits this transaction asynchronously.
      *
-     * @return write result
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
      */
     public CompletableFuture<WriteResult> commit() {
         if (isRolledBack) {
@@ -59,7 +64,11 @@ public class Transaction implements AutoCloseable {
      * Writes events to a transaction in the Event Store asynchronously.
      *
      * @param events the events to write.
-     * @return the future that retrieves {@code null} as success value, when it completes.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion. In case of successful completion, the future's methods {@code get} and {@code join}
+     * returns {@code null}.
      */
     public CompletableFuture<Void> write(Iterable<EventData> events) {
         if (isRolledBack) {
