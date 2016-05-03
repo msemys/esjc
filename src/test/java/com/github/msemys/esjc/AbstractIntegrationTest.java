@@ -1,5 +1,6 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.event.ClientConnected;
 import com.github.msemys.esjc.util.Throwables;
 import org.junit.After;
 import org.junit.Before;
@@ -10,7 +11,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Supplier;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractIntegrationTest {
 
@@ -35,7 +40,18 @@ public abstract class AbstractIntegrationTest {
     @Before
     public void setUp() throws Exception {
         eventstore = createEventStore();
+
+        CountDownLatch clientConnectedSignal = new CountDownLatch(1);
+
+        eventstore.addListener(event -> {
+            if (event instanceof ClientConnected) {
+                clientConnectedSignal.countDown();
+            }
+        });
+
         eventstore.connect();
+
+        assertTrue("client connect timeout", clientConnectedSignal.await(15, SECONDS));
     }
 
     @After
