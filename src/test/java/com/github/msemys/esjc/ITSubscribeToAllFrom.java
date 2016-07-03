@@ -50,6 +50,34 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
     }
 
     @Test
+    public void triggersOnCloseCallbackWhenAnErrorOccursWhileProcessingAnEvent() throws TimeoutException, InterruptedException {
+        CountDownLatch closeSignal = new CountDownLatch(1);
+
+        eventstore.appendToStream(generateStreamName(), ExpectedVersion.any(), asList(newTestEvent())).join();
+
+        eventstore.subscribeToAllFrom(null, new CatchUpSubscriptionListener() {
+            @Override
+            public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
+                throw new RuntimeException("test");
+            }
+
+            @Override
+            public void onLiveProcessingStarted(CatchUpSubscription subscription) {
+                logger.info("Live processing started.");
+            }
+
+            @Override
+            public void onClose(CatchUpSubscription subscription, SubscriptionDropReason reason, Exception exception) {
+                if (exception != null && "test".equals(exception.getMessage())) {
+                    closeSignal.countDown();
+                }
+            }
+        });
+
+        assertTrue("onClose timeout", closeSignal.await(10, SECONDS));
+    }
+
+    @Test
     public void subscribesToAllStream() throws InterruptedException, TimeoutException {
         CountDownLatch eventSignal = new CountDownLatch(1);
         CountDownLatch liveSignal = new CountDownLatch(1);
