@@ -151,8 +151,14 @@ public abstract class PersistentSubscription implements AutoCloseable {
         }
     }
 
+    /**
+     * Unsubscribes from the persistent subscription (using 2 seconds wait time before it should timeout).
+     *
+     * @throws TimeoutException when timeouts
+     * @see #stop(Duration)
+     */
     @Override
-    public void close() throws Exception {
+    public void close() throws TimeoutException {
         stop(Duration.ofSeconds(2));
     }
 

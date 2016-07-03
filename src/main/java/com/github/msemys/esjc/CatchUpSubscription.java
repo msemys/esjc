@@ -117,8 +117,14 @@ public abstract class CatchUpSubscription implements AutoCloseable {
         enqueueSubscriptionDropNotification(SubscriptionDropReason.UserInitiated, null);
     }
 
+    /**
+     * Unsubscribes from the catch-up subscription (using 2 seconds wait time before it should timeout).
+     *
+     * @throws TimeoutException when timeouts
+     * @see #stop(Duration)
+     */
     @Override
-    public void close() throws Exception {
+    public void close() throws TimeoutException {
         stop(Duration.ofSeconds(2));
     }
 
