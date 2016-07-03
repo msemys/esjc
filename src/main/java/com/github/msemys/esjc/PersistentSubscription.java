@@ -138,7 +138,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
     }
 
     /**
-     * Unsubscribes from the the persistent subscriptions.
+     * Unsubscribes from the persistent subscription.
      *
      * @param timeout the maximum wait time before it should timeout.
      * @throws TimeoutException when timeouts

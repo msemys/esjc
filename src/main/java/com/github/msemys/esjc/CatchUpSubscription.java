@@ -99,6 +99,12 @@ public abstract class CatchUpSubscription implements AutoCloseable {
         runSubscription();
     }
 
+    /**
+     * Unsubscribes from the catch-up subscription.
+     *
+     * @param timeout the maximum wait time before it should timeout.
+     * @throws TimeoutException when timeouts
+     */
     public void stop(Duration timeout) throws TimeoutException {
         stop();
         logger.trace("Waiting on subscription to stop");
@@ -107,6 +113,9 @@ public abstract class CatchUpSubscription implements AutoCloseable {
         }
     }
 
+    /**
+     * Unsubscribes from the catch-up subscription asynchronously.
+     */
     public void stop() {
         logger.trace("Catch-up subscription to {}: requesting stop...", streamId());
 
