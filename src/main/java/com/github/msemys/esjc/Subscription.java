@@ -42,8 +42,11 @@ public abstract class Subscription implements AutoCloseable {
      */
     public abstract void unsubscribe();
 
+    /**
+     * Unsubscribes from the stream.
+     */
     @Override
-    public void close() throws Exception {
+    public void close() {
         unsubscribe();
     }
 }

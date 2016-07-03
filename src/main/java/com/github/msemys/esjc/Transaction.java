@@ -93,11 +93,9 @@ public class Transaction implements AutoCloseable {
 
     /**
      * Closes this transaction by rolling it back if not already committed.
-     *
-     * @throws Exception if any error occurs
      */
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (!isCommitted) {
             isRolledBack = true;
         }
