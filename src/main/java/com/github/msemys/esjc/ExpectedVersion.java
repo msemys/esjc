@@ -6,6 +6,7 @@ package com.github.msemys.esjc;
 public class ExpectedVersion {
     private static final ExpectedVersion NO_STREAM = new ExpectedVersion(-1);
     private static final ExpectedVersion ANY = new ExpectedVersion(-2);
+    private static final ExpectedVersion STREAM_EXISTS = new ExpectedVersion(-4);
 
     /**
      * Stream version value
@@ -53,5 +54,13 @@ public class ExpectedVersion {
      */
     public static ExpectedVersion any() {
         return ANY;
+    }
+
+    /**
+     * Specifies the expectation that stream should exist (idempotence is not guaranteed).
+     * If it or a metadata stream does not exist treat that as a concurrency problem.
+     */
+    public static ExpectedVersion streamExists() {
+        return STREAM_EXISTS;
     }
 }

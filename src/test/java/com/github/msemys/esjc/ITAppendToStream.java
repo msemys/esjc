@@ -203,4 +203,68 @@ public class ITAppendToStream extends AbstractIntegrationTest {
         assertEquals(99, eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).get().nextExpectedVersion);
     }
 
+    @Test
+    public void appendsWithStreamExistsExpectedVersionToExistingStream() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.streamExists(), asList(newTestEvent())).join();
+    }
+
+    @Test
+    public void appendsWithStreamExistsExpectedVersionToStreamWithMultipleEvents() {
+        final String stream = generateStreamName();
+
+        range(0, 5).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join());
+        eventstore.appendToStream(stream, ExpectedVersion.streamExists(), asList(newTestEvent())).join();
+    }
+
+    @Test
+    public void appendsWithStreamExistsExpectedVersionIfMetadataStreamExists() {
+        final String stream = generateStreamName();
+
+        eventstore.setStreamMetadata(stream, ExpectedVersion.any(), StreamMetadata.newBuilder().maxCount(10).build()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.streamExists(), asList(newTestEvent())).join();
+    }
+
+    @Test
+    public void failsAppendingWithStreamExistsExpectedVersionToNonExistingStream() {
+        final String stream = generateStreamName();
+
+        try {
+            eventstore.appendToStream(stream, ExpectedVersion.streamExists(), asList(newTestEvent())).join();
+            fail("should fail with 'WrongExpectedVersionException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
+        }
+    }
+
+    @Test
+    public void failsAppendingWithStreamExistsExpectedVersionToHardDeletedStream() {
+        final String stream = generateStreamName();
+
+        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+
+        try {
+            eventstore.appendToStream(stream, ExpectedVersion.streamExists(), asList(newTestEvent())).join();
+            fail("should fail with 'StreamDeletedException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
+        }
+    }
+
+    @Test
+    public void failsAppendingWithStreamExistsExpectedVersionToSoftDeletedStream() {
+        final String stream = generateStreamName();
+
+        eventstore.deleteStream(stream, ExpectedVersion.noStream(), false).join();
+
+        try {
+            eventstore.appendToStream(stream, ExpectedVersion.streamExists(), asList(newTestEvent())).join();
+            fail("should fail with 'StreamDeletedException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
+        }
+    }
+
 }
