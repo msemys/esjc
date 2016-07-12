@@ -37,7 +37,7 @@ import static com.github.msemys.esjc.util.Strings.*;
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
 import static java.time.Duration.between;
 import static java.time.Instant.now;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
@@ -336,7 +336,7 @@ public class EventStore extends AbstractEventStore {
             .build();
 
         enqueue(new AppendToStreamOperation(result, settings.requireMaster, SystemStreams.metastreamOf(stream),
-            expectedMetastreamVersion.value, asList(metaevent), userCredentials));
+            expectedMetastreamVersion.value, singletonList(metaevent), userCredentials));
 
         return result;
     }
@@ -404,7 +404,7 @@ public class EventStore extends AbstractEventStore {
         checkNotNull(settings, "settings");
         return appendToStream(SystemStreams.SETTINGS_STREAM,
             ExpectedVersion.any(),
-            asList(EventData.newBuilder()
+            singletonList(EventData.newBuilder()
                 .type(SystemEventType.SETTINGS.value)
                 .jsonData(settings.toJson())
                 .build()),

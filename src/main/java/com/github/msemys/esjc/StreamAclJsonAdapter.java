@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 public class StreamAclJsonAdapter extends TypeAdapter<StreamAcl> {
     private static final String ACL_READ = "$r";
@@ -82,7 +82,7 @@ public class StreamAclJsonAdapter extends TypeAdapter<StreamAcl> {
 
     private static List<String> readRoles(JsonReader reader) throws IOException {
         if (reader.peek() == JsonToken.STRING) {
-            return asList(reader.nextString());
+            return singletonList(reader.nextString());
         } else {
             List<String> roles = new ArrayList<>();
 

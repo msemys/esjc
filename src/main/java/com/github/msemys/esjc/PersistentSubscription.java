@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
 import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toCollection;
 
 /**
@@ -94,7 +94,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
      * @param event the event to acknowledge.
      */
     public void acknowledge(ResolvedEvent event) {
-        subscription.notifyEventsProcessed(asList(event.originalEvent().eventId));
+        subscription.notifyEventsProcessed(singletonList(event.originalEvent().eventId));
     }
 
     /**
@@ -118,7 +118,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
      * @param reason an error message as to why the failure is occurring.
      */
     public void fail(ResolvedEvent event, PersistentSubscriptionNakEventAction action, String reason) {
-        subscription.notifyEventsFailed(asList(event.originalEvent().eventId), action, reason);
+        subscription.notifyEventsFailed(singletonList(event.originalEvent().eventId), action, reason);
     }
 
     /**
@@ -203,7 +203,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
                     listener.onEvent(this, event);
 
                     if (autoAck) {
-                        subscription.notifyEventsProcessed(asList(event.originalEvent().eventId));
+                        subscription.notifyEventsProcessed(singletonList(event.originalEvent().eventId));
                     }
 
                     logger.trace("Persistent subscription to {}: processed event ({}, {}, {} @ {}).", streamId,
