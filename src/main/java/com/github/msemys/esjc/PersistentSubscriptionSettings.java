@@ -21,69 +21,69 @@ public class PersistentSubscriptionSettings {
     /**
      * Whether or not the subscription should resolve linkTo events to their linked events.
      */
-    public boolean resolveLinkTos;
+    public final boolean resolveLinkTos;
 
     /**
      * The event number from which to start.
      */
-    public int startFrom;
+    public final int startFrom;
 
     /**
      * Whether or not in depth latency statistics should be tracked on this subscription.
      */
-    public boolean timingStatistics;
+    public final boolean timingStatistics;
 
     /**
      * The amount of time after which a message should be considered to be timedout and retried.
      */
-    public Duration messageTimeout;
+    public final Duration messageTimeout;
 
     /**
      * The number of events read at a time when paging in history.
      */
-    public int readBatchSize;
+    public final int readBatchSize;
 
     /**
      * The maximum number of retries (due to timeout) before a message get considered to be parked.
      */
-    public int maxRetryCount;
+    public final int maxRetryCount;
 
     /**
      * The size of the buffer listening to live messages as they happen.
      */
-    public int liveBufferSize;
+    public final int liveBufferSize;
 
     /**
      * The number of events to cache when paging through history.
      */
-    public int historyBufferSize;
+    public final int historyBufferSize;
 
     /**
      * The amount of time to try to checkpoint after.
      */
-    public Duration checkPointAfter;
+    public final Duration checkPointAfter;
 
     /**
      * The minimum number of messages to checkpoint.
      */
-    public int minCheckPointCount;
+    public final int minCheckPointCount;
 
     /**
      * The maximum number of messages to checkpoint. If this number is a reached, a checkpoint will be forced.
      */
-    public int maxCheckPointCount;
+    public final int maxCheckPointCount;
 
     /**
      * The maximum number of subscribers allowed.
      */
-    public int maxSubscriberCount;
+    public final int maxSubscriberCount;
 
     /**
      * The strategy to use for distributing events to client consumers.
      *
      * @see SystemConsumerStrategy
      */
-    public SystemConsumerStrategy namedConsumerStrategy;
+    public final SystemConsumerStrategy namedConsumerStrategy;
 
     private PersistentSubscriptionSettings(Builder builder) {
         resolveLinkTos = builder.resolveLinkTos;
