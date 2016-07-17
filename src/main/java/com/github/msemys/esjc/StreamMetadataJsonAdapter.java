@@ -8,6 +8,8 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
     private static final String MAX_AGE = "$maxAge";
@@ -53,6 +55,24 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
                     propertyWriter.value((Number) property.value);
                 } else if (property.value instanceof Boolean) {
                     propertyWriter.value((Boolean) property.value);
+                } else if (property.value instanceof String[]) {
+                    propertyWriter.beginArray();
+                    for (String v : ((String[]) property.value)) {
+                        propertyWriter.value(v);
+                    }
+                    propertyWriter.endArray();
+                } else if (property.value instanceof Number[]) {
+                    propertyWriter.beginArray();
+                    for (Number v : ((Number[]) property.value)) {
+                        propertyWriter.value(v);
+                    }
+                    propertyWriter.endArray();
+                } else if (property.value instanceof Boolean[]) {
+                    propertyWriter.beginArray();
+                    for (Boolean v : ((Boolean[]) property.value)) {
+                        propertyWriter.value(v);
+                    }
+                    propertyWriter.endArray();
                 } else {
                     propertyWriter.value(property.value.toString());
                 }
@@ -102,6 +122,37 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
                         case NULL:
                             reader.nextNull();
                             builder.customProperty(name, (String) null);
+                            break;
+                        case BEGIN_ARRAY:
+                            List<Object> values = new ArrayList<>();
+
+                            reader.beginArray();
+                            while (reader.peek() != JsonToken.END_ARRAY) {
+                                switch (reader.peek()) {
+                                    case NULL:
+                                        reader.nextNull();
+                                        values.add(null);
+                                        break;
+                                    case BOOLEAN:
+                                        values.add(reader.nextBoolean());
+                                        break;
+                                    case NUMBER:
+                                        values.add(new BigDecimal(reader.nextString()));
+                                        break;
+                                    case STRING:
+                                        values.add(reader.nextString());
+                                }
+                            }
+                            reader.endArray();
+
+                            if (values.stream().anyMatch(v -> v instanceof Boolean)) {
+                                builder.customProperty(name, values.stream().toArray(Boolean[]::new));
+                            } else if (values.stream().anyMatch(v -> v instanceof Number)) {
+                                builder.customProperty(name, values.stream().toArray(Number[]::new));
+                            } else {
+                                builder.customProperty(name, values.stream().toArray(String[]::new));
+                            }
+
                             break;
                         case BOOLEAN:
                             builder.customProperty(name, reader.nextBoolean());

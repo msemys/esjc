@@ -20,6 +20,7 @@ import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Strings.toBytes;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
@@ -315,6 +316,39 @@ public class StreamMetadata {
         }
 
         /**
+         * Sets text array type custom metadata property.
+         *
+         * @param name   property name.
+         * @param values property values.
+         * @return the builder reference
+         */
+        public Builder customProperty(String name, String... values) {
+            return customProperty(new Property(name, values));
+        }
+
+        /**
+         * Sets number array type custom metadata property.
+         *
+         * @param name   property name.
+         * @param values property values.
+         * @return the builder reference
+         */
+        public Builder customProperty(String name, Number... values) {
+            return customProperty(new Property(name, values));
+        }
+
+        /**
+         * Sets boolean array type custom metadata property.
+         *
+         * @param name   property name.
+         * @param values property values.
+         * @return the builder reference
+         */
+        public Builder customProperty(String name, Boolean... values) {
+            return customProperty(new Property(name, values));
+        }
+
+        /**
          * Builds a stream metadata.
          *
          * @return stream metadata
@@ -417,6 +451,54 @@ public class StreamMetadata {
                 return (Boolean) value;
             } else {
                 return (value != null) ? Boolean.parseBoolean(toString()) : null;
+            }
+        }
+
+        public String[] toStrings() {
+            if (value instanceof String[]) {
+                return (String[]) value;
+            } else {
+                return (value != null) ? new String[]{toString()} : null;
+            }
+        }
+
+        public Integer[] toIntegers() {
+            if (value instanceof Number[]) {
+                return stream(((Number[]) value)).map(v -> (v != null) ? v.intValue() : null).toArray(Integer[]::new);
+            } else if (value instanceof String[]) {
+                return new Integer[((String[]) value).length];
+            } else {
+                return (value != null) ? new Integer[]{Integer.parseInt(toString())} : null;
+            }
+        }
+
+        public Long[] toLongs() {
+            if (value instanceof Number[]) {
+                return stream(((Number[]) value)).map(v -> (v != null) ? v.longValue() : null).toArray(Long[]::new);
+            } else if (value instanceof String[]) {
+                return new Long[((String[]) value).length];
+            } else {
+                return (value != null) ? new Long[]{Long.parseLong(toString())} : null;
+            }
+        }
+
+        public Double[] toDoubles() {
+            if (value instanceof Number[]) {
+                return stream(((Number[]) value)).map(v -> (v != null) ? v.doubleValue() : null).toArray(Double[]::new);
+            } else if (value instanceof String[]) {
+                return new Double[((String[]) value).length];
+            } else {
+                return (value != null) ? new Double[]{Double.parseDouble(toString())} : null;
+            }
+        }
+
+        public Boolean[] toBooleans() {
+            if (value instanceof Boolean[]) {
+                return (Boolean[]) value;
+            } else if (value instanceof String[]) {
+                return new Boolean[((String[]) value).length];
+            } else {
+                return (value != null) ? new Boolean[]{Boolean.parseBoolean(toString())} : null;
             }
         }
     }
