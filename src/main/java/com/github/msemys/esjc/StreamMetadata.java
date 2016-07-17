@@ -260,6 +260,28 @@ public class StreamMetadata {
         }
 
         /**
+         * Sets metadata custom property list.
+         *
+         * @param properties custom properties.
+         * @return the builder reference
+         */
+        public Builder customProperties(List<Property> properties) {
+            customProperties = properties;
+            return this;
+        }
+
+        /**
+         * Sets metadata custom property.
+         *
+         * @param property custom property.
+         * @return the builder reference
+         */
+        public Builder customProperty(Property property) {
+            customProperties.add(property);
+            return this;
+        }
+
+        /**
          * Sets text based custom metadata property.
          *
          * @param name  property name.
@@ -267,8 +289,7 @@ public class StreamMetadata {
          * @return the builder reference
          */
         public Builder customProperty(String name, String value) {
-            customProperties.add(new Property(name, value));
-            return this;
+            return customProperty(new Property(name, value));
         }
 
         /**
@@ -279,8 +300,7 @@ public class StreamMetadata {
          * @return the builder reference
          */
         public Builder customProperty(String name, Number value) {
-            customProperties.add(new Property(name, value));
-            return this;
+            return customProperty(new Property(name, value));
         }
 
         /**
@@ -291,8 +311,7 @@ public class StreamMetadata {
          * @return the builder reference
          */
         public Builder customProperty(String name, Boolean value) {
-            customProperties.add(new Property(name, value));
-            return this;
+            return customProperty(new Property(name, value));
         }
 
         /**
