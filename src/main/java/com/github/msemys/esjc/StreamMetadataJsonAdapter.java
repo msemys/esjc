@@ -6,6 +6,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.Duration;
 
 public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
@@ -106,8 +107,9 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
                             builder.customProperty(name, reader.nextBoolean());
                             break;
                         case NUMBER:
+                            builder.customProperty(name, new BigDecimal(reader.nextString()));
+                            break;
                         case STRING:
-                        default:
                             builder.customProperty(name, reader.nextString());
                     }
             }

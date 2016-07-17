@@ -370,24 +370,24 @@ public class StreamMetadata {
         }
 
         public Integer toInteger() {
-            if (value instanceof Integer) {
-                return (Integer) value;
+            if (value instanceof Number) {
+                return ((Number) value).intValue();
             } else {
                 return (value != null) ? Integer.parseInt(toString()) : null;
             }
         }
 
         public Long toLong() {
-            if (value instanceof Long) {
-                return (Long) value;
+            if (value instanceof Number) {
+                return ((Number) value).longValue();
             } else {
                 return (value != null) ? Long.parseLong(toString()) : null;
             }
         }
 
         public Double toDouble() {
-            if (value instanceof Double) {
-                return (Double) value;
+            if (value instanceof Number) {
+                return ((Number) value).doubleValue();
             } else {
                 return (value != null) ? Double.parseDouble(toString()) : null;
             }
