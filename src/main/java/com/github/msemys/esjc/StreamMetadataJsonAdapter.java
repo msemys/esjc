@@ -162,6 +162,9 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
                             break;
                         case STRING:
                             builder.customProperty(name, reader.nextString());
+                            break;
+                        default:
+                            reader.skipValue();
                     }
             }
         }
