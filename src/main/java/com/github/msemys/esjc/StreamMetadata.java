@@ -90,6 +90,59 @@ public class StreamMetadata {
     }
 
     /**
+     * Creates a new stream metadata builder populated with the values from this instance.
+     *
+     * @return stream metadata builder
+     */
+    public Builder toBuilder() {
+        Builder builder = new Builder();
+
+        if (maxCount != null) {
+            builder.maxCount(maxCount);
+        }
+
+        if (maxAge != null) {
+            builder.maxAge(maxAge);
+        }
+
+        if (truncateBefore != null) {
+            builder.truncateBefore(truncateBefore);
+        }
+
+        if (cacheControl != null) {
+            builder.cacheControl(cacheControl);
+        }
+
+        if (acl != null) {
+            if (acl.readRoles != null) {
+                builder.aclReadRoles(new ArrayList<>(acl.readRoles));
+            }
+
+            if (acl.writeRoles != null) {
+                builder.aclWriteRoles(new ArrayList<>(acl.writeRoles));
+            }
+
+            if (acl.deleteRoles != null) {
+                builder.aclDeleteRoles(new ArrayList<>(acl.deleteRoles));
+            }
+
+            if (acl.metaReadRoles != null) {
+                builder.aclMetaReadRoles(new ArrayList<>(acl.metaReadRoles));
+            }
+
+            if (acl.metaWriteRoles != null) {
+                builder.aclMetaWriteRoles(new ArrayList<>(acl.metaWriteRoles));
+            }
+        }
+
+        if (customProperties != null) {
+            builder.customProperties(new ArrayList<>(customProperties));
+        }
+
+        return builder;
+    }
+
+    /**
      * Converts to JSON representation.
      *
      * @return JSON representation
