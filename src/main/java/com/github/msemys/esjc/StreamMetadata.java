@@ -278,7 +278,17 @@ public class StreamMetadata {
          * @return the builder reference
          */
         public Builder customProperty(Property property) {
-            customProperties.add(property);
+            int index = customProperties.stream()
+                .filter(p -> p.name.equals(property.name))
+                .findFirst()
+                .map(p -> customProperties.indexOf(p)).orElse(-1);
+
+            if (index > -1) {
+                customProperties.set(index, property);
+            } else {
+                customProperties.add(property);
+            }
+
             return this;
         }
 
