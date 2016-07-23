@@ -279,7 +279,7 @@ public class EventStoreBuilder {
      *
      * @return the builder reference
      */
-    public EventStoreBuilder useSslConnectionWithAnyCertificate() {
+    public EventStoreBuilder useSslConnection() {
         settingsBuilder.sslSettings(SslSettings.trustAllCertificates());
         return this;
     }

@@ -27,7 +27,7 @@ public abstract class AbstractIntegrationTest {
 
     protected static final Supplier<EventStore> eventstoreSslSupplier = () -> EventStoreBuilder.newBuilder()
         .singleNodeAddress("127.0.0.1", 7779)
-        .useSslConnectionWithAnyCertificate()
+        .useSslConnection()
         .userCredentials("admin", "changeit")
         .maxClientReconnections(2)
         .build();
