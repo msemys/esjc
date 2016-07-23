@@ -220,7 +220,7 @@ public class StreamMetadata {
          * @param maxCount the maximum number of events allowed in the stream.
          * @return the builder reference
          */
-        public Builder maxCount(int maxCount) {
+        public Builder maxCount(Integer maxCount) {
             this.maxCount = maxCount;
             return this;
         }
