@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
 import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
+import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toCollection;
 
@@ -178,40 +179,44 @@ public abstract class PersistentSubscription implements AutoCloseable {
 
     private void processQueue() {
         do {
-            ResolvedEvent event;
-            while ((event = queue.poll()) != null) {
-                // drop subscription artificial ResolvedEvent
-                if (event.equals(DROP_SUBSCRIPTION_EVENT)) {
-                    DropData previousDropData = dropData.getAndAccumulate(UNKNOWN_DROP_DATA,
-                        (current, update) -> (current == null) ? update : current);
+            if (subscription == null) {
+                sleepUninterruptibly(1);
+            } else {
+                ResolvedEvent event;
+                while ((event = queue.poll()) != null) {
+                    // drop subscription artificial ResolvedEvent
+                    if (event.equals(DROP_SUBSCRIPTION_EVENT)) {
+                        DropData previousDropData = dropData.getAndAccumulate(UNKNOWN_DROP_DATA,
+                            (current, update) -> (current == null) ? update : current);
 
-                    if (previousDropData == null) {
-                        previousDropData = UNKNOWN_DROP_DATA;
+                        if (previousDropData == null) {
+                            previousDropData = UNKNOWN_DROP_DATA;
+                        }
+
+                        dropSubscription(previousDropData.reason, previousDropData.exception);
+                        return;
                     }
 
-                    dropSubscription(previousDropData.reason, previousDropData.exception);
-                    return;
-                }
-
-                DropData currentDropData = dropData.get();
-                if (currentDropData != null) {
-                    dropSubscription(currentDropData.reason, currentDropData.exception);
-                    return;
-                }
-
-                try {
-                    listener.onEvent(this, event);
-
-                    if (autoAck) {
-                        subscription.notifyEventsProcessed(singletonList(event.originalEvent().eventId));
+                    DropData currentDropData = dropData.get();
+                    if (currentDropData != null) {
+                        dropSubscription(currentDropData.reason, currentDropData.exception);
+                        return;
                     }
 
-                    logger.trace("Persistent subscription to {}: processed event ({}, {}, {} @ {}).", streamId,
-                        event.originalEvent().eventStreamId, event.originalEvent().eventNumber,
-                        event.originalEvent().eventType, event.originalEventNumber());
-                } catch (Exception e) {
-                    dropSubscription(SubscriptionDropReason.EventHandlerException, e);
-                    return;
+                    try {
+                        listener.onEvent(this, event);
+
+                        if (autoAck) {
+                            subscription.notifyEventsProcessed(singletonList(event.originalEvent().eventId));
+                        }
+
+                        logger.trace("Persistent subscription to {}: processed event ({}, {}, {} @ {}).", streamId,
+                            event.originalEvent().eventStreamId, event.originalEvent().eventNumber,
+                            event.originalEvent().eventType, event.originalEventNumber());
+                    } catch (Exception e) {
+                        dropSubscription(SubscriptionDropReason.EventHandlerException, e);
+                        return;
+                    }
                 }
             }
             isProcessing.compareAndSet(true, false);
