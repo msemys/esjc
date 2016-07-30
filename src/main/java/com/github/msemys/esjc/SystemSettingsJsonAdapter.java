@@ -32,12 +32,11 @@ public class SystemSettingsJsonAdapter extends TypeAdapter<SystemSettings> {
 
     @Override
     public SystemSettings read(JsonReader reader) throws IOException {
-        StreamAcl userStreamAcl = null;
-        StreamAcl systemStreamAcl = null;
-
         if (reader.peek() == JsonToken.NULL) {
             return null;
         }
+
+        SystemSettings.Builder builder = SystemSettings.newBuilder();
 
         reader.beginObject();
 
@@ -45,16 +44,16 @@ public class SystemSettingsJsonAdapter extends TypeAdapter<SystemSettings> {
             String name = reader.nextName();
             switch (name) {
                 case USER_STREAM_ACL:
-                    userStreamAcl = streamAclJsonAdapter.read(reader);
+                    builder.userStreamAcl(streamAclJsonAdapter.read(reader));
                     break;
                 case SYSTEM_STREAM_ACL:
-                    systemStreamAcl = streamAclJsonAdapter.read(reader);
+                    builder.systemStreamAcl(streamAclJsonAdapter.read(reader));
                     break;
             }
         }
 
         reader.endObject();
 
-        return new SystemSettings(userStreamAcl, systemStreamAcl);
+        return builder.build();
     }
 }

@@ -19,6 +19,8 @@ import static com.github.msemys.esjc.util.Strings.toBytes;
  * Represents global settings for an Event Store server.
  */
 public class SystemSettings {
+    private static final SystemSettings EMPTY = newBuilder().build();
+
     private static final Gson gson = new GsonBuilder()
         .registerTypeAdapter(SystemSettings.class, new SystemSettingsJsonAdapter())
         .create();
@@ -33,15 +35,9 @@ public class SystemSettings {
      */
     public final StreamAcl systemStreamAcl;
 
-    /**
-     * Creates a new system settings instance.
-     *
-     * @param userStreamAcl   default access control list for new user streams.
-     * @param systemStreamAcl default access control list for new system streams.
-     */
-    public SystemSettings(StreamAcl userStreamAcl, StreamAcl systemStreamAcl) {
-        this.userStreamAcl = userStreamAcl;
-        this.systemStreamAcl = systemStreamAcl;
+    private SystemSettings(Builder builder) {
+        userStreamAcl = builder.userStreamAcl;
+        systemStreamAcl = builder.systemStreamAcl;
     }
 
     /**
@@ -82,5 +78,66 @@ public class SystemSettings {
     @Override
     public String toString() {
         return String.format("UserStreamAcl: (%s), SystemStreamAcl: (%s)", userStreamAcl, systemStreamAcl);
+    }
+
+    /**
+     * Empty system settings.
+     *
+     * @return system settings.
+     */
+    public static SystemSettings empty() {
+        return EMPTY;
+    }
+
+    /**
+     * Creates a new system settings builder.
+     *
+     * @return system settings builder
+     */
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    /**
+     * System settings builder.
+     */
+    public static class Builder {
+        private StreamAcl userStreamAcl;
+        private StreamAcl systemStreamAcl;
+
+        private Builder() {
+        }
+
+        /**
+         * Sets default access-control-list for new user streams.
+         *
+         * @param userStreamAcl default ACL for new user streams
+         * @return the builder reference
+         */
+        public Builder userStreamAcl(StreamAcl userStreamAcl) {
+            this.userStreamAcl = userStreamAcl;
+            return this;
+        }
+
+        /**
+         * Sets default access-control-list for new system streams.
+         *
+         * @param systemStreamAcl default ACL for new system streams
+         * @return the builder reference
+         */
+        public Builder systemStreamAcl(StreamAcl systemStreamAcl) {
+            this.systemStreamAcl = systemStreamAcl;
+            return this;
+        }
+
+        /**
+         * Builds a system settings.
+         *
+         * @return system settings
+         */
+        public SystemSettings build() {
+            return new SystemSettings(this);
+        }
+
     }
 }

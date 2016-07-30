@@ -24,7 +24,10 @@ public class SystemSettingsJsonAdapterTest {
             .metaWriteRoles(asList("$all"))
             .build();
 
-        SystemSettings settings = new SystemSettings(userStreamAcl, systemStreamAcl);
+        SystemSettings settings = SystemSettings.newBuilder()
+            .userStreamAcl(userStreamAcl)
+            .systemStreamAcl(systemStreamAcl)
+            .build();
 
         assertEquals("{\"$userStreamAcl\":{\"$r\":[\"eric\",\"kyle\",\"stan\",\"kenny\"]," +
             "\"$w\":\"butters\"," +
@@ -45,7 +48,9 @@ public class SystemSettingsJsonAdapterTest {
             .metaWriteRoles(asList("$all"))
             .build();
 
-        SystemSettings settings = new SystemSettings(null, systemStreamAcl);
+        SystemSettings settings = SystemSettings.newBuilder()
+            .systemStreamAcl(systemStreamAcl)
+            .build();
 
         assertEquals("{\"$systemStreamAcl\":{\"$r\":\"$admins\"," +
             "\"$w\":\"$all\"," +
@@ -54,7 +59,7 @@ public class SystemSettingsJsonAdapterTest {
 
     @Test
     public void serializesWithoutAcls() {
-        SystemSettings settings = new SystemSettings(null, null);
+        SystemSettings settings = SystemSettings.empty();
         assertEquals("{}", settings.toJson());
     }
 
