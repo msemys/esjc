@@ -437,8 +437,14 @@ public class StreamMetadata {
                 aclWriteRoles == null &&
                 aclDeleteRoles == null &&
                 aclMetaReadRoles == null &&
-                aclMetaWriteRoles == null) ?
-                null : new StreamAcl(aclReadRoles, aclWriteRoles, aclDeleteRoles, aclMetaReadRoles, aclMetaWriteRoles);
+                aclMetaWriteRoles == null) ? null :
+                StreamAcl.newBuilder()
+                    .readRoles(aclReadRoles)
+                    .writeRoles(aclWriteRoles)
+                    .deleteRoles(aclDeleteRoles)
+                    .metaReadRoles(aclMetaReadRoles)
+                    .metaWriteRoles(aclMetaWriteRoles)
+                    .build();
 
             return new StreamMetadata(this);
         }

@@ -31,11 +31,7 @@ public class StreamAclJsonAdapter extends TypeAdapter<StreamAcl> {
 
     @Override
     public StreamAcl read(JsonReader reader) throws IOException {
-        List<String> readRoles = null;
-        List<String> writeRoles = null;
-        List<String> deleteRoles = null;
-        List<String> metaReadRoles = null;
-        List<String> metaWriteRoles = null;
+        StreamAcl.Builder builder = StreamAcl.newBuilder();
 
         reader.beginObject();
 
@@ -43,26 +39,26 @@ public class StreamAclJsonAdapter extends TypeAdapter<StreamAcl> {
             String name = reader.nextName();
             switch (name) {
                 case ACL_READ:
-                    readRoles = readRoles(reader);
+                    builder.readRoles(readRoles(reader));
                     break;
                 case ACL_WRITE:
-                    writeRoles = readRoles(reader);
+                    builder.writeRoles(readRoles(reader));
                     break;
                 case ACL_DELETE:
-                    deleteRoles = readRoles(reader);
+                    builder.deleteRoles(readRoles(reader));
                     break;
                 case ACL_META_READ:
-                    metaReadRoles = readRoles(reader);
+                    builder.metaReadRoles(readRoles(reader));
                     break;
                 case ACL_META_WRITE:
-                    metaWriteRoles = readRoles(reader);
+                    builder.metaWriteRoles(readRoles(reader));
                     break;
             }
         }
 
         reader.endObject();
 
-        return new StreamAcl(readRoles, writeRoles, deleteRoles, metaReadRoles, metaWriteRoles);
+        return builder.build();
     }
 
     private static void writeRoles(JsonWriter writer, String name, List<String> roles) throws IOException {

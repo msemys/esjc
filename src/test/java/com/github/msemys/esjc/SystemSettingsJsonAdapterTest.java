@@ -9,17 +9,20 @@ public class SystemSettingsJsonAdapterTest {
 
     @Test
     public void serializesWithAllAcls() {
-        StreamAcl userStreamAcl = new StreamAcl(asList("eric", "kyle", "stan", "kenny"),
-            asList("butters"),
-            asList("$admins"),
-            asList("victoria", "mackey"),
-            asList("randy"));
+        StreamAcl userStreamAcl = StreamAcl.newBuilder()
+            .readRoles(asList("eric", "kyle", "stan", "kenny"))
+            .writeRoles(asList("butters"))
+            .deleteRoles(asList("$admins"))
+            .metaReadRoles(asList("victoria", "mackey"))
+            .metaWriteRoles(asList("randy"))
+            .build();
 
-        StreamAcl systemStreamAcl = new StreamAcl(asList("$admins"),
-            asList("$all"),
-            asList("$admins"),
-            null,
-            asList("$all"));
+        StreamAcl systemStreamAcl = StreamAcl.newBuilder()
+            .readRoles(asList("$admins"))
+            .writeRoles(asList("$all"))
+            .deleteRoles(asList("$admins"))
+            .metaWriteRoles(asList("$all"))
+            .build();
 
         SystemSettings settings = new SystemSettings(userStreamAcl, systemStreamAcl);
 
@@ -36,7 +39,11 @@ public class SystemSettingsJsonAdapterTest {
 
     @Test
     public void serializesWithSystemStreamAclOnly() {
-        StreamAcl systemStreamAcl = new StreamAcl(asList("$admins"), asList("$all"), null, null, asList("$all"));
+        StreamAcl systemStreamAcl = StreamAcl.newBuilder()
+            .readRoles(asList("$admins"))
+            .writeRoles(asList("$all"))
+            .metaWriteRoles(asList("$all"))
+            .build();
 
         SystemSettings settings = new SystemSettings(null, systemStreamAcl);
 
