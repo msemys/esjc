@@ -54,6 +54,20 @@ public class StreamAcl {
     }
 
     /**
+     * Creates a new stream access-control-list builder populated with the values from this instance.
+     *
+     * @return stream access-control-list builder
+     */
+    public Builder toBuilder() {
+        return newBuilder()
+            .readRoles(readRoles)
+            .writeRoles(writeRoles)
+            .deleteRoles(deleteRoles)
+            .metaReadRoles(metaReadRoles)
+            .metaWriteRoles(metaWriteRoles);
+    }
+
+    /**
      * Creates a new stream access-control-list builder.
      *
      * @return stream access-control-list builder
