@@ -6,6 +6,7 @@ import java.time.Duration;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class StreamMetadataTest {
 
@@ -116,6 +117,84 @@ public class StreamMetadataTest {
             .build();
 
         assertEquals(expectedStreamMetadata.toJson(), result.toJson());
+    }
+
+    @Test
+    public void shouldSetAclUsingStreamAclBuilder() {
+        StreamMetadata streamMetadata = StreamMetadata.newBuilder()
+            .aclReadRoles(asList("eric", "kyle", "stan", "kenny"))
+            .aclWriteRoles(asList("butters"))
+            .aclDeleteRoles(asList("$admins"))
+            .aclMetaReadRoles(asList("victoria", "mackey"))
+            .aclMetaWriteRoles(asList("randy"))
+            .build();
+
+        StreamMetadata result = StreamMetadata.newBuilder()
+            .acl(StreamAcl.newBuilder()
+                .readRoles(asList("eric", "kyle", "stan", "kenny"))
+                .writeRoles(asList("butters"))
+                .deleteRoles(asList("$admins"))
+                .metaReadRoles(asList("victoria", "mackey"))
+                .metaWriteRoles(asList("randy"))
+                .build())
+            .build();
+
+        assertEquals(streamMetadata.toJson(), result.toJson());
+        assertEquals(asList("eric", "kyle", "stan", "kenny"), result.acl.readRoles);
+        assertEquals(asList("butters"), result.acl.writeRoles);
+        assertEquals(asList("$admins"), result.acl.deleteRoles);
+        assertEquals(asList("victoria", "mackey"), result.acl.metaReadRoles);
+        assertEquals(asList("randy"), result.acl.metaWriteRoles);
+    }
+
+    @Test
+    public void updatesAclAfterItIsSetUsingStreamAclBuilder() {
+        StreamAcl streamAcl = StreamAcl.newBuilder()
+            .readRoles(asList("eric", "kyle", "stan", "kenny"))
+            .writeRoles(asList("butters"))
+            .deleteRoles(asList("$admins"))
+            .metaReadRoles(asList("victoria", "mackey"))
+            .metaWriteRoles(asList("randy"))
+            .build();
+
+        StreamMetadata streamMetadata = StreamMetadata.newBuilder()
+            .aclMetaReadRoles(asList("foo", "bar"))
+            .acl(streamAcl)
+            .aclWriteRoles(asList("santa"))
+            .aclMetaWriteRoles(null)
+            .build();
+
+        assertEquals(asList("eric", "kyle", "stan", "kenny"), streamMetadata.acl.readRoles);
+        assertEquals(asList("santa"), streamMetadata.acl.writeRoles);
+        assertEquals(asList("$admins"), streamMetadata.acl.deleteRoles);
+        assertEquals(asList("victoria", "mackey"), streamMetadata.acl.metaReadRoles);
+        assertNull(streamMetadata.acl.metaWriteRoles);
+    }
+
+    @Test
+    public void shouldRemoveAcl() {
+        StreamMetadata streamMetadata = StreamMetadata.newBuilder()
+            .maxCount(123)
+            .aclReadRoles(asList("eric", "kyle", "stan", "kenny"))
+            .aclWriteRoles(asList("butters"))
+            .aclDeleteRoles(asList("$admins"))
+            .aclMetaWriteRoles(asList("randy"))
+            .customProperty("customStringArray", "a", "b", "c", "d")
+            .customProperty("customIntArray", 1, 2, 3, 4)
+            .build();
+
+        StreamMetadata expectedStreamMetadata = StreamMetadata.newBuilder()
+            .maxCount(123)
+            .customProperty("customStringArray", "a", "b", "c", "d")
+            .customProperty("customIntArray", 1, 2, 3, 4)
+            .build();
+
+        StreamMetadata result = streamMetadata.toBuilder()
+            .acl(null)
+            .build();
+
+        assertEquals(expectedStreamMetadata.toJson(), result.toJson());
+        assertNull(result.acl);
     }
 
 }

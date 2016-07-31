@@ -71,7 +71,7 @@ public class StreamMetadata {
         maxAge = builder.maxAge;
         truncateBefore = builder.truncateBefore;
         cacheControl = builder.cacheControl;
-        acl = builder.acl;
+        acl = (builder.aclBuilder != null) ? builder.aclBuilder.build() : null;
         customProperties = (builder.customProperties != null) ? unmodifiableList(builder.customProperties) : emptyList();
     }
 
@@ -114,25 +114,7 @@ public class StreamMetadata {
         }
 
         if (acl != null) {
-            if (acl.readRoles != null) {
-                builder.aclReadRoles(new ArrayList<>(acl.readRoles));
-            }
-
-            if (acl.writeRoles != null) {
-                builder.aclWriteRoles(new ArrayList<>(acl.writeRoles));
-            }
-
-            if (acl.deleteRoles != null) {
-                builder.aclDeleteRoles(new ArrayList<>(acl.deleteRoles));
-            }
-
-            if (acl.metaReadRoles != null) {
-                builder.aclMetaReadRoles(new ArrayList<>(acl.metaReadRoles));
-            }
-
-            if (acl.metaWriteRoles != null) {
-                builder.aclMetaWriteRoles(new ArrayList<>(acl.metaWriteRoles));
-            }
+            builder.aclBuilder = acl.toBuilder();
         }
 
         if (customProperties != null) {
@@ -203,12 +185,7 @@ public class StreamMetadata {
         private Duration maxAge;
         private Integer truncateBefore;
         private Duration cacheControl;
-        private StreamAcl acl;
-        private List<String> aclReadRoles;
-        private List<String> aclWriteRoles;
-        private List<String> aclDeleteRoles;
-        private List<String> aclMetaReadRoles;
-        private List<String> aclMetaWriteRoles;
+        private StreamAcl.Builder aclBuilder;
         private List<Property> customProperties = new ArrayList<>();
 
         private Builder() {
@@ -259,13 +236,25 @@ public class StreamMetadata {
         }
 
         /**
+         * Sets an access-control-list for the stream.
+         *
+         * @param acl stream ACL.
+         * @return the builder reference
+         */
+        public Builder acl(StreamAcl acl) {
+            aclBuilder = (acl != null) ? acl.toBuilder() : null;
+            return this;
+        }
+
+        /**
          * Sets role names with read permission for the stream.
          *
          * @param aclReadRoles role names.
          * @return the builder reference
+         * @see #acl(StreamAcl)
          */
         public Builder aclReadRoles(List<String> aclReadRoles) {
-            this.aclReadRoles = aclReadRoles;
+            aclBuilder().readRoles(aclReadRoles);
             return this;
         }
 
@@ -274,9 +263,10 @@ public class StreamMetadata {
          *
          * @param aclWriteRoles role names.
          * @return the builder reference
+         * @see #acl(StreamAcl)
          */
         public Builder aclWriteRoles(List<String> aclWriteRoles) {
-            this.aclWriteRoles = aclWriteRoles;
+            aclBuilder().writeRoles(aclWriteRoles);
             return this;
         }
 
@@ -285,9 +275,10 @@ public class StreamMetadata {
          *
          * @param aclDeleteRoles role names.
          * @return the builder reference
+         * @see #acl(StreamAcl)
          */
         public Builder aclDeleteRoles(List<String> aclDeleteRoles) {
-            this.aclDeleteRoles = aclDeleteRoles;
+            aclBuilder().deleteRoles(aclDeleteRoles);
             return this;
         }
 
@@ -296,9 +287,10 @@ public class StreamMetadata {
          *
          * @param aclMetaReadRoles role names.
          * @return the builder reference
+         * @see #acl(StreamAcl)
          */
         public Builder aclMetaReadRoles(List<String> aclMetaReadRoles) {
-            this.aclMetaReadRoles = aclMetaReadRoles;
+            aclBuilder().metaReadRoles(aclMetaReadRoles);
             return this;
         }
 
@@ -307,10 +299,18 @@ public class StreamMetadata {
          *
          * @param aclMetaWriteRoles role names.
          * @return the builder reference
+         * @see #acl(StreamAcl)
          */
         public Builder aclMetaWriteRoles(List<String> aclMetaWriteRoles) {
-            this.aclMetaWriteRoles = aclMetaWriteRoles;
+            aclBuilder().metaWriteRoles(aclMetaWriteRoles);
             return this;
+        }
+
+        private StreamAcl.Builder aclBuilder() {
+            if (aclBuilder == null) {
+                aclBuilder = StreamAcl.newBuilder();
+            }
+            return aclBuilder;
         }
 
         /**
@@ -432,19 +432,6 @@ public class StreamMetadata {
             if (cacheControl != null) {
                 checkArgument(!Duration.ZERO.equals(cacheControl), "cacheControl cannot be zero");
             }
-
-            acl = (aclReadRoles == null &&
-                aclWriteRoles == null &&
-                aclDeleteRoles == null &&
-                aclMetaReadRoles == null &&
-                aclMetaWriteRoles == null) ? null :
-                StreamAcl.newBuilder()
-                    .readRoles(aclReadRoles)
-                    .writeRoles(aclWriteRoles)
-                    .deleteRoles(aclDeleteRoles)
-                    .metaReadRoles(aclMetaReadRoles)
-                    .metaWriteRoles(aclMetaWriteRoles)
-                    .build();
 
             return new StreamMetadata(this);
         }
