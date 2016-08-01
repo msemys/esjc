@@ -5,8 +5,7 @@ import org.junit.Test;
 import java.time.Duration;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class StreamMetadataTest {
 
@@ -195,6 +194,26 @@ public class StreamMetadataTest {
 
         assertEquals(expectedStreamMetadata.toJson(), result.toJson());
         assertNull(result.acl);
+    }
+
+    @Test
+    public void findsCustomProperties() {
+        StreamMetadata streamMetadata = StreamMetadata.newBuilder()
+            .maxCount(19)
+            .maxAge(Duration.ofSeconds(17))
+            .truncateBefore(8)
+            .cacheControl(Duration.ofDays(82))
+            .customProperty("customString", "a string")
+            .customProperty("customInt", 123)
+            .customProperty("customStringArray", "a", "b", "c", "d")
+            .customProperty("customIntArray", 1, 2, 3, 4)
+            .build();
+
+        assertFalse(streamMetadata.findCustomProperty("none").isPresent());
+        assertEquals("a string", streamMetadata.findCustomProperty("customString").get().toString());
+        assertEquals(123, streamMetadata.findCustomProperty("customInt").get().toInteger().intValue());
+        assertArrayEquals(new String[]{"a", "b", "c", "d"}, streamMetadata.findCustomProperty("customStringArray").get().toStrings());
+        assertArrayEquals(new Integer[]{1, 2, 3, 4}, streamMetadata.findCustomProperty("customIntArray").get().toIntegers());
     }
 
 }

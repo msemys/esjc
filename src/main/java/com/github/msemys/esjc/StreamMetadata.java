@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
@@ -76,6 +77,16 @@ public class StreamMetadata {
     }
 
     /**
+     * Finds custom property.
+     *
+     * @param name property name.
+     * @return custom property
+     */
+    public Optional<Property> findCustomProperty(String name) {
+        return customProperties.stream().filter(p -> p.name.equals(name)).findFirst();
+    }
+
+    /**
      * Gets custom property.
      *
      * @param name property name.
@@ -83,10 +94,7 @@ public class StreamMetadata {
      * @throws NoSuchElementException if custom property not found
      */
     public Property getCustomProperty(String name) throws NoSuchElementException {
-        return customProperties.stream()
-            .filter(p -> p.name.equals(name))
-            .findFirst()
-            .get();
+        return findCustomProperty(name).get();
     }
 
     /**
