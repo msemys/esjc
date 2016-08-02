@@ -151,6 +151,8 @@ public abstract class CatchUpSubscription implements AutoCloseable {
             logger.trace("Catch-up subscription to {}: running...", streamId());
 
             stopped.reset();
+            allowProcessing = false;
+            isDropped.set(false);
 
             try {
                 if (!shouldStop) {
