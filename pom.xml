@@ -6,7 +6,7 @@
 
     <groupId>com.github.msemys</groupId>
     <artifactId>esjc</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0-SNAPSHOT</version>
 
     <name>EventStore Java Client</name>
     <description>EventStore client for Java 8 that uses Netty for network communication.</description>
