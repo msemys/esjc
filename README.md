@@ -5,7 +5,7 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 ## Requirements
 
 * Java 8
-* EventStore Server >= 3.2.0 (tested with 3.3.1 - 3.8.0)
+* EventStore Server >= 3.2.0 (tested with 3.3.1 - 3.8.1)
 
 
 ## Maven Dependency
@@ -107,7 +107,7 @@ EventStore eventstore = EventStoreBuilder.newBuilder()
 // creates a client with secure connection to server without certificate verification
 EventStore eventstore = EventStoreBuilder.newBuilder()
     .singleNodeAddress("127.0.0.1", 1119)
-    .useSslConnectionWithAnyCertificate()
+    .useSslConnection()
     .userCredentials("admin", "changeit")
     .build();
 ```
@@ -460,20 +460,24 @@ eventstore.getStreamMetadataAsRawBytes("foo").thenAccept(r ->
 #### Sets system settings
 
 ```java
-StreamAcl userStreamAcl = new StreamAcl(
-    asList("eric", "kyle", "stan", "kenny"),
-    asList("butters"),
-    asList("$admins"),
-    asList("victoria", "mackey"),
-    asList("randy"));
+StreamAcl userStreamAcl = StreamAcl.newBuilder()
+    .readRoles(asList("eric", "kyle", "stan", "kenny"))
+    .writeRoles(asList("butters"))
+    .deleteRoles(asList("$admins"))
+    .metaReadRoles(asList("victoria", "mackey"))
+    .metaWriteRoles(asList("randy"))
+    .build();
 
-StreamAcl systemStreamAcl = new StreamAcl(
-    asList("$admins"),
-    asList("$all"),
-    asList("$admins"),
-    null,
-    asList("$all"));
+StreamAcl systemStreamAcl = StreamAcl.newBuilder()
+    .readRoles(asList("$admins"))
+    .writeRoles(asList("$all"))
+    .deleteRoles(asList("$admins"))
+    .metaWriteRoles(asList("$all"))
+    .build();
 
-eventstore.setSystemSettings(new SystemSettings(userStreamAcl, systemStreamAcl))
-    .thenAccept(r -> System.out.println(r.logPosition));
+eventstore.setSystemSettings(SystemSettings.newBuilder()
+    .userStreamAcl(userStreamAcl)
+    .systemStreamAcl(systemStreamAcl)
+    .build()
+).thenAccept(r -> System.out.println(r.logPosition));
 ```
