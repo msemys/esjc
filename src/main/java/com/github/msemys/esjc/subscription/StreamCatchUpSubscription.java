@@ -12,6 +12,7 @@ import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
 public class StreamCatchUpSubscription extends CatchUpSubscription {
     private int nextReadEventNumber;
     private int lastProcessedEventNumber;
+    private final int offset;
 
     public StreamCatchUpSubscription(EventStore eventstore,
                                      String streamId,
@@ -25,6 +26,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
         super(eventstore, streamId, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, executor);
         checkArgument(!isNullOrEmpty(streamId), "streamId");
         lastProcessedEventNumber = (fromEventNumberExclusive == null) ? StreamPosition.END : fromEventNumberExclusive;
+        offset = lastProcessedEventNumber + 1;
         nextReadEventNumber = (fromEventNumberExclusive == null) ? StreamPosition.START : fromEventNumberExclusive;
     }
 
@@ -69,7 +71,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
     protected void tryProcess(ResolvedEvent event) {
         boolean processed = false;
 
-        if (event.originalEventNumber() > lastProcessedEventNumber) {
+        if (event.originalEventNumber() + offset > lastProcessedEventNumber) {
             listener.onEvent(this, event);
             lastProcessedEventNumber = event.originalEventNumber();
             processed = true;
