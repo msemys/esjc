@@ -426,6 +426,7 @@ public class EventStore extends AbstractEventStore {
             new EventStoreException("Bad request received from server. Error: " + defaultIfEmpty(newString(tcpPackage.data), "<no message>"))));
     }
 
+    @Override
     protected void onChannelError(Throwable throwable) {
         fireEvent(Events.errorOccurred(throwable));
     }
@@ -435,9 +436,7 @@ public class EventStore extends AbstractEventStore {
         reconnectTo(nodeEndpoints);
     }
 
-    /**
-     * Connects to server asynchronously.
-     */
+    @Override
     public void connect() {
         if (!isRunning()) {
             timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
@@ -452,9 +451,7 @@ public class EventStore extends AbstractEventStore {
         tasks.enqueue(new StartConnection(result, discoverer));
     }
 
-    /**
-     * Disconnects client from server.
-     */
+    @Override
     public void disconnect() {
         disconnect("exit");
     }
@@ -472,11 +469,7 @@ public class EventStore extends AbstractEventStore {
         }
     }
 
-    /**
-     * Check whether this client is currently running.
-     *
-     * @return {@code true} if client is running, otherwise {@code false}
-     */
+    @Override
     public boolean isRunning() {
         return timer != null && !timer.isDone();
     }
