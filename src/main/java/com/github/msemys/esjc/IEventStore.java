@@ -48,19 +48,19 @@ public interface IEventStore {
     /**
      * Connects to server asynchronously.
      */
-    public void connect();
+    void connect();
 
     /**
      * Disconnects client from server.
      */
-    public void disconnect();
+    void disconnect();
 
     /**
      * Check whether this client is currently running.
      *
      * @return {@code true} if client is running, otherwise {@code false}
      */
-    public boolean isRunning();
+    boolean isRunning();
 
     /**
      * Deletes a stream from the Event Store asynchronously using soft-deletion
@@ -84,7 +84,7 @@ public interface IEventStore {
      * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
-    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion);
+    CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion);
 
     /**
      * Deletes a stream from the Event Store asynchronously using soft-deletion
@@ -111,7 +111,7 @@ public interface IEventStore {
      * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
-    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
+    CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
             UserCredentials userCredentials);
 
     /**
@@ -145,7 +145,7 @@ public interface IEventStore {
      * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
-    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
+    CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
             boolean hardDelete);
 
     /**
@@ -179,7 +179,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
+    CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
             boolean hardDelete, UserCredentials userCredentials);
 
     /**
@@ -205,7 +205,7 @@ public interface IEventStore {
      * 
      * @see #appendToStream(String, ExpectedVersion, Iterable, UserCredentials)
      */
-    public CompletableFuture<WriteResult> appendToStream(String stream, ExpectedVersion expectedVersion,
+    CompletableFuture<WriteResult> appendToStream(String stream, ExpectedVersion expectedVersion,
             Iterable<EventData> events);
 
     /**
@@ -232,7 +232,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<WriteResult> appendToStream(String stream, ExpectedVersion expectedVersion,
+    CompletableFuture<WriteResult> appendToStream(String stream, ExpectedVersion expectedVersion,
             Iterable<EventData> events, UserCredentials userCredentials);
 
     /**
@@ -257,7 +257,7 @@ public interface IEventStore {
      * 
      * @see #startTransaction(String, ExpectedVersion, UserCredentials)
      */
-    public CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion);
+    CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion);
 
     /**
      * Starts a transaction in the Event Store on a given stream asynchronously.
@@ -281,7 +281,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion,
+    CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion,
             UserCredentials userCredentials);
 
     /**
@@ -295,7 +295,7 @@ public interface IEventStore {
      * 
      * @see #continueTransaction(long, UserCredentials)
      */
-    public Transaction continueTransaction(long transactionId);
+    Transaction continueTransaction(long transactionId);
 
     /**
      * Continues transaction by the specified transaction ID.
@@ -308,7 +308,7 @@ public interface IEventStore {
      * 
      * @return transaction
      */
-    public Transaction continueTransaction(long transactionId, UserCredentials userCredentials);
+    Transaction continueTransaction(long transactionId, UserCredentials userCredentials);
 
     /**
      * Reads a single event from a stream asynchronously using default user
@@ -331,7 +331,7 @@ public interface IEventStore {
      * 
      * @see #readEvent(String, int, boolean, UserCredentials)
      */
-    public CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber,
+    CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber,
             boolean resolveLinkTos);
 
     /**
@@ -355,7 +355,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber,
+    CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber,
             boolean resolveLinkTos, UserCredentials userCredentials);
 
     /**
@@ -381,7 +381,7 @@ public interface IEventStore {
      * 
      * @see #readStreamEventsForward(String, int, int, boolean, UserCredentials)
      */
-    public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count,
+    CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count,
             boolean resolveLinkTos);
 
     /**
@@ -407,7 +407,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count,
+    CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count,
             boolean resolveLinkTos, UserCredentials userCredentials);
 
     /**
@@ -434,7 +434,7 @@ public interface IEventStore {
      * @see #readStreamEventsBackward(String, int, int, boolean,
      *      UserCredentials)
      */
-    public CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream, int start, int count,
+    CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream, int start, int count,
             boolean resolveLinkTos);
 
     /**
@@ -460,7 +460,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream, int start, int count,
+    CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream, int start, int count,
             boolean resolveLinkTos, UserCredentials userCredentials);
 
     /**
@@ -483,7 +483,7 @@ public interface IEventStore {
      * 
      * @see #readAllEventsForward(Position, int, boolean, UserCredentials)
      */
-    public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position, int maxCount,
+    CompletableFuture<AllEventsSlice> readAllEventsForward(Position position, int maxCount,
             boolean resolveLinkTos);
 
     /**
@@ -507,7 +507,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<AllEventsSlice> readAllEventsForward(Position position, int maxCount,
+    CompletableFuture<AllEventsSlice> readAllEventsForward(Position position, int maxCount,
             boolean resolveLinkTos, UserCredentials userCredentials);
 
     /**
@@ -530,7 +530,7 @@ public interface IEventStore {
      * 
      * @see #readAllEventsBackward(Position, int, boolean, UserCredentials)
      */
-    public CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount,
+    CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount,
             boolean resolveLinkTos);
 
     /**
@@ -554,7 +554,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount,
+    CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount,
             boolean resolveLinkTos, UserCredentials userCredentials);
 
     /**
@@ -579,7 +579,7 @@ public interface IEventStore {
      * @see #subscribeToStream(String, boolean, VolatileSubscriptionListener,
      *      UserCredentials)
      */
-    public CompletableFuture<Subscription> subscribeToStream(String stream, boolean resolveLinkTos,
+    CompletableFuture<Subscription> subscribeToStream(String stream, boolean resolveLinkTos,
             VolatileSubscriptionListener listener);
 
     /**
@@ -603,7 +603,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<Subscription> subscribeToStream(String stream, boolean resolveLinkTos,
+    CompletableFuture<Subscription> subscribeToStream(String stream, boolean resolveLinkTos,
             VolatileSubscriptionListener listener, UserCredentials userCredentials);
 
     /**
@@ -626,7 +626,7 @@ public interface IEventStore {
      * @see #subscribeToAll(boolean, VolatileSubscriptionListener,
      *      UserCredentials)
      */
-    public CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
+    CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
             VolatileSubscriptionListener listener);
 
     /**
@@ -648,7 +648,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
+    CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
             VolatileSubscriptionListener listener, UserCredentials userCredentials);
 
     /**
@@ -685,7 +685,7 @@ public interface IEventStore {
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings,
      *      CatchUpSubscriptionListener, UserCredentials)
      */
-    public CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
+    CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
             CatchUpSubscriptionSettings settings, CatchUpSubscriptionListener listener);
 
     /**
@@ -721,7 +721,7 @@ public interface IEventStore {
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings,
      *      CatchUpSubscriptionListener, UserCredentials)
      */
-    public CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
+    CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
             CatchUpSubscriptionListener listener);
 
     /**
@@ -759,7 +759,7 @@ public interface IEventStore {
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings,
      *      CatchUpSubscriptionListener, UserCredentials)
      */
-    public CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
+    CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
             CatchUpSubscriptionListener listener, UserCredentials userCredentials);
 
     /**
@@ -796,7 +796,7 @@ public interface IEventStore {
      * 
      * @return catch-up subscription
      */
-    public CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
+    CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
             CatchUpSubscriptionSettings settings, CatchUpSubscriptionListener listener,
             UserCredentials userCredentials);
 
@@ -832,7 +832,7 @@ public interface IEventStore {
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
-    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+    CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
             CatchUpSubscriptionListener listener);
 
     /**
@@ -868,7 +868,7 @@ public interface IEventStore {
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
-    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+    CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
             CatchUpSubscriptionSettings settings, CatchUpSubscriptionListener listener);
 
     /**
@@ -905,7 +905,7 @@ public interface IEventStore {
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
-    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+    CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
             CatchUpSubscriptionListener listener, UserCredentials userCredentials);
 
     /**
@@ -940,7 +940,7 @@ public interface IEventStore {
      * 
      * @return catch-up subscription
      */
-    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+    CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
             CatchUpSubscriptionSettings settings, CatchUpSubscriptionListener listener,
             UserCredentials userCredentials);
 
@@ -979,7 +979,7 @@ public interface IEventStore {
      * @see #subscribeToPersistent(String, String,
      *      PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
-    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
+    CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
             PersistentSubscriptionListener listener);
 
     /**
@@ -1020,7 +1020,7 @@ public interface IEventStore {
      * @see #subscribeToPersistent(String, String,
      *      PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
-    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
+    CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
             PersistentSubscriptionListener listener, UserCredentials userCredentials);
 
     /**
@@ -1063,7 +1063,7 @@ public interface IEventStore {
      * @see #subscribeToPersistent(String, String,
      *      PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
-    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
+    CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
             PersistentSubscriptionListener listener, int bufferSize, boolean autoAck);
 
     /**
@@ -1105,7 +1105,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
+    CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
             PersistentSubscriptionListener listener, UserCredentials userCredentials, int bufferSize,
             boolean autoAck);
 
@@ -1129,7 +1129,7 @@ public interface IEventStore {
      * @see #createPersistentSubscription(String, String,
      *      PersistentSubscriptionSettings, UserCredentials)
      */
-    public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+    CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
             String groupName);
 
     /**
@@ -1155,7 +1155,7 @@ public interface IEventStore {
      * @see #createPersistentSubscription(String, String,
      *      PersistentSubscriptionSettings, UserCredentials)
      */
-    public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+    CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
             String groupName, UserCredentials userCredentials);
 
     /**
@@ -1180,7 +1180,7 @@ public interface IEventStore {
      * @see #createPersistentSubscription(String, String,
      *      PersistentSubscriptionSettings, UserCredentials)
      */
-    public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+    CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
             String groupName, PersistentSubscriptionSettings settings);
 
     /**
@@ -1204,7 +1204,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+    CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
             String groupName, PersistentSubscriptionSettings settings, UserCredentials userCredentials);
 
     /**
@@ -1229,7 +1229,7 @@ public interface IEventStore {
      * @see #updatePersistentSubscription(String, String,
      *      PersistentSubscriptionSettings, UserCredentials)
      */
-    public CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
+    CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
             String groupName, PersistentSubscriptionSettings settings);
 
     /**
@@ -1253,7 +1253,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
+    CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
             String groupName, PersistentSubscriptionSettings settings, UserCredentials userCredentials);
 
     /**
@@ -1275,7 +1275,7 @@ public interface IEventStore {
      * 
      * @see #deletePersistentSubscription(String, String, UserCredentials)
      */
-    public CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
+    CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
             String groupName);
 
     /**
@@ -1297,7 +1297,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
+    CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
             String groupName, UserCredentials userCredentials);
 
     /**
@@ -1323,7 +1323,7 @@ public interface IEventStore {
      * 
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
-    public CompletableFuture<WriteResult> setStreamMetadata(String stream,
+    CompletableFuture<WriteResult> setStreamMetadata(String stream,
             ExpectedVersion expectedMetastreamVersion, StreamMetadata metadata);
 
     /**
@@ -1351,7 +1351,7 @@ public interface IEventStore {
      * 
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
-    public CompletableFuture<WriteResult> setStreamMetadata(String stream,
+    CompletableFuture<WriteResult> setStreamMetadata(String stream,
             ExpectedVersion expectedMetastreamVersion, StreamMetadata metadata,
             UserCredentials userCredentials);
 
@@ -1378,7 +1378,7 @@ public interface IEventStore {
      * 
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
-    public CompletableFuture<WriteResult> setStreamMetadata(String stream,
+    CompletableFuture<WriteResult> setStreamMetadata(String stream,
             ExpectedVersion expectedMetastreamVersion, byte[] metadata);
 
     /**
@@ -1404,7 +1404,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<WriteResult> setStreamMetadata(String stream,
+    CompletableFuture<WriteResult> setStreamMetadata(String stream,
             ExpectedVersion expectedMetastreamVersion, byte[] metadata, UserCredentials userCredentials);
 
     /**
@@ -1422,7 +1422,7 @@ public interface IEventStore {
      * 
      * @see #getStreamMetadata(String, UserCredentials)
      */
-    public CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream);
+    CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream);
 
     /**
      * Gets the metadata for a stream asynchronously.
@@ -1440,7 +1440,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream,
+    CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream,
             UserCredentials userCredentials);
 
     /**
@@ -1459,7 +1459,7 @@ public interface IEventStore {
      * 
      * @see #getStreamMetadataAsRawBytes(String, UserCredentials)
      */
-    public CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream);
+    CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream);
 
     /**
      * Gets the metadata for a stream as a byte array asynchronously.
@@ -1477,7 +1477,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream,
+    CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream,
             UserCredentials userCredentials);
 
     /**
@@ -1499,7 +1499,7 @@ public interface IEventStore {
      * 
      * @see #setSystemSettings(SystemSettings, UserCredentials)
      */
-    public CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings);
+    CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings);
 
     /**
      * Sets the global settings for the server or cluster asynchronously.
@@ -1520,7 +1520,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      */
-    public CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings,
+    CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings,
             UserCredentials userCredentials);
 
     /**
@@ -1529,7 +1529,7 @@ public interface IEventStore {
      * @param listener
      *            client event listener.
      */
-    public void addListener(EventStoreListener listener);
+    void addListener(EventStoreListener listener);
 
     /**
      * Removes the specified listener from this client.
@@ -1537,6 +1537,6 @@ public interface IEventStore {
      * @param listener
      *            client event listener.
      */
-    public void removeListener(EventStoreListener listener);
+    void removeListener(EventStoreListener listener);
 
 }
