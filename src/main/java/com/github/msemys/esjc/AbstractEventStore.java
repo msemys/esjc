@@ -26,7 +26,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
@@ -108,21 +107,6 @@ abstract class AbstractEventStore implements IEventStore {
     @Override
     public Settings settings() {
         return settings;
-    }
-
-    @Override
-    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
-                                                                           String groupName,
-                                                                           PersistentSubscriptionListener listener) {
-        return subscribeToPersistent(stream, groupName, listener, null, settings.persistentSubscriptionBufferSize, settings.persistentSubscriptionAutoAckEnabled);
-    }
-
-    @Override
-    public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
-                                                                           String groupName,
-                                                                           PersistentSubscriptionListener listener,
-                                                                           UserCredentials userCredentials) {
-        return subscribeToPersistent(stream, groupName, listener, userCredentials, settings.persistentSubscriptionBufferSize, settings.persistentSubscriptionAutoAckEnabled);
     }
 
     @Override

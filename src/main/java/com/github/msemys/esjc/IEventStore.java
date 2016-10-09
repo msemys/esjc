@@ -994,8 +994,10 @@ public interface IEventStore {
      * @see #subscribeToPersistent(String, String,
      *      PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
-    CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
-            PersistentSubscriptionListener listener);
+    default CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
+            PersistentSubscriptionListener listener) {
+        return subscribeToPersistent(stream, groupName, listener, null, settings().persistentSubscriptionBufferSize, settings().persistentSubscriptionAutoAckEnabled);
+    }
 
     /**
      * Subscribes to a persistent subscription asynchronously using default
@@ -1035,8 +1037,10 @@ public interface IEventStore {
      * @see #subscribeToPersistent(String, String,
      *      PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
-    CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
-            PersistentSubscriptionListener listener, UserCredentials userCredentials);
+    default CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
+            PersistentSubscriptionListener listener, UserCredentials userCredentials) {
+        return subscribeToPersistent(stream, groupName, listener, userCredentials, settings().persistentSubscriptionBufferSize, settings().persistentSubscriptionAutoAckEnabled);
+    }
 
     /**
      * Subscribes to a persistent subscription asynchronously using default user
