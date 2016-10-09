@@ -6,6 +6,9 @@ import com.github.msemys.esjc.subscription.PersistentSubscriptionDeletedExceptio
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+import static com.github.msemys.esjc.util.Strings.toBytes;
+
 /**
  * An Event Store client with full duplex connection to server. It is
  * recommended that only one instance per application is created.
@@ -51,7 +54,9 @@ public interface IEventStore {
      * @see #deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
-    CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion);
+    default CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion) {
+        return deleteStream(stream, expectedVersion, false, null);
+    }
 
     /**
      * Deletes a stream from the Event Store asynchronously using soft-deletion
@@ -78,8 +83,10 @@ public interface IEventStore {
      * @see #deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
-    CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
-            UserCredentials userCredentials);
+    default CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
+            UserCredentials userCredentials) {
+        return deleteStream(stream, expectedVersion, false, userCredentials);
+    }
 
     /**
      * Deletes a stream from the Event Store asynchronously using default user
@@ -112,8 +119,10 @@ public interface IEventStore {
      * @see #deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
-    CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
-            boolean hardDelete);
+    default CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
+            boolean hardDelete) {
+        return deleteStream(stream, expectedVersion, hardDelete, null);
+    }
 
     /**
      * Deletes a stream from the Event Store asynchronously. There are two
@@ -172,8 +181,10 @@ public interface IEventStore {
      * 
      * @see #appendToStream(String, ExpectedVersion, Iterable, UserCredentials)
      */
-    CompletableFuture<WriteResult> appendToStream(String stream, ExpectedVersion expectedVersion,
-            Iterable<EventData> events);
+    default CompletableFuture<WriteResult> appendToStream(String stream, ExpectedVersion expectedVersion,
+            Iterable<EventData> events) {
+        return appendToStream(stream, expectedVersion, events, null);
+    }
 
     /**
      * Appends events to a stream asynchronously.
@@ -224,7 +235,9 @@ public interface IEventStore {
      * 
      * @see #startTransaction(String, ExpectedVersion, UserCredentials)
      */
-    CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion);
+    default CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion) {
+        return startTransaction(stream, expectedVersion, null);
+    }
 
     /**
      * Starts a transaction in the Event Store on a given stream asynchronously.
@@ -262,7 +275,9 @@ public interface IEventStore {
      * 
      * @see #continueTransaction(long, UserCredentials)
      */
-    Transaction continueTransaction(long transactionId);
+    default Transaction continueTransaction(long transactionId) {
+        return continueTransaction(transactionId, null);
+    }
 
     /**
      * Continues transaction by the specified transaction ID.
@@ -298,8 +313,10 @@ public interface IEventStore {
      * 
      * @see #readEvent(String, int, boolean, UserCredentials)
      */
-    CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber,
-            boolean resolveLinkTos);
+    default CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber,
+            boolean resolveLinkTos) {
+        return readEvent(stream, eventNumber, resolveLinkTos, null);
+    }
 
     /**
      * Reads a single event from a stream asynchronously.
@@ -348,8 +365,10 @@ public interface IEventStore {
      * 
      * @see #readStreamEventsForward(String, int, int, boolean, UserCredentials)
      */
-    CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count,
-            boolean resolveLinkTos);
+    default CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream, int start, int count,
+            boolean resolveLinkTos) {
+        return readStreamEventsForward(stream, start, count, resolveLinkTos, null);
+    }
 
     /**
      * Reads count events from a stream forwards (e.g. oldest to newest)
@@ -401,8 +420,10 @@ public interface IEventStore {
      * @see #readStreamEventsBackward(String, int, int, boolean,
      *      UserCredentials)
      */
-    CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream, int start, int count,
-            boolean resolveLinkTos);
+    default CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream, int start, int count,
+            boolean resolveLinkTos) {
+        return readStreamEventsBackward(stream, start, count, resolveLinkTos, null);
+    }
 
     /**
      * Reads count events from a stream backwards (e.g. newest to oldest) from
@@ -450,8 +471,10 @@ public interface IEventStore {
      * 
      * @see #readAllEventsForward(Position, int, boolean, UserCredentials)
      */
-    CompletableFuture<AllEventsSlice> readAllEventsForward(Position position, int maxCount,
-            boolean resolveLinkTos);
+    default CompletableFuture<AllEventsSlice> readAllEventsForward(Position position, int maxCount,
+            boolean resolveLinkTos) {
+        return readAllEventsForward(position, maxCount, resolveLinkTos, null);
+    }
 
     /**
      * Reads all events in the node forward (e.g. beginning to end)
@@ -497,8 +520,10 @@ public interface IEventStore {
      * 
      * @see #readAllEventsBackward(Position, int, boolean, UserCredentials)
      */
-    CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount,
-            boolean resolveLinkTos);
+    default CompletableFuture<AllEventsSlice> readAllEventsBackward(Position position, int maxCount,
+            boolean resolveLinkTos) {
+        return readAllEventsBackward(position, maxCount, resolveLinkTos, null);
+    }
 
     /**
      * Reads all events in the node backwards (e.g. end to beginning)
@@ -546,8 +571,10 @@ public interface IEventStore {
      * @see #subscribeToStream(String, boolean, VolatileSubscriptionListener,
      *      UserCredentials)
      */
-    CompletableFuture<Subscription> subscribeToStream(String stream, boolean resolveLinkTos,
-            VolatileSubscriptionListener listener);
+    default CompletableFuture<Subscription> subscribeToStream(String stream, boolean resolveLinkTos,
+            VolatileSubscriptionListener listener) {
+        return subscribeToStream(stream, resolveLinkTos, listener, null);
+    }
 
     /**
      * Subscribes to a stream asynchronously. New events written to the stream
@@ -593,8 +620,10 @@ public interface IEventStore {
      * @see #subscribeToAll(boolean, VolatileSubscriptionListener,
      *      UserCredentials)
      */
-    CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
-            VolatileSubscriptionListener listener);
+    default CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
+            VolatileSubscriptionListener listener) {
+        return subscribeToAll(resolveLinkTos, listener, null);
+    }
 
     /**
      * Subscribes to the $all stream asynchronously. New events written to the
@@ -652,8 +681,10 @@ public interface IEventStore {
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings,
      *      CatchUpSubscriptionListener, UserCredentials)
      */
-    CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
-            CatchUpSubscriptionSettings settings, CatchUpSubscriptionListener listener);
+    default CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
+            CatchUpSubscriptionSettings settings, CatchUpSubscriptionListener listener) {
+        return subscribeToStreamFrom(stream, fromEventNumberExclusive, settings, listener, null);
+    }
 
     /**
      * Subscribes to a stream from the specified event number (exclusive)
@@ -688,8 +719,10 @@ public interface IEventStore {
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings,
      *      CatchUpSubscriptionListener, UserCredentials)
      */
-    CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
-            CatchUpSubscriptionListener listener);
+    default CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
+            CatchUpSubscriptionListener listener) {
+        return subscribeToStreamFrom(stream, fromEventNumberExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, null);
+    }
 
     /**
      * Subscribes to a stream from the specified event number (exclusive)
@@ -726,8 +759,10 @@ public interface IEventStore {
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings,
      *      CatchUpSubscriptionListener, UserCredentials)
      */
-    CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
-            CatchUpSubscriptionListener listener, UserCredentials userCredentials);
+    default CatchUpSubscription subscribeToStreamFrom(String stream, Integer fromEventNumberExclusive,
+            CatchUpSubscriptionListener listener, UserCredentials userCredentials) {
+        return subscribeToStreamFrom(stream, fromEventNumberExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
+    }
 
     /**
      * Subscribes to a stream from the specified event number (exclusive)
@@ -799,8 +834,10 @@ public interface IEventStore {
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
-    CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
-            CatchUpSubscriptionListener listener);
+    default CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+            CatchUpSubscriptionListener listener) {
+        return subscribeToAllFrom(fromPositionExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, null);
+    }
 
     /**
      * Subscribes to the $all stream from the specified event position
@@ -835,8 +872,10 @@ public interface IEventStore {
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
-    CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
-            CatchUpSubscriptionSettings settings, CatchUpSubscriptionListener listener);
+    default CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+            CatchUpSubscriptionSettings settings, CatchUpSubscriptionListener listener) {
+        return subscribeToAllFrom(fromPositionExclusive, settings, listener, null);
+    }
 
     /**
      * Subscribes to the $all stream from the specified event position
@@ -872,8 +911,10 @@ public interface IEventStore {
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
-    CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
-            CatchUpSubscriptionListener listener, UserCredentials userCredentials);
+    default CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+            CatchUpSubscriptionListener listener, UserCredentials userCredentials) {
+        return subscribeToAllFrom(fromPositionExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
+    }
 
     /**
      * Subscribes to the $all stream from the specified event position
@@ -1030,8 +1071,10 @@ public interface IEventStore {
      * @see #subscribeToPersistent(String, String,
      *      PersistentSubscriptionListener, UserCredentials, int, boolean)
      */
-    CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
-            PersistentSubscriptionListener listener, int bufferSize, boolean autoAck);
+    default CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream, String groupName,
+            PersistentSubscriptionListener listener, int bufferSize, boolean autoAck) {
+        return subscribeToPersistent(stream, groupName, listener, null, bufferSize, autoAck);
+    }
 
     /**
      * Subscribes to a persistent subscription asynchronously.
@@ -1096,8 +1139,10 @@ public interface IEventStore {
      * @see #createPersistentSubscription(String, String,
      *      PersistentSubscriptionSettings, UserCredentials)
      */
-    CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
-            String groupName);
+    default CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+            String groupName) {
+        return createPersistentSubscription(stream, groupName, PersistentSubscriptionSettings.DEFAULT, null);
+    }
 
     /**
      * Creates a persistent subscription group on a stream asynchronously using
@@ -1122,8 +1167,10 @@ public interface IEventStore {
      * @see #createPersistentSubscription(String, String,
      *      PersistentSubscriptionSettings, UserCredentials)
      */
-    CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
-            String groupName, UserCredentials userCredentials);
+    default CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+            String groupName, UserCredentials userCredentials) {
+        return createPersistentSubscription(stream, groupName, PersistentSubscriptionSettings.DEFAULT, userCredentials);
+    }
 
     /**
      * Creates a persistent subscription group on a stream asynchronously using
@@ -1147,8 +1194,10 @@ public interface IEventStore {
      * @see #createPersistentSubscription(String, String,
      *      PersistentSubscriptionSettings, UserCredentials)
      */
-    CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
-            String groupName, PersistentSubscriptionSettings settings);
+    default CompletableFuture<PersistentSubscriptionCreateResult> createPersistentSubscription(String stream,
+            String groupName, PersistentSubscriptionSettings settings) {
+        return createPersistentSubscription(stream, groupName, settings, null);
+    }
 
     /**
      * Creates a persistent subscription on a stream asynchronously.
@@ -1196,8 +1245,10 @@ public interface IEventStore {
      * @see #updatePersistentSubscription(String, String,
      *      PersistentSubscriptionSettings, UserCredentials)
      */
-    CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
-            String groupName, PersistentSubscriptionSettings settings);
+    default CompletableFuture<PersistentSubscriptionUpdateResult> updatePersistentSubscription(String stream,
+            String groupName, PersistentSubscriptionSettings settings) {
+        return updatePersistentSubscription(stream, groupName, settings, null);
+    }
 
     /**
      * Updates a persistent subscription on a stream asynchronously.
@@ -1242,8 +1293,10 @@ public interface IEventStore {
      * 
      * @see #deletePersistentSubscription(String, String, UserCredentials)
      */
-    CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
-            String groupName);
+    default CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
+            String groupName) {
+        return deletePersistentSubscription(stream, groupName, null);
+    }
 
     /**
      * Deletes a persistent subscription on a stream asynchronously.
@@ -1290,8 +1343,11 @@ public interface IEventStore {
      * 
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
-    CompletableFuture<WriteResult> setStreamMetadata(String stream,
-            ExpectedVersion expectedMetastreamVersion, StreamMetadata metadata);
+    default CompletableFuture<WriteResult> setStreamMetadata(String stream,
+            ExpectedVersion expectedMetastreamVersion, StreamMetadata metadata) {
+        checkNotNull(metadata, "metadata");
+        return setStreamMetadata(stream, expectedMetastreamVersion, toBytes(metadata.toJson()), null);
+    }
 
     /**
      * Sets the metadata for a stream asynchronously.
@@ -1318,9 +1374,12 @@ public interface IEventStore {
      * 
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
-    CompletableFuture<WriteResult> setStreamMetadata(String stream,
+    default CompletableFuture<WriteResult> setStreamMetadata(String stream,
             ExpectedVersion expectedMetastreamVersion, StreamMetadata metadata,
-            UserCredentials userCredentials);
+            UserCredentials userCredentials) {
+        checkNotNull(metadata, "metadata");
+        return setStreamMetadata(stream, expectedMetastreamVersion, toBytes(metadata.toJson()), userCredentials);
+    }
 
     /**
      * Sets the metadata for a stream asynchronously using default user
@@ -1345,8 +1404,10 @@ public interface IEventStore {
      * 
      * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
      */
-    CompletableFuture<WriteResult> setStreamMetadata(String stream,
-            ExpectedVersion expectedMetastreamVersion, byte[] metadata);
+    default CompletableFuture<WriteResult> setStreamMetadata(String stream,
+            ExpectedVersion expectedMetastreamVersion, byte[] metadata) {
+        return setStreamMetadata(stream, expectedMetastreamVersion, metadata, null);
+    }
 
     /**
      * Sets the metadata for a stream asynchronously.
@@ -1389,7 +1450,9 @@ public interface IEventStore {
      * 
      * @see #getStreamMetadata(String, UserCredentials)
      */
-    CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream);
+    default CompletableFuture<StreamMetadataResult> getStreamMetadata(String stream) {
+        return getStreamMetadata(stream, null);
+    }
 
     /**
      * Gets the metadata for a stream asynchronously.
@@ -1426,7 +1489,9 @@ public interface IEventStore {
      * 
      * @see #getStreamMetadataAsRawBytes(String, UserCredentials)
      */
-    CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream);
+    default CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream) {
+        return getStreamMetadataAsRawBytes(stream, null);
+    }
 
     /**
      * Gets the metadata for a stream as a byte array asynchronously.
@@ -1466,7 +1531,9 @@ public interface IEventStore {
      * 
      * @see #setSystemSettings(SystemSettings, UserCredentials)
      */
-    CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings);
+    default CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings) {
+        return setSystemSettings(settings, null);
+    }
 
     /**
      * Sets the global settings for the server or cluster asynchronously.
