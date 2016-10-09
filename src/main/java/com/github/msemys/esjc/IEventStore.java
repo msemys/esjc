@@ -1,43 +1,10 @@
 package com.github.msemys.esjc;
 
-import java.util.concurrent.CompletableFuture;
-
-import com.github.msemys.esjc.AllEventsSlice;
-import com.github.msemys.esjc.CatchUpSubscription;
-import com.github.msemys.esjc.CatchUpSubscriptionListener;
-import com.github.msemys.esjc.CatchUpSubscriptionSettings;
-import com.github.msemys.esjc.DeleteResult;
-import com.github.msemys.esjc.EventData;
-import com.github.msemys.esjc.EventReadResult;
-import com.github.msemys.esjc.EventStoreListener;
-import com.github.msemys.esjc.ExpectedVersion;
-import com.github.msemys.esjc.PersistentSubscription;
-import com.github.msemys.esjc.PersistentSubscriptionCreateResult;
-import com.github.msemys.esjc.PersistentSubscriptionDeleteResult;
-import com.github.msemys.esjc.PersistentSubscriptionListener;
-import com.github.msemys.esjc.PersistentSubscriptionSettings;
-import com.github.msemys.esjc.PersistentSubscriptionUpdateResult;
-import com.github.msemys.esjc.Position;
-import com.github.msemys.esjc.RawStreamMetadataResult;
-import com.github.msemys.esjc.StreamEventsSlice;
-import com.github.msemys.esjc.StreamMetadata;
-import com.github.msemys.esjc.StreamMetadataResult;
-import com.github.msemys.esjc.StreamPosition;
-import com.github.msemys.esjc.Subscription;
-import com.github.msemys.esjc.SystemSettings;
-import com.github.msemys.esjc.Transaction;
-import com.github.msemys.esjc.UserCredentials;
-import com.github.msemys.esjc.VolatileSubscriptionListener;
-import com.github.msemys.esjc.WriteResult;
-import com.github.msemys.esjc.operation.AccessDeniedException;
-import com.github.msemys.esjc.operation.CommandNotExpectedException;
-import com.github.msemys.esjc.operation.InvalidTransactionException;
-import com.github.msemys.esjc.operation.NotAuthenticatedException;
-import com.github.msemys.esjc.operation.ServerErrorException;
-import com.github.msemys.esjc.operation.StreamDeletedException;
-import com.github.msemys.esjc.operation.WrongExpectedVersionException;
+import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.subscription.MaximumSubscribersReachedException;
 import com.github.msemys.esjc.subscription.PersistentSubscriptionDeletedException;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * An Event Store client with full duplex connection to server. It is
