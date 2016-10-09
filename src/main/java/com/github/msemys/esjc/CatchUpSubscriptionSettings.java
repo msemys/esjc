@@ -116,7 +116,7 @@ public class CatchUpSubscriptionSettings {
                 readBatchSize = 500;
             } else {
                 checkArgument(isPositive(readBatchSize), "readBatchSize should be positive");
-                checkArgument(readBatchSize < EventStore.MAX_READ_SIZE, "Read batch size should be less than %d. For larger reads you should page.", EventStore.MAX_READ_SIZE);
+                checkArgument(readBatchSize < EventStoreImpl.MAX_READ_SIZE, "Read batch size should be less than %d. For larger reads you should page.", EventStoreImpl.MAX_READ_SIZE);
             }
 
             return new CatchUpSubscriptionSettings(this);

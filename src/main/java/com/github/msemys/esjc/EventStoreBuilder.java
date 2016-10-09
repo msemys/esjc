@@ -552,7 +552,7 @@ public class EventStoreBuilder {
 
         settingsBuilder.tcpSettings(tcpSettingsBuilder.build());
 
-        return new EventStore(settingsBuilder.build());
+        return new EventStoreImpl(settingsBuilder.build());
     }
 
 }
