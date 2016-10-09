@@ -16,6 +16,13 @@ import static com.github.msemys.esjc.util.Strings.toBytes;
 public interface IEventStore {
 
     /**
+     * Gets client settings
+     *
+     * @return client settings
+     */
+    Settings settings();
+
+    /**
      * Connects to server asynchronously.
      */
     void connect();

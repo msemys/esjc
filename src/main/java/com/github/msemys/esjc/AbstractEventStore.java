@@ -106,6 +106,11 @@ abstract class AbstractEventStore implements IEventStore {
     }
 
     @Override
+    public Settings settings() {
+        return settings;
+    }
+
+    @Override
     public CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
                                                                            String groupName,
                                                                            PersistentSubscriptionListener listener) {

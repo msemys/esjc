@@ -84,9 +84,9 @@ public class ITCreatePersistentSubscription extends AbstractIntegrationTest {
         final String group = "group57";
 
         EventStore unauthenticatedEventstore = new EventStore(Settings.newBuilder()
-            .nodeSettings(eventstore.settings.staticNodeSettings.get())
-            .sslSettings(eventstore.settings.sslSettings)
-            .maxReconnections(eventstore.settings.maxReconnections)
+            .nodeSettings(eventstore.settings().staticNodeSettings.get())
+            .sslSettings(eventstore.settings().sslSettings)
+            .maxReconnections(eventstore.settings().maxReconnections)
             .build());
 
         try {
