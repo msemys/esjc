@@ -48,7 +48,7 @@ public interface IEventStore {
      *         {@link CommandNotExpectedException},
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
-     * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean,
+     * @see #deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
     CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion);
@@ -75,7 +75,7 @@ public interface IEventStore {
      *         {@link CommandNotExpectedException},
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
-     * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean,
+     * @see #deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
     CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
@@ -109,7 +109,7 @@ public interface IEventStore {
      *         {@link NotAuthenticatedException}, {@link AccessDeniedException}
      *         or {@link ServerErrorException} on exceptional completion.
      * 
-     * @see AbstractEventStore#deleteStream(String, ExpectedVersion, boolean,
+     * @see #deleteStream(String, ExpectedVersion, boolean,
      *      UserCredentials)
      */
     CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion,
@@ -795,7 +795,7 @@ public interface IEventStore {
      * 
      * @return catch-up subscription
      * 
-     * @see AbstractEventStore#subscribeToAllFrom(Position,
+     * @see #subscribeToAllFrom(Position,
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
@@ -831,7 +831,7 @@ public interface IEventStore {
      * 
      * @return catch-up subscription
      * 
-     * @see AbstractEventStore#subscribeToAllFrom(Position,
+     * @see #subscribeToAllFrom(Position,
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
@@ -868,7 +868,7 @@ public interface IEventStore {
      * 
      * @return catch-up subscription
      * 
-     * @see AbstractEventStore#subscribeToAllFrom(Position,
+     * @see #subscribeToAllFrom(Position,
      *      CatchUpSubscriptionSettings, CatchUpSubscriptionListener,
      *      UserCredentials)
      */
