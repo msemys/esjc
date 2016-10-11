@@ -91,6 +91,13 @@
     </dependencies>
 
     <build>
+		<extensions>
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.3.0.Final</version>
+			</extension>
+		</extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -130,30 +137,24 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <id>compile-proto</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <mkdir dir="${project.build.directory}/generated-sources/protobuf"/>
-                                <exec executable="protoc">
-                                    <arg value="--java_out=${project.build.directory}/generated-sources/protobuf"/>
-                                    <arg value="--proto_path=${project.basedir}/src/main/protobuf"/>
-                                    <arg value="${project.basedir}/src/main/protobuf/EventStoreClientMessages.proto"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+			<plugin>
+				<groupId>org.xolstice.maven.plugins</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>0.5.0</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<protoSourceRoot>${project.basedir}/src/main/protobuf</protoSourceRoot>
+							<outputDirectory>${project.build.directory}/generated-sources/protobuf</outputDirectory>
+							<protocArtifact>com.google.protobuf:protoc:2.6.1:exe:${os.detected.classifier}</protocArtifact>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -200,6 +201,31 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>    
+			    <groupId>org.fuin.esmp</groupId>
+			    <artifactId>es-maven-plugin</artifactId>
+			    <version>0.4.1</version>
+			    <executions>
+			        <execution>
+			            <goals>
+			                <goal>download</goal>
+			                <goal>certificate</goal>
+			                <goal>start</goal>
+			                <goal>stop</goal>
+			            </goals>
+			        </execution>
+			    </executions>
+			    <configuration>
+			        <certificate-file>${project.build.directory}/domain.p12</certificate-file>
+			        <arguments>                  
+			            <argument>--mem-db=TRUE</argument>
+			            <argument>--stats-period-sec=3000</argument>
+			            <argument>--ext-tcp-port=7773</argument>
+			            <argument>--ext-secure-tcp-port=7779</argument>
+			            <argument>--certificate-file=${project.build.directory}/domain.p12</argument>
+			        </arguments>
+			    </configuration>
+			</plugin>            
         </plugins>
     </build>
 
