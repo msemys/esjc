@@ -148,6 +148,7 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
+							<clearOutputDirectory>false</clearOutputDirectory>
 							<protoSourceRoot>${project.basedir}/src/main/protobuf</protoSourceRoot>
 							<outputDirectory>${project.basedir}/src-gen/main/protobuf</outputDirectory>
 							<protocArtifact>com.google.protobuf:protoc:2.6.1:exe:${os.detected.classifier}</protocArtifact>
