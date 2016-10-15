@@ -153,6 +153,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
             stopped.reset();
             allowProcessing = false;
             isDropped.set(false);
+            dropData.set(null);
 
             try {
                 if (!shouldStop) {
