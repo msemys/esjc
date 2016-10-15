@@ -15,7 +15,7 @@ public class StreamMetadataResult {
     public final String stream;
 
     /**
-     * Indicates whether or not the stream is soft-deleted.
+     * Indicates whether or not the stream is deleted.
      */
     public final boolean isStreamDeleted;
 
