@@ -33,13 +33,6 @@ public interface EventStore {
     void disconnect();
 
     /**
-     * Check whether this client is currently running.
-     *
-     * @return {@code true} if client is running, otherwise {@code false}
-     */
-    boolean isRunning();
-
-    /**
      * Deletes a stream from the Event Store asynchronously using soft-deletion mode and default user credentials.
      *
      * @param stream          the name of the stream to delete.

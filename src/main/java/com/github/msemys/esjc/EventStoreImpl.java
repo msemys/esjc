@@ -529,8 +529,7 @@ public class EventStoreImpl implements EventStore {
         }
     }
 
-    @Override
-    public boolean isRunning() {
+    private boolean isRunning() {
         return timer != null && !timer.isDone();
     }
 
