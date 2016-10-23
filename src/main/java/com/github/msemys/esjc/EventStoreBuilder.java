@@ -423,6 +423,17 @@ public class EventStoreBuilder {
     }
 
     /**
+     * Sets no default user credentials for operations.
+     *
+     * @return the builder reference
+     * @see #userCredentials(String, String)
+     */
+    public EventStoreBuilder withoutUserCredentials() {
+        settingsBuilder.withoutUserCredentials();
+        return this;
+    }
+
+    /**
      * Sets the amount of time before an operation is considered to have timed out.
      *
      * @param duration the amount of time before an operation is considered to have timed out.

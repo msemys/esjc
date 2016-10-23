@@ -310,6 +310,17 @@ public class Settings {
         }
 
         /**
+         * Sets no default user credentials for operations.
+         *
+         * @return the builder reference
+         * @see #userCredentials(String, String)
+         */
+        public Builder withoutUserCredentials() {
+            this.userCredentials = null;
+            return this;
+        }
+
+        /**
          * Sets the amount of time before an operation is considered to have timed out.
          *
          * @param operationTimeout the amount of time before an operation is considered to have timed out.

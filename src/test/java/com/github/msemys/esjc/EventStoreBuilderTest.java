@@ -194,4 +194,59 @@ public class EventStoreBuilderTest {
         assertTrue(result.settings().failOnNoServerResponse);
     }
 
+    @Test
+    public void createsCustomizedClientWithoutUserCredentialsFromSettings() {
+        Settings settings = Settings.newBuilder()
+            .nodeSettings(StaticNodeSettings.newBuilder()
+                .address("localhost", 1010)
+                .build())
+            .userCredentials("username", "password")
+            .tcpSettings(TcpSettings.newBuilder()
+                .connectTimeout(Duration.ofSeconds(11))
+                .closeTimeout(Duration.ofSeconds(22))
+                .keepAlive(false)
+                .tcpNoDelay(false)
+                .sendBufferSize(1111)
+                .receiveBufferSize(2222)
+                .writeBufferHighWaterMark(3333)
+                .writeBufferLowWaterMark(4444)
+                .build())
+            .sslSettings(SslSettings.noSsl())
+            .reconnectionDelay(Duration.ofSeconds(33))
+            .heartbeatInterval(Duration.ofSeconds(44))
+            .heartbeatTimeout(Duration.ofSeconds(55))
+            .requireMaster(false)
+            .operationTimeout(Duration.ofMinutes(1))
+            .operationTimeoutCheckInterval(Duration.ofMinutes(2))
+            .maxOperationQueueSize(100)
+            .maxConcurrentOperations(200)
+            .maxOperationRetries(300)
+            .maxReconnections(400)
+            .persistentSubscriptionBufferSize(5555)
+            .persistentSubscriptionAutoAckEnabled(false)
+            .failOnNoServerResponse(false)
+            .executor(Executors.newCachedThreadPool())
+            .build();
+
+        EventStore result = EventStoreBuilder.newBuilder(settings)
+            .singleNodeAddress("localhost", 2020)
+            .withoutUserCredentials()
+            .tcpKeepAliveEnabled()
+            .tcpNoDelayEnabled()
+            .tcpSendBufferSize(11110)
+            .useSslConnection()
+            .requireMasterEnabled()
+            .failOnNoServerResponseEnabled()
+            .build();
+
+        assertEquals(2020, result.settings().staticNodeSettings.get().address.getPort());
+        assertFalse(result.settings().userCredentials.isPresent());
+        assertTrue(result.settings().tcpSettings.keepAlive);
+        assertTrue(result.settings().tcpSettings.tcpNoDelay);
+        assertEquals(11110, result.settings().tcpSettings.sendBufferSize);
+        assertTrue(result.settings().sslSettings.useSslConnection);
+        assertTrue(result.settings().requireMaster);
+        assertTrue(result.settings().failOnNoServerResponse);
+    }
+
 }
