@@ -94,7 +94,7 @@ public class EventStoreImpl implements EventStore {
 
     private final Object mutex = new Object();
 
-    public EventStoreImpl(Settings settings) {
+    protected EventStoreImpl(Settings settings) {
         checkNotNull(settings, "settings");
 
         bootstrap = new Bootstrap()
