@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
+import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
 
@@ -19,8 +20,8 @@ import static java.util.stream.Collectors.toList;
  * Event Store client builder.
  */
 public class EventStoreBuilder {
-    private final Settings.Builder settingsBuilder = Settings.newBuilder();
-    private final TcpSettings.Builder tcpSettingsBuilder = TcpSettings.newBuilder();
+    private final Settings.Builder settingsBuilder;
+    private final TcpSettings.Builder tcpSettingsBuilder;
     private InetSocketAddress singleNodeAddress;
     private Duration clusterNodeGossipTimeout;
     private Duration clusterNodeDiscoverAttemptInterval;
@@ -29,7 +30,52 @@ public class EventStoreBuilder {
     private Integer clusterNodeDiscoveryFromDnsOnGosipPort;
     private List<GossipSeed> clusterNodeDiscoveryFromGossipSeeds;
 
-    private EventStoreBuilder() {
+    private EventStoreBuilder(Settings.Builder settingsBuilder, TcpSettings.Builder tcpSettingsBuilder) {
+        this.settingsBuilder = settingsBuilder;
+        this.tcpSettingsBuilder = tcpSettingsBuilder;
+    }
+
+    /**
+     * Creates a new Event Store client builder populated with the specified settings.
+     *
+     * @param settings client settings
+     * @return Event Store client builder.
+     */
+    public static EventStoreBuilder newBuilder(Settings settings) {
+        checkNotNull(settings, "settings is null");
+
+        Settings.Builder settingsBuilder = Settings.newBuilder()
+            .sslSettings(settings.sslSettings)
+            .reconnectionDelay(settings.reconnectionDelay)
+            .heartbeatInterval(settings.heartbeatInterval)
+            .heartbeatTimeout(settings.heartbeatTimeout)
+            .requireMaster(settings.requireMaster)
+            .operationTimeout(settings.operationTimeout)
+            .operationTimeoutCheckInterval(settings.operationTimeoutCheckInterval)
+            .maxOperationQueueSize(settings.maxOperationQueueSize)
+            .maxConcurrentOperations(settings.maxConcurrentOperations)
+            .maxOperationRetries(settings.maxOperationRetries)
+            .maxReconnections(settings.maxReconnections)
+            .persistentSubscriptionBufferSize(settings.persistentSubscriptionBufferSize)
+            .persistentSubscriptionAutoAckEnabled(settings.persistentSubscriptionAutoAckEnabled)
+            .failOnNoServerResponse(settings.failOnNoServerResponse)
+            .executor(settings.executor);
+
+        settings.staticNodeSettings.ifPresent(settingsBuilder::nodeSettings);
+        settings.clusterNodeSettings.ifPresent(settingsBuilder::nodeSettings);
+        settings.userCredentials.ifPresent(u -> settingsBuilder.userCredentials(u.username, u.password));
+
+        TcpSettings.Builder tcpSettingsBuilder = TcpSettings.newBuilder()
+            .connectTimeout(settings.tcpSettings.connectTimeout)
+            .closeTimeout(settings.tcpSettings.closeTimeout)
+            .keepAlive(settings.tcpSettings.keepAlive)
+            .tcpNoDelay(settings.tcpSettings.tcpNoDelay)
+            .sendBufferSize(settings.tcpSettings.sendBufferSize)
+            .receiveBufferSize(settings.tcpSettings.receiveBufferSize)
+            .writeBufferHighWaterMark(settings.tcpSettings.writeBufferHighWaterMark)
+            .writeBufferLowWaterMark(settings.tcpSettings.writeBufferLowWaterMark);
+
+        return new EventStoreBuilder(settingsBuilder, tcpSettingsBuilder);
     }
 
     /**
@@ -38,7 +84,7 @@ public class EventStoreBuilder {
      * @return Event Store client builder.
      */
     public static EventStoreBuilder newBuilder() {
-        return new EventStoreBuilder();
+        return new EventStoreBuilder(Settings.newBuilder(), TcpSettings.newBuilder());
     }
 
     /**
