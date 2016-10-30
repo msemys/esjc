@@ -7,6 +7,8 @@ import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
  * SSL settings
  */
 public class SslSettings {
+    private static final SslSettings TRUST_ALL_CERTIFICATES = new SslSettings(true, null, false);
+    private static final SslSettings NO_SSL = new SslSettings(false, null, false);
 
     /**
      * Whether or not the connection is encrypted using SSL.
@@ -58,7 +60,7 @@ public class SslSettings {
      * @return SSL settings
      */
     public static SslSettings trustAllCertificates() {
-        return new SslSettings(true, null, false);
+        return TRUST_ALL_CERTIFICATES;
     }
 
     /**
@@ -67,7 +69,7 @@ public class SslSettings {
      * @return SSL settings
      */
     public static SslSettings noSsl() {
-        return new SslSettings(false, null, false);
+        return NO_SSL;
     }
 
 }
