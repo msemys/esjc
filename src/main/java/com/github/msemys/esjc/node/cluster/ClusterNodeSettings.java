@@ -162,7 +162,7 @@ public class ClusterNodeSettings {
          */
         @Override
         public ClusterNodeSettings build() {
-            checkArgument(super.gossipSeeds != null && !super.gossipSeeds.isEmpty(), "Empty FakeDnsEntries collection.");
+            checkArgument(super.gossipSeeds != null && !super.gossipSeeds.isEmpty(), "Gossip seeds are not specified.");
             return super.build();
         }
     }
