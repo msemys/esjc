@@ -41,4 +41,13 @@ public class GossipSeed {
         this.endpoint = endpoint;
         this.hostHeader = hostHeader;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("GossipSeed{");
+        sb.append("endpoint=").append(endpoint);
+        sb.append(", hostHeader='").append(hostHeader).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
