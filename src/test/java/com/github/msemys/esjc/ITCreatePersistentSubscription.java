@@ -3,7 +3,6 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.operation.AccessDeniedException;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -25,7 +24,7 @@ public class ITCreatePersistentSubscription extends AbstractIntegrationTest {
             .startFromCurrent()
             .build();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
     }
@@ -114,7 +113,7 @@ public class ITCreatePersistentSubscription extends AbstractIntegrationTest {
             .startFromCurrent()
             .build();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 

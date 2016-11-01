@@ -11,7 +11,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
-import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
@@ -53,7 +52,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
     public void triggersOnCloseCallbackWhenAnErrorOccursWhileProcessingAnEvent() throws TimeoutException, InterruptedException {
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        eventstore.appendToStream(generateStreamName(), ExpectedVersion.any(), asList(newTestEvent())).join();
+        eventstore.appendToStream(generateStreamName(), ExpectedVersion.any(), newTestEvent()).join();
 
         eventstore.subscribeToAllFrom(null, new CatchUpSubscriptionListener() {
             @Override
@@ -130,7 +129,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         Position lastPosition = slice.events.get(0).originalPosition;
 
         range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         CatchUpSubscription subscription = eventstore.subscribeToAllFrom(null, new CatchUpSubscriptionListener() {
@@ -154,7 +153,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         });
 
         range(10, 20).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
@@ -177,7 +176,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         CountDownLatch closeSignal = new CountDownLatch(1);
 
         range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 1, false).join();
@@ -202,7 +201,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         });
 
         range(10, 20).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
@@ -227,7 +226,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         CountDownLatch closeSignal = new CountDownLatch(1);
 
         range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 2, false).join();

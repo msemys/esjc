@@ -7,7 +7,6 @@ import org.junit.Test;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.Stream.concat;
@@ -35,7 +34,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(5, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(0, writer.startTransaction(ExpectedVersion.of(-1)).write(asList(events.get(0))).commit().nextExpectedVersion);
+        assertEquals(0, writer.startTransaction(ExpectedVersion.of(-1)).write(events.get(0)).commit().nextExpectedVersion);
 
         assertEquals(events.size(), size(stream));
     }
@@ -49,7 +48,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(5, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(0, writer.startTransaction(ExpectedVersion.any()).write(asList(events.get(0))).commit().nextExpectedVersion);
+        assertEquals(0, writer.startTransaction(ExpectedVersion.any()).write(events.get(0)).commit().nextExpectedVersion);
 
         assertEquals(events.size(), size(stream));
     }
@@ -63,7 +62,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(5, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(6, writer.startTransaction(ExpectedVersion.of(5)).write(asList(events.get(0))).commit().nextExpectedVersion);
+        assertEquals(6, writer.startTransaction(ExpectedVersion.of(5)).write(events.get(0)).commit().nextExpectedVersion);
 
         assertEquals(events.size() + 1, size(stream));
     }
@@ -79,7 +78,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         assertEquals(5, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
 
         try {
-            writer.startTransaction(ExpectedVersion.of(6)).write(asList(events.get(0))).commit();
+            writer.startTransaction(ExpectedVersion.of(6)).write(events.get(0)).commit();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause().getCause(), instanceOf(WrongExpectedVersionException.class));
@@ -97,7 +96,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         assertEquals(5, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
 
         try {
-            writer.startTransaction(ExpectedVersion.of(4)).write(asList(events.get(0))).commit();
+            writer.startTransaction(ExpectedVersion.of(4)).write(events.get(0)).commit();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause().getCause(), instanceOf(WrongExpectedVersionException.class));
@@ -113,7 +112,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(0, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(1, writer.startTransaction(ExpectedVersion.of(0)).write(asList(events.get(0))).commit().nextExpectedVersion);
+        assertEquals(1, writer.startTransaction(ExpectedVersion.of(0)).write(events.get(0)).commit().nextExpectedVersion);
 
         assertEquals(events.size() + 1, size(stream));
     }
@@ -127,7 +126,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(0, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(0, writer.startTransaction(ExpectedVersion.any()).write(asList(events.get(0))).commit().nextExpectedVersion);
+        assertEquals(0, writer.startTransaction(ExpectedVersion.any()).write(events.get(0)).commit().nextExpectedVersion);
 
         assertEquals(events.size(), size(stream));
     }
@@ -141,7 +140,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(0, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(0, writer.startTransaction(ExpectedVersion.of(-1)).write(asList(events.get(0))).commit().nextExpectedVersion);
+        assertEquals(0, writer.startTransaction(ExpectedVersion.of(-1)).write(events.get(0)).commit().nextExpectedVersion);
 
         assertEquals(events.size(), size(stream));
     }
@@ -156,8 +155,8 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
 
         assertEquals(2, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
         assertEquals(0, writer.startTransaction(ExpectedVersion.any())
-            .write(asList(events.get(0)))
-            .write(asList(events.get(0)))
+            .write(events.get(0))
+            .write(events.get(0))
             .commit().nextExpectedVersion);
 
         assertEquals(events.size(), size(stream));
@@ -210,6 +209,15 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
 
         private OngoingTransaction(Transaction transaction) {
             this.transaction = transaction;
+        }
+
+        private OngoingTransaction write(EventData event) {
+            try {
+                transaction.write(event).get();
+                return this;
+            } catch (Exception e) {
+                throw Throwables.propagate(e);
+            }
         }
 
         private OngoingTransaction write(List<EventData> events) {

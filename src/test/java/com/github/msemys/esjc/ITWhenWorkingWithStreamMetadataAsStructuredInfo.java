@@ -152,7 +152,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
     public void setsMetadataForExistingStream() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
 
         StreamMetadata metadata = StreamMetadata.newBuilder()
             .maxCount(17)

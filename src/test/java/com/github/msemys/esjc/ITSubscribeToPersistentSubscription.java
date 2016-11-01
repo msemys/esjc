@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -121,14 +120,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             eventSignal.countDown();
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(stream, ExpectedVersion.any(),
             EventData.newBuilder()
                 .eventId(eventId)
                 .type("test")
                 .jsonData("{'foo' : 'bar'}")
                 .metadata(new byte[0])
                 .build()
-        )).join();
+        ).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
         assertEquals(1, events.size());
@@ -159,14 +158,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
 
         range(0, 3).forEach(i -> {
             eventIds.add(UUID.randomUUID());
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+            eventstore.appendToStream(stream, ExpectedVersion.any(),
                 EventData.newBuilder()
                     .eventId(eventIds.get(i))
                     .type("test")
                     .jsonData("{'foo' : 'bar'}")
                     .metadata(new byte[0])
                     .build()
-            )).join();
+            ).join();
         });
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
@@ -191,14 +190,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
 
         range(0, 10).forEach(i -> {
             eventIds.add(UUID.randomUUID());
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+            eventstore.appendToStream(stream, ExpectedVersion.any(),
                 EventData.newBuilder()
                     .eventId(eventIds.get(i))
                     .type("test")
                     .jsonData("{'foo' : 'bar'}")
                     .metadata(new byte[0])
                     .build()
-            )).join();
+            ).join();
         });
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
@@ -226,14 +225,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             .build();
 
         range(0, 10).forEach(i ->
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+            eventstore.appendToStream(stream, ExpectedVersion.any(),
                 EventData.newBuilder()
                     .eventId(UUID.randomUUID())
                     .type("test")
                     .jsonData("{'foo' : 'bar'}")
                     .metadata(new byte[0])
                     .build()
-            )).join());
+            ).join());
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -256,14 +255,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             .build();
 
         range(0, 10).forEach(i ->
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+            eventstore.appendToStream(stream, ExpectedVersion.any(),
                 EventData.newBuilder()
                     .eventId(UUID.randomUUID())
                     .type("test")
                     .jsonData("{'foo' : 'bar'}")
                     .metadata(new byte[0])
                     .build()
-            )).join());
+            ).join());
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -272,14 +271,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             eventSignal.countDown();
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(stream, ExpectedVersion.any(),
             EventData.newBuilder()
                 .eventId(eventId)
                 .type("test")
                 .jsonData("{'foo' : 'bar'}")
                 .metadata(new byte[0])
                 .build()
-        )).join();
+        ).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
         assertEquals(1, events.size());
@@ -302,14 +301,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             .build();
 
         range(0, 11).forEach(i ->
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+            eventstore.appendToStream(stream, ExpectedVersion.any(),
                 EventData.newBuilder()
                     .eventId(UUID.randomUUID())
                     .type("test")
                     .jsonData("{'foo' : 'bar'}")
                     .metadata(new byte[0])
                     .build()
-            )).join());
+            ).join());
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -318,14 +317,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             eventSignal.countDown();
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(stream, ExpectedVersion.any(),
             EventData.newBuilder()
                 .eventId(eventId)
                 .type("test")
                 .jsonData("{'foo' : 'bar'}")
                 .metadata(new byte[0])
                 .build()
-        )).join();
+        ).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
         assertEquals(1, events.size());
@@ -363,14 +362,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             }
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(stream, ExpectedVersion.any(),
             EventData.newBuilder()
                 .eventId(UUID.randomUUID())
                 .type("test")
                 .jsonData("{'foo' : 'bar'}")
                 .metadata(new byte[0])
                 .build()
-        )).join();
+        ).join();
 
         assertTrue("onClose timeout", closeSignal.await(5, SECONDS));
         assertEquals(SubscriptionDropReason.EventHandlerException, closeReason.get());
@@ -393,14 +392,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             .build();
 
         range(0, 10).forEach(i ->
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+            eventstore.appendToStream(stream, ExpectedVersion.any(),
                 EventData.newBuilder()
                     .eventId(UUID.randomUUID())
                     .type("test")
                     .jsonData("{'foo' : 'bar'}")
                     .metadata(new byte[0])
                     .build()
-            )).join());
+            ).join());
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -409,14 +408,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             eventSignal.countDown();
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(stream, ExpectedVersion.any(),
             EventData.newBuilder()
                 .eventId(eventId)
                 .type("test")
                 .jsonData("{'foo' : 'bar'}")
                 .metadata(new byte[0])
                 .build()
-        )).join();
+        ).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
         assertEquals(1, events.size());
@@ -440,14 +439,14 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
 
         range(0, 10).forEach(i -> {
             eventIds.add(UUID.randomUUID());
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+            eventstore.appendToStream(stream, ExpectedVersion.any(),
                 EventData.newBuilder()
                     .eventId(eventIds.get(i))
                     .type("test")
                     .jsonData("{'foo' : 'bar'}")
                     .metadata(new byte[0])
                     .build()
-            )).join();
+            ).join();
         });
 
         eventstore.createPersistentSubscription(stream, group, settings).join();

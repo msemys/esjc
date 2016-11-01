@@ -7,7 +7,6 @@ import org.junit.Test;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.Stream.concat;
@@ -158,7 +157,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
-            eventstore.appendToStream(stream, ExpectedVersion.of(-1), asList(events.get(0))).get();
+            eventstore.appendToStream(stream, ExpectedVersion.of(-1), events.get(0)).get();
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -174,7 +173,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(events.get(0))).get();
+            eventstore.appendToStream(stream, ExpectedVersion.any(), events.get(0)).get();
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -190,7 +189,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
-            eventstore.appendToStream(stream, ExpectedVersion.of(0), asList(events.get(1))).get();
+            eventstore.appendToStream(stream, ExpectedVersion.of(0), events.get(1)).get();
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -206,7 +205,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(events.get(1))).get();
+            eventstore.appendToStream(stream, ExpectedVersion.any(), events.get(1)).get();
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -262,7 +261,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
                 try {
                     ExpectedVersion nextExpectedVersion = ExpectedVersion.of(eventstore
-                        .appendToStream(stream, expectedVersion, asList(events.get(i)))
+                        .appendToStream(stream, expectedVersion, events.get(i))
                         .get().nextExpectedVersion);
 
                     if (!ExpectedVersion.any().equals(nextExpectedVersion)) {
@@ -291,7 +290,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         private TailWriter append(EventData event, ExpectedVersion version) {
             try {
-                eventstore.appendToStream(stream, version, asList(event)).get();
+                eventstore.appendToStream(stream, version, event).get();
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }

@@ -5,7 +5,6 @@ import org.junit.Test;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +37,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             eventSignal.countDown();
         }, BUFFER_SIZE, false).join();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())));
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()));
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
     }
@@ -59,7 +58,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
 
         eventstore.subscribeToPersistent(stream, group, (s, e) -> eventSignal.countDown(), BUFFER_SIZE, true).join();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())));
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()));
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
     }
@@ -76,7 +75,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             .startFromBeginning()
             .build();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join());
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join());
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -100,7 +99,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             .startFromBeginning()
             .build();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join());
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join());
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -122,7 +121,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             .startFromBeginning()
             .build();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream2, ExpectedVersion.any(), asList(newTestEvent())).join());
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream2, ExpectedVersion.any(), newTestEvent()).join());
 
         eventstore.createPersistentSubscription(stream1, group, settings).join();
 
@@ -134,10 +133,10 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
         }, BUFFER_SIZE, false).join();
 
         range(0, EVENT_COUNT).forEach(i ->
-            eventstore.appendToStream(stream1, ExpectedVersion.any(), asList(
+            eventstore.appendToStream(stream1, ExpectedVersion.any(),
                 EventData.newBuilder()
                     .linkTo(i, stream2)
-                    .build())
+                    .build()
             ).join());
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
@@ -156,7 +155,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             .startFromBeginning()
             .build();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream2, ExpectedVersion.any(), asList(newTestEvent())).join());
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream2, ExpectedVersion.any(), newTestEvent()).join());
 
         eventstore.createPersistentSubscription(stream1, group, settings).join();
 
@@ -166,10 +165,10 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             }
         }, BUFFER_SIZE, true).join();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream1, ExpectedVersion.any(), asList(
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream1, ExpectedVersion.any(),
             EventData.newBuilder()
                 .linkTo(i, stream2)
-                .build())
+                .build()
         ).join());
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));

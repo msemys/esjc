@@ -4,7 +4,6 @@ import com.github.msemys.esjc.operation.StreamDeletedException;
 import com.github.msemys.esjc.operation.WrongExpectedVersionException;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -31,7 +30,7 @@ public class ITDeleteStream extends AbstractIntegrationTest {
     @Test
     public void succeedsToDeleteExistingStream() {
         final String stream = generateStreamName();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
         eventstore.deleteStream(stream, ExpectedVersion.of(0), true).join();
     }
 

@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 
-import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
 
@@ -23,7 +22,7 @@ public class ITSubscribeToAll extends AbstractIntegrationTest {
 
         eventstore.subscribeToAll(false, (s, e) -> eventSignal.countDown()).join();
         eventstore.subscribeToAll(false, (s, e) -> eventSignal.countDown()).join();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
     }

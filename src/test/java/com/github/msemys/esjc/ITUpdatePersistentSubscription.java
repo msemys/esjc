@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
@@ -28,7 +27,7 @@ public class ITUpdatePersistentSubscription extends AbstractIntegrationTest {
             .startFromCurrent()
             .build();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -49,7 +48,7 @@ public class ITUpdatePersistentSubscription extends AbstractIntegrationTest {
             .startFromCurrent()
             .build();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -108,7 +107,7 @@ public class ITUpdatePersistentSubscription extends AbstractIntegrationTest {
                 .startFromCurrent()
                 .build();
 
-            unauthenticatedEventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent()), admin).join();
+            unauthenticatedEventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent(), admin).join();
 
             unauthenticatedEventstore.createPersistentSubscription(stream, group, settings, admin).join();
 

@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.util.List;
 
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
@@ -36,7 +35,7 @@ public class ITReadAllEventsForwardWithHardDeletedStream extends AbstractIntegra
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        Position position = eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(events.get(0))).join().logPosition;
+        Position position = eventstore.appendToStream(stream, ExpectedVersion.noStream(), events.get(0)).join().logPosition;
         eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
         eventstore.deleteStream(stream, ExpectedVersion.any(), true).join();
 

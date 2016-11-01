@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.github.msemys.esjc.util.Strings.newString;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.CompletableFuture.allOf;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -29,7 +28,7 @@ public class ITTransaction extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.noStream()).join();
-        transaction.write(asList(newTestEvent())).join();
+        transaction.write(newTestEvent()).join();
 
         assertEquals(0, transaction.commit().join().nextExpectedVersion);
     }
@@ -39,7 +38,7 @@ public class ITTransaction extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.any()).join();
-        transaction.write(asList(newTestEvent())).join();
+        transaction.write(newTestEvent()).join();
 
         assertEquals(0, transaction.commit().join().nextExpectedVersion);
     }
@@ -49,7 +48,7 @@ public class ITTransaction extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(1)).join();
-        transaction.write(asList(newTestEvent())).join();
+        transaction.write(newTestEvent()).join();
 
         try {
             transaction.commit().join();
@@ -87,7 +86,7 @@ public class ITTransaction extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(100500)).join();
-        transaction.write(asList(newTestEvent())).join();
+        transaction.write(newTestEvent()).join();
 
         try {
             transaction.commit().join();
@@ -115,13 +114,13 @@ public class ITTransaction extends AbstractIntegrationTest {
 
             CompletableFuture[] writes = new CompletableFuture[totalTransactionalWrites];
             for (int i = 0; i < totalTransactionalWrites; i++) {
-                writes[i] = transaction.write(asList(
+                writes[i] = transaction.write(
                     EventData.newBuilder()
                         .type("test")
                         .data(String.valueOf(i))
                         .metadata("transactional write")
                         .build()
-                ));
+                );
             }
 
             allOf(writes).join();
@@ -133,13 +132,13 @@ public class ITTransaction extends AbstractIntegrationTest {
         threadPool.execute(() -> {
             CompletableFuture[] writes = new CompletableFuture[totalPlainWrites];
             for (int i = 0; i < totalPlainWrites; i++) {
-                writes[i] = eventstore.appendToStream(stream, ExpectedVersion.any(), asList(
+                writes[i] = eventstore.appendToStream(stream, ExpectedVersion.any(),
                     EventData.newBuilder()
                         .type("test")
                         .data(String.valueOf(i))
                         .metadata("plain write")
                         .build()
-                ));
+                );
             }
 
             allOf(writes).join();
@@ -160,8 +159,8 @@ public class ITTransaction extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.noStream()).join();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
-        transaction.write(asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        transaction.write(newTestEvent()).join();
 
         try {
             transaction.commit().join();
@@ -176,8 +175,8 @@ public class ITTransaction extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(0)).join();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
-        transaction.write(asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        transaction.write(newTestEvent()).join();
 
         assertEquals(1, transaction.commit().join().nextExpectedVersion);
     }
@@ -187,7 +186,7 @@ public class ITTransaction extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.noStream()).join();
-        transaction.write(asList(newTestEvent())).join();
+        transaction.write(newTestEvent()).join();
         eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
 
         try {
@@ -208,11 +207,11 @@ public class ITTransaction extends AbstractIntegrationTest {
             .build();
 
         Transaction transaction1 = eventstore.startTransaction(stream, ExpectedVersion.any()).join();
-        transaction1.write(asList(event)).join();
+        transaction1.write(event).join();
         assertEquals(0, transaction1.commit().join().nextExpectedVersion);
 
         Transaction transaction2 = eventstore.startTransaction(stream, ExpectedVersion.any()).join();
-        transaction2.write(asList(event)).join();
+        transaction2.write(event).join();
         assertEquals(0, transaction2.commit().join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();

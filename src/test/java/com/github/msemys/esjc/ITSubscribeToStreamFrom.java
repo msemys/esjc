@@ -11,7 +11,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
-import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
@@ -86,7 +85,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             }
         });
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
 
@@ -137,7 +136,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             }
         });
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
 
@@ -183,7 +182,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
 
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
 
         eventstore.subscribeToStreamFrom(stream, null, new CatchUpSubscriptionListener() {
             @Override
@@ -217,7 +216,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch closeSignal = new CountDownLatch(1);
 
         range(0, 10).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, null, new CatchUpSubscriptionListener() {
@@ -239,7 +238,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         });
 
         range(10, 20).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
@@ -261,7 +260,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch closeSignal = new CountDownLatch(1);
 
         range(0, 20).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9, new CatchUpSubscriptionListener() {
@@ -283,7 +282,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         });
 
         range(20, 30).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
@@ -308,7 +307,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch closeSignal = new CountDownLatch(1);
 
         range(0, 20).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
-            asList(EventData.newBuilder().type("et-" + i).build())
+            EventData.newBuilder().type("et-" + i).build()
         ).join());
 
         CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9, new CatchUpSubscriptionListener() {

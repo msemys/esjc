@@ -3,7 +3,6 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.system.SystemEventType;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class ITReadAllEventsForwardWithLinkToPassedMaxCount extends AbstractIntegrationTest {
@@ -18,11 +17,11 @@ public class ITReadAllEventsForwardWithLinkToPassedMaxCount extends AbstractInte
         final String deletedStreamName = generateStreamName();
         final String linkedStreamName = generateStreamName();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(),
             EventData.newBuilder()
                 .type("testing1")
                 .jsonData("{'foo' : 4}")
-                .build())
+                .build()
         ).join();
 
         eventstore.setStreamMetadata(deletedStreamName, ExpectedVersion.any(),
@@ -31,25 +30,25 @@ public class ITReadAllEventsForwardWithLinkToPassedMaxCount extends AbstractInte
                 .build()
         ).join();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(),
             EventData.newBuilder()
                 .type("testing2")
                 .jsonData("{'foo' : 4}")
-                .build())
+                .build()
         ).join();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(),
             EventData.newBuilder()
                 .type("testing3")
                 .jsonData("{'foo' : 4}")
-                .build())
+                .build()
         ).join();
 
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(), asList(
+        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(),
             EventData.newBuilder()
                 .type(SystemEventType.LINK_TO.value)
                 .data("0@" + deletedStreamName)
-                .build())
+                .build()
         ).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(linkedStreamName, 0, 1, true).join();

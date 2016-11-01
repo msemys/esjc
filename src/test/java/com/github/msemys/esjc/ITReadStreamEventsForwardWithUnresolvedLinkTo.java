@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
@@ -23,7 +22,7 @@ public class ITReadStreamEventsForwardWithUnresolvedLinkTo extends AbstractInteg
         final String linkedStreamName = generateStreamName();
 
         eventstore.appendToStream(deletedStreamName, ExpectedVersion.noStream(), newTestEvents()).join();
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.noStream(), asList(newLinkEvent(deletedStreamName, 0))).join();
+        eventstore.appendToStream(linkedStreamName, ExpectedVersion.noStream(), newLinkEvent(deletedStreamName, 0)).join();
         eventstore.deleteStream(deletedStreamName, ExpectedVersion.any()).join();
 
         StreamEventsSlice deletedStreamSlice = eventstore.readStreamEventsForward(deletedStreamName, 0, 100, false).join();

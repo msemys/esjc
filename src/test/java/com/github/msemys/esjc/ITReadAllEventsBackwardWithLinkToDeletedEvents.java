@@ -3,7 +3,6 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.system.SystemEventType;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
 public class ITReadAllEventsBackwardWithLinkToDeletedEvents extends AbstractIntegrationTest {
@@ -18,8 +17,8 @@ public class ITReadAllEventsBackwardWithLinkToDeletedEvents extends AbstractInte
         final String deletedStreamName = generateStreamName();
         final String linkedStreamName = generateStreamName();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), asList(newTestEvent())).join();
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(), asList(newLinkEvent(deletedStreamName, 0))).join();
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), newTestEvent()).join();
+        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(), newLinkEvent(deletedStreamName, 0)).join();
         eventstore.deleteStream(deletedStreamName, ExpectedVersion.any()).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(linkedStreamName, 0, 1, true).join();

@@ -3,10 +3,7 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.util.EmptyArrays;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class ITWhenWorkingWithMetadata extends AbstractIntegrationTest {
 
@@ -19,7 +16,7 @@ public class ITWhenWorkingWithMetadata extends AbstractIntegrationTest {
     public void getsMetadataForAnExistingStreamAndNoMetadataExists() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
 
         RawStreamMetadataResult metadata = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata.stream);

@@ -164,7 +164,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertTrue(streamMetadataResult.isStreamDeleted);
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent())).join();
+            eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
             fail("append should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
@@ -183,7 +183,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join().nextExpectedVersion);
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent())).join();
+            eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
