@@ -222,6 +222,16 @@ public class EventStoreBuilder {
     }
 
     /**
+     * Disables connection encryption.
+     *
+     * @return the builder reference
+     */
+    public EventStoreBuilder noSslConnection() {
+        settingsBuilder.sslSettings(SslSettings.noSsl());
+        return this;
+    }
+
+    /**
      * Sets the amount of time to delay before attempting to reconnect.
      *
      * @param duration the amount of time to delay before attempting to reconnect.

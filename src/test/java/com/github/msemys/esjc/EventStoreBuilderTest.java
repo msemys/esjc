@@ -143,6 +143,20 @@ public class EventStoreBuilderTest {
     }
 
     @Test
+    public void createsCustomizedClientWithDisabledConnectionEncryptionFromSettings() {
+        Settings settings = Settings.newBuilder()
+            .nodeSettings(StaticNodeSettings.newBuilder().address("localhost", 1010).build())
+            .sslSettings(SslSettings.trustAllCertificates())
+            .build();
+
+        EventStore result = EventStoreBuilder.newBuilder(settings)
+            .noSslConnection()
+            .build();
+
+        assertFalse(result.settings().sslSettings.useSslConnection);
+    }
+
+    @Test
     public void createsCustomizedClientFromSettings() {
         Settings settings = Settings.newBuilder()
             .nodeSettings(StaticNodeSettings.newBuilder()
