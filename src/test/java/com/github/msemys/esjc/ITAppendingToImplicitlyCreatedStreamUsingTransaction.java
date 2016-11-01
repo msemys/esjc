@@ -1,7 +1,6 @@
 package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.operation.WrongExpectedVersionException;
-import com.github.msemys.esjc.util.Throwables;
 import org.junit.Test;
 
 import java.util.List;
@@ -81,7 +80,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
             writer.startTransaction(ExpectedVersion.of(6)).write(events.get(0)).commit();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
-            assertThat(e.getCause().getCause(), instanceOf(WrongExpectedVersionException.class));
+            assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
         }
     }
 
@@ -99,7 +98,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
             writer.startTransaction(ExpectedVersion.of(4)).write(events.get(0)).commit();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
-            assertThat(e.getCause().getCause(), instanceOf(WrongExpectedVersionException.class));
+            assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
         }
     }
 
@@ -178,7 +177,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
                 .commit();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
-            assertThat(e.getCause().getCause(), instanceOf(WrongExpectedVersionException.class));
+            assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
         }
     }
 
@@ -196,11 +195,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         }
 
         private OngoingTransaction startTransaction(ExpectedVersion version) {
-            try {
-                return new OngoingTransaction(eventstore.startTransaction(stream, version).get());
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
+            return new OngoingTransaction(eventstore.startTransaction(stream, version).join());
         }
     }
 
@@ -212,29 +207,17 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         }
 
         private OngoingTransaction write(EventData event) {
-            try {
-                transaction.write(event).get();
-                return this;
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
+            transaction.write(event).join();
+            return this;
         }
 
         private OngoingTransaction write(List<EventData> events) {
-            try {
-                transaction.write(events).get();
-                return this;
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
+            transaction.write(events).join();
+            return this;
         }
 
         private WriteResult commit() {
-            try {
-                return transaction.commit().get();
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
+            return transaction.commit().join();
         }
     }
 

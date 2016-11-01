@@ -1,7 +1,6 @@
 package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.event.ClientConnected;
-import com.github.msemys.esjc.util.Throwables;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -96,15 +95,11 @@ public abstract class AbstractIntegrationTest {
         int result = 0;
 
         while (true) {
-            try {
-                StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, result, 10, false).get();
-                result += slice.events.size();
+            StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, result, 10, false).join();
+            result += slice.events.size();
 
-                if (slice.isEndOfStream) {
-                    break;
-                }
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
+            if (slice.isEndOfStream) {
+                break;
             }
         }
 
