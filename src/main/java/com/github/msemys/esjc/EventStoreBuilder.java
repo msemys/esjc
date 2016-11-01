@@ -1,38 +1,41 @@
 package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
-import com.github.msemys.esjc.node.cluster.GossipSeed;
+import com.github.msemys.esjc.node.cluster.ClusterNodeSettings.BuilderForDnsDiscoverer;
+import com.github.msemys.esjc.node.cluster.ClusterNodeSettings.BuilderForGossipSeedDiscoverer;
 import com.github.msemys.esjc.node.static_.StaticNodeSettings;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
 
 import java.net.InetSocketAddress;
 import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 
-import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
-import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Event Store client builder.
  */
 public class EventStoreBuilder {
     private final Settings.Builder settingsBuilder;
-    private final TcpSettings.Builder tcpSettingsBuilder;
-    private InetSocketAddress singleNodeAddress;
-    private Duration clusterNodeGossipTimeout;
-    private Duration clusterNodeDiscoverAttemptInterval;
-    private Integer clusterNodeMaxDiscoverAttempts;
-    private String clusterNodeDiscoveryFromDns;
-    private Integer clusterNodeDiscoveryFromDnsOnGosipPort;
-    private List<GossipSeed> clusterNodeDiscoveryFromGossipSeeds;
+    private TcpSettings.Builder tcpSettingsBuilder;
+    private StaticNodeSettings.Builder singleNodeSettingsBuilder;
+    private BuilderForDnsDiscoverer clusterNodeUsingDnsSettingsBuilder;
+    private BuilderForGossipSeedDiscoverer clusterNodeUsingGossipSeedSettingsBuilder;
 
-    private EventStoreBuilder(Settings.Builder settingsBuilder, TcpSettings.Builder tcpSettingsBuilder) {
+    private EventStoreBuilder(Settings.Builder settingsBuilder,
+                              TcpSettings.Builder tcpSettingsBuilder,
+                              StaticNodeSettings.Builder singleNodeSettingsBuilder,
+                              BuilderForDnsDiscoverer clusterNodeUsingDnsSettingsBuilder,
+                              BuilderForGossipSeedDiscoverer clusterNodeUsingGossipSeedSettingsBuilder) {
+        checkNotNull(settingsBuilder, "settingsBuilder is null");
+
         this.settingsBuilder = settingsBuilder;
         this.tcpSettingsBuilder = tcpSettingsBuilder;
+        this.singleNodeSettingsBuilder = singleNodeSettingsBuilder;
+        this.clusterNodeUsingDnsSettingsBuilder = clusterNodeUsingDnsSettingsBuilder;
+        this.clusterNodeUsingGossipSeedSettingsBuilder = clusterNodeUsingGossipSeedSettingsBuilder;
     }
 
     /**
@@ -44,6 +47,7 @@ public class EventStoreBuilder {
     public static EventStoreBuilder newBuilder(Settings settings) {
         checkNotNull(settings, "settings is null");
 
+        // populate settings builder
         Settings.Builder settingsBuilder = Settings.newBuilder()
             .sslSettings(settings.sslSettings)
             .reconnectionDelay(settings.reconnectionDelay)
@@ -61,10 +65,37 @@ public class EventStoreBuilder {
             .failOnNoServerResponse(settings.failOnNoServerResponse)
             .executor(settings.executor);
 
-        settings.staticNodeSettings.ifPresent(settingsBuilder::nodeSettings);
-        settings.clusterNodeSettings.ifPresent(settingsBuilder::nodeSettings);
         settings.userCredentials.ifPresent(u -> settingsBuilder.userCredentials(u.username, u.password));
 
+        // populate single-node settings builder
+        StaticNodeSettings.Builder singleNodeSettingsBuilder = null;
+
+        if (settings.staticNodeSettings.isPresent()) {
+            singleNodeSettingsBuilder = StaticNodeSettings.newBuilder().address(settings.staticNodeSettings.get().address);
+        }
+
+        // populate cluster-node settings builders
+        BuilderForDnsDiscoverer clusterNodeUsingDnsSettingsBuilder = null;
+        BuilderForGossipSeedDiscoverer clusterNodeUsingGossipSeedSettingsBuilder = null;
+
+        if (settings.clusterNodeSettings.isPresent()) {
+            if (!settings.clusterNodeSettings.get().gossipSeeds.isEmpty()) {
+                clusterNodeUsingGossipSeedSettingsBuilder = ClusterNodeSettings.forGossipSeedDiscoverer()
+                    .maxDiscoverAttempts(settings.clusterNodeSettings.get().maxDiscoverAttempts)
+                    .discoverAttemptInterval(settings.clusterNodeSettings.get().discoverAttemptInterval)
+                    .gossipSeeds(settings.clusterNodeSettings.get().gossipSeeds)
+                    .gossipTimeout(settings.clusterNodeSettings.get().gossipTimeout);
+            } else {
+                clusterNodeUsingDnsSettingsBuilder = ClusterNodeSettings.forDnsDiscoverer()
+                    .maxDiscoverAttempts(settings.clusterNodeSettings.get().maxDiscoverAttempts)
+                    .discoverAttemptInterval(settings.clusterNodeSettings.get().discoverAttemptInterval)
+                    .clusterDns(settings.clusterNodeSettings.get().clusterDns)
+                    .externalGossipPort(settings.clusterNodeSettings.get().externalGossipPort)
+                    .gossipTimeout(settings.clusterNodeSettings.get().gossipTimeout);
+            }
+        }
+
+        // populate tcp settings builder
         TcpSettings.Builder tcpSettingsBuilder = TcpSettings.newBuilder()
             .connectTimeout(settings.tcpSettings.connectTimeout)
             .closeTimeout(settings.tcpSettings.closeTimeout)
@@ -75,7 +106,12 @@ public class EventStoreBuilder {
             .writeBufferHighWaterMark(settings.tcpSettings.writeBufferHighWaterMark)
             .writeBufferLowWaterMark(settings.tcpSettings.writeBufferLowWaterMark);
 
-        return new EventStoreBuilder(settingsBuilder, tcpSettingsBuilder);
+        return new EventStoreBuilder(
+            settingsBuilder,
+            tcpSettingsBuilder,
+            singleNodeSettingsBuilder,
+            clusterNodeUsingDnsSettingsBuilder,
+            clusterNodeUsingGossipSeedSettingsBuilder);
     }
 
     /**
@@ -84,113 +120,7 @@ public class EventStoreBuilder {
      * @return Event Store client builder.
      */
     public static EventStoreBuilder newBuilder() {
-        return new EventStoreBuilder(Settings.newBuilder(), TcpSettings.newBuilder());
-    }
-
-    /**
-     * Sets connection establishment timeout.
-     *
-     * @param duration connection establishment timeout.
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpConnectTimeout(Duration duration) {
-        tcpSettingsBuilder.connectTimeout(duration);
-        return this;
-    }
-
-    /**
-     * Sets connection closing timeout.
-     *
-     * @param duration connection closing timeout.
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpCloseTimeout(Duration duration) {
-        tcpSettingsBuilder.closeTimeout(duration);
-        return this;
-    }
-
-    /**
-     * Enables socket keep-alive option.
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpKeepAliveEnabled() {
-        tcpSettingsBuilder.keepAlive(true);
-        return this;
-    }
-
-    /**
-     * Disables socket keep-alive option.
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpKeepAliveDisabled() {
-        tcpSettingsBuilder.keepAlive(false);
-        return this;
-    }
-
-    /**
-     * Enables socket no-delay option (Nagle's algorithm will not be used).
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpNoDelayEnabled() {
-        tcpSettingsBuilder.tcpNoDelay(true);
-        return this;
-    }
-
-    /**
-     * Disables socket no-delay option (Nagle's algorithm will be used).
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpNoDelayDisabled() {
-        tcpSettingsBuilder.tcpNoDelay(false);
-        return this;
-    }
-
-    /**
-     * Sets the maximum socket send buffer in bytes.
-     *
-     * @param size the maximum socket send buffer in bytes.
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpSendBufferSize(int size) {
-        tcpSettingsBuilder.sendBufferSize(size);
-        return this;
-    }
-
-    /**
-     * Sets the maximum socket receive buffer in bytes.
-     *
-     * @param size the maximum socket receive buffer in bytes.
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpReceiveBufferSize(int size) {
-        tcpSettingsBuilder.receiveBufferSize(size);
-        return this;
-    }
-
-    /**
-     * Sets write buffer high watermark in bytes.
-     *
-     * @param size write buffer high watermark in bytes.
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpWriteBufferHighWaterMark(int size) {
-        tcpSettingsBuilder.writeBufferHighWaterMark(size);
-        return this;
-    }
-
-    /**
-     * Sets write buffer low watermark in bytes.
-     *
-     * @param size write buffer low watermark in bytes.
-     * @return the builder reference
-     */
-    public EventStoreBuilder tcpWriteBufferLowWaterMark(int size) {
-        tcpSettingsBuilder.writeBufferLowWaterMark(size);
-        return this;
+        return new EventStoreBuilder(Settings.newBuilder(), null, null, null, null);
     }
 
     /**
@@ -200,7 +130,12 @@ public class EventStoreBuilder {
      * @return the builder reference
      */
     public EventStoreBuilder singleNodeAddress(InetSocketAddress address) {
-        singleNodeAddress = address;
+        if (singleNodeSettingsBuilder == null) {
+            singleNodeSettingsBuilder = StaticNodeSettings.newBuilder();
+        }
+        singleNodeSettingsBuilder = singleNodeSettingsBuilder.address(address);
+        clusterNodeUsingDnsSettingsBuilder = null;
+        clusterNodeUsingGossipSeedSettingsBuilder = null;
         return this;
     }
 
@@ -212,100 +147,56 @@ public class EventStoreBuilder {
      * @return the builder reference
      */
     public EventStoreBuilder singleNodeAddress(String host, int port) {
-        singleNodeAddress = new InetSocketAddress(host, port);
+        if (singleNodeSettingsBuilder == null) {
+            singleNodeSettingsBuilder = StaticNodeSettings.newBuilder();
+        }
+        singleNodeSettingsBuilder = singleNodeSettingsBuilder.address(host, port);
+        clusterNodeUsingDnsSettingsBuilder = null;
+        clusterNodeUsingGossipSeedSettingsBuilder = null;
         return this;
     }
 
     /**
-     * Sets the period after which gossip times out if none is received.
+     * Sets the client to discover cluster-nodes using a DNS name and a well-known port.
      *
-     * @param duration the period after which gossip times out if none is received.
+     * @param modifier function to apply to cluster-node settings builder
      * @return the builder reference
+     * @see #clusterNodeUsingGossipSeeds(Function)
      */
-    public EventStoreBuilder clusterNodeGossipTimeout(Duration duration) {
-        clusterNodeGossipTimeout = duration;
+    public EventStoreBuilder clusterNodeUsingDns(Function<BuilderForDnsDiscoverer, BuilderForDnsDiscoverer> modifier) {
+        checkNotNull(modifier, "modifier is null");
+        clusterNodeUsingDnsSettingsBuilder = modifier.apply(clusterNodeUsingDnsSettingsBuilder == null ?
+            ClusterNodeSettings.forDnsDiscoverer() : clusterNodeUsingDnsSettingsBuilder);
+        clusterNodeUsingGossipSeedSettingsBuilder = null;
+        singleNodeSettingsBuilder = null;
         return this;
     }
 
     /**
-     * Sets the interval between discovering endpoint attempts.
+     * Sets the client to discover cluster-nodes by specifying the IP endpoints (gossip seeds) of one or more of the nodes.
      *
-     * @param duration the interval between discovering endpoint attempts.
+     * @param modifier function to apply to cluster-node settings builder
      * @return the builder reference
+     * @see #clusterNodeUsingDns(Function)
      */
-    public EventStoreBuilder clusterNodeDiscoverAttemptInterval(Duration duration) {
-        clusterNodeDiscoverAttemptInterval = duration;
+    public EventStoreBuilder clusterNodeUsingGossipSeeds(Function<BuilderForGossipSeedDiscoverer, BuilderForGossipSeedDiscoverer> modifier) {
+        checkNotNull(modifier, "modifier is null");
+        clusterNodeUsingGossipSeedSettingsBuilder = modifier.apply(clusterNodeUsingGossipSeedSettingsBuilder == null ?
+            ClusterNodeSettings.forGossipSeedDiscoverer() : clusterNodeUsingGossipSeedSettingsBuilder);
+        clusterNodeUsingDnsSettingsBuilder = null;
+        singleNodeSettingsBuilder = null;
         return this;
     }
 
     /**
-     * Sets the maximum number of attempts for discovery.
+     * Sets TCP settings.
      *
-     * @param count the maximum number of attempts for discovery.
-     * @return the builder reference
-     * @see #clusterNodeUnlimitedDiscoverAttempts()
-     */
-    public EventStoreBuilder clusterNodeMaxDiscoverAttempts(int count) {
-        clusterNodeMaxDiscoverAttempts = count;
-        return this;
-    }
-
-    /**
-     * Sets the unlimited number of attempts for discovery.
-     *
+     * @param modifier function to apply to TCP settings builder
      * @return the builder reference
      */
-    public EventStoreBuilder clusterNodeUnlimitedDiscoverAttempts() {
-        clusterNodeMaxDiscoverAttempts = -1;
-        return this;
-    }
-
-    /**
-     * Sets the DNS name under which cluster nodes are listed.
-     *
-     * @param dns the DNS name under which cluster nodes are listed.
-     * @return the builder reference
-     */
-    public EventStoreBuilder clusterNodeDiscoveryFromDns(String dns) {
-        clusterNodeDiscoveryFromDns = dns;
-        return this;
-    }
-
-    /**
-     * Sets the well-known port on which the cluster gossip is taking place.
-     * <p>
-     * If you are using the commercial edition of Event Store HA, with Manager nodes in
-     * place, this should be the port number of the External HTTP port on which the
-     * managers are running.
-     * </p>
-     * <p>
-     * If you are using the open source edition of Event Store HA, this should be the
-     * External HTTP port that the nodes are running on. If you cannot use a well-known
-     * port for this across all nodes, you can instead use gossip seed discovery and set
-     * the endpoint of some seed nodes instead.
-     * </p>
-     *
-     * @param port the cluster gossip port.
-     * @return the builder reference
-     */
-    public EventStoreBuilder clusterNodeDiscoveryFromDnsOnGosipPort(int port) {
-        clusterNodeDiscoveryFromDnsOnGosipPort = port;
-        return this;
-    }
-
-    /**
-     * Sets gossip seed endpoints for the client.
-     * <p>
-     * Note that this should be the external HTTP endpoint of the server, as it is required
-     * for the client to exchange gossip with the server. The standard port which should be
-     * used here is 2113.
-     * </p>
-     *
-     * @param endpoints the endpoints of nodes from which to seed gossip.
-     * @return the builder reference
-     */
-    public EventStoreBuilder clusterNodeDiscoveryFromGossipSeeds(List<InetSocketAddress> endpoints) {
-        clusterNodeDiscoveryFromGossipSeeds = endpoints.stream().map(GossipSeed::new).collect(toList());
+    public EventStoreBuilder tcpSettings(Function<TcpSettings.Builder, TcpSettings.Builder> modifier) {
+        checkNotNull(modifier, "modifier is null");
+        tcpSettingsBuilder = modifier.apply(tcpSettingsBuilder == null ? TcpSettings.newBuilder() : tcpSettingsBuilder);
         return this;
     }
 
@@ -567,47 +458,21 @@ public class EventStoreBuilder {
      * @return Event Store client
      */
     public EventStore build() {
-        if (singleNodeAddress != null) {
-            settingsBuilder.nodeSettings(StaticNodeSettings.newBuilder()
-                .address(singleNodeAddress)
-                .build());
+        if (singleNodeSettingsBuilder != null) {
+            settingsBuilder.nodeSettings(singleNodeSettingsBuilder.build());
         }
 
-        if (clusterNodeDiscoveryFromGossipSeeds != null && !clusterNodeDiscoveryFromGossipSeeds.isEmpty()) {
-            checkArgument(isNullOrEmpty(clusterNodeDiscoveryFromDns), "Usage of gossip-seed and DNS discoverer at once is not allowed.");
-
-            ClusterNodeSettings.BuilderForGossipSeedDiscoverer clusterNodeSettingsBuilder = ClusterNodeSettings.forGossipSeedDiscoverer();
-
-            clusterNodeSettingsBuilder.gossipSeeds(clusterNodeDiscoveryFromGossipSeeds);
-            clusterNodeSettingsBuilder.gossipTimeout(clusterNodeGossipTimeout);
-            clusterNodeSettingsBuilder.discoverAttemptInterval(clusterNodeDiscoverAttemptInterval);
-            if (clusterNodeMaxDiscoverAttempts != null) {
-                clusterNodeSettingsBuilder.maxDiscoverAttempts(clusterNodeMaxDiscoverAttempts);
-            }
-
-            settingsBuilder.nodeSettings(clusterNodeSettingsBuilder.build());
+        if (clusterNodeUsingDnsSettingsBuilder != null) {
+            settingsBuilder.nodeSettings(clusterNodeUsingDnsSettingsBuilder.build());
         }
 
-        if (!isNullOrEmpty(clusterNodeDiscoveryFromDns)) {
-            checkArgument(clusterNodeDiscoveryFromGossipSeeds == null || clusterNodeDiscoveryFromGossipSeeds.isEmpty(),
-                "Usage of gossip-seed and DNS discoverer at once is not allowed.");
-
-            ClusterNodeSettings.BuilderForDnsDiscoverer clusterNodeSettingsBuilder = ClusterNodeSettings.forDnsDiscoverer();
-
-            clusterNodeSettingsBuilder.clusterDns(clusterNodeDiscoveryFromDns);
-            if (clusterNodeDiscoveryFromDnsOnGosipPort != null) {
-                clusterNodeSettingsBuilder.externalGossipPort(clusterNodeDiscoveryFromDnsOnGosipPort);
-            }
-            clusterNodeSettingsBuilder.gossipTimeout(clusterNodeGossipTimeout);
-            clusterNodeSettingsBuilder.discoverAttemptInterval(clusterNodeDiscoverAttemptInterval);
-            if (clusterNodeMaxDiscoverAttempts != null) {
-                clusterNodeSettingsBuilder.maxDiscoverAttempts(clusterNodeMaxDiscoverAttempts);
-            }
-
-            settingsBuilder.nodeSettings(clusterNodeSettingsBuilder.build());
+        if (clusterNodeUsingGossipSeedSettingsBuilder != null) {
+            settingsBuilder.nodeSettings(clusterNodeUsingGossipSeedSettingsBuilder.build());
         }
 
-        settingsBuilder.tcpSettings(tcpSettingsBuilder.build());
+        if (tcpSettingsBuilder != null) {
+            settingsBuilder.tcpSettings(tcpSettingsBuilder.build());
+        }
 
         return new EventStoreImpl(settingsBuilder.build());
     }

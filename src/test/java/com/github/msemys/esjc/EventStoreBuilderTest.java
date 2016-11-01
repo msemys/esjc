@@ -1,6 +1,7 @@
 package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
+import com.github.msemys.esjc.node.cluster.GossipSeed;
 import com.github.msemys.esjc.node.static_.StaticNodeSettings;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
@@ -11,6 +12,9 @@ import java.time.Duration;
 import java.util.concurrent.Executors;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
 public class EventStoreBuilderTest {
@@ -175,9 +179,7 @@ public class EventStoreBuilderTest {
         EventStore result = EventStoreBuilder.newBuilder(settings)
             .singleNodeAddress("localhost", 2020)
             .userCredentials("usr", "psw")
-            .tcpKeepAliveEnabled()
-            .tcpNoDelayEnabled()
-            .tcpSendBufferSize(11110)
+            .tcpSettings(tcp -> tcp.keepAlive(true).tcpNoDelay(true).sendBufferSize(11110))
             .useSslConnection()
             .requireMasterEnabled()
             .failOnNoServerResponseEnabled()
@@ -231,9 +233,7 @@ public class EventStoreBuilderTest {
         EventStore result = EventStoreBuilder.newBuilder(settings)
             .singleNodeAddress("localhost", 2020)
             .withoutUserCredentials()
-            .tcpKeepAliveEnabled()
-            .tcpNoDelayEnabled()
-            .tcpSendBufferSize(11110)
+            .tcpSettings(tcp -> tcp.keepAlive(true).tcpNoDelay(true).sendBufferSize(11110))
             .useSslConnection()
             .requireMasterEnabled()
             .failOnNoServerResponseEnabled()
@@ -249,4 +249,270 @@ public class EventStoreBuilderTest {
         assertTrue(result.settings().failOnNoServerResponse);
     }
 
+    @Test
+    public void createsCustomizedClusterNodeUsingGossipSeedsClientFromSettings() {
+        Settings settings = Settings.newBuilder()
+            .nodeSettings(ClusterNodeSettings.forGossipSeedDiscoverer()
+                .gossipSeedEndpoints(asList(
+                    new InetSocketAddress("localhost", 1001),
+                    new InetSocketAddress("localhost", 1002),
+                    new InetSocketAddress("localhost", 1003)))
+                .gossipTimeout(Duration.ofSeconds(60))
+                .discoverAttemptInterval(Duration.ofMinutes(2))
+                .maxDiscoverAttempts(5)
+                .build())
+            .build();
+
+        EventStore result = EventStoreBuilder.newBuilder(settings)
+            .clusterNodeUsingGossipSeeds(cluster -> cluster
+                .gossipTimeout(Duration.ofSeconds(120))
+                .discoverAttemptInterval(Duration.ofMinutes(4))
+                .maxDiscoverAttempts(10))
+            .build();
+
+        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertTrue(result.settings().clusterNodeSettings.isPresent());
+        assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
+        assertThat(result.settings().clusterNodeSettings.get().gossipSeeds.stream()
+                .map(GossipSeed::toString)
+                .collect(toList()),
+            hasItems(
+                new GossipSeed(new InetSocketAddress("localhost", 1001)).toString(),
+                new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
+                new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
+        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.get().gossipTimeout);
+    }
+
+    @Test
+    public void createsCustomizedClusterNodeUsingDnsClientFromSettings() {
+        Settings settings = Settings.newBuilder()
+            .nodeSettings(ClusterNodeSettings.forDnsDiscoverer()
+                .clusterDns("dns1")
+                .externalGossipPort(1234)
+                .gossipTimeout(Duration.ofSeconds(60))
+                .discoverAttemptInterval(Duration.ofMinutes(2))
+                .maxDiscoverAttempts(5)
+                .build())
+            .build();
+
+        EventStore result = EventStoreBuilder.newBuilder(settings)
+            .clusterNodeUsingDns(cluster -> cluster
+                .clusterDns("dns2")
+                .gossipTimeout(Duration.ofSeconds(120))
+                .discoverAttemptInterval(Duration.ofMinutes(4))
+                .maxDiscoverAttempts(10))
+            .build();
+
+        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertTrue(result.settings().clusterNodeSettings.isPresent());
+        assertEquals("dns2", result.settings().clusterNodeSettings.get().clusterDns);
+        assertEquals(1234, result.settings().clusterNodeSettings.get().externalGossipPort);
+        assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
+        assertTrue(result.settings().clusterNodeSettings.get().gossipSeeds.isEmpty());
+        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.get().gossipTimeout);
+    }
+
+    @Test
+    public void createsSingleNodeClientFromSettingsWithClusterNode() {
+        Settings settings = Settings.newBuilder()
+            .nodeSettings(ClusterNodeSettings.forDnsDiscoverer()
+                .clusterDns("dns1")
+                .externalGossipPort(1234)
+                .gossipTimeout(Duration.ofSeconds(60))
+                .discoverAttemptInterval(Duration.ofMinutes(2))
+                .maxDiscoverAttempts(5)
+                .build())
+            .build();
+
+        EventStore result = EventStoreBuilder.newBuilder(settings)
+            .singleNodeAddress("localhost", 1009)
+            .build();
+
+        assertTrue(result.settings().staticNodeSettings.isPresent());
+        assertFalse(result.settings().clusterNodeSettings.isPresent());
+        assertEquals("localhost", result.settings().staticNodeSettings.get().address.getHostName());
+        assertEquals(1009, result.settings().staticNodeSettings.get().address.getPort());
+    }
+
+    @Test
+    public void createsClusterNodeUsingGossipSeedsClientFromSettingsWithSingleNode() {
+        Settings settings = Settings.newBuilder()
+            .nodeSettings(StaticNodeSettings.newBuilder().address("localhost", 1001).build())
+            .build();
+
+        EventStore result = EventStoreBuilder.newBuilder(settings)
+            .clusterNodeUsingGossipSeeds(cluster -> cluster
+                .maxDiscoverAttempts(10)
+                .discoverAttemptInterval(Duration.ofMinutes(4))
+                .gossipSeedEndpoints(asList(
+                    new InetSocketAddress("localhost", 1001),
+                    new InetSocketAddress("localhost", 1002),
+                    new InetSocketAddress("localhost", 1003)))
+                .gossipTimeout(Duration.ofSeconds(120)))
+            .build();
+
+        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertTrue(result.settings().clusterNodeSettings.isPresent());
+        assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
+        assertThat(result.settings().clusterNodeSettings.get().gossipSeeds.stream()
+                .map(GossipSeed::toString)
+                .collect(toList()),
+            hasItems(
+                new GossipSeed(new InetSocketAddress("localhost", 1001)).toString(),
+                new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
+                new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
+        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.get().gossipTimeout);
+    }
+
+    @Test
+    public void createsClusterNodeUsingDnsClientFromSettingsWithSingleNode() {
+        Settings settings = Settings.newBuilder()
+            .nodeSettings(StaticNodeSettings.newBuilder().address("localhost", 1001).build())
+            .build();
+
+        EventStore result = EventStoreBuilder.newBuilder(settings)
+            .clusterNodeUsingDns(cluster -> cluster
+                .clusterDns("dns")
+                .externalGossipPort(1234)
+                .gossipTimeout(Duration.ofSeconds(120))
+                .discoverAttemptInterval(Duration.ofMinutes(4))
+                .maxDiscoverAttempts(10))
+            .build();
+
+        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertTrue(result.settings().clusterNodeSettings.isPresent());
+        assertEquals("dns", result.settings().clusterNodeSettings.get().clusterDns);
+        assertEquals(1234, result.settings().clusterNodeSettings.get().externalGossipPort);
+        assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
+        assertTrue(result.settings().clusterNodeSettings.get().gossipSeeds.isEmpty());
+        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.get().gossipTimeout);
+    }
+
+    @Test
+    public void createsSingleNodeClient() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .singleNodeAddress("localhost", 1009)
+            .build();
+
+        assertTrue(result.settings().staticNodeSettings.isPresent());
+        assertFalse(result.settings().clusterNodeSettings.isPresent());
+        assertEquals("localhost", result.settings().staticNodeSettings.get().address.getHostName());
+        assertEquals(1009, result.settings().staticNodeSettings.get().address.getPort());
+    }
+
+    @Test
+    public void createsClusterNodeUsingGossipSeedsClient() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .clusterNodeUsingGossipSeeds(cluster -> cluster
+                .maxDiscoverAttempts(-1)
+                .discoverAttemptInterval(Duration.ofMinutes(5))
+                .gossipSeedEndpoints(asList(
+                    new InetSocketAddress("localhost", 1001),
+                    new InetSocketAddress("localhost", 1002),
+                    new InetSocketAddress("localhost", 1003)))
+                .gossipTimeout(Duration.ofSeconds(73)))
+            .build();
+
+        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertTrue(result.settings().clusterNodeSettings.isPresent());
+        assertEquals("", result.settings().clusterNodeSettings.get().clusterDns);
+        assertEquals(-1, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(5), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
+        assertEquals(0, result.settings().clusterNodeSettings.get().externalGossipPort);
+        assertThat(result.settings().clusterNodeSettings.get().gossipSeeds.stream()
+                .map(GossipSeed::toString)
+                .collect(toList()),
+            hasItems(
+                new GossipSeed(new InetSocketAddress("localhost", 1001)).toString(),
+                new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
+                new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
+        assertEquals(Duration.ofSeconds(73), result.settings().clusterNodeSettings.get().gossipTimeout);
+    }
+
+    @Test
+    public void createsClusterNodeUsingDnsClient() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .clusterNodeUsingDns(cluster -> cluster
+                .clusterDns("dns")
+                .maxDiscoverAttempts(3)
+                .discoverAttemptInterval(Duration.ofMinutes(6))
+                .externalGossipPort(1717)
+                .gossipTimeout(Duration.ofSeconds(83)))
+            .build();
+
+        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertTrue(result.settings().clusterNodeSettings.isPresent());
+        assertEquals("dns", result.settings().clusterNodeSettings.get().clusterDns);
+        assertEquals(3, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(6), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
+        assertEquals(1717, result.settings().clusterNodeSettings.get().externalGossipPort);
+        assertTrue(result.settings().clusterNodeSettings.get().gossipSeeds.isEmpty());
+        assertEquals(Duration.ofSeconds(83), result.settings().clusterNodeSettings.get().gossipTimeout);
+    }
+
+    @Test
+    public void createsClientWithCustomTcpSettings() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .singleNodeAddress("localhost", 1009)
+            .tcpSettings(tcp -> tcp
+                .closeTimeout(Duration.ofSeconds(100))
+                .connectTimeout(Duration.ofSeconds(200))
+                .keepAlive(false)
+                .tcpNoDelay(false)
+                .sendBufferSize(1)
+                .receiveBufferSize(2)
+                .writeBufferLowWaterMark(3)
+                .writeBufferHighWaterMark(4))
+            .build();
+
+        assertEquals(Duration.ofSeconds(100), result.settings().tcpSettings.closeTimeout);
+        assertEquals(Duration.ofSeconds(200), result.settings().tcpSettings.connectTimeout);
+        assertFalse(result.settings().tcpSettings.keepAlive);
+        assertFalse(result.settings().tcpSettings.tcpNoDelay);
+        assertEquals(1, result.settings().tcpSettings.sendBufferSize);
+        assertEquals(2, result.settings().tcpSettings.receiveBufferSize);
+        assertEquals(3, result.settings().tcpSettings.writeBufferLowWaterMark);
+        assertEquals(4, result.settings().tcpSettings.writeBufferHighWaterMark);
+    }
+
+    @Test
+    public void failsToCreateClientWithoutNodeSettings() {
+        try {
+            EventStoreBuilder.newBuilder().build();
+            fail("should fail with 'IllegalArgumentException'");
+        } catch (Exception e) {
+            assertThat(e, instanceOf(IllegalArgumentException.class));
+            assertEquals("Missing node settings", e.getMessage());
+        }
+    }
+
+    @Test
+    public void failsToCreateClusterNodeUsingGossipSeedsClientWithoutGossipSeeds() {
+        try {
+            EventStoreBuilder.newBuilder()
+                .clusterNodeUsingGossipSeeds(cluster -> cluster)
+                .build();
+            fail("should fail with 'IllegalArgumentException'");
+        } catch (Exception e) {
+            assertThat(e, instanceOf(IllegalArgumentException.class));
+            assertEquals("Gossip seeds are not specified.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void failsToCreateClusterNodeUsingDnsClientWithoutDns() {
+        try {
+            EventStoreBuilder.newBuilder()
+                .clusterNodeUsingDns(cluster -> cluster)
+                .build();
+            fail("should fail with 'IllegalArgumentException'");
+        } catch (Exception e) {
+            assertThat(e, instanceOf(IllegalArgumentException.class));
+            assertEquals("clusterDns is empty", e.getMessage());
+        }
+    }
 }
