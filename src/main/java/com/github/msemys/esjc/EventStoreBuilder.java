@@ -61,7 +61,7 @@ public class EventStoreBuilder {
             .maxOperationRetries(settings.maxOperationRetries)
             .maxReconnections(settings.maxReconnections)
             .persistentSubscriptionBufferSize(settings.persistentSubscriptionBufferSize)
-            .persistentSubscriptionAutoAckEnabled(settings.persistentSubscriptionAutoAckEnabled)
+            .persistentSubscriptionAutoAck(settings.persistentSubscriptionAutoAck)
             .failOnNoServerResponse(settings.failOnNoServerResponse)
             .executor(settings.executor);
 
@@ -395,7 +395,7 @@ public class EventStoreBuilder {
      * @return the builder reference
      */
     public EventStoreBuilder persistentSubscriptionAutoAckEnabled() {
-        settingsBuilder.persistentSubscriptionAutoAckEnabled(true);
+        settingsBuilder.persistentSubscriptionAutoAck(true);
         return this;
     }
 
@@ -405,7 +405,7 @@ public class EventStoreBuilder {
      * @return the builder reference
      */
     public EventStoreBuilder persistentSubscriptionAutoAckDisabled() {
-        settingsBuilder.persistentSubscriptionAutoAckEnabled(false);
+        settingsBuilder.persistentSubscriptionAutoAck(false);
         return this;
     }
 

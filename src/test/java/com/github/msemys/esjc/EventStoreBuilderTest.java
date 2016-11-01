@@ -48,7 +48,7 @@ public class EventStoreBuilderTest {
             .maxOperationRetries(300)
             .maxReconnections(400)
             .persistentSubscriptionBufferSize(5555)
-            .persistentSubscriptionAutoAckEnabled(false)
+            .persistentSubscriptionAutoAck(false)
             .failOnNoServerResponse(true)
             .executor(Executors.newCachedThreadPool())
             .build();
@@ -93,7 +93,7 @@ public class EventStoreBuilderTest {
             .maxOperationRetries(300)
             .maxReconnections(400)
             .persistentSubscriptionBufferSize(5555)
-            .persistentSubscriptionAutoAckEnabled(false)
+            .persistentSubscriptionAutoAck(false)
             .failOnNoServerResponse(true)
             .executor(Executors.newCachedThreadPool())
             .build();
@@ -131,7 +131,7 @@ public class EventStoreBuilderTest {
             .maxOperationRetries(300)
             .maxReconnections(400)
             .persistentSubscriptionBufferSize(5555)
-            .persistentSubscriptionAutoAckEnabled(false)
+            .persistentSubscriptionAutoAck(false)
             .failOnNoServerResponse(true)
             .executor(Executors.newCachedThreadPool())
             .build();
@@ -185,7 +185,7 @@ public class EventStoreBuilderTest {
             .maxOperationRetries(300)
             .maxReconnections(400)
             .persistentSubscriptionBufferSize(5555)
-            .persistentSubscriptionAutoAckEnabled(false)
+            .persistentSubscriptionAutoAck(false)
             .failOnNoServerResponse(false)
             .executor(Executors.newCachedThreadPool())
             .build();
@@ -239,7 +239,7 @@ public class EventStoreBuilderTest {
             .maxOperationRetries(300)
             .maxReconnections(400)
             .persistentSubscriptionBufferSize(5555)
-            .persistentSubscriptionAutoAckEnabled(false)
+            .persistentSubscriptionAutoAck(false)
             .failOnNoServerResponse(false)
             .executor(Executors.newCachedThreadPool())
             .build();

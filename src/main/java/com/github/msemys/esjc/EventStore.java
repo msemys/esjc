@@ -747,7 +747,7 @@ public interface EventStore {
     default CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
                                                                             String groupName,
                                                                             PersistentSubscriptionListener listener) {
-        return subscribeToPersistent(stream, groupName, listener, null, settings().persistentSubscriptionBufferSize, settings().persistentSubscriptionAutoAckEnabled);
+        return subscribeToPersistent(stream, groupName, listener, null, settings().persistentSubscriptionBufferSize, settings().persistentSubscriptionAutoAck);
     }
 
     /**
@@ -777,7 +777,7 @@ public interface EventStore {
                                                                             String groupName,
                                                                             PersistentSubscriptionListener listener,
                                                                             UserCredentials userCredentials) {
-        return subscribeToPersistent(stream, groupName, listener, userCredentials, settings().persistentSubscriptionBufferSize, settings().persistentSubscriptionAutoAckEnabled);
+        return subscribeToPersistent(stream, groupName, listener, userCredentials, settings().persistentSubscriptionBufferSize, settings().persistentSubscriptionAutoAck);
     }
 
     /**

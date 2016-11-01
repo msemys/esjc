@@ -108,7 +108,7 @@ public class Settings {
     /**
      * Whether the subscription should automatically acknowledge messages processed.
      */
-    public final boolean persistentSubscriptionAutoAckEnabled;
+    public final boolean persistentSubscriptionAutoAck;
 
     /**
      * Whether or not to raise an error if no response is received from the server for an operation.
@@ -137,7 +137,7 @@ public class Settings {
         maxOperationRetries = builder.maxOperationRetries;
         maxReconnections = builder.maxReconnections;
         persistentSubscriptionBufferSize = builder.persistentSubscriptionBufferSize;
-        persistentSubscriptionAutoAckEnabled = builder.persistentSubscriptionAutoAckEnabled;
+        persistentSubscriptionAutoAck = builder.persistentSubscriptionAutoAck;
         failOnNoServerResponse = builder.failOnNoServerResponse;
         executor = builder.executor;
     }
@@ -161,7 +161,7 @@ public class Settings {
         sb.append(", maxOperationRetries=").append(maxOperationRetries);
         sb.append(", maxReconnections=").append(maxReconnections);
         sb.append(", persistentSubscriptionBufferSize=").append(persistentSubscriptionBufferSize);
-        sb.append(", persistentSubscriptionAutoAckEnabled=").append(persistentSubscriptionAutoAckEnabled);
+        sb.append(", persistentSubscriptionAutoAck=").append(persistentSubscriptionAutoAck);
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
         sb.append(", executor=").append(executor);
         sb.append('}');
@@ -197,7 +197,7 @@ public class Settings {
         private Integer maxOperationRetries;
         private Integer maxReconnections;
         private Integer persistentSubscriptionBufferSize;
-        private Boolean persistentSubscriptionAutoAckEnabled;
+        private Boolean persistentSubscriptionAutoAck;
         private Boolean failOnNoServerResponse;
         private Executor executor;
 
@@ -400,11 +400,11 @@ public class Settings {
         /**
          * Sets whether or not the subscription should automatically acknowledge messages processed.
          *
-         * @param persistentSubscriptionAutoAckEnabled {@code true} to enable auto-acknowledge.
+         * @param persistentSubscriptionAutoAck {@code true} to enable auto-acknowledge.
          * @return the builder reference
          */
-        public Builder persistentSubscriptionAutoAckEnabled(boolean persistentSubscriptionAutoAckEnabled) {
-            this.persistentSubscriptionAutoAckEnabled = persistentSubscriptionAutoAckEnabled;
+        public Builder persistentSubscriptionAutoAck(boolean persistentSubscriptionAutoAck) {
+            this.persistentSubscriptionAutoAck = persistentSubscriptionAutoAck;
             return this;
         }
 
@@ -501,8 +501,8 @@ public class Settings {
                 checkArgument(isPositive(persistentSubscriptionBufferSize), "persistentSubscriptionBufferSize should be positive");
             }
 
-            if (persistentSubscriptionAutoAckEnabled == null) {
-                persistentSubscriptionAutoAckEnabled = true;
+            if (persistentSubscriptionAutoAck == null) {
+                persistentSubscriptionAutoAck = true;
             }
 
             if (failOnNoServerResponse == null) {
