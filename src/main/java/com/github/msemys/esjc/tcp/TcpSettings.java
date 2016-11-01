@@ -29,7 +29,7 @@ public class TcpSettings {
     /**
      * Whether the socket no-delay option is enabled.
      */
-    public final boolean tcpNoDelay;
+    public final boolean noDelay;
 
     /**
      * The maximum socket send buffer in bytes.
@@ -55,7 +55,7 @@ public class TcpSettings {
         connectTimeout = builder.connectTimeout;
         closeTimeout = builder.closeTimeout;
         keepAlive = builder.keepAlive;
-        tcpNoDelay = builder.tcpNoDelay;
+        noDelay = builder.noDelay;
         sendBufferSize = builder.sendBufferSize;
         receiveBufferSize = builder.receiveBufferSize;
         writeBufferHighWaterMark = builder.writeBufferHighWaterMark;
@@ -68,7 +68,7 @@ public class TcpSettings {
         sb.append("connectTimeout=").append(connectTimeout);
         sb.append(", closeTimeout=").append(closeTimeout);
         sb.append(", keepAlive=").append(keepAlive);
-        sb.append(", tcpNoDelay=").append(tcpNoDelay);
+        sb.append(", noDelay=").append(noDelay);
         sb.append(", sendBufferSize=").append(sendBufferSize);
         sb.append(", receiveBufferSize=").append(receiveBufferSize);
         sb.append(", writeBufferLowWaterMark=").append(writeBufferLowWaterMark);
@@ -93,7 +93,7 @@ public class TcpSettings {
         private Duration connectTimeout;
         private Duration closeTimeout;
         private Boolean keepAlive;
-        private Boolean tcpNoDelay;
+        private Boolean noDelay;
         private Integer sendBufferSize;
         private Integer receiveBufferSize;
         private Integer writeBufferHighWaterMark;
@@ -138,11 +138,11 @@ public class TcpSettings {
          * When no-delay is enabled, Nagle's algorithm will not be use.
          * </p>
          *
-         * @param tcpNoDelay {@code true} to enable.
+         * @param noDelay {@code true} to enable.
          * @return the builder reference
          */
-        public Builder tcpNoDelay(boolean tcpNoDelay) {
-            this.tcpNoDelay = tcpNoDelay;
+        public Builder noDelay(boolean noDelay) {
+            this.noDelay = noDelay;
             return this;
         }
 
@@ -208,8 +208,8 @@ public class TcpSettings {
                 keepAlive = true;
             }
 
-            if (tcpNoDelay == null) {
-                tcpNoDelay = true;
+            if (noDelay == null) {
+                noDelay = true;
             }
 
             if (sendBufferSize == null) {

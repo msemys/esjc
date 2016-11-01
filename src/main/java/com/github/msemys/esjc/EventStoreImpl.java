@@ -99,7 +99,7 @@ public class EventStoreImpl implements EventStore {
 
         bootstrap = new Bootstrap()
             .option(ChannelOption.SO_KEEPALIVE, settings.tcpSettings.keepAlive)
-            .option(ChannelOption.TCP_NODELAY, settings.tcpSettings.tcpNoDelay)
+            .option(ChannelOption.TCP_NODELAY, settings.tcpSettings.noDelay)
             .option(ChannelOption.SO_SNDBUF, settings.tcpSettings.sendBufferSize)
             .option(ChannelOption.SO_RCVBUF, settings.tcpSettings.receiveBufferSize)
             .option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, settings.tcpSettings.writeBufferLowWaterMark)

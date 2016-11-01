@@ -30,7 +30,7 @@ public class EventStoreBuilderTest {
                 .connectTimeout(Duration.ofSeconds(11))
                 .closeTimeout(Duration.ofSeconds(22))
                 .keepAlive(false)
-                .tcpNoDelay(false)
+                .noDelay(false)
                 .sendBufferSize(1111)
                 .receiveBufferSize(2222)
                 .writeBufferHighWaterMark(3333)
@@ -75,7 +75,7 @@ public class EventStoreBuilderTest {
                 .connectTimeout(Duration.ofSeconds(11))
                 .closeTimeout(Duration.ofSeconds(22))
                 .keepAlive(false)
-                .tcpNoDelay(false)
+                .noDelay(false)
                 .sendBufferSize(1111)
                 .receiveBufferSize(2222)
                 .writeBufferHighWaterMark(3333)
@@ -113,7 +113,7 @@ public class EventStoreBuilderTest {
                 .connectTimeout(Duration.ofSeconds(11))
                 .closeTimeout(Duration.ofSeconds(22))
                 .keepAlive(false)
-                .tcpNoDelay(false)
+                .noDelay(false)
                 .sendBufferSize(1111)
                 .receiveBufferSize(2222)
                 .writeBufferHighWaterMark(3333)
@@ -153,7 +153,7 @@ public class EventStoreBuilderTest {
                 .connectTimeout(Duration.ofSeconds(11))
                 .closeTimeout(Duration.ofSeconds(22))
                 .keepAlive(false)
-                .tcpNoDelay(false)
+                .noDelay(false)
                 .sendBufferSize(1111)
                 .receiveBufferSize(2222)
                 .writeBufferHighWaterMark(3333)
@@ -179,7 +179,7 @@ public class EventStoreBuilderTest {
         EventStore result = EventStoreBuilder.newBuilder(settings)
             .singleNodeAddress("localhost", 2020)
             .userCredentials("usr", "psw")
-            .tcpSettings(tcp -> tcp.keepAlive(true).tcpNoDelay(true).sendBufferSize(11110))
+            .tcpSettings(tcp -> tcp.keepAlive(true).noDelay(true).sendBufferSize(11110))
             .useSslConnection()
             .requireMasterEnabled()
             .failOnNoServerResponseEnabled()
@@ -189,7 +189,7 @@ public class EventStoreBuilderTest {
         assertEquals("usr", result.settings().userCredentials.get().username);
         assertEquals("psw", result.settings().userCredentials.get().password);
         assertTrue(result.settings().tcpSettings.keepAlive);
-        assertTrue(result.settings().tcpSettings.tcpNoDelay);
+        assertTrue(result.settings().tcpSettings.noDelay);
         assertEquals(11110, result.settings().tcpSettings.sendBufferSize);
         assertTrue(result.settings().sslSettings.useSslConnection);
         assertTrue(result.settings().requireMaster);
@@ -207,7 +207,7 @@ public class EventStoreBuilderTest {
                 .connectTimeout(Duration.ofSeconds(11))
                 .closeTimeout(Duration.ofSeconds(22))
                 .keepAlive(false)
-                .tcpNoDelay(false)
+                .noDelay(false)
                 .sendBufferSize(1111)
                 .receiveBufferSize(2222)
                 .writeBufferHighWaterMark(3333)
@@ -233,7 +233,7 @@ public class EventStoreBuilderTest {
         EventStore result = EventStoreBuilder.newBuilder(settings)
             .singleNodeAddress("localhost", 2020)
             .withoutUserCredentials()
-            .tcpSettings(tcp -> tcp.keepAlive(true).tcpNoDelay(true).sendBufferSize(11110))
+            .tcpSettings(tcp -> tcp.keepAlive(true).noDelay(true).sendBufferSize(11110))
             .useSslConnection()
             .requireMasterEnabled()
             .failOnNoServerResponseEnabled()
@@ -242,7 +242,7 @@ public class EventStoreBuilderTest {
         assertEquals(2020, result.settings().staticNodeSettings.get().address.getPort());
         assertFalse(result.settings().userCredentials.isPresent());
         assertTrue(result.settings().tcpSettings.keepAlive);
-        assertTrue(result.settings().tcpSettings.tcpNoDelay);
+        assertTrue(result.settings().tcpSettings.noDelay);
         assertEquals(11110, result.settings().tcpSettings.sendBufferSize);
         assertTrue(result.settings().sslSettings.useSslConnection);
         assertTrue(result.settings().requireMaster);
@@ -462,7 +462,7 @@ public class EventStoreBuilderTest {
                 .closeTimeout(Duration.ofSeconds(100))
                 .connectTimeout(Duration.ofSeconds(200))
                 .keepAlive(false)
-                .tcpNoDelay(false)
+                .noDelay(false)
                 .sendBufferSize(1)
                 .receiveBufferSize(2)
                 .writeBufferLowWaterMark(3)
@@ -472,7 +472,7 @@ public class EventStoreBuilderTest {
         assertEquals(Duration.ofSeconds(100), result.settings().tcpSettings.closeTimeout);
         assertEquals(Duration.ofSeconds(200), result.settings().tcpSettings.connectTimeout);
         assertFalse(result.settings().tcpSettings.keepAlive);
-        assertFalse(result.settings().tcpSettings.tcpNoDelay);
+        assertFalse(result.settings().tcpSettings.noDelay);
         assertEquals(1, result.settings().tcpSettings.sendBufferSize);
         assertEquals(2, result.settings().tcpSettings.receiveBufferSize);
         assertEquals(3, result.settings().tcpSettings.writeBufferLowWaterMark);

@@ -100,7 +100,7 @@ public class EventStoreBuilder {
             .connectTimeout(settings.tcpSettings.connectTimeout)
             .closeTimeout(settings.tcpSettings.closeTimeout)
             .keepAlive(settings.tcpSettings.keepAlive)
-            .tcpNoDelay(settings.tcpSettings.tcpNoDelay)
+            .noDelay(settings.tcpSettings.noDelay)
             .sendBufferSize(settings.tcpSettings.sendBufferSize)
             .receiveBufferSize(settings.tcpSettings.receiveBufferSize)
             .writeBufferHighWaterMark(settings.tcpSettings.writeBufferHighWaterMark)
