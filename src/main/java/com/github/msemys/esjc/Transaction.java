@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
+import static java.util.Collections.singletonList;
 
 /**
  * Represents a multi-request transaction with the Event Store.
@@ -58,6 +59,20 @@ public class Transaction implements AutoCloseable {
             isCommitted = true;
             return transactionManager.commit(this, userCredentials);
         }
+    }
+
+    /**
+     * Writes single event to a transaction in the Event Store asynchronously.
+     *
+     * @param event the event to write.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion. In case of successful completion, the future's methods {@code get} and {@code join}
+     * returns {@code null}.
+     */
+    public CompletableFuture<Void> write(EventData event) {
+        return write(singletonList(event));
     }
 
     /**
