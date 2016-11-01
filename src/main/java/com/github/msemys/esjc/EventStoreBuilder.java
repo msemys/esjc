@@ -237,20 +237,9 @@ public class EventStoreBuilder {
      *
      * @param count the maximum number of times to allow for reconnection.
      * @return the builder reference
-     * @see #unlimitedClientReconnections()
      */
     public EventStoreBuilder maxClientReconnections(int count) {
         settingsBuilder.maxReconnections(count);
-        return this;
-    }
-
-    /**
-     * Sets the unilmited number of times to allow for reconnection.
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder unlimitedClientReconnections() {
-        settingsBuilder.maxReconnections(-1);
         return this;
     }
 
@@ -373,20 +362,9 @@ public class EventStoreBuilder {
      *
      * @param count the maximum number of operation retry attempts.
      * @return the builder reference
-     * @see #unlimitedOperationRetries()
      */
     public EventStoreBuilder maxOperationRetries(int count) {
         settingsBuilder.maxOperationRetries(count);
-        return this;
-    }
-
-    /**
-     * Sets the unlimited number of operation retry attempts.
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder unlimitedOperationRetries() {
-        settingsBuilder.maxOperationRetries(-1);
         return this;
     }
 
