@@ -227,7 +227,7 @@ public class EventStoreBuilder {
      * @param duration the amount of time to delay before attempting to reconnect.
      * @return the builder reference
      */
-    public EventStoreBuilder clientReconnectionDelay(Duration duration) {
+    public EventStoreBuilder reconnectionDelay(Duration duration) {
         settingsBuilder.reconnectionDelay(duration);
         return this;
     }
