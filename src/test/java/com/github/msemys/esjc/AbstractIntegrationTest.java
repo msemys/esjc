@@ -22,14 +22,14 @@ public abstract class AbstractIntegrationTest {
     protected static final Supplier<EventStore> eventstoreSupplier = () -> EventStoreBuilder.newBuilder()
         .singleNodeAddress("127.0.0.1", 7773)
         .userCredentials("admin", "changeit")
-        .maxClientReconnections(2)
+        .maxReconnections(2)
         .build();
 
     protected static final Supplier<EventStore> eventstoreSslSupplier = () -> EventStoreBuilder.newBuilder()
         .singleNodeAddress("127.0.0.1", 7779)
         .useSslConnection()
         .userCredentials("admin", "changeit")
-        .maxClientReconnections(2)
+        .maxReconnections(2)
         .build();
 
     protected EventStore eventstore;

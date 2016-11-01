@@ -238,7 +238,7 @@ public class EventStoreBuilder {
      * @param count the maximum number of times to allow for reconnection.
      * @return the builder reference
      */
-    public EventStoreBuilder maxClientReconnections(int count) {
+    public EventStoreBuilder maxReconnections(int count) {
         settingsBuilder.maxReconnections(count);
         return this;
     }
