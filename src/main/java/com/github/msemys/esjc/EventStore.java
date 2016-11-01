@@ -8,6 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.toBytes;
+import static java.util.Collections.singletonList;
 
 /**
  * An Event Store client with full duplex connection to server.
@@ -113,6 +114,47 @@ public interface EventStore {
                                                  ExpectedVersion expectedVersion,
                                                  boolean hardDelete,
                                                  UserCredentials userCredentials);
+
+    /**
+     * Appends single event to a stream asynchronously using default user credentials.
+     *
+     * @param stream          the name of the stream to append event to.
+     * @param expectedVersion the version at which we currently expect the stream to be,
+     *                        in order that an optimistic concurrency check can be performed.
+     * @param event           the event to append.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
+     * @see #appendToStream(String, ExpectedVersion, EventData, UserCredentials)
+     */
+    default CompletableFuture<WriteResult> appendToStream(String stream,
+                                                          ExpectedVersion expectedVersion,
+                                                          EventData event) {
+        return appendToStream(stream, expectedVersion, event, null);
+    }
+
+    /**
+     * Appends single event to a stream asynchronously.
+     *
+     * @param stream          the name of the stream to append event to.
+     * @param expectedVersion the version at which we currently expect the stream to be,
+     *                        in order that an optimistic concurrency check can be performed.
+     * @param event           the event to append.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
+     * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
+     * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
+     * on exceptional completion.
+     */
+    default CompletableFuture<WriteResult> appendToStream(String stream,
+                                                          ExpectedVersion expectedVersion,
+                                                          EventData event,
+                                                          UserCredentials userCredentials) {
+        return appendToStream(stream, expectedVersion, singletonList(event), userCredentials);
+    }
 
     /**
      * Appends events to a stream asynchronously using default user credentials.
