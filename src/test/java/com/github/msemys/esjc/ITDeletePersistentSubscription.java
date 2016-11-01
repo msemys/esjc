@@ -81,7 +81,7 @@ public class ITDeletePersistentSubscription extends AbstractIntegrationTest {
         final String group = UUID.randomUUID().toString();
 
         EventStore unauthenticatedEventstore = EventStoreBuilder.newBuilder(eventstore.settings())
-            .withoutUserCredentials()
+            .noUserCredentials()
             .build();
 
         try {

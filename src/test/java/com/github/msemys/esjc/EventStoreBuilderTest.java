@@ -246,7 +246,7 @@ public class EventStoreBuilderTest {
 
         EventStore result = EventStoreBuilder.newBuilder(settings)
             .singleNodeAddress("localhost", 2020)
-            .withoutUserCredentials()
+            .noUserCredentials()
             .tcpSettings(tcp -> tcp.keepAlive(true).noDelay(true).sendBufferSize(11110))
             .useSslConnection()
             .requireMasterEnabled()

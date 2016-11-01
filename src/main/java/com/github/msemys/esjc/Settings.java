@@ -315,7 +315,7 @@ public class Settings {
          * @return the builder reference
          * @see #userCredentials(String, String)
          */
-        public Builder withoutUserCredentials() {
+        public Builder noUserCredentials() {
             this.userCredentials = null;
             return this;
         }

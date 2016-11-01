@@ -98,7 +98,7 @@ public class ITUpdatePersistentSubscription extends AbstractIntegrationTest {
         UserCredentials admin = new UserCredentials("admin", "changeit");
 
         EventStore unauthenticatedEventstore = EventStoreBuilder.newBuilder(eventstore.settings())
-            .withoutUserCredentials()
+            .noUserCredentials()
             .build();
 
         try {

@@ -53,7 +53,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
         final String group = "agroupname55";
 
         EventStore unauthenticatedEventstore = EventStoreBuilder.newBuilder(eventstore.settings())
-            .withoutUserCredentials()
+            .noUserCredentials()
             .build();
 
         try {

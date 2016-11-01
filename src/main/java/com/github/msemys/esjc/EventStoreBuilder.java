@@ -318,8 +318,8 @@ public class EventStoreBuilder {
      * @return the builder reference
      * @see #userCredentials(String, String)
      */
-    public EventStoreBuilder withoutUserCredentials() {
-        settingsBuilder.withoutUserCredentials();
+    public EventStoreBuilder noUserCredentials() {
+        settingsBuilder.noUserCredentials();
         return this;
     }
 
