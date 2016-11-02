@@ -61,7 +61,7 @@ public class Settings {
     public final Duration heartbeatTimeout;
 
     /**
-     * Whether or not to require Event Store to refuse serving read or write request if it is not master.
+     * Whether or not to require Event Store to refuse serving read or write request if it is not master (cluster version only).
      */
     public final boolean requireMaster;
 
@@ -106,7 +106,7 @@ public class Settings {
     public final int persistentSubscriptionBufferSize;
 
     /**
-     * Whether the subscription should automatically acknowledge messages processed.
+     * Whether by default, the persistent subscription should automatically acknowledge messages processed.
      */
     public final boolean persistentSubscriptionAutoAck;
 
@@ -286,7 +286,7 @@ public class Settings {
         }
 
         /**
-         * Sets whether or not to require Event Store to refuse serving read or write request if it is not master.
+         * Sets whether or not to require Event Store to refuse serving read or write request if it is not master (cluster version only).
          *
          * @param requireMaster {@code true} to require master.
          * @return the builder reference
@@ -398,7 +398,7 @@ public class Settings {
         }
 
         /**
-         * Sets whether or not the subscription should automatically acknowledge messages processed.
+         * Sets whether or not by default, the persistent subscription should automatically acknowledge messages processed.
          *
          * @param persistentSubscriptionAutoAck {@code true} to enable auto-acknowledge.
          * @return the builder reference
