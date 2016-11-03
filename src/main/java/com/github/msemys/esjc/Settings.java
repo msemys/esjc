@@ -411,7 +411,7 @@ public class Settings {
         /**
          * Sets whether or not to raise an error if no response is received from the server for an operation.
          *
-         * @param failOnNoServerResponse {@code true} to raise an error if no response is received from the server for an operation.
+         * @param failOnNoServerResponse {@code true} to raise an error or {@code false} to schedule operation retry.
          * @return the builder reference
          */
         public Builder failOnNoServerResponse(boolean failOnNoServerResponse) {
