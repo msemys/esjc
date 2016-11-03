@@ -3,7 +3,7 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings.BuilderForDnsDiscoverer;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings.BuilderForGossipSeedDiscoverer;
-import com.github.msemys.esjc.node.static_.StaticNodeSettings;
+import com.github.msemys.esjc.node.single.SingleNodeSettings;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
 
@@ -20,13 +20,13 @@ import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 public class EventStoreBuilder {
     private final Settings.Builder settingsBuilder;
     private TcpSettings.Builder tcpSettingsBuilder;
-    private StaticNodeSettings.Builder singleNodeSettingsBuilder;
+    private SingleNodeSettings.Builder singleNodeSettingsBuilder;
     private BuilderForDnsDiscoverer clusterNodeUsingDnsSettingsBuilder;
     private BuilderForGossipSeedDiscoverer clusterNodeUsingGossipSeedSettingsBuilder;
 
     private EventStoreBuilder(Settings.Builder settingsBuilder,
                               TcpSettings.Builder tcpSettingsBuilder,
-                              StaticNodeSettings.Builder singleNodeSettingsBuilder,
+                              SingleNodeSettings.Builder singleNodeSettingsBuilder,
                               BuilderForDnsDiscoverer clusterNodeUsingDnsSettingsBuilder,
                               BuilderForGossipSeedDiscoverer clusterNodeUsingGossipSeedSettingsBuilder) {
         checkNotNull(settingsBuilder, "settingsBuilder is null");
@@ -68,10 +68,10 @@ public class EventStoreBuilder {
         settings.userCredentials.ifPresent(u -> settingsBuilder.userCredentials(u.username, u.password));
 
         // populate single-node settings builder
-        StaticNodeSettings.Builder singleNodeSettingsBuilder = null;
+        SingleNodeSettings.Builder singleNodeSettingsBuilder = null;
 
-        if (settings.staticNodeSettings.isPresent()) {
-            singleNodeSettingsBuilder = StaticNodeSettings.newBuilder().address(settings.staticNodeSettings.get().address);
+        if (settings.singleNodeSettings.isPresent()) {
+            singleNodeSettingsBuilder = SingleNodeSettings.newBuilder().address(settings.singleNodeSettings.get().address);
         }
 
         // populate cluster-node settings builders
@@ -131,7 +131,7 @@ public class EventStoreBuilder {
      */
     public EventStoreBuilder singleNodeAddress(InetSocketAddress address) {
         if (singleNodeSettingsBuilder == null) {
-            singleNodeSettingsBuilder = StaticNodeSettings.newBuilder();
+            singleNodeSettingsBuilder = SingleNodeSettings.newBuilder();
         }
         singleNodeSettingsBuilder = singleNodeSettingsBuilder.address(address);
         clusterNodeUsingDnsSettingsBuilder = null;
@@ -148,7 +148,7 @@ public class EventStoreBuilder {
      */
     public EventStoreBuilder singleNodeAddress(String host, int port) {
         if (singleNodeSettingsBuilder == null) {
-            singleNodeSettingsBuilder = StaticNodeSettings.newBuilder();
+            singleNodeSettingsBuilder = SingleNodeSettings.newBuilder();
         }
         singleNodeSettingsBuilder = singleNodeSettingsBuilder.address(host, port);
         clusterNodeUsingDnsSettingsBuilder = null;

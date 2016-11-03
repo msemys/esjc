@@ -2,7 +2,7 @@ package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.cluster.GossipSeed;
-import com.github.msemys.esjc.node.static_.StaticNodeSettings;
+import com.github.msemys.esjc.node.single.SingleNodeSettings;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class EventStoreBuilderTest {
     @Test
     public void createsSingleNodeClientFromSettings() {
         Settings settings = Settings.newBuilder()
-            .nodeSettings(StaticNodeSettings.newBuilder()
+            .nodeSettings(SingleNodeSettings.newBuilder()
                 .address("localhost", 1010)
                 .build())
             .userCredentials("username", "password")
@@ -106,7 +106,7 @@ public class EventStoreBuilderTest {
     @Test
     public void createsClientWithoutUserCredentialsFromSettings() {
         Settings settings = Settings.newBuilder()
-            .nodeSettings(StaticNodeSettings.newBuilder()
+            .nodeSettings(SingleNodeSettings.newBuilder()
                 .address("localhost", 1010)
                 .build())
             .tcpSettings(TcpSettings.newBuilder()
@@ -145,7 +145,7 @@ public class EventStoreBuilderTest {
     @Test
     public void createsCustomizedClientWithDisabledConnectionEncryptionFromSettings() {
         Settings settings = Settings.newBuilder()
-            .nodeSettings(StaticNodeSettings.newBuilder().address("localhost", 1010).build())
+            .nodeSettings(SingleNodeSettings.newBuilder().address("localhost", 1010).build())
             .sslSettings(SslSettings.trustAllCertificates())
             .build();
 
@@ -159,7 +159,7 @@ public class EventStoreBuilderTest {
     @Test
     public void createsCustomizedClientFromSettings() {
         Settings settings = Settings.newBuilder()
-            .nodeSettings(StaticNodeSettings.newBuilder()
+            .nodeSettings(SingleNodeSettings.newBuilder()
                 .address("localhost", 1010)
                 .build())
             .userCredentials("username", "password")
@@ -199,7 +199,7 @@ public class EventStoreBuilderTest {
             .failOnNoServerResponse(true)
             .build();
 
-        assertEquals(2020, result.settings().staticNodeSettings.get().address.getPort());
+        assertEquals(2020, result.settings().singleNodeSettings.get().address.getPort());
         assertEquals("usr", result.settings().userCredentials.get().username);
         assertEquals("psw", result.settings().userCredentials.get().password);
         assertTrue(result.settings().tcpSettings.keepAlive);
@@ -213,7 +213,7 @@ public class EventStoreBuilderTest {
     @Test
     public void createsCustomizedClientWithoutUserCredentialsFromSettings() {
         Settings settings = Settings.newBuilder()
-            .nodeSettings(StaticNodeSettings.newBuilder()
+            .nodeSettings(SingleNodeSettings.newBuilder()
                 .address("localhost", 1010)
                 .build())
             .userCredentials("username", "password")
@@ -253,7 +253,7 @@ public class EventStoreBuilderTest {
             .failOnNoServerResponse(true)
             .build();
 
-        assertEquals(2020, result.settings().staticNodeSettings.get().address.getPort());
+        assertEquals(2020, result.settings().singleNodeSettings.get().address.getPort());
         assertFalse(result.settings().userCredentials.isPresent());
         assertTrue(result.settings().tcpSettings.keepAlive);
         assertTrue(result.settings().tcpSettings.noDelay);
@@ -284,7 +284,7 @@ public class EventStoreBuilderTest {
                 .maxDiscoverAttempts(10))
             .build();
 
-        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
         assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
         assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
@@ -318,7 +318,7 @@ public class EventStoreBuilderTest {
                 .maxDiscoverAttempts(10))
             .build();
 
-        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
         assertEquals("dns2", result.settings().clusterNodeSettings.get().clusterDns);
         assertEquals(1234, result.settings().clusterNodeSettings.get().externalGossipPort);
@@ -344,16 +344,16 @@ public class EventStoreBuilderTest {
             .singleNodeAddress("localhost", 1009)
             .build();
 
-        assertTrue(result.settings().staticNodeSettings.isPresent());
+        assertTrue(result.settings().singleNodeSettings.isPresent());
         assertFalse(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("localhost", result.settings().staticNodeSettings.get().address.getHostName());
-        assertEquals(1009, result.settings().staticNodeSettings.get().address.getPort());
+        assertEquals("localhost", result.settings().singleNodeSettings.get().address.getHostName());
+        assertEquals(1009, result.settings().singleNodeSettings.get().address.getPort());
     }
 
     @Test
     public void createsClusterNodeUsingGossipSeedsClientFromSettingsWithSingleNode() {
         Settings settings = Settings.newBuilder()
-            .nodeSettings(StaticNodeSettings.newBuilder().address("localhost", 1001).build())
+            .nodeSettings(SingleNodeSettings.newBuilder().address("localhost", 1001).build())
             .build();
 
         EventStore result = EventStoreBuilder.newBuilder(settings)
@@ -367,7 +367,7 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(120)))
             .build();
 
-        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
         assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
         assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
@@ -384,7 +384,7 @@ public class EventStoreBuilderTest {
     @Test
     public void createsClusterNodeUsingDnsClientFromSettingsWithSingleNode() {
         Settings settings = Settings.newBuilder()
-            .nodeSettings(StaticNodeSettings.newBuilder().address("localhost", 1001).build())
+            .nodeSettings(SingleNodeSettings.newBuilder().address("localhost", 1001).build())
             .build();
 
         EventStore result = EventStoreBuilder.newBuilder(settings)
@@ -396,7 +396,7 @@ public class EventStoreBuilderTest {
                 .maxDiscoverAttempts(10))
             .build();
 
-        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
         assertEquals("dns", result.settings().clusterNodeSettings.get().clusterDns);
         assertEquals(1234, result.settings().clusterNodeSettings.get().externalGossipPort);
@@ -412,10 +412,10 @@ public class EventStoreBuilderTest {
             .singleNodeAddress("localhost", 1009)
             .build();
 
-        assertTrue(result.settings().staticNodeSettings.isPresent());
+        assertTrue(result.settings().singleNodeSettings.isPresent());
         assertFalse(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("localhost", result.settings().staticNodeSettings.get().address.getHostName());
-        assertEquals(1009, result.settings().staticNodeSettings.get().address.getPort());
+        assertEquals("localhost", result.settings().singleNodeSettings.get().address.getHostName());
+        assertEquals(1009, result.settings().singleNodeSettings.get().address.getPort());
     }
 
     @Test
@@ -431,7 +431,7 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(73)))
             .build();
 
-        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
         assertEquals("", result.settings().clusterNodeSettings.get().clusterDns);
         assertEquals(-1, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
@@ -458,7 +458,7 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(83)))
             .build();
 
-        assertFalse(result.settings().staticNodeSettings.isPresent());
+        assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
         assertEquals("dns", result.settings().clusterNodeSettings.get().clusterDns);
         assertEquals(3, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);

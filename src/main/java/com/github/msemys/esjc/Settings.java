@@ -1,7 +1,7 @@
 package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
-import com.github.msemys.esjc.node.static_.StaticNodeSettings;
+import com.github.msemys.esjc.node.single.SingleNodeSettings;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
 import com.github.msemys.esjc.util.concurrent.DefaultThreadFactory;
@@ -27,9 +27,9 @@ public class Settings {
     public final TcpSettings tcpSettings;
 
     /**
-     * Static node settings (optional).
+     * Single node settings (optional).
      */
-    public final Optional<StaticNodeSettings> staticNodeSettings;
+    public final Optional<SingleNodeSettings> singleNodeSettings;
 
     /**
      * Cluster node settings (optional).
@@ -122,7 +122,7 @@ public class Settings {
 
     private Settings(Builder builder) {
         tcpSettings = builder.tcpSettings;
-        staticNodeSettings = Optional.ofNullable(builder.staticNodeSettings);
+        singleNodeSettings = Optional.ofNullable(builder.singleNodeSettings);
         clusterNodeSettings = Optional.ofNullable(builder.clusterNodeSettings);
         sslSettings = builder.sslSettings;
         reconnectionDelay = builder.reconnectionDelay;
@@ -146,7 +146,7 @@ public class Settings {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Settings{");
         sb.append("tcpSettings=").append(tcpSettings);
-        sb.append(", staticNodeSettings=").append(staticNodeSettings);
+        sb.append(", singleNodeSettings=").append(singleNodeSettings);
         sb.append(", clusterNodeSettings=").append(clusterNodeSettings);
         sb.append(", sslSettings=").append(sslSettings);
         sb.append(", reconnectionDelay=").append(reconnectionDelay);
@@ -182,7 +182,7 @@ public class Settings {
      */
     public static class Builder {
         private TcpSettings tcpSettings;
-        private StaticNodeSettings staticNodeSettings;
+        private SingleNodeSettings singleNodeSettings;
         private ClusterNodeSettings clusterNodeSettings;
         private SslSettings sslSettings;
         private Duration reconnectionDelay;
@@ -216,13 +216,13 @@ public class Settings {
         }
 
         /**
-         * Sets static node settings.
+         * Sets single node settings.
          *
-         * @param staticNodeSettings static node settings.
+         * @param singleNodeSettings single node settings.
          * @return the builder reference
          */
-        public Builder nodeSettings(StaticNodeSettings staticNodeSettings) {
-            this.staticNodeSettings = staticNodeSettings;
+        public Builder nodeSettings(SingleNodeSettings singleNodeSettings) {
+            this.singleNodeSettings = singleNodeSettings;
             return this;
         }
 
@@ -436,8 +436,8 @@ public class Settings {
          * @return client settings
          */
         public Settings build() {
-            checkArgument(staticNodeSettings != null || clusterNodeSettings != null, "Missing node settings");
-            checkArgument(staticNodeSettings == null || clusterNodeSettings == null, "Usage of 'static' and 'cluster' settings at once is not allowed");
+            checkArgument(singleNodeSettings != null || clusterNodeSettings != null, "Missing node settings");
+            checkArgument(singleNodeSettings == null || clusterNodeSettings == null, "Usage of 'single-node' and 'cluster-node' settings at once is not allowed");
 
             if (tcpSettings == null) {
                 tcpSettings = TcpSettings.newBuilder().build();

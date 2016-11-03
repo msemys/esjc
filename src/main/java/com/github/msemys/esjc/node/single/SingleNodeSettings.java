@@ -1,4 +1,4 @@
-package com.github.msemys.esjc.node.static_;
+package com.github.msemys.esjc.node.single;
 
 import java.net.InetSocketAddress;
 
@@ -7,14 +7,14 @@ import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 /**
  * Single node settings.
  */
-public class StaticNodeSettings {
+public class SingleNodeSettings {
 
     /**
      * Server address.
      */
     public final InetSocketAddress address;
 
-    private StaticNodeSettings(Builder builder) {
+    private SingleNodeSettings(Builder builder) {
         address = builder.address;
     }
 
@@ -29,7 +29,7 @@ public class StaticNodeSettings {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("StaticNodeSettings{");
+        final StringBuilder sb = new StringBuilder("SingleNodeSettings{");
         sb.append("address=").append(address);
         sb.append('}');
         return sb.toString();
@@ -64,13 +64,13 @@ public class StaticNodeSettings {
         }
 
         /**
-         * Builds a static-node settings.
+         * Builds a single-node settings.
          *
-         * @return static-node settings
+         * @return single-node settings
          */
-        public StaticNodeSettings build() {
+        public SingleNodeSettings build() {
             checkNotNull(address, "address");
-            return new StaticNodeSettings(this);
+            return new SingleNodeSettings(this);
         }
     }
 }
