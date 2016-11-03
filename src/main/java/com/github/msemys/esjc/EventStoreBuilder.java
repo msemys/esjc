@@ -280,22 +280,13 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Requires all write and read requests to be served only by master (cluster version only).
+     * Sets whether or not to require Event Store to refuse serving read or write request if it is not master (cluster version only).
      *
+     * @param requireMaster {@code true} to require master.
      * @return the builder reference
      */
-    public EventStoreBuilder requireMasterEnabled() {
-        settingsBuilder.requireMaster(true);
-        return this;
-    }
-
-    /**
-     * Allows for writes to be forwarded and read requests served locally if node is not master (cluster version only).
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder requireMasterDisabled() {
-        settingsBuilder.requireMaster(false);
+    public EventStoreBuilder requireMaster(boolean requireMaster) {
+        settingsBuilder.requireMaster(requireMaster);
         return this;
     }
 
@@ -390,42 +381,24 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Enables auto-acknowledge for persistent subscriptions.
+     * Sets whether or not by default, the persistent subscription should automatically acknowledge messages processed.
      *
+     * @param persistentSubscriptionAutoAck {@code true} to enable auto-acknowledge.
      * @return the builder reference
      */
-    public EventStoreBuilder persistentSubscriptionAutoAckEnabled() {
-        settingsBuilder.persistentSubscriptionAutoAck(true);
+    public EventStoreBuilder persistentSubscriptionAutoAck(boolean persistentSubscriptionAutoAck) {
+        settingsBuilder.persistentSubscriptionAutoAck(persistentSubscriptionAutoAck);
         return this;
     }
 
     /**
-     * Disables auto-acknowledge for persistent subscriptions.
+     * Sets whether or not to raise an error if no response is received from the server for an operation.
      *
+     * @param failOnNoServerResponse {@code true} to raise an error or {@code false} to schedule operation retry.
      * @return the builder reference
      */
-    public EventStoreBuilder persistentSubscriptionAutoAckDisabled() {
-        settingsBuilder.persistentSubscriptionAutoAck(false);
-        return this;
-    }
-
-    /**
-     * Operation timeout checker will raise an error if no response is received from the server for an operation.
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder failOnNoServerResponseEnabled() {
-        settingsBuilder.failOnNoServerResponse(true);
-        return this;
-    }
-
-    /**
-     * Operation timeout checker will schedule operation retry, if no response is received from the server for an operation.
-     *
-     * @return the builder reference
-     */
-    public EventStoreBuilder failOnNoServerResponseDisabled() {
-        settingsBuilder.failOnNoServerResponse(false);
+    public EventStoreBuilder failOnNoServerResponse(boolean failOnNoServerResponse) {
+        settingsBuilder.failOnNoServerResponse(failOnNoServerResponse);
         return this;
     }
 

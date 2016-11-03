@@ -195,8 +195,8 @@ public class EventStoreBuilderTest {
             .userCredentials("usr", "psw")
             .tcpSettings(tcp -> tcp.keepAlive(true).noDelay(true).sendBufferSize(11110))
             .useSslConnection()
-            .requireMasterEnabled()
-            .failOnNoServerResponseEnabled()
+            .requireMaster(true)
+            .failOnNoServerResponse(true)
             .build();
 
         assertEquals(2020, result.settings().staticNodeSettings.get().address.getPort());
@@ -249,8 +249,8 @@ public class EventStoreBuilderTest {
             .noUserCredentials()
             .tcpSettings(tcp -> tcp.keepAlive(true).noDelay(true).sendBufferSize(11110))
             .useSslConnection()
-            .requireMasterEnabled()
-            .failOnNoServerResponseEnabled()
+            .requireMaster(true)
+            .failOnNoServerResponse(true)
             .build();
 
         assertEquals(2020, result.settings().staticNodeSettings.get().address.getPort());
