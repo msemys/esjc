@@ -4,7 +4,7 @@ import com.github.msemys.esjc.event.Event;
 import com.github.msemys.esjc.event.Events;
 import com.github.msemys.esjc.node.EndpointDiscoverer;
 import com.github.msemys.esjc.node.NodeEndpoints;
-import com.github.msemys.esjc.node.cluster.ClusterDnsEndpointDiscoverer;
+import com.github.msemys.esjc.node.cluster.ClusterEndpointDiscoverer;
 import com.github.msemys.esjc.node.single.SingleEndpointDiscoverer;
 import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.operation.manager.OperationItem;
@@ -149,7 +149,7 @@ public class EventStoreImpl implements EventStore {
         if (settings.singleNodeSettings.isPresent()) {
             discoverer = new SingleEndpointDiscoverer(settings.singleNodeSettings.get(), settings.sslSettings.useSslConnection);
         } else if (settings.clusterNodeSettings.isPresent()) {
-            discoverer = new ClusterDnsEndpointDiscoverer(settings.clusterNodeSettings.get(), group);
+            discoverer = new ClusterEndpointDiscoverer(settings.clusterNodeSettings.get(), group);
         } else {
             throw new IllegalStateException("Node settings not found");
         }
