@@ -19,7 +19,7 @@ public class ClusterNodeSettings {
     /**
      * The DNS name to use for discovering endpoints.
      */
-    public final String clusterDns;
+    public final String dns;
 
     /**
      * The maximum number of attempts for discovering endpoints.
@@ -47,7 +47,7 @@ public class ClusterNodeSettings {
     public final Duration gossipTimeout;
 
     private ClusterNodeSettings(Builder builder) {
-        clusterDns = builder.clusterDns;
+        dns = builder.dns;
         maxDiscoverAttempts = builder.maxDiscoverAttempts;
         discoverAttemptInterval = builder.discoverAttemptInterval;
         externalGossipPort = builder.externalGossipPort;
@@ -76,7 +76,7 @@ public class ClusterNodeSettings {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ClusterNodeSettings{");
-        sb.append("clusterDns='").append(clusterDns).append('\'');
+        sb.append("dns='").append(dns).append('\'');
         sb.append(", maxDiscoverAttempts=").append(maxDiscoverAttempts);
         sb.append(", discoverAttemptInterval=").append(discoverAttemptInterval);
         sb.append(", externalGossipPort=").append(externalGossipPort);
@@ -175,11 +175,11 @@ public class ClusterNodeSettings {
         /**
          * Sets the DNS name under which cluster nodes are listed.
          *
-         * @param clusterDns the DNS name under which cluster nodes are listed.
+         * @param dns the DNS name under which cluster nodes are listed.
          * @return the builder reference
          */
-        public BuilderForDnsDiscoverer clusterDns(String clusterDns) {
-            super.clusterDns = clusterDns;
+        public BuilderForDnsDiscoverer dns(String dns) {
+            super.dns = dns;
             return this;
         }
 
@@ -245,7 +245,7 @@ public class ClusterNodeSettings {
          */
         @Override
         public ClusterNodeSettings build() {
-            checkArgument(!isNullOrEmpty(super.clusterDns), "clusterDns is empty");
+            checkArgument(!isNullOrEmpty(super.dns), "dns is empty");
 
             if (super.externalGossipPort == null) {
                 super.externalGossipPort = 30778;
@@ -259,7 +259,7 @@ public class ClusterNodeSettings {
      * Base builder
      */
     private static class Builder {
-        private String clusterDns;
+        private String dns;
         private Integer maxDiscoverAttempts;
         private Duration discoverAttemptInterval;
         private Integer externalGossipPort;
@@ -267,8 +267,8 @@ public class ClusterNodeSettings {
         private Duration gossipTimeout;
 
         public ClusterNodeSettings build() {
-            if (clusterDns == null) {
-                clusterDns = "";
+            if (dns == null) {
+                dns = "";
             }
 
             if (maxDiscoverAttempts == null) {

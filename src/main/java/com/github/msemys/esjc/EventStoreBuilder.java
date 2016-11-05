@@ -89,7 +89,7 @@ public class EventStoreBuilder {
                 clusterNodeUsingDnsSettingsBuilder = ClusterNodeSettings.forDnsDiscoverer()
                     .maxDiscoverAttempts(settings.clusterNodeSettings.get().maxDiscoverAttempts)
                     .discoverAttemptInterval(settings.clusterNodeSettings.get().discoverAttemptInterval)
-                    .clusterDns(settings.clusterNodeSettings.get().clusterDns)
+                    .dns(settings.clusterNodeSettings.get().dns)
                     .externalGossipPort(settings.clusterNodeSettings.get().externalGossipPort)
                     .gossipTimeout(settings.clusterNodeSettings.get().gossipTimeout);
             }

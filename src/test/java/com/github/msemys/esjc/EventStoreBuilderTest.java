@@ -302,7 +302,7 @@ public class EventStoreBuilderTest {
     public void createsCustomizedClusterNodeUsingDnsClientFromSettings() {
         Settings settings = Settings.newBuilder()
             .nodeSettings(ClusterNodeSettings.forDnsDiscoverer()
-                .clusterDns("dns1")
+                .dns("dns1")
                 .externalGossipPort(1234)
                 .gossipTimeout(Duration.ofSeconds(60))
                 .discoverAttemptInterval(Duration.ofMinutes(2))
@@ -312,7 +312,7 @@ public class EventStoreBuilderTest {
 
         EventStore result = EventStoreBuilder.newBuilder(settings)
             .clusterNodeUsingDns(cluster -> cluster
-                .clusterDns("dns2")
+                .dns("dns2")
                 .gossipTimeout(Duration.ofSeconds(120))
                 .discoverAttemptInterval(Duration.ofMinutes(4))
                 .maxDiscoverAttempts(10))
@@ -320,7 +320,7 @@ public class EventStoreBuilderTest {
 
         assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("dns2", result.settings().clusterNodeSettings.get().clusterDns);
+        assertEquals("dns2", result.settings().clusterNodeSettings.get().dns);
         assertEquals(1234, result.settings().clusterNodeSettings.get().externalGossipPort);
         assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
         assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
@@ -332,7 +332,7 @@ public class EventStoreBuilderTest {
     public void createsSingleNodeClientFromSettingsWithClusterNode() {
         Settings settings = Settings.newBuilder()
             .nodeSettings(ClusterNodeSettings.forDnsDiscoverer()
-                .clusterDns("dns1")
+                .dns("dns1")
                 .externalGossipPort(1234)
                 .gossipTimeout(Duration.ofSeconds(60))
                 .discoverAttemptInterval(Duration.ofMinutes(2))
@@ -389,7 +389,7 @@ public class EventStoreBuilderTest {
 
         EventStore result = EventStoreBuilder.newBuilder(settings)
             .clusterNodeUsingDns(cluster -> cluster
-                .clusterDns("dns")
+                .dns("dns")
                 .externalGossipPort(1234)
                 .gossipTimeout(Duration.ofSeconds(120))
                 .discoverAttemptInterval(Duration.ofMinutes(4))
@@ -398,7 +398,7 @@ public class EventStoreBuilderTest {
 
         assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("dns", result.settings().clusterNodeSettings.get().clusterDns);
+        assertEquals("dns", result.settings().clusterNodeSettings.get().dns);
         assertEquals(1234, result.settings().clusterNodeSettings.get().externalGossipPort);
         assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
         assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
@@ -433,7 +433,7 @@ public class EventStoreBuilderTest {
 
         assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("", result.settings().clusterNodeSettings.get().clusterDns);
+        assertEquals("", result.settings().clusterNodeSettings.get().dns);
         assertEquals(-1, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
         assertEquals(Duration.ofMinutes(5), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
         assertEquals(0, result.settings().clusterNodeSettings.get().externalGossipPort);
@@ -451,7 +451,7 @@ public class EventStoreBuilderTest {
     public void createsClusterNodeUsingDnsClient() {
         EventStore result = EventStoreBuilder.newBuilder()
             .clusterNodeUsingDns(cluster -> cluster
-                .clusterDns("dns")
+                .dns("dns")
                 .maxDiscoverAttempts(3)
                 .discoverAttemptInterval(Duration.ofMinutes(6))
                 .externalGossipPort(1717)
@@ -460,7 +460,7 @@ public class EventStoreBuilderTest {
 
         assertFalse(result.settings().singleNodeSettings.isPresent());
         assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("dns", result.settings().clusterNodeSettings.get().clusterDns);
+        assertEquals("dns", result.settings().clusterNodeSettings.get().dns);
         assertEquals(3, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
         assertEquals(Duration.ofMinutes(6), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
         assertEquals(1717, result.settings().clusterNodeSettings.get().externalGossipPort);
@@ -526,7 +526,7 @@ public class EventStoreBuilderTest {
             fail("should fail with 'IllegalArgumentException'");
         } catch (Exception e) {
             assertThat(e, instanceOf(IllegalArgumentException.class));
-            assertEquals("clusterDns is empty", e.getMessage());
+            assertEquals("dns is empty", e.getMessage());
         }
     }
 }

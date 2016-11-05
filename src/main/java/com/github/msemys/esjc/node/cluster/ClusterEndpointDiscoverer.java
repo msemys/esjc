@@ -140,15 +140,15 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
 
     private List<InetAddress> resolveDns() {
         try {
-            InetAddress[] addresses = InetAddress.getAllByName(settings.clusterDns);
+            InetAddress[] addresses = InetAddress.getAllByName(settings.dns);
 
             if (addresses == null || addresses.length == 0) {
-                throw new ClusterException(String.format("DNS entry '%s' resolved into empty list.", settings.clusterDns));
+                throw new ClusterException(String.format("DNS entry '%s' resolved into empty list.", settings.dns));
             } else {
                 return asList(addresses);
             }
         } catch (Exception e) {
-            throw new ClusterException(String.format("Error while resolving DNS entry '%s'.", settings.clusterDns), e);
+            throw new ClusterException(String.format("Error while resolving DNS entry '%s'.", settings.dns), e);
         }
     }
 
