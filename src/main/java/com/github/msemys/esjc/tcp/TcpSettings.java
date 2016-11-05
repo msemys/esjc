@@ -100,7 +100,7 @@ public class TcpSettings {
         private Integer writeBufferLowWaterMark;
 
         /**
-         * Sets connection establishment timeout.
+         * Sets connection establishment timeout (by default, 10 seconds).
          *
          * @param connectTimeout connection establishment timeout.
          * @return the builder reference
@@ -111,7 +111,7 @@ public class TcpSettings {
         }
 
         /**
-         * Sets connection closing timeout.
+         * Sets connection closing timeout (by default, 500 milliseconds).
          *
          * @param closeTimeout connection closing timeout.
          * @return the builder reference
@@ -122,7 +122,7 @@ public class TcpSettings {
         }
 
         /**
-         * Specifies socket keep-alive option.
+         * Specifies socket keep-alive option (by default, it is enabled).
          *
          * @param keepAlive {@code true} to enable.
          * @return the builder reference
@@ -133,7 +133,7 @@ public class TcpSettings {
         }
 
         /**
-         * Specifies socket no-delay option.
+         * Specifies socket no-delay option (by default, it is enabled).
          * <p>
          * When no-delay is enabled, Nagle's algorithm will not be use.
          * </p>
@@ -147,7 +147,7 @@ public class TcpSettings {
         }
 
         /**
-         * Sets the maximum socket send buffer in bytes.
+         * Sets the maximum socket send buffer in bytes (by default, 64 kilobytes).
          *
          * @param sendBufferSize the maximum socket send buffer in bytes.
          * @return the builder reference
@@ -158,7 +158,7 @@ public class TcpSettings {
         }
 
         /**
-         * Sets the maximum socket receive buffer in bytes.
+         * Sets the maximum socket receive buffer in bytes (by default, 64 kilobytes).
          *
          * @param receiveBufferSize the maximum socket receive buffer in bytes.
          * @return the builder reference
@@ -169,7 +169,7 @@ public class TcpSettings {
         }
 
         /**
-         * Sets write buffer high watermark in bytes.
+         * Sets write buffer high watermark in bytes (by default, 64 kilobytes).
          *
          * @param writeBufferHighWaterMark write buffer high watermark in bytes.
          * @return the builder reference
@@ -180,7 +180,7 @@ public class TcpSettings {
         }
 
         /**
-         * Sets write buffer low watermark in bytes.
+         * Sets write buffer low watermark in bytes (by default, 32 kilobytes).
          *
          * @param writeBufferLowWaterMark write buffer low watermark in bytes.
          * @return the builder reference

@@ -232,7 +232,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the amount of time to delay before attempting to reconnect.
+     * Sets the amount of time to delay before attempting to reconnect (by default, 1 second).
      *
      * @param duration the amount of time to delay before attempting to reconnect.
      * @return the builder reference
@@ -243,7 +243,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the maximum number of times to allow for reconnection.
+     * Sets the maximum number of times to allow for reconnection (by default, 10 times).
      *
      * @param count the maximum number of times to allow for reconnection (use {@code -1} for unlimited).
      * @return the builder reference
@@ -254,7 +254,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the interval at which to send heartbeat messages.
+     * Sets the interval at which to send heartbeat messages (by default, 500 milliseconds).
      * <p>
      * <u>NOTE</u>: heartbeat request will be sent only if connection is idle (no writes) for the specified time.
      * </p>
@@ -269,7 +269,7 @@ public class EventStoreBuilder {
 
     /**
      * Sets the interval after which an unacknowledged heartbeat will cause
-     * the connection to be considered faulted and disconnect.
+     * the connection to be considered faulted and disconnect (by default, 1500 milliseconds).
      *
      * @param duration heartbeat timeout.
      * @return the builder reference
@@ -281,6 +281,7 @@ public class EventStoreBuilder {
 
     /**
      * Sets whether or not to require Event Store to refuse serving read or write request if it is not master (cluster version only).
+     * By default, it is enabled.
      *
      * @param requireMaster {@code true} to require master.
      * @return the builder reference
@@ -315,7 +316,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the amount of time before an operation is considered to have timed out.
+     * Sets the amount of time before an operation is considered to have timed out (by default, 7 seconds).
      *
      * @param duration the amount of time before an operation is considered to have timed out.
      * @return the builder reference
@@ -326,7 +327,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the amount of time that timeouts are checked in the system.
+     * Sets the amount of time that timeouts are checked in the system (by default, 1 second).
      *
      * @param duration the amount of time that timeouts are checked in the system.
      * @return the builder reference
@@ -337,7 +338,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the maximum number of outstanding items allowed in the operation queue.
+     * Sets the maximum number of outstanding items allowed in the operation queue (by default, 5000 items).
      *
      * @param size the maximum number of outstanding items allowed in the operation queue.
      * @return the builder reference
@@ -348,7 +349,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the maximum number of allowed asynchronous operations to be in process.
+     * Sets the maximum number of allowed asynchronous operations to be in process (by default, 5000 operations).
      *
      * @param count the maximum number of allowed asynchronous operations to be in process.
      * @return the builder reference
@@ -359,7 +360,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the maximum number of operation retry attempts.
+     * Sets the maximum number of operation retry attempts (by default, 10 attempts).
      *
      * @param count the maximum number of operation retry attempts (use {@code -1} for unlimited).
      * @return the builder reference
@@ -370,7 +371,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets the default buffer size to use for the persistent subscription.
+     * Sets the default buffer size to use for the persistent subscription (by default, 10 messages).
      *
      * @param size the default buffer size to use for the persistent subscription.
      * @return the builder reference
@@ -382,6 +383,7 @@ public class EventStoreBuilder {
 
     /**
      * Sets whether or not by default, the persistent subscription should automatically acknowledge messages processed.
+     * By default, it is enabled.
      *
      * @param persistentSubscriptionAutoAck {@code true} to enable auto-acknowledge.
      * @return the builder reference
@@ -393,6 +395,7 @@ public class EventStoreBuilder {
 
     /**
      * Sets whether or not to raise an error if no response is received from the server for an operation.
+     * By default, it is disabled - operations are scheduled to be retried.
      *
      * @param failOnNoServerResponse {@code true} to raise an error or {@code false} to schedule operation retry.
      * @return the builder reference

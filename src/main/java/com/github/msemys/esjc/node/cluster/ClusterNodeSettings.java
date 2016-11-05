@@ -93,7 +93,7 @@ public class ClusterNodeSettings {
     public static class BuilderForGossipSeedDiscoverer extends Builder {
 
         /**
-         * Sets the maximum number of attempts for discovery.
+         * Sets the maximum number of attempts for discovery (by default, 10 attempts).
          *
          * @param maxDiscoverAttempts the maximum number of attempts for discovery (use {@code -1} for unlimited).
          * @return the builder reference
@@ -104,7 +104,7 @@ public class ClusterNodeSettings {
         }
 
         /**
-         * Sets the interval between discovering endpoint attempts.
+         * Sets the interval between discovering endpoint attempts (by default, 500 milliseconds).
          *
          * @param discoverAttemptInterval the interval between discovering endpoint attempts.
          * @return the builder reference
@@ -145,7 +145,7 @@ public class ClusterNodeSettings {
         }
 
         /**
-         * Sets the period after which gossip times out if none is received.
+         * Sets the period after which gossip times out if none is received (by default, 1 second).
          *
          * @param gossipTimeout the period after which gossip times out if none is received.
          * @return the builder reference
@@ -184,7 +184,7 @@ public class ClusterNodeSettings {
         }
 
         /**
-         * Sets the maximum number of attempts for discovery.
+         * Sets the maximum number of attempts for discovery (by default, 10 attempts).
          *
          * @param maxDiscoverAttempts the maximum number of attempts for discovery (use {@code -1} for unlimited).
          * @return the builder reference
@@ -195,7 +195,7 @@ public class ClusterNodeSettings {
         }
 
         /**
-         * Sets the interval between discovering endpoint attempts.
+         * Sets the interval between discovering endpoint attempts (by default, 500 milliseconds).
          *
          * @param discoverAttemptInterval the interval between discovering endpoint attempts.
          * @return the builder reference
@@ -206,7 +206,7 @@ public class ClusterNodeSettings {
         }
 
         /**
-         * Sets the well-known port on which the cluster gossip is taking place.
+         * Sets the well-known port on which the cluster gossip is taking place (by default, 30778 port is used).
          * <p>
          * If you are using the commercial edition of Event Store HA, with Manager nodes in
          * place, this should be the port number of the External HTTP port on which the
@@ -228,7 +228,7 @@ public class ClusterNodeSettings {
         }
 
         /**
-         * Sets the period after which gossip times out if none is received.
+         * Sets the period after which gossip times out if none is received (by default, 1 second).
          *
          * @param gossipTimeout the period after which gossip times out if none is received.
          * @return the builder reference
