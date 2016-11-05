@@ -22,12 +22,12 @@ public class TcpSettings {
     public final Duration closeTimeout;
 
     /**
-     * Whether the socket keep-alive option is enabled.
+     * Whether the socket <i>keep-alive</i> option is enabled.
      */
     public final boolean keepAlive;
 
     /**
-     * Whether the socket no-delay option is enabled.
+     * Whether the socket <i>no-delay</i> option is enabled.
      */
     public final boolean noDelay;
 
@@ -122,7 +122,7 @@ public class TcpSettings {
         }
 
         /**
-         * Specifies socket keep-alive option (by default, it is enabled).
+         * Specifies whether or not socket <i>keep-alive</i> option is enabled (by default, it is enabled).
          *
          * @param keepAlive {@code true} to enable.
          * @return the builder reference
@@ -133,9 +133,9 @@ public class TcpSettings {
         }
 
         /**
-         * Specifies socket no-delay option (by default, it is enabled).
+         * Specifies whether or not socket <i>no-delay</i> option is enabled (by default, it is enabled).
          * <p>
-         * When no-delay is enabled, Nagle's algorithm will not be use.
+         * When this option is enabled, Nagle's algorithm will not be used.
          * </p>
          *
          * @param noDelay {@code true} to enable.

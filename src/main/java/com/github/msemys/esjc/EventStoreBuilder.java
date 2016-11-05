@@ -280,8 +280,11 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets whether or not to require Event Store to refuse serving read or write request if it is not master (cluster version only).
-     * By default, it is enabled.
+     * Specifies whether or not all write and read requests to be served only by master.
+     * By default, it is enabled - master node required.
+     * <p>
+     * <u>NOTE</u>: this option is used for cluster only.
+     * </p>
      *
      * @param requireMaster {@code true} to require master.
      * @return the builder reference
