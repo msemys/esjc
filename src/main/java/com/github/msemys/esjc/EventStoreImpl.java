@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -275,6 +276,50 @@ public class EventStoreImpl implements EventStore {
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsBackwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
         return result;
+    }
+
+    @Override
+    public Iterator<ResolvedEvent> iterateStreamEventsForward(String stream,
+                                                              int start,
+                                                              int batchSize,
+                                                              boolean resolveLinkTos,
+                                                              UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(isPositive(batchSize), "batchSize should be positive.");
+        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d.", MAX_READ_SIZE);
+        return new StreamEventsIterator(start, i -> readStreamEventsForward(stream, i, batchSize, resolveLinkTos, userCredentials));
+    }
+
+    @Override
+    public Iterator<ResolvedEvent> iterateStreamEventsBackward(String stream,
+                                                               int start,
+                                                               int batchSize,
+                                                               boolean resolveLinkTos,
+                                                               UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(isPositive(batchSize), "batchSize should be positive.");
+        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d.", MAX_READ_SIZE);
+        return new StreamEventsIterator(start, i -> readStreamEventsBackward(stream, i, batchSize, resolveLinkTos, userCredentials));
+    }
+
+    @Override
+    public Iterator<ResolvedEvent> iterateAllEventsForward(Position position,
+                                                           int batchSize,
+                                                           boolean resolveLinkTos,
+                                                           UserCredentials userCredentials) {
+        checkArgument(isPositive(batchSize), "batchSize should be positive.");
+        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d.", MAX_READ_SIZE);
+        return new AllEventsIterator(position, p -> readAllEventsForward(p, batchSize, resolveLinkTos, userCredentials));
+    }
+
+    @Override
+    public Iterator<ResolvedEvent> iterateAllEventsBackward(Position position,
+                                                            int batchSize,
+                                                            boolean resolveLinkTos,
+                                                            UserCredentials userCredentials) {
+        checkArgument(isPositive(batchSize), "batchSize should be positive.");
+        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d.", MAX_READ_SIZE);
+        return new AllEventsIterator(position, p -> readAllEventsBackward(p, batchSize, resolveLinkTos, userCredentials));
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.subscription.MaximumSubscribersReachedException;
 import com.github.msemys.esjc.subscription.PersistentSubscriptionDeletedException;
 
+import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
@@ -431,6 +432,130 @@ public interface EventStore {
                                                             int maxCount,
                                                             boolean resolveLinkTos,
                                                             UserCredentials userCredentials);
+
+    /**
+     * Iterates over events in a stream from the specified start position to the end of stream using default user credentials.
+     *
+     * @param stream         the stream to iterate.
+     * @param start          the starting point to iterate from.
+     * @param batchSize      the number of events to return per batch.
+     * @param resolveLinkTos whether to resolve link events automatically.
+     * @return an iterator over the events in the stream
+     * @see #iterateStreamEventsForward(String, int, int, boolean, UserCredentials)
+     */
+    default Iterator<ResolvedEvent> iterateStreamEventsForward(String stream,
+                                                               int start,
+                                                               int batchSize,
+                                                               boolean resolveLinkTos) {
+        return iterateStreamEventsForward(stream, start, batchSize, resolveLinkTos, null);
+    }
+
+    /**
+     * Iterates over events in a stream from the specified start position to the end of stream.
+     *
+     * @param stream          the stream to iterate.
+     * @param start           the starting point to iterate from.
+     * @param batchSize       the number of events to return per batch.
+     * @param resolveLinkTos  whether to resolve link events automatically.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return an iterator over the events in the stream
+     */
+    Iterator<ResolvedEvent> iterateStreamEventsForward(String stream,
+                                                       int start,
+                                                       int batchSize,
+                                                       boolean resolveLinkTos,
+                                                       UserCredentials userCredentials);
+
+    /**
+     * Iterates over events in a stream backwards from the specified start position to the beginning of stream using default user credentials.
+     *
+     * @param stream         the stream to iterate.
+     * @param start          the starting point to iterate from.
+     * @param batchSize      the number of events to return per batch.
+     * @param resolveLinkTos whether to resolve link events automatically.
+     * @return an iterator over the events in the stream
+     * @see #iterateStreamEventsBackward(String, int, int, boolean, UserCredentials)
+     */
+    default Iterator<ResolvedEvent> iterateStreamEventsBackward(String stream,
+                                                                int start,
+                                                                int batchSize,
+                                                                boolean resolveLinkTos) {
+        return iterateStreamEventsBackward(stream, start, batchSize, resolveLinkTos, null);
+    }
+
+    /**
+     * Iterates over events in a stream backwards from the specified start position to the beginning of stream.
+     *
+     * @param stream          the stream to iterate.
+     * @param start           the starting point to iterate from.
+     * @param batchSize       the number of events to return per batch.
+     * @param resolveLinkTos  whether to resolve link events automatically.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return an iterator over the events in the stream
+     */
+    Iterator<ResolvedEvent> iterateStreamEventsBackward(String stream,
+                                                        int start,
+                                                        int batchSize,
+                                                        boolean resolveLinkTos,
+                                                        UserCredentials userCredentials);
+
+    /**
+     * Iterates over all events in the node forward from the specified start position to the end using default user credentials.
+     *
+     * @param position       the position to start iterating from.
+     * @param batchSize      the number of events to return per batch.
+     * @param resolveLinkTos whether to resolve link events automatically.
+     * @return an iterator over the events in the $all stream
+     * @see #iterateAllEventsForward(Position, int, boolean, UserCredentials)
+     */
+    default Iterator<ResolvedEvent> iterateAllEventsForward(Position position,
+                                                            int batchSize,
+                                                            boolean resolveLinkTos) {
+        return iterateAllEventsForward(position, batchSize, resolveLinkTos, null);
+    }
+
+    /**
+     * Iterates over all events in the node forward from the specified start position to the end.
+     *
+     * @param position        the position to start iterating from.
+     * @param batchSize       the number of events to return per batch.
+     * @param resolveLinkTos  whether to resolve link events automatically.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return an iterator over the events in the $all stream
+     */
+    Iterator<ResolvedEvent> iterateAllEventsForward(Position position,
+                                                    int batchSize,
+                                                    boolean resolveLinkTos,
+                                                    UserCredentials userCredentials);
+
+    /**
+     * Iterates over all events in the node backwards from the specified start position to the beginning using default user credentials.
+     *
+     * @param position       the position to start iterating from.
+     * @param batchSize      the number of events to return per batch.
+     * @param resolveLinkTos whether to resolve link events automatically.
+     * @return an iterator over the events in the $all stream
+     * @see #iterateAllEventsBackward(Position, int, boolean, UserCredentials)
+     */
+    default Iterator<ResolvedEvent> iterateAllEventsBackward(Position position,
+                                                             int batchSize,
+                                                             boolean resolveLinkTos) {
+        return iterateAllEventsBackward(position, batchSize, resolveLinkTos, null);
+    }
+
+    /**
+     * Iterates over all events in the node backwards from the specified start position to the beginning.
+     *
+     * @param position        the position to start iterating from.
+     * @param batchSize       the number of events to return per batch.
+     * @param resolveLinkTos  whether to resolve link events automatically.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return an iterator over the events in the $all stream
+     */
+    Iterator<ResolvedEvent> iterateAllEventsBackward(Position position,
+                                                     int batchSize,
+                                                     boolean resolveLinkTos,
+                                                     UserCredentials userCredentials);
 
     /**
      * Subscribes to a stream asynchronously using default user credentials. New events written to the stream
