@@ -232,15 +232,6 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
         drop(SubscriptionDropReason.UserInitiated, null, connectionSupplier.get());
     }
 
-    protected boolean timeoutSubscription() {
-        if (subscription != null) {
-            return false;
-        } else {
-            drop(SubscriptionDropReason.SubscribingError, null);
-            return true;
-        }
-    }
-
     protected void confirmSubscription(long lastCommitPosition, Integer lastEventNumber) {
         checkArgument(lastCommitPosition >= -1, "Invalid lastCommitPosition %d on subscription confirmation.", lastCommitPosition);
         checkState(subscription == null, "Double confirmation of subscription.");
