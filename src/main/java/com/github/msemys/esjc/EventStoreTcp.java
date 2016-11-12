@@ -224,31 +224,31 @@ public class EventStoreTcp implements EventStore {
     @Override
     public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
                                                                         int start,
-                                                                        int count,
+                                                                        int maxCount,
                                                                         boolean resolveLinkTos,
                                                                         UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         checkArgument(!isNegative(start), "start should not be negative");
-        checkArgument(isPositive(count), "count should be positive");
-        checkArgument(count < MAX_READ_SIZE, "count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(isPositive(maxCount), "maxCount should be positive");
+        checkArgument(maxCount < MAX_READ_SIZE, "maxCount should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
-        enqueue(new ReadStreamEventsForwardOperation(result, stream, start, count, resolveLinkTos, settings.requireMaster, userCredentials));
+        enqueue(new ReadStreamEventsForwardOperation(result, stream, start, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
         return result;
     }
 
     @Override
     public CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
                                                                          int start,
-                                                                         int count,
+                                                                         int maxCount,
                                                                          boolean resolveLinkTos,
                                                                          UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-        checkArgument(isPositive(count), "count should be positive");
-        checkArgument(count < MAX_READ_SIZE, "count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(isPositive(maxCount), "maxCount should be positive");
+        checkArgument(maxCount < MAX_READ_SIZE, "maxCount should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
-        enqueue(new ReadStreamEventsBackwardOperation(result, stream, start, count, resolveLinkTos, settings.requireMaster, userCredentials));
+        enqueue(new ReadStreamEventsBackwardOperation(result, stream, start, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
         return result;
     }
 
@@ -257,8 +257,8 @@ public class EventStoreTcp implements EventStore {
                                                                   int maxCount,
                                                                   boolean resolveLinkTos,
                                                                   UserCredentials userCredentials) {
-        checkArgument(isPositive(maxCount), "count should be positive");
-        checkArgument(maxCount < MAX_READ_SIZE, "count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(isPositive(maxCount), "maxCount should be positive");
+        checkArgument(maxCount < MAX_READ_SIZE, "maxCount should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsForwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -270,8 +270,8 @@ public class EventStoreTcp implements EventStore {
                                                                    int maxCount,
                                                                    boolean resolveLinkTos,
                                                                    UserCredentials userCredentials) {
-        checkArgument(isPositive(maxCount), "count should be positive");
-        checkArgument(maxCount < MAX_READ_SIZE, "count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(isPositive(maxCount), "maxCount should be positive");
+        checkArgument(maxCount < MAX_READ_SIZE, "maxCount should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsBackwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));

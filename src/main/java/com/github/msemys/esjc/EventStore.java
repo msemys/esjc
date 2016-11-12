@@ -287,7 +287,7 @@ public interface EventStore {
      *
      * @param stream         the stream to read from.
      * @param start          the starting point to read from.
-     * @param count          the count of events to read.
+     * @param maxCount       the maximum count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
@@ -297,9 +297,9 @@ public interface EventStore {
      */
     default CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
                                                                          int start,
-                                                                         int count,
+                                                                         int maxCount,
                                                                          boolean resolveLinkTos) {
-        return readStreamEventsForward(stream, start, count, resolveLinkTos, null);
+        return readStreamEventsForward(stream, start, maxCount, resolveLinkTos, null);
     }
 
     /**
@@ -308,7 +308,7 @@ public interface EventStore {
      *
      * @param stream          the stream to read from.
      * @param start           the starting point to read from.
-     * @param count           the count of events to read.
+     * @param maxCount        the maximum count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -318,7 +318,7 @@ public interface EventStore {
      */
     CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
                                                                  int start,
-                                                                 int count,
+                                                                 int maxCount,
                                                                  boolean resolveLinkTos,
                                                                  UserCredentials userCredentials);
 
@@ -328,7 +328,7 @@ public interface EventStore {
      *
      * @param stream         the stream to read from.
      * @param start          the starting point to read from.
-     * @param count          the count of events to read.
+     * @param maxCount       the maximum count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
@@ -338,9 +338,9 @@ public interface EventStore {
      */
     default CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
                                                                           int start,
-                                                                          int count,
+                                                                          int maxCount,
                                                                           boolean resolveLinkTos) {
-        return readStreamEventsBackward(stream, start, count, resolveLinkTos, null);
+        return readStreamEventsBackward(stream, start, maxCount, resolveLinkTos, null);
     }
 
     /**
@@ -349,7 +349,7 @@ public interface EventStore {
      *
      * @param stream          the stream to read from.
      * @param start           the starting point to read from.
-     * @param count           the count of events to read.
+     * @param maxCount        the maximum count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -359,7 +359,7 @@ public interface EventStore {
      */
     CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
                                                                   int start,
-                                                                  int count,
+                                                                  int maxCount,
                                                                   boolean resolveLinkTos,
                                                                   UserCredentials userCredentials);
 
@@ -367,7 +367,7 @@ public interface EventStore {
      * Reads all events in the node forward (e.g. beginning to end) asynchronously using default user credentials.
      *
      * @param position       the position to start reading from.
-     * @param maxCount       the maximum count to read.
+     * @param maxCount       the maximum count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
@@ -385,7 +385,7 @@ public interface EventStore {
      * Reads all events in the node forward (e.g. beginning to end) asynchronously.
      *
      * @param position        the position to start reading from.
-     * @param maxCount        the maximum count to read.
+     * @param maxCount        the maximum count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -402,7 +402,7 @@ public interface EventStore {
      * Reads all events in the node backwards (e.g. end to beginning) asynchronously using default user credentials.
      *
      * @param position       the position to start reading from.
-     * @param maxCount       the maximum count to read.
+     * @param maxCount       the maximum count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
@@ -420,7 +420,7 @@ public interface EventStore {
      * Reads all events in the node backwards (e.g. end to beginning) asynchronously.
      *
      * @param position        the position to start reading from.
-     * @param maxCount        the maximum count to read.
+     * @param maxCount        the maximum count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
