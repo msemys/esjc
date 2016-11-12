@@ -286,7 +286,7 @@ public interface EventStore {
      * specified start position asynchronously using default user credentials.
      *
      * @param stream         the name of the stream to read from.
-     * @param start          the starting point to read from.
+     * @param eventNumber    the event number (inclusive) to read from.
      * @param maxCount       the maximum count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -296,10 +296,10 @@ public interface EventStore {
      * @see #readStreamEventsForward(String, int, int, boolean, UserCredentials)
      */
     default CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
-                                                                         int start,
+                                                                         int eventNumber,
                                                                          int maxCount,
                                                                          boolean resolveLinkTos) {
-        return readStreamEventsForward(stream, start, maxCount, resolveLinkTos, null);
+        return readStreamEventsForward(stream, eventNumber, maxCount, resolveLinkTos, null);
     }
 
     /**
@@ -307,7 +307,7 @@ public interface EventStore {
      * specified start position asynchronously.
      *
      * @param stream          the name of the stream to read from.
-     * @param start           the starting point to read from.
+     * @param eventNumber     the event number (inclusive) to read from.
      * @param maxCount        the maximum count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
@@ -317,7 +317,7 @@ public interface EventStore {
      * on exceptional completion.
      */
     CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
-                                                                 int start,
+                                                                 int eventNumber,
                                                                  int maxCount,
                                                                  boolean resolveLinkTos,
                                                                  UserCredentials userCredentials);
@@ -327,7 +327,7 @@ public interface EventStore {
      * specified start position asynchronously using default user credentials.
      *
      * @param stream         the name of the stream to read from.
-     * @param start          the starting point to read from.
+     * @param eventNumber    the event number (inclusive) to read from.
      * @param maxCount       the maximum count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -337,10 +337,10 @@ public interface EventStore {
      * @see #readStreamEventsBackward(String, int, int, boolean, UserCredentials)
      */
     default CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
-                                                                          int start,
+                                                                          int eventNumber,
                                                                           int maxCount,
                                                                           boolean resolveLinkTos) {
-        return readStreamEventsBackward(stream, start, maxCount, resolveLinkTos, null);
+        return readStreamEventsBackward(stream, eventNumber, maxCount, resolveLinkTos, null);
     }
 
     /**
@@ -348,7 +348,7 @@ public interface EventStore {
      * specified start position asynchronously.
      *
      * @param stream          the name of the stream to read from.
-     * @param start           the starting point to read from.
+     * @param eventNumber     the event number (inclusive) to read from.
      * @param maxCount        the maximum count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
@@ -358,7 +358,7 @@ public interface EventStore {
      * on exceptional completion.
      */
     CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
-                                                                  int start,
+                                                                  int eventNumber,
                                                                   int maxCount,
                                                                   boolean resolveLinkTos,
                                                                   UserCredentials userCredentials);
@@ -437,31 +437,31 @@ public interface EventStore {
      * Iterates over events in a stream from the specified start position to the end of stream using default user credentials.
      *
      * @param stream         the name of the stream to iterate.
-     * @param start          the starting point to iterate from.
+     * @param eventNumber    the event number (inclusive) to iterate from.
      * @param batchSize      the number of events to return per batch.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the stream
      * @see #iterateStreamEventsForward(String, int, int, boolean, UserCredentials)
      */
     default Iterator<ResolvedEvent> iterateStreamEventsForward(String stream,
-                                                               int start,
+                                                               int eventNumber,
                                                                int batchSize,
                                                                boolean resolveLinkTos) {
-        return iterateStreamEventsForward(stream, start, batchSize, resolveLinkTos, null);
+        return iterateStreamEventsForward(stream, eventNumber, batchSize, resolveLinkTos, null);
     }
 
     /**
      * Iterates over events in a stream from the specified start position to the end of stream.
      *
      * @param stream          the name of the stream to iterate.
-     * @param start           the starting point to iterate from.
+     * @param eventNumber     the event number (inclusive) to iterate from.
      * @param batchSize       the number of events to return per batch.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return an iterator over the events in the stream
      */
     Iterator<ResolvedEvent> iterateStreamEventsForward(String stream,
-                                                       int start,
+                                                       int eventNumber,
                                                        int batchSize,
                                                        boolean resolveLinkTos,
                                                        UserCredentials userCredentials);
@@ -470,31 +470,31 @@ public interface EventStore {
      * Iterates over events in a stream backwards from the specified start position to the beginning of stream using default user credentials.
      *
      * @param stream         the name of the stream to iterate.
-     * @param start          the starting point to iterate from.
+     * @param eventNumber    the event number (inclusive) to iterate from.
      * @param batchSize      the number of events to return per batch.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the stream
      * @see #iterateStreamEventsBackward(String, int, int, boolean, UserCredentials)
      */
     default Iterator<ResolvedEvent> iterateStreamEventsBackward(String stream,
-                                                                int start,
+                                                                int eventNumber,
                                                                 int batchSize,
                                                                 boolean resolveLinkTos) {
-        return iterateStreamEventsBackward(stream, start, batchSize, resolveLinkTos, null);
+        return iterateStreamEventsBackward(stream, eventNumber, batchSize, resolveLinkTos, null);
     }
 
     /**
      * Iterates over events in a stream backwards from the specified start position to the beginning of stream.
      *
      * @param stream          the name of the stream to iterate.
-     * @param start           the starting point to iterate from.
+     * @param eventNumber     the event number (inclusive) to iterate from.
      * @param batchSize       the number of events to return per batch.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return an iterator over the events in the stream
      */
     Iterator<ResolvedEvent> iterateStreamEventsBackward(String stream,
-                                                        int start,
+                                                        int eventNumber,
                                                         int batchSize,
                                                         boolean resolveLinkTos,
                                                         UserCredentials userCredentials);
