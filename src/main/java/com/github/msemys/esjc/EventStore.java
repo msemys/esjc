@@ -629,7 +629,7 @@ public interface EventStore {
 
     /**
      * Subscribes to a stream from the specified event number (exclusive) asynchronously using default user credentials.
-     * Existing events from {@code fromEventNumberExclusive} onwards are read from the stream and presented to the user
+     * Existing events from {@code eventNumber} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
      * switched to push new events as they are written.
@@ -638,28 +638,28 @@ public interface EventStore {
      * use the event number of the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code fromEventNumberExclusive} will result in missing
+     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code eventNumber} will result in missing
      * the first event in the stream.
      * </p>
      *
-     * @param stream                   the name of the stream to subscribe to.
-     * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
-     * @param settings                 subscription settings.
-     * @param listener                 subscription listener.
+     * @param stream      the name of the stream to subscribe to.
+     * @param eventNumber the event number (exclusive) from which to start (use {@code null} to receive all events).
+     * @param settings    subscription settings.
+     * @param listener    subscription listener.
      * @return catch-up subscription
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     default CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                      Integer fromEventNumberExclusive,
+                                                      Integer eventNumber,
                                                       CatchUpSubscriptionSettings settings,
                                                       CatchUpSubscriptionListener listener) {
-        return subscribeToStreamFrom(stream, fromEventNumberExclusive, settings, listener, null);
+        return subscribeToStreamFrom(stream, eventNumber, settings, listener, null);
     }
 
     /**
      * Subscribes to a stream from the specified event number (exclusive) asynchronously
      * using default catch-up subscription settings and default user credentials.
-     * Existing events from {@code fromEventNumberExclusive} onwards are read from the stream and presented to the user
+     * Existing events from {@code eventNumber} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
      * switched to push new events as they are written.
@@ -668,25 +668,25 @@ public interface EventStore {
      * use the event number of the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code fromEventNumberExclusive} will result in missing
+     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code eventNumber} will result in missing
      * the first event in the stream.
      * </p>
      *
-     * @param stream                   the name of the stream to subscribe to.
-     * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
-     * @param listener                 subscription listener.
+     * @param stream      the name of the stream to subscribe to.
+     * @param eventNumber the event number (exclusive) from which to start (use {@code null} to receive all events).
+     * @param listener    subscription listener.
      * @return catch-up subscription
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     default CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                      Integer fromEventNumberExclusive,
+                                                      Integer eventNumber,
                                                       CatchUpSubscriptionListener listener) {
-        return subscribeToStreamFrom(stream, fromEventNumberExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, null);
+        return subscribeToStreamFrom(stream, eventNumber, CatchUpSubscriptionSettings.DEFAULT, listener, null);
     }
 
     /**
      * Subscribes to a stream from the specified event number (exclusive) asynchronously using default catch-up subscription settings.
-     * Existing events from {@code fromEventNumberExclusive} onwards are read from the stream and presented to the user
+     * Existing events from {@code eventNumber} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
      * switched to push new events as they are written.
@@ -695,27 +695,27 @@ public interface EventStore {
      * use the event number of the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code fromEventNumberExclusive} will result in missing
+     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code eventNumber} will result in missing
      * the first event in the stream.
      * </p>
      *
-     * @param stream                   the name of the stream to subscribe to.
-     * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
-     * @param listener                 subscription listener.
-     * @param userCredentials          user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @param stream          the name of the stream to subscribe to.
+     * @param eventNumber     the event number (exclusive) from which to start (use {@code null} to receive all events).
+     * @param listener        subscription listener.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return catch-up subscription
      * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     default CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                      Integer fromEventNumberExclusive,
+                                                      Integer eventNumber,
                                                       CatchUpSubscriptionListener listener,
                                                       UserCredentials userCredentials) {
-        return subscribeToStreamFrom(stream, fromEventNumberExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
+        return subscribeToStreamFrom(stream, eventNumber, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
     }
 
     /**
      * Subscribes to a stream from the specified event number (exclusive) asynchronously.
-     * Existing events from {@code fromEventNumberExclusive} onwards are read from the stream and presented to the user
+     * Existing events from {@code eventNumber} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
      * switched to push new events as they are written.
@@ -724,19 +724,19 @@ public interface EventStore {
      * use the event number of the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code fromEventNumberExclusive} will result in missing
+     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code eventNumber} will result in missing
      * the first event in the stream.
      * </p>
      *
-     * @param stream                   the name of the stream to subscribe to.
-     * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
-     * @param settings                 subscription settings.
-     * @param listener                 subscription listener.
-     * @param userCredentials          user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @param stream          the name of the stream to subscribe to.
+     * @param eventNumber     the event number (exclusive) from which to start (use {@code null} to receive all events).
+     * @param settings        subscription settings.
+     * @param listener        subscription listener.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return catch-up subscription
      */
     CatchUpSubscription subscribeToStreamFrom(String stream,
-                                              Integer fromEventNumberExclusive,
+                                              Integer eventNumber,
                                               CatchUpSubscriptionSettings settings,
                                               CatchUpSubscriptionListener listener,
                                               UserCredentials userCredentials);
@@ -744,7 +744,7 @@ public interface EventStore {
     /**
      * Subscribes to the $all stream from the specified event position (exclusive) asynchronously using
      * default catch-up subscription settings and default user credentials.
-     * Existing events from {@code fromPositionExclusive} onwards are read from the stream and presented to the user
+     * Existing events from {@code position} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
      * switched to push new events as they are written.
@@ -753,22 +753,22 @@ public interface EventStore {
      * use the position representing the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link Position#START} for {@code fromPositionExclusive} will result in missing
+     * <u>NOTE</u>: using {@link Position#START} for {@code position} will result in missing
      * the first event in the stream.
      * </p>
      *
-     * @param fromPositionExclusive the position (exclusive) from which to start (use {@code null} to receive all events).
-     * @param listener              subscription listener.
+     * @param position the position (exclusive) from which to start (use {@code null} to receive all events).
+     * @param listener subscription listener.
      * @return catch-up subscription
      * @see #subscribeToAllFrom(Position, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
-    default CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive, CatchUpSubscriptionListener listener) {
-        return subscribeToAllFrom(fromPositionExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, null);
+    default CatchUpSubscription subscribeToAllFrom(Position position, CatchUpSubscriptionListener listener) {
+        return subscribeToAllFrom(position, CatchUpSubscriptionSettings.DEFAULT, listener, null);
     }
 
     /**
      * Subscribes to the $all stream from the specified event position (exclusive) asynchronously using default user credentials.
-     * Existing events from {@code fromPositionExclusive} onwards are read from the stream and presented to the user
+     * Existing events from {@code position} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
      * switched to push new events as they are written.
@@ -777,26 +777,26 @@ public interface EventStore {
      * use the position representing the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link Position#START} for {@code fromPositionExclusive} will result in missing
+     * <u>NOTE</u>: using {@link Position#START} for {@code position} will result in missing
      * the first event in the stream.
      * </p>
      *
-     * @param fromPositionExclusive the position (exclusive) from which to start (use {@code null} to receive all events).
-     * @param settings              subscription settings.
-     * @param listener              subscription listener.
+     * @param position the position (exclusive) from which to start (use {@code null} to receive all events).
+     * @param settings subscription settings.
+     * @param listener subscription listener.
      * @return catch-up subscription
      * @see #subscribeToAllFrom(Position, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
-    default CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+    default CatchUpSubscription subscribeToAllFrom(Position position,
                                                    CatchUpSubscriptionSettings settings,
                                                    CatchUpSubscriptionListener listener) {
-        return subscribeToAllFrom(fromPositionExclusive, settings, listener, null);
+        return subscribeToAllFrom(position, settings, listener, null);
     }
 
     /**
      * Subscribes to the $all stream from the specified event position (exclusive) asynchronously
      * using default catch-up subscription settings.
-     * Existing events from {@code fromPositionExclusive} onwards are read from the stream and presented to the user
+     * Existing events from {@code position} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
      * switched to push new events as they are written.
@@ -805,25 +805,25 @@ public interface EventStore {
      * use the position representing the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link Position#START} for {@code fromPositionExclusive} will result in missing
+     * <u>NOTE</u>: using {@link Position#START} for {@code position} will result in missing
      * the first event in the stream.
      * </p>
      *
-     * @param fromPositionExclusive the position (exclusive) from which to start (use {@code null} to receive all events).
-     * @param listener              subscription listener.
-     * @param userCredentials       user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @param position        the position (exclusive) from which to start (use {@code null} to receive all events).
+     * @param listener        subscription listener.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return catch-up subscription
      * @see #subscribeToAllFrom(Position, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
-    default CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+    default CatchUpSubscription subscribeToAllFrom(Position position,
                                                    CatchUpSubscriptionListener listener,
                                                    UserCredentials userCredentials) {
-        return subscribeToAllFrom(fromPositionExclusive, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
+        return subscribeToAllFrom(position, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
     }
 
     /**
      * Subscribes to the $all stream from the specified event position (exclusive) asynchronously.
-     * Existing events from {@code fromPositionExclusive} onwards are read from the stream and presented to the user
+     * Existing events from {@code position} onwards are read from the stream and presented to the user
      * by invoking subscription listener {@code .onEvent()} method as if they had been pushed.
      * Once the end of the stream is read, the subscription is transparently (to the user)
      * switched to push new events as they are written.
@@ -832,17 +832,17 @@ public interface EventStore {
      * use the position representing the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link Position#START} for {@code fromPositionExclusive} will result in missing
+     * <u>NOTE</u>: using {@link Position#START} for {@code position} will result in missing
      * the first event in the stream.
      * </p>
      *
-     * @param fromPositionExclusive the position (exclusive) from which to start (use {@code null} to receive all events).
-     * @param settings              subscription settings.
-     * @param listener              subscription listener.
-     * @param userCredentials       user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @param position        the position (exclusive) from which to start (use {@code null} to receive all events).
+     * @param settings        subscription settings.
+     * @param listener        subscription listener.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return catch-up subscription
      */
-    CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+    CatchUpSubscription subscribeToAllFrom(Position position,
                                            CatchUpSubscriptionSettings settings,
                                            CatchUpSubscriptionListener listener,
                                            UserCredentials userCredentials);

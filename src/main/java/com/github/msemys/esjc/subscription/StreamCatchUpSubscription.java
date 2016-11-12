@@ -15,7 +15,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
 
     public StreamCatchUpSubscription(EventStore eventstore,
                                      String streamId,
-                                     Integer fromEventNumberExclusive,
+                                     Integer eventNumber,
                                      boolean resolveLinkTos,
                                      CatchUpSubscriptionListener listener,
                                      UserCredentials userCredentials,
@@ -24,8 +24,8 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
                                      Executor executor) {
         super(eventstore, streamId, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, executor);
         checkArgument(!isNullOrEmpty(streamId), "streamId is null or empty");
-        lastProcessedEventNumber = (fromEventNumberExclusive == null) ? StreamPosition.END : fromEventNumberExclusive;
-        nextReadEventNumber = (fromEventNumberExclusive == null) ? StreamPosition.START : fromEventNumberExclusive;
+        lastProcessedEventNumber = (eventNumber == null) ? StreamPosition.END : eventNumber;
+        nextReadEventNumber = (eventNumber == null) ? StreamPosition.START : eventNumber;
     }
 
     @Override

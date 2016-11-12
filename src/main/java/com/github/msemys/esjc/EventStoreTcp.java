@@ -348,7 +348,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                     Integer fromEventNumberExclusive,
+                                                     Integer eventNumber,
                                                      CatchUpSubscriptionSettings settings,
                                                      CatchUpSubscriptionListener listener,
                                                      UserCredentials userCredentials) {
@@ -357,7 +357,7 @@ public class EventStoreTcp implements EventStore {
         checkNotNull(settings, "settings is null");
 
         CatchUpSubscription subscription = new StreamCatchUpSubscription(this,
-            stream, fromEventNumberExclusive, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
+            stream, eventNumber, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
 
         subscription.start();
 
@@ -365,7 +365,7 @@ public class EventStoreTcp implements EventStore {
     }
 
     @Override
-    public CatchUpSubscription subscribeToAllFrom(Position fromPositionExclusive,
+    public CatchUpSubscription subscribeToAllFrom(Position position,
                                                   CatchUpSubscriptionSettings settings,
                                                   CatchUpSubscriptionListener listener,
                                                   UserCredentials userCredentials) {
@@ -373,7 +373,7 @@ public class EventStoreTcp implements EventStore {
         checkNotNull(settings, "settings is null");
 
         CatchUpSubscription subscription = new AllCatchUpSubscription(this,
-            fromPositionExclusive, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
+            position, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
 
         subscription.start();
 

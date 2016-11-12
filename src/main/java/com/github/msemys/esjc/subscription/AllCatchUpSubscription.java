@@ -12,7 +12,7 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
     private Position lastProcessedPosition;
 
     public AllCatchUpSubscription(EventStore eventstore,
-                                  Position fromPositionExclusive,
+                                  Position position,
                                   boolean resolveLinkTos,
                                   CatchUpSubscriptionListener listener,
                                   UserCredentials userCredentials,
@@ -20,8 +20,8 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
                                   int maxPushQueueSize,
                                   Executor executor) {
         super(eventstore, Strings.EMPTY, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, executor);
-        lastProcessedPosition = (fromPositionExclusive == null) ? Position.END : fromPositionExclusive;
-        nextReadPosition = (fromPositionExclusive == null) ? Position.START : fromPositionExclusive;
+        lastProcessedPosition = (position == null) ? Position.END : position;
+        nextReadPosition = (position == null) ? Position.START : position;
     }
 
     @Override
