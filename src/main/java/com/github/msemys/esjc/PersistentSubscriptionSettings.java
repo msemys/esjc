@@ -149,7 +149,7 @@ public class PersistentSubscriptionSettings {
         private SystemConsumerStrategy namedConsumerStrategy;
 
         /**
-         * Specifies whether or not to resolve link events automatically.
+         * Specifies whether or not to resolve link events automatically (by default, it is disabled).
          *
          * @param resolveLinkTos whether to resolve link events automatically.
          * @return the builder reference
@@ -178,7 +178,7 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets that the subscription should start from a specified location of the stream.
+         * Sets that the subscription should start from a specified location of the stream (by default, starts from {@link StreamPosition#END}).
          *
          * @param startFrom the event number from which to start.
          * @return the builder reference
@@ -189,7 +189,7 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Specifies whether or not to include further latency statistics.
+         * Specifies whether or not to include further latency statistics (by default, it is disabled).
          * <p><u>NOTE:</u> these statistics have a cost and should not be used in high performance situations.</p>
          *
          * @param timingStatistics {@code true} to include further latency statistics.
@@ -201,7 +201,8 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the timeout for a message (will be retried if an ack is not received within the specified duration).
+         * Sets the timeout for a message (by default, 30 seconds).
+         * Message will be retried if an ack is not received within the specified duration.
          *
          * @param messageTimeout the maximum wait time before it should timeout.
          * @return the builder reference
@@ -212,7 +213,7 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the size of the read batch used when paging in history for the subscription.
+         * Sets the size of the read batch used when paging in history for the subscription (by default, 20 messages).
          * <p>Size should not be too big.</p>
          *
          * @param readBatchSize read batch size.
@@ -224,7 +225,7 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the number of times a message should be retried before being considered a bad message.
+         * Sets the number of times a message should be retried before being considered a bad message (by default, 10 times).
          *
          * @param maxRetryCount the maximum retry count.
          * @return the builder reference
@@ -235,8 +236,9 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the size of the live buffer for the subscription. This is the buffer used to cache messages
-         * while sending messages as they happen. The count is in terms of the number of messages to cache.
+         * Sets the size of the live buffer for the subscription (by default, 500 messages).
+         * This is the buffer used to cache messages while sending messages as they happen.
+         * The count is in terms of the number of messages to cache.
          *
          * @param liveBufferSize number of messages in live buffer.
          * @return the builder reference
@@ -247,7 +249,7 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the size of the history buffer for the subscription.
+         * Sets the size of the history buffer for the subscription (by default, 500 messages).
          *
          * @param historyBufferSize number of messages in history buffer.
          * @return the builder reference
@@ -259,8 +261,8 @@ public class PersistentSubscriptionSettings {
 
         /**
          * Sets that the backend should try to checkpoint the subscription after some
-         * period of time. Note that if the increment of the checkpoint would be below
-         * the minimum the stream will not be checkpointed at this time.
+         * period of time (by default, 2 seconds). Note that if the increment of the checkpoint
+         * would be below the minimum the stream will not be checkpointed at this time.
          * <p>
          * It is important to tweak checkpointing for high performance streams as they cause
          * writes to happen back in the system. There is a trade off between the number of
@@ -280,8 +282,8 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the minimum checkpoint count. The subscription will not increment a checkpoint
-         * below this value eg if there is one item to checkpoint and it is set to five it
+         * Sets the minimum checkpoint count (by default, 10). The subscription will not increment
+         * a checkpoint below this value eg if there is one item to checkpoint and it is set to five it
          * will not checkpoint.
          * <p>
          * It is important to tweak checkpointing for high performance streams as they cause
@@ -302,10 +304,10 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the largest increment the subscription will checkpoint. If this value is
-         * reached the subscription will immediately write a checkpoint. As such this value
-         * should normally be reasonably large so as not to cause too many writes to occur in
-         * the subscription.
+         * Sets the largest increment the subscription will checkpoint (by default, 1000).
+         * If this value is reached the subscription will immediately write a checkpoint.
+         * As such this value should normally be reasonably large so as not to cause
+         * too many writes to occur in the subscription.
          * <p>
          * It is important to tweak checkpointing for high performance streams as they cause
          * writes to happen back in the system. There is a trade off between the number of
@@ -325,7 +327,7 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the maximum number of subscribers allowed to connect.
+         * Sets the maximum number of subscribers allowed to connect (by default, 0 subscribers).
          *
          * @param maxSubscriberCount the maximum number of subscribers.
          * @return the builder reference
@@ -336,7 +338,7 @@ public class PersistentSubscriptionSettings {
         }
 
         /**
-         * Sets the consumer strategy for distributing event to clients.
+         * Sets the consumer strategy for distributing event to clients (by default, {@link SystemConsumerStrategy#ROUND_ROBIN}).
          *
          * @param namedConsumerStrategy the consumer strategy name.
          * @return the builder reference

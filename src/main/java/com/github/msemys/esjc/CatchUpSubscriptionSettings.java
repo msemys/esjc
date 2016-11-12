@@ -63,7 +63,7 @@ public class CatchUpSubscriptionSettings {
         private Integer readBatchSize;
 
         /**
-         * Specifies the maximum number of events allowed to be cached when processing from live subscription.
+         * Specifies the maximum number of events allowed to be cached when processing from live subscription (by default, 10000 events).
          * Going above will drop the subscription.
          *
          * @param maxLiveQueueSize the maximum number of events allowed to be cached when processing from live subscription.
@@ -75,7 +75,7 @@ public class CatchUpSubscriptionSettings {
         }
 
         /**
-         * Specifies whether or not to resolve link events automatically.
+         * Specifies whether or not to resolve link events automatically (by default, it is disabled).
          *
          * @param resolveLinkTos whether to resolve link events automatically.
          * @return the builder reference
@@ -86,7 +86,7 @@ public class CatchUpSubscriptionSettings {
         }
 
         /**
-         * Sets the size of the read batch used when reading history.
+         * Sets the size of the read batch used when reading history (by default, 500 events).
          *
          * @param readBatchSize read batch size.
          * @return the builder reference
