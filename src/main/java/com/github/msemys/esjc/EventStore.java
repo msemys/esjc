@@ -1120,7 +1120,7 @@ public interface EventStore {
     default CompletableFuture<WriteResult> setStreamMetadata(String stream,
                                                              ExpectedVersion expectedMetastreamVersion,
                                                              StreamMetadata metadata) {
-        checkNotNull(metadata, "metadata");
+        checkNotNull(metadata, "metadata is null");
         return setStreamMetadata(stream, expectedMetastreamVersion, toBytes(metadata.toJson()), null);
     }
 
@@ -1142,7 +1142,7 @@ public interface EventStore {
                                                              ExpectedVersion expectedMetastreamVersion,
                                                              StreamMetadata metadata,
                                                              UserCredentials userCredentials) {
-        checkNotNull(metadata, "metadata");
+        checkNotNull(metadata, "metadata is null");
         return setStreamMetadata(stream, expectedMetastreamVersion, toBytes(metadata.toJson()), userCredentials);
     }
 

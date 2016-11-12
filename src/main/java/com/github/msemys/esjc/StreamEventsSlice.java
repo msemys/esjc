@@ -63,7 +63,7 @@ public class StreamEventsSlice {
                              int nextEventNumber,
                              int lastEventNumber,
                              boolean isEndOfStream) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         this.status = status;
         this.stream = stream;
         this.fromEventNumber = fromEventNumber;

@@ -23,7 +23,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
                                      int maxPushQueueSize,
                                      Executor executor) {
         super(eventstore, streamId, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, executor);
-        checkArgument(!isNullOrEmpty(streamId), "streamId");
+        checkArgument(!isNullOrEmpty(streamId), "streamId is null or empty");
         lastProcessedEventNumber = (fromEventNumberExclusive == null) ? StreamPosition.END : fromEventNumberExclusive;
         nextReadEventNumber = (fromEventNumberExclusive == null) ? StreamPosition.START : fromEventNumberExclusive;
     }

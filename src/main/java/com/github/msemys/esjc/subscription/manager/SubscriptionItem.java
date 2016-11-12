@@ -22,7 +22,7 @@ public class SubscriptionItem {
     public Instant lastUpdated;
 
     public SubscriptionItem(SubscriptionOperation operation, int maxRetries, Duration timeout) {
-        checkNotNull(operation, "operation");
+        checkNotNull(operation, "operation is null");
 
         this.operation = operation;
         this.maxRetries = maxRetries;

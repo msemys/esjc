@@ -38,7 +38,7 @@ public class StreamMetadataResult {
      * @param streamMetadata    user-specified stream metadata.
      */
     public StreamMetadataResult(String stream, boolean isStreamDeleted, int metastreamVersion, StreamMetadata streamMetadata) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         this.stream = stream;
         this.isStreamDeleted = isStreamDeleted;
         this.metastreamVersion = metastreamVersion;

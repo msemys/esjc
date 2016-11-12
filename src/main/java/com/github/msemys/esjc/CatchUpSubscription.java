@@ -63,11 +63,11 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                                   int readBatchSize,
                                   int maxPushQueueSize,
                                   Executor executor) {
-        checkNotNull(eventstore, "eventstore");
-        checkNotNull(listener, "listener");
-        checkNotNull(listener, "executor");
+        checkNotNull(eventstore, "eventstore is null");
+        checkNotNull(listener, "listener is null");
+        checkNotNull(listener, "executor is null");
         checkArgument(isPositive(readBatchSize), "readBatchSize should be positive");
-        checkArgument(readBatchSize < EventStoreTcp.MAX_READ_SIZE, "Read batch size should be less than %d. For larger reads you should page.", EventStoreTcp.MAX_READ_SIZE);
+        checkArgument(readBatchSize < EventStoreTcp.MAX_READ_SIZE, "readBatchSize size should be less than %d", EventStoreTcp.MAX_READ_SIZE);
         checkArgument(isPositive(maxPushQueueSize), "maxPushQueueSize should be positive");
 
         this.eventstore = eventstore;

@@ -29,8 +29,8 @@ public class StartPersistentSubscription implements Task {
                                        SubscriptionListener<PersistentSubscriptionChannel> listener,
                                        int maxRetries,
                                        Duration timeout) {
-        checkNotNull(result, "result");
-        checkNotNull(listener, "listener");
+        checkNotNull(result, "result is null");
+        checkNotNull(listener, "listener is null");
 
         this.result = result;
         this.subscriptionId = subscriptionId;

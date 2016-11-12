@@ -245,7 +245,7 @@ public class ClusterNodeSettings {
          */
         @Override
         public ClusterNodeSettings build() {
-            checkArgument(!isNullOrEmpty(super.dns), "dns is empty");
+            checkArgument(!isNullOrEmpty(super.dns), "dns is null or empty");
 
             if (super.externalGossipPort == null) {
                 super.externalGossipPort = 30778;

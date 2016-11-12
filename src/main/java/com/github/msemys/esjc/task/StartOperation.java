@@ -8,7 +8,7 @@ public class StartOperation implements Task {
     public final Operation operation;
 
     public StartOperation(Operation operation) {
-        checkNotNull(operation, "operation");
+        checkNotNull(operation, "operation is null");
         this.operation = operation;
     }
 }

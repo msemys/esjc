@@ -101,7 +101,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
 
     @Override
     public void notifyEventsProcessed(List<UUID> processedEvents) {
-        checkNotNull(processedEvents, "processedEvents");
+        checkNotNull(processedEvents, "processedEvents is null");
 
         PersistentSubscriptionAckEvents message = PersistentSubscriptionAckEvents.newBuilder()
             .setSubscriptionId(subscriptionId)
@@ -122,8 +122,8 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
 
     @Override
     public void notifyEventsFailed(List<UUID> processedEvents, PersistentSubscriptionNakEventAction action, String reason) {
-        checkNotNull(processedEvents, "processedEvents");
-        checkNotNull(reason, "reason");
+        checkNotNull(processedEvents, "processedEvents is null");
+        checkNotNull(reason, "reason is null");
 
         PersistentSubscriptionNakEvents message = PersistentSubscriptionNakEvents.newBuilder()
             .setSubscriptionId(subscriptionId)

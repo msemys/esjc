@@ -526,7 +526,7 @@ public class EventStoreBuilderTest {
             fail("should fail with 'IllegalArgumentException'");
         } catch (Exception e) {
             assertThat(e, instanceOf(IllegalArgumentException.class));
-            assertEquals("dns is empty", e.getMessage());
+            assertEquals("dns is null or empty", e.getMessage());
         }
     }
 }

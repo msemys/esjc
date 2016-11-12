@@ -29,7 +29,7 @@ public class SubscriptionManager {
     private final Settings settings;
 
     public SubscriptionManager(Settings settings) {
-        checkNotNull(settings, "settings");
+        checkNotNull(settings, "settings is null");
         this.settings = settings;
     }
 
@@ -62,7 +62,7 @@ public class SubscriptionManager {
     }
 
     public void checkTimeoutsAndRetry(Channel connection) {
-        checkNotNull(connection, "connection");
+        checkNotNull(connection, "connection is null");
 
         final ChannelId connectionId = ChannelId.of(connection);
 
@@ -133,7 +133,7 @@ public class SubscriptionManager {
     }
 
     public void startSubscription(SubscriptionItem item, Channel connection) {
-        checkNotNull(connection, "connection");
+        checkNotNull(connection, "connection is null");
 
         if (item.isSubscribed) {
             logger.debug("StartSubscription REMOVING due to already subscribed {}.", item);

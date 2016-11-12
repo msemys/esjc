@@ -35,8 +35,8 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
     private final Gson gson;
 
     public ClusterEndpointDiscoverer(ClusterNodeSettings settings, ScheduledExecutorService scheduler) {
-        checkNotNull(settings, "settings");
-        checkNotNull(scheduler, "scheduler");
+        checkNotNull(settings, "settings is null");
+        checkNotNull(scheduler, "scheduler is null");
 
         this.settings = settings;
         this.scheduler = scheduler;

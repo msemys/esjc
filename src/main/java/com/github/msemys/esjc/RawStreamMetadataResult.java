@@ -37,7 +37,7 @@ public class RawStreamMetadataResult {
      * @param streamMetadata    a byte array containing user-specified metadata.
      */
     public RawStreamMetadataResult(String stream, boolean isStreamDeleted, int metastreamVersion, byte[] streamMetadata) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         this.stream = stream;
         this.isStreamDeleted = isStreamDeleted;
         this.metastreamVersion = metastreamVersion;

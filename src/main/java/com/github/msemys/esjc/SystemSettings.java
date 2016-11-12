@@ -56,7 +56,7 @@ public class SystemSettings {
      * @return system settings
      */
     public static SystemSettings fromJson(String json) {
-        checkArgument(!isNullOrEmpty(json), "json");
+        checkArgument(!isNullOrEmpty(json), "json is null or empty");
         return fromJson(toBytes(json));
     }
 
@@ -67,7 +67,7 @@ public class SystemSettings {
      * @return system settings
      */
     public static SystemSettings fromJson(byte[] bytes) {
-        checkNotNull(bytes, "bytes");
+        checkNotNull(bytes, "bytes is null");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             return gson.fromJson(new JsonReader(reader), SystemSettings.class);
         } catch (IOException e) {

@@ -69,7 +69,7 @@ public class SingleNodeSettings {
          * @return single-node settings
          */
         public SingleNodeSettings build() {
-            checkNotNull(address, "address");
+            checkNotNull(address, "address is null");
             return new SingleNodeSettings(this);
         }
     }

@@ -13,7 +13,7 @@ public class SingleEndpointDiscoverer implements EndpointDiscoverer {
     private final CompletableFuture<NodeEndpoints> result;
 
     public SingleEndpointDiscoverer(SingleNodeSettings settings, boolean ssl) {
-        checkNotNull(settings, "settings");
+        checkNotNull(settings, "settings is null");
         result = CompletableFuture.completedFuture(new NodeEndpoints(
             ssl ? null : settings.address,
             ssl ? settings.address : null));

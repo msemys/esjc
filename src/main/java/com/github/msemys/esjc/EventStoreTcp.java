@@ -96,7 +96,7 @@ public class EventStoreTcp implements EventStore {
     private final Object mutex = new Object();
 
     protected EventStoreTcp(Settings settings) {
-        checkNotNull(settings, "settings");
+        checkNotNull(settings, "settings is null");
 
         bootstrap = new Bootstrap()
             .option(ChannelOption.SO_KEEPALIVE, settings.tcpSettings.keepAlive)
@@ -169,8 +169,8 @@ public class EventStoreTcp implements EventStore {
                                                         ExpectedVersion expectedVersion,
                                                         boolean hardDelete,
                                                         UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkNotNull(expectedVersion, "expectedVersion");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkNotNull(expectedVersion, "expectedVersion is null");
 
         CompletableFuture<DeleteResult> result = new CompletableFuture<>();
         enqueue(new DeleteStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, hardDelete, userCredentials));
@@ -182,9 +182,9 @@ public class EventStoreTcp implements EventStore {
                                                          ExpectedVersion expectedVersion,
                                                          Iterable<EventData> events,
                                                          UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkNotNull(expectedVersion, "expectedVersion");
-        checkNotNull(events, "events");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkNotNull(expectedVersion, "expectedVersion is null");
+        checkNotNull(events, "events is null");
 
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
         enqueue(new AppendToStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, events, userCredentials));
@@ -195,8 +195,8 @@ public class EventStoreTcp implements EventStore {
     public CompletableFuture<Transaction> startTransaction(String stream,
                                                            ExpectedVersion expectedVersion,
                                                            UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkNotNull(expectedVersion, "expectedVersion");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkNotNull(expectedVersion, "expectedVersion is null");
 
         CompletableFuture<Transaction> result = new CompletableFuture<>();
         enqueue(new StartTransactionOperation(result, settings.requireMaster, stream, expectedVersion.value, transactionManager, userCredentials));
@@ -213,8 +213,8 @@ public class EventStoreTcp implements EventStore {
                                                         int eventNumber,
                                                         boolean resolveLinkTos,
                                                         UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(eventNumber >= -1, "Event number out of range");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(eventNumber >= -1, "eventNumber out of range");
 
         CompletableFuture<EventReadResult> result = new CompletableFuture<>();
         enqueue(new ReadEventOperation(result, stream, eventNumber, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -227,10 +227,10 @@ public class EventStoreTcp implements EventStore {
                                                                         int count,
                                                                         boolean resolveLinkTos,
                                                                         UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(!isNegative(start), "start should not be negative.");
-        checkArgument(isPositive(count), "count should be positive.");
-        checkArgument(count < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(!isNegative(start), "start should not be negative");
+        checkArgument(isPositive(count), "count should be positive");
+        checkArgument(count < MAX_READ_SIZE, "count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadStreamEventsForwardOperation(result, stream, start, count, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -243,9 +243,9 @@ public class EventStoreTcp implements EventStore {
                                                                          int count,
                                                                          boolean resolveLinkTos,
                                                                          UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(isPositive(count), "count should be positive.");
-        checkArgument(count < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(isPositive(count), "count should be positive");
+        checkArgument(count < MAX_READ_SIZE, "count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadStreamEventsBackwardOperation(result, stream, start, count, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -257,8 +257,8 @@ public class EventStoreTcp implements EventStore {
                                                                   int maxCount,
                                                                   boolean resolveLinkTos,
                                                                   UserCredentials userCredentials) {
-        checkArgument(isPositive(maxCount), "count should be positive.");
-        checkArgument(maxCount < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(isPositive(maxCount), "count should be positive");
+        checkArgument(maxCount < MAX_READ_SIZE, "count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsForwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -270,8 +270,8 @@ public class EventStoreTcp implements EventStore {
                                                                    int maxCount,
                                                                    boolean resolveLinkTos,
                                                                    UserCredentials userCredentials) {
-        checkArgument(isPositive(maxCount), "count should be positive.");
-        checkArgument(maxCount < MAX_READ_SIZE, "Count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(isPositive(maxCount), "count should be positive");
+        checkArgument(maxCount < MAX_READ_SIZE, "count should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsBackwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -284,9 +284,9 @@ public class EventStoreTcp implements EventStore {
                                                               int batchSize,
                                                               boolean resolveLinkTos,
                                                               UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(isPositive(batchSize), "batchSize should be positive.");
-        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d.", MAX_READ_SIZE);
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(isPositive(batchSize), "batchSize should be positive");
+        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
         return new StreamEventsIterator(start, i -> readStreamEventsForward(stream, i, batchSize, resolveLinkTos, userCredentials));
     }
 
@@ -296,9 +296,9 @@ public class EventStoreTcp implements EventStore {
                                                                int batchSize,
                                                                boolean resolveLinkTos,
                                                                UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(isPositive(batchSize), "batchSize should be positive.");
-        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d.", MAX_READ_SIZE);
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(isPositive(batchSize), "batchSize should be positive");
+        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
         return new StreamEventsIterator(start, i -> readStreamEventsBackward(stream, i, batchSize, resolveLinkTos, userCredentials));
     }
 
@@ -307,8 +307,8 @@ public class EventStoreTcp implements EventStore {
                                                            int batchSize,
                                                            boolean resolveLinkTos,
                                                            UserCredentials userCredentials) {
-        checkArgument(isPositive(batchSize), "batchSize should be positive.");
-        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d.", MAX_READ_SIZE);
+        checkArgument(isPositive(batchSize), "batchSize should be positive");
+        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
         return new AllEventsIterator(position, p -> readAllEventsForward(p, batchSize, resolveLinkTos, userCredentials));
     }
 
@@ -317,8 +317,8 @@ public class EventStoreTcp implements EventStore {
                                                             int batchSize,
                                                             boolean resolveLinkTos,
                                                             UserCredentials userCredentials) {
-        checkArgument(isPositive(batchSize), "batchSize should be positive.");
-        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d.", MAX_READ_SIZE);
+        checkArgument(isPositive(batchSize), "batchSize should be positive");
+        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
         return new AllEventsIterator(position, p -> readAllEventsBackward(p, batchSize, resolveLinkTos, userCredentials));
     }
 
@@ -327,8 +327,8 @@ public class EventStoreTcp implements EventStore {
                                                              boolean resolveLinkTos,
                                                              VolatileSubscriptionListener listener,
                                                              UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkNotNull(listener, "listener");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkNotNull(listener, "listener is null");
 
         CompletableFuture<Subscription> result = new CompletableFuture<>();
         enqueue(new StartSubscription(result, stream, resolveLinkTos, userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
@@ -339,7 +339,7 @@ public class EventStoreTcp implements EventStore {
     public CompletableFuture<Subscription> subscribeToAll(boolean resolveLinkTos,
                                                           VolatileSubscriptionListener listener,
                                                           UserCredentials userCredentials) {
-        checkNotNull(listener, "listener");
+        checkNotNull(listener, "listener is null");
 
         CompletableFuture<Subscription> result = new CompletableFuture<>();
         enqueue(new StartSubscription(result, Strings.EMPTY, resolveLinkTos, userCredentials, listener, settings.maxOperationRetries, settings.operationTimeout));
@@ -352,9 +352,9 @@ public class EventStoreTcp implements EventStore {
                                                      CatchUpSubscriptionSettings settings,
                                                      CatchUpSubscriptionListener listener,
                                                      UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkNotNull(listener, "listener");
-        checkNotNull(settings, "settings");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkNotNull(listener, "listener is null");
+        checkNotNull(settings, "settings is null");
 
         CatchUpSubscription subscription = new StreamCatchUpSubscription(this,
             stream, fromEventNumberExclusive, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
@@ -369,8 +369,8 @@ public class EventStoreTcp implements EventStore {
                                                   CatchUpSubscriptionSettings settings,
                                                   CatchUpSubscriptionListener listener,
                                                   UserCredentials userCredentials) {
-        checkNotNull(listener, "listener");
-        checkNotNull(settings, "settings");
+        checkNotNull(listener, "listener is null");
+        checkNotNull(settings, "settings is null");
 
         CatchUpSubscription subscription = new AllCatchUpSubscription(this,
             fromPositionExclusive, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
@@ -387,9 +387,9 @@ public class EventStoreTcp implements EventStore {
                                                                            UserCredentials userCredentials,
                                                                            int bufferSize,
                                                                            boolean autoAck) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(!isNullOrEmpty(groupName), "groupName");
-        checkNotNull(listener, "listener");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(!isNullOrEmpty(groupName), "groupName is null or empty");
+        checkNotNull(listener, "listener is null");
         checkArgument(isPositive(bufferSize), "bufferSize should be positive");
 
         PersistentSubscription subscription = new PersistentSubscription(groupName, stream, listener, userCredentials, bufferSize, autoAck, executor()) {
@@ -414,9 +414,9 @@ public class EventStoreTcp implements EventStore {
                                                                                               String groupName,
                                                                                               PersistentSubscriptionSettings settings,
                                                                                               UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(!isNullOrEmpty(groupName), "groupName");
-        checkNotNull(settings, "settings");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(!isNullOrEmpty(groupName), "groupName is null or empty");
+        checkNotNull(settings, "settings is null");
 
         CompletableFuture<PersistentSubscriptionCreateResult> result = new CompletableFuture<>();
         enqueue(new CreatePersistentSubscriptionOperation(result, stream, groupName, settings, userCredentials));
@@ -428,9 +428,9 @@ public class EventStoreTcp implements EventStore {
                                                                                               String groupName,
                                                                                               PersistentSubscriptionSettings settings,
                                                                                               UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(!isNullOrEmpty(groupName), "groupName");
-        checkNotNull(settings, "settings");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(!isNullOrEmpty(groupName), "groupName is null or empty");
+        checkNotNull(settings, "settings is null");
 
         CompletableFuture<PersistentSubscriptionUpdateResult> result = new CompletableFuture<>();
         enqueue(new UpdatePersistentSubscriptionOperation(result, stream, groupName, settings, userCredentials));
@@ -441,8 +441,8 @@ public class EventStoreTcp implements EventStore {
     public CompletableFuture<PersistentSubscriptionDeleteResult> deletePersistentSubscription(String stream,
                                                                                               String groupName,
                                                                                               UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(!isNullOrEmpty(groupName), "groupName");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(!isNullOrEmpty(groupName), "groupName is null or empty");
 
         CompletableFuture<PersistentSubscriptionDeleteResult> result = new CompletableFuture<>();
         enqueue(new DeletePersistentSubscriptionOperation(result, stream, groupName, userCredentials));
@@ -454,9 +454,9 @@ public class EventStoreTcp implements EventStore {
                                                             ExpectedVersion expectedMetastreamVersion,
                                                             byte[] metadata,
                                                             UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
-        checkArgument(!isMetastream(stream), "Setting metadata for metastream '%s' is not supported.", stream);
-        checkNotNull(expectedMetastreamVersion, "expectedMetastreamVersion");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(!isMetastream(stream), "Setting metadata for metastream '%s' is not supported", stream);
+        checkNotNull(expectedMetastreamVersion, "expectedMetastreamVersion is null");
 
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
 
@@ -494,7 +494,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CompletableFuture<RawStreamMetadataResult> getStreamMetadataAsRawBytes(String stream, UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
 
         CompletableFuture<RawStreamMetadataResult> result = new CompletableFuture<>();
 
@@ -531,7 +531,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings, UserCredentials userCredentials) {
-        checkNotNull(settings, "settings");
+        checkNotNull(settings, "settings is null");
         return appendToStream(SystemStreams.SETTINGS_STREAM,
             ExpectedVersion.any(),
             singletonList(EventData.newBuilder()
@@ -653,7 +653,7 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void gotoConnectedPhase() {
-        checkNotNull(connection, "connection");
+        checkNotNull(connection, "connection is null");
         connectingPhase = ConnectingPhase.CONNECTED;
         reconnectionInfo.reset();
         fireEvent(Events.clientConnected((InetSocketAddress) connection.remoteAddress()));
@@ -917,8 +917,8 @@ public class EventStoreTcp implements EventStore {
 
         @Override
         public CompletableFuture<Void> write(Transaction transaction, Iterable<EventData> events, UserCredentials userCredentials) {
-            checkNotNull(transaction, "transaction");
-            checkNotNull(events, "events");
+            checkNotNull(transaction, "transaction is null");
+            checkNotNull(events, "events is null");
 
             CompletableFuture<Void> result = new CompletableFuture<>();
             enqueue(new TransactionalWriteOperation(result, settings.requireMaster, transaction.transactionId, events, userCredentials));
@@ -927,7 +927,7 @@ public class EventStoreTcp implements EventStore {
 
         @Override
         public CompletableFuture<WriteResult> commit(Transaction transaction, UserCredentials userCredentials) {
-            checkNotNull(transaction, "transaction");
+            checkNotNull(transaction, "transaction is null");
 
             CompletableFuture<WriteResult> result = new CompletableFuture<>();
             enqueue(new CommitTransactionOperation(result, settings.requireMaster, transaction.transactionId, userCredentials));

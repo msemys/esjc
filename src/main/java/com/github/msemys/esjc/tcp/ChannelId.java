@@ -11,7 +11,7 @@ public class ChannelId implements Comparable<CharSequence>, CharSequence, Serial
     private final String value;
 
     private ChannelId(Channel channel) {
-        checkNotNull(channel, "channel");
+        checkNotNull(channel, "channel is null");
         value = String.format("0x%08x", (int) channel.hashCode());
     }
 

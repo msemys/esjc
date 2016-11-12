@@ -416,7 +416,7 @@ public class PersistentSubscriptionSettings {
             if (maxSubscriberCount == null) {
                 maxSubscriberCount = 0;
             } else {
-                checkArgument(!isNegative(maxSubscriberCount), "maxSubscriberCount should not be negative.");
+                checkArgument(!isNegative(maxSubscriberCount), "maxSubscriberCount should not be negative");
             }
 
             if (namedConsumerStrategy == null) {

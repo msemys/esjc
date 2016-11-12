@@ -34,7 +34,7 @@ public class Transaction implements AutoCloseable {
      * @param transactionManager transaction manager, that performs commit and write operations.
      */
     public Transaction(long transactionId, UserCredentials userCredentials, TransactionManager transactionManager) {
-        checkArgument(!isNegative(transactionId), "transactionId should not be negative.");
+        checkArgument(!isNegative(transactionId), "transactionId should not be negative");
 
         this.transactionId = transactionId;
         this.userCredentials = userCredentials;

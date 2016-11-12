@@ -198,7 +198,7 @@ public class EventData {
          * @return the builder reference
          */
         public Builder linkTo(int eventNumber, String stream) {
-            checkArgument(!isNullOrEmpty(stream), "stream");
+            checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
             return type(SystemEventType.LINK_TO.value).data(eventNumber + "@" + stream);
         }
 
@@ -213,7 +213,7 @@ public class EventData {
                 eventId = UUID.randomUUID();
             }
 
-            checkNotNull(type, "type");
+            checkNotNull(type, "type is null");
 
             if (data == null) {
                 data = EmptyArrays.EMPTY_BYTES;

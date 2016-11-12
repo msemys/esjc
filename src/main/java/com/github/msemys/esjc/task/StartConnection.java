@@ -11,8 +11,8 @@ public class StartConnection implements Task {
     public final EndpointDiscoverer endpointDiscoverer;
 
     public StartConnection(CompletableFuture<Void> result, EndpointDiscoverer endpointDiscoverer) {
-        checkNotNull(result, "result");
-        checkNotNull(endpointDiscoverer, "endpointDiscoverer");
+        checkNotNull(result, "result is null");
+        checkNotNull(endpointDiscoverer, "endpointDiscoverer is null");
 
         this.result = result;
         this.endpointDiscoverer = endpointDiscoverer;

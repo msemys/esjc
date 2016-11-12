@@ -39,7 +39,7 @@ public class EventReadResult {
      * @param event       the event read.
      */
     public EventReadResult(EventReadStatus status, String stream, int eventNumber, ResolvedIndexedEvent event) {
-        checkArgument(!isNullOrEmpty(stream), "stream");
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         this.status = status;
         this.stream = stream;
         this.eventNumber = eventNumber;

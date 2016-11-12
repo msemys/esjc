@@ -148,7 +148,7 @@ public class StreamMetadata {
      * @return stream metadata
      */
     public static StreamMetadata fromJson(String json) {
-        checkArgument(!isNullOrEmpty(json), "json");
+        checkArgument(!isNullOrEmpty(json), "json is null or empty");
         return fromJson(toBytes(json));
     }
 
@@ -159,7 +159,7 @@ public class StreamMetadata {
      * @return stream metadata
      */
     public static StreamMetadata fromJson(byte[] bytes) {
-        checkNotNull(bytes, "bytes");
+        checkNotNull(bytes, "bytes is null");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             return gson.fromJson(new JsonReader(reader), StreamMetadata.class);
         } catch (IOException e) {
@@ -453,7 +453,7 @@ public class StreamMetadata {
         public final Object value;
 
         private Property(String name, Object value) {
-            checkArgument(!isNullOrEmpty(name), "name");
+            checkArgument(!isNullOrEmpty(name), "name is null or empty");
             this.name = name;
             this.value = value;
         }

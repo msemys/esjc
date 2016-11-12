@@ -56,11 +56,11 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
                                             SubscriptionListener<T> listener,
                                             Supplier<Channel> connectionSupplier,
                                             Executor executor) {
-        checkNotNull(result, "result");
-        checkNotNull(subscribeCommand, "subscribeCommand");
-        checkNotNull(listener, "listener");
-        checkNotNull(connectionSupplier, "connectionSupplier");
-        checkNotNull(executor, "executor");
+        checkNotNull(result, "result is null");
+        checkNotNull(subscribeCommand, "subscribeCommand is null");
+        checkNotNull(listener, "listener is null");
+        checkNotNull(connectionSupplier, "connectionSupplier is null");
+        checkNotNull(executor, "executor is null");
 
         this.result = result;
         this.subscribeCommand = subscribeCommand;
@@ -80,7 +80,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
 
     @Override
     public boolean subscribe(UUID correlationId, Channel connection) {
-        checkNotNull(connection, "connection");
+        checkNotNull(connection, "connection is null");
 
         if (subscription != null || unsubscribed.get()) {
             return false;
