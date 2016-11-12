@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
+import static com.github.msemys.esjc.util.Preconditions.checkState;
 import static java.util.Collections.singletonList;
 
 /**
@@ -51,14 +52,11 @@ public class Transaction implements AutoCloseable {
      * on exceptional completion.
      */
     public CompletableFuture<WriteResult> commit() {
-        if (isRolledBack) {
-            throw new IllegalStateException("Cannot commit a rolled-back transaction");
-        } else if (isCommitted) {
-            throw new IllegalStateException("Transaction is already committed");
-        } else {
-            isCommitted = true;
-            return transactionManager.commit(this, userCredentials);
-        }
+        checkState(!isRolledBack, "Cannot commit a rolled-back transaction");
+        checkState(!isCommitted, "Transaction is already committed");
+
+        isCommitted = true;
+        return transactionManager.commit(this, userCredentials);
     }
 
     /**
@@ -86,24 +84,19 @@ public class Transaction implements AutoCloseable {
      * returns {@code null}.
      */
     public CompletableFuture<Void> write(Iterable<EventData> events) {
-        if (isRolledBack) {
-            throw new IllegalStateException("Cannot write to a rolled-back transaction");
-        } else if (isCommitted) {
-            throw new IllegalStateException("Transaction is already committed");
-        } else {
-            return transactionManager.write(this, events);
-        }
+        checkState(!isRolledBack, "Cannot write to a rolled-back transaction");
+        checkState(!isCommitted, "Transaction is already committed");
+
+        return transactionManager.write(this, events);
     }
 
     /**
      * Rollbacks this transaction.
      */
     public void rollback() {
-        if (isCommitted) {
-            throw new IllegalStateException("Transaction is already committed");
-        } else {
-            isRolledBack = true;
-        }
+        checkState(!isCommitted, "Transaction is already committed");
+
+        isRolledBack = true;
     }
 
     /**
