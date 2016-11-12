@@ -65,7 +65,7 @@ import static java.time.Instant.now;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class EventStoreImpl implements EventStore {
+public class EventStoreTcp implements EventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStore.class);
 
     private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;
@@ -95,7 +95,7 @@ public class EventStoreImpl implements EventStore {
 
     private final Object mutex = new Object();
 
-    protected EventStoreImpl(Settings settings) {
+    protected EventStoreTcp(Settings settings) {
         checkNotNull(settings, "settings");
 
         bootstrap = new Bootstrap()
@@ -134,11 +134,11 @@ public class EventStoreImpl implements EventStore {
                     pipeline.addLast("idle-state-handler", new IdleStateHandler(0, settings.heartbeatInterval.toMillis(), 0, MILLISECONDS));
                     pipeline.addLast("heartbeat-handler", new HeartbeatHandler(settings.heartbeatTimeout));
                     pipeline.addLast("authentication-handler", new AuthenticationHandler(settings.userCredentials, settings.operationTimeout)
-                        .whenComplete(EventStoreImpl.this::onAuthenticationCompleted));
+                        .whenComplete(EventStoreTcp.this::onAuthenticationCompleted));
                     pipeline.addLast("operation-handler", new OperationHandler(operationManager, subscriptionManager)
-                        .whenBadRequest(EventStoreImpl.this::onBadRequest)
-                        .whenChannelError(EventStoreImpl.this::onChannelError)
-                        .whenReconnect(EventStoreImpl.this::onReconnect));
+                        .whenBadRequest(EventStoreTcp.this::onBadRequest)
+                        .whenChannelError(EventStoreTcp.this::onChannelError)
+                        .whenReconnect(EventStoreTcp.this::onReconnect));
                 }
             });
 

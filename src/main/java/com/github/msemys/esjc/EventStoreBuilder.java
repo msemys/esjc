@@ -441,7 +441,7 @@ public class EventStoreBuilder {
             settingsBuilder.tcpSettings(tcpSettingsBuilder.build());
         }
 
-        return new EventStoreImpl(settingsBuilder.build());
+        return new EventStoreTcp(settingsBuilder.build());
     }
 
 }
