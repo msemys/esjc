@@ -199,7 +199,7 @@ public interface EventStore {
     /**
      * Starts a transaction in the Event Store on a given stream asynchronously using default user credentials.
      *
-     * @param stream          the stream to start a transaction on.
+     * @param stream          the name of the stream to start a transaction on.
      * @param expectedVersion the expected version of the stream at the time of starting the transaction.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link WrongExpectedVersionException},
@@ -215,7 +215,7 @@ public interface EventStore {
     /**
      * Starts a transaction in the Event Store on a given stream asynchronously.
      *
-     * @param stream          the stream to start a transaction on.
+     * @param stream          the name of the stream to start a transaction on.
      * @param expectedVersion the expected version of the stream at the time of starting the transaction.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -251,7 +251,7 @@ public interface EventStore {
     /**
      * Reads a single event from a stream asynchronously using default user credentials.
      *
-     * @param stream         the stream to read from.
+     * @param stream         the name of the stream to read from.
      * @param eventNumber    the event number to read (use {@link StreamPosition#END} to read the last event in the stream).
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -267,7 +267,7 @@ public interface EventStore {
     /**
      * Reads a single event from a stream asynchronously.
      *
-     * @param stream          the stream to read from.
+     * @param stream          the name of the stream to read from.
      * @param eventNumber     the event number to read (use {@link StreamPosition#END} to read the last event in the stream).
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
@@ -285,7 +285,7 @@ public interface EventStore {
      * Reads count events from a stream forwards (e.g. oldest to newest) starting from the
      * specified start position asynchronously using default user credentials.
      *
-     * @param stream         the stream to read from.
+     * @param stream         the name of the stream to read from.
      * @param start          the starting point to read from.
      * @param maxCount       the maximum count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
@@ -306,7 +306,7 @@ public interface EventStore {
      * Reads count events from a stream forwards (e.g. oldest to newest) starting from the
      * specified start position asynchronously.
      *
-     * @param stream          the stream to read from.
+     * @param stream          the name of the stream to read from.
      * @param start           the starting point to read from.
      * @param maxCount        the maximum count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
@@ -326,7 +326,7 @@ public interface EventStore {
      * Reads count events from a stream backwards (e.g. newest to oldest) from the
      * specified start position asynchronously using default user credentials.
      *
-     * @param stream         the stream to read from.
+     * @param stream         the name of the stream to read from.
      * @param start          the starting point to read from.
      * @param maxCount       the maximum count of events to read.
      * @param resolveLinkTos whether to resolve link events automatically.
@@ -347,7 +347,7 @@ public interface EventStore {
      * Reads count events from a stream backwards (e.g. newest to oldest) from the
      * specified start position asynchronously.
      *
-     * @param stream          the stream to read from.
+     * @param stream          the name of the stream to read from.
      * @param start           the starting point to read from.
      * @param maxCount        the maximum count of events to read.
      * @param resolveLinkTos  whether to resolve link events automatically.
@@ -436,7 +436,7 @@ public interface EventStore {
     /**
      * Iterates over events in a stream from the specified start position to the end of stream using default user credentials.
      *
-     * @param stream         the stream to iterate.
+     * @param stream         the name of the stream to iterate.
      * @param start          the starting point to iterate from.
      * @param batchSize      the number of events to return per batch.
      * @param resolveLinkTos whether to resolve link events automatically.
@@ -453,7 +453,7 @@ public interface EventStore {
     /**
      * Iterates over events in a stream from the specified start position to the end of stream.
      *
-     * @param stream          the stream to iterate.
+     * @param stream          the name of the stream to iterate.
      * @param start           the starting point to iterate from.
      * @param batchSize       the number of events to return per batch.
      * @param resolveLinkTos  whether to resolve link events automatically.
@@ -469,7 +469,7 @@ public interface EventStore {
     /**
      * Iterates over events in a stream backwards from the specified start position to the beginning of stream using default user credentials.
      *
-     * @param stream         the stream to iterate.
+     * @param stream         the name of the stream to iterate.
      * @param start          the starting point to iterate from.
      * @param batchSize      the number of events to return per batch.
      * @param resolveLinkTos whether to resolve link events automatically.
@@ -486,7 +486,7 @@ public interface EventStore {
     /**
      * Iterates over events in a stream backwards from the specified start position to the beginning of stream.
      *
-     * @param stream          the stream to iterate.
+     * @param stream          the name of the stream to iterate.
      * @param start           the starting point to iterate from.
      * @param batchSize       the number of events to return per batch.
      * @param resolveLinkTos  whether to resolve link events automatically.
@@ -561,7 +561,7 @@ public interface EventStore {
      * Subscribes to a stream asynchronously using default user credentials. New events written to the stream
      * while the subscription is active will be pushed to the client.
      *
-     * @param stream         the stream to subscribe to.
+     * @param stream         the name of the stream to subscribe to.
      * @param resolveLinkTos whether to resolve link events automatically.
      * @param listener       subscription listener.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -580,7 +580,7 @@ public interface EventStore {
      * Subscribes to a stream asynchronously. New events written to the stream while the subscription is active
      * will be pushed to the client.
      *
-     * @param stream          the stream to subscribe to.
+     * @param stream          the name of the stream to subscribe to.
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param listener        subscription listener.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
@@ -642,7 +642,7 @@ public interface EventStore {
      * the first event in the stream.
      * </p>
      *
-     * @param stream                   the stream to subscribe to.
+     * @param stream                   the name of the stream to subscribe to.
      * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
      * @param settings                 subscription settings.
      * @param listener                 subscription listener.
@@ -672,7 +672,7 @@ public interface EventStore {
      * the first event in the stream.
      * </p>
      *
-     * @param stream                   the stream to subscribe to.
+     * @param stream                   the name of the stream to subscribe to.
      * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
      * @param listener                 subscription listener.
      * @return catch-up subscription
@@ -699,7 +699,7 @@ public interface EventStore {
      * the first event in the stream.
      * </p>
      *
-     * @param stream                   the stream to subscribe to.
+     * @param stream                   the name of the stream to subscribe to.
      * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
      * @param listener                 subscription listener.
      * @param userCredentials          user credentials to be used for this operation (use {@code null} for default user credentials).
@@ -728,7 +728,7 @@ public interface EventStore {
      * the first event in the stream.
      * </p>
      *
-     * @param stream                   the stream to subscribe to.
+     * @param stream                   the name of the stream to subscribe to.
      * @param fromEventNumberExclusive the event number (exclusive) from which to start (use {@code null} to receive all events).
      * @param settings                 subscription settings.
      * @param listener                 subscription listener.
@@ -859,7 +859,7 @@ public interface EventStore {
      * When auto-ack is disabled, the receiver is required to explicitly acknowledge messages through the subscription.
      * </p>
      *
-     * @param stream    the stream to subscribe to.
+     * @param stream    the name of the stream to subscribe to.
      * @param groupName the subscription group to connect to.
      * @param listener  subscription listener.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -887,7 +887,7 @@ public interface EventStore {
      * When auto-ack is disabled, the receiver is required to explicitly acknowledge messages through the subscription.
      * </p>
      *
-     * @param stream          the stream to subscribe to.
+     * @param stream          the name of the stream to subscribe to.
      * @param groupName       the subscription group to connect to.
      * @param listener        subscription listener.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
@@ -917,7 +917,7 @@ public interface EventStore {
      * When auto-ack is disabled, the receiver is required to explicitly acknowledge messages through the subscription.
      * </p>
      *
-     * @param stream     the stream to subscribe to.
+     * @param stream     the name of the stream to subscribe to.
      * @param groupName  the subscription group to connect to.
      * @param listener   subscription listener.
      * @param bufferSize the buffer size to use for the persistent subscription.
@@ -949,7 +949,7 @@ public interface EventStore {
      * When auto-ack is disabled, the receiver is required to explicitly acknowledge messages through the subscription.
      * </p>
      *
-     * @param stream          the stream to subscribe to.
+     * @param stream          the name of the stream to subscribe to.
      * @param groupName       the subscription group to connect to.
      * @param listener        subscription listener.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
