@@ -285,6 +285,7 @@ public class EventStoreTcp implements EventStore {
                                                               boolean resolveLinkTos,
                                                               UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(!isNegative(eventNumber), "eventNumber should not be negative");
         checkArgument(isPositive(batchSize), "batchSize should be positive");
         checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
         return new StreamEventsIterator(eventNumber, i -> readStreamEventsForward(stream, i, batchSize, resolveLinkTos, userCredentials));
