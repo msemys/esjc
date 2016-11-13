@@ -23,10 +23,10 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 
 ### Creating a Client Instance
 
-There are two ways to create a new client instance. The examples below demonstrate how to create default client with singe-node and cluster-node configuration in both ways.
+Client instances are created using a builder class. The examples below demonstrate how to create default client with singe-node and cluster-node configuration.
 
 
-* creates a client using builder class
+* creates a single-node client
 
 ```java
 EventStore eventstore = EventStoreBuilder.newBuilder()
@@ -35,44 +35,33 @@ EventStore eventstore = EventStoreBuilder.newBuilder()
     .build();
 ```
 
+* creates a cluster-node client (using gossip seeds)
+
 ```java
 EventStore eventstore = EventStoreBuilder.newBuilder()
-    .clusterNodeDiscoveryFromGossipSeeds(asList(
-        new InetSocketAddress("127.0.0.1", 2113),
-        new InetSocketAddress("127.0.0.1", 2213),
-        new InetSocketAddress("127.0.0.1", 2313)))
+    .clusterNodeUsingGossipSeeds(cluster -> cluster
+        .gossipSeedEndpoints(asList(
+            new InetSocketAddress("127.0.0.1", 2113),
+            new InetSocketAddress("127.0.0.1", 2213),
+            new InetSocketAddress("127.0.0.1", 2313))))
     .userCredentials("admin", "changeit")
     .build();
 ```
 
-* creates a client by calling constructor and passing settings instance
+* creates a cluster-node client (using dns)
 
 ```java
-EventStore eventstore = new EventStore(Settings.newBuilder()
-    .nodeSettings(StaticNodeSettings.newBuilder()
-        .address("127.0.0.1", 1113)
-        .build())
+EventStore eventstore = EventStoreBuilder.newBuilder()
+    .clusterNodeUsingDns(cluster -> cluster.dns("mycluster.com"))
     .userCredentials("admin", "changeit")
-    .build());
-```
-
-```java
-EventStore eventstore = new EventStore(Settings.newBuilder()
-    .nodeSettings(ClusterNodeSettings.forGossipSeedDiscoverer()
-        .gossipSeedEndpoints(asList(
-            new InetSocketAddress("127.0.0.1", 2113),
-            new InetSocketAddress("127.0.0.1", 2213),
-            new InetSocketAddress("127.0.0.1", 2313)))
-        .build())
-    .userCredentials("admin", "changeit")
-    .build());
+    .build();
 ```
 
 Driver uses full-duplex communication channel to server. It is recommended that only one instance per application is created.
 
 ### SSL
 
-In order to use secure channel between the cient and server, first of all we need to enable SSL on server side by providing TCP secure port and server certificate.
+In order to use secure channel between the client and server, first of all we need to enable SSL on server side by providing TCP secure port and server certificate.
 
 * create private key file and self-signed certificate request (for testing purposes)
 
@@ -223,6 +212,50 @@ eventstore.readAllEventsBackward(Position.END, 10, false).thenAccept(e ->
         i.originalEvent().eventId,
         i.originalEvent().eventType,
         new String(i.originalEvent().data))));
+```
+
+#### Iterates over stream events forwards
+
+```java
+eventstore.iterateStreamEventsForward("foo", 10, 5, false).forEachRemaining(e ->
+    System.out.format("#%d  id: '%s'; type: '%s'; data: '%s'\n",
+        e.originalEvent().eventNumber,
+        e.originalEvent().eventId,
+        e.originalEvent().eventType,
+        new String(e.originalEvent().data)));
+```
+
+#### Iterates over stream events backwards
+
+```java
+eventstore.iterateStreamEventsBackward("foo", 10, 5, false).forEachRemaining(e ->
+    System.out.format("#%d  id: '%s'; type: '%s'; data: '%s'\n",
+        e.originalEvent().eventNumber,
+        e.originalEvent().eventId,
+        e.originalEvent().eventType,
+        new String(e.originalEvent().data)));
+```
+
+#### Iterates over all events forwards
+
+```java
+eventstore.iterateAllEventsForward(Position.START, 10, false).forEachRemaining(e ->
+    System.out.format("@%s  id: '%s'; type: '%s'; data: '%s'\n",
+        e.originalPosition,
+        e.originalEvent().eventId,
+        e.originalEvent().eventType,
+        new String(e.originalEvent().data)));
+```
+
+#### Iterates over all events backwards
+
+```java
+eventstore.iterateAllEventsBackward(Position.END, 10, false).forEachRemaining(e ->
+    System.out.format("@%s  id: '%s'; type: '%s'; data: '%s'\n",
+        e.originalPosition,
+        e.originalEvent().eventId,
+        e.originalEvent().eventType,
+        new String(e.originalEvent().data)));
 ```
 
 #### Subscribes to stream (volatile subscription)
