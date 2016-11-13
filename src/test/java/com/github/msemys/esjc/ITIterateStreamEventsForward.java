@@ -153,6 +153,16 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     }
 
     @Test
+    public void iteratesStreamEventsFromStartToEndWithMaxBatchSize() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+
+        Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 4096, false);
+        assertThat(iterator, hasSize(10));
+    }
+
+    @Test
     public void iteratesEventsInSameOrderAsWritten() {
         final String stream = generateStreamName();
 

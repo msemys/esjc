@@ -82,6 +82,19 @@ public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
         assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(reverse(events)));
     }
 
+    @Test
+    public void iteratesAllEventsUntilEndOfStreamUsingMaxBatchSize() {
+        final String stream = generateStreamName();
+
+        List<EventData> events = newTestEvents();
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+
+        List<RecordedEvent> allEvents = new ArrayList<>();
+        eventstore.iterateAllEventsBackward(Position.END, 4096, false).forEachRemaining(e -> allEvents.add(e.event));
+
+        assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(reverse(events)));
+    }
+
     private static List<EventData> newTestEvents() {
         return range(0, 20).mapToObj(i -> newTestEvent()).collect(toList());
     }

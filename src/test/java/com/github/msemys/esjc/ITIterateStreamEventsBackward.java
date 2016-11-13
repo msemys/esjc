@@ -155,6 +155,16 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
     }
 
     @Test
+    public void iteratesStreamEventsFromEndToStartWithMaxBatchSize() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+
+        Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, StreamPosition.END, 4096, false);
+        assertThat(iterator, hasSize(10));
+    }
+
+    @Test
     public void iteratesEventsReversedComparedToWritten() {
         final String stream = generateStreamName();
 
