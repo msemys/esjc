@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+import static com.github.msemys.esjc.util.Ranges.BATCH_SIZE_RANGE;
 import static com.github.msemys.esjc.util.Strings.defaultIfEmpty;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
@@ -66,8 +67,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
         checkNotNull(eventstore, "eventstore is null");
         checkNotNull(listener, "listener is null");
         checkNotNull(listener, "executor is null");
-        checkArgument(isPositive(readBatchSize), "readBatchSize should be positive");
-        checkArgument(readBatchSize < EventStoreTcp.MAX_READ_SIZE, "readBatchSize size should be less than %d", EventStoreTcp.MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(readBatchSize), "readBatchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
         checkArgument(isPositive(maxPushQueueSize), "maxPushQueueSize should be positive");
 
         this.eventstore = eventstore;

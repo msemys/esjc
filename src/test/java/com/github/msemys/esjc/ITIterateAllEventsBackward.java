@@ -25,7 +25,7 @@ public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failsToIterateWhenBatchSizeOutOfRange() {
-        eventstore.iterateAllEventsBackward(Position.START, 4096, false);
+        eventstore.iterateAllEventsBackward(Position.START, 4097, false);
     }
 
     @Test

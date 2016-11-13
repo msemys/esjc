@@ -50,9 +50,9 @@ public class ITReadAllEventsBackward extends AbstractIntegrationTest {
         List<EventData> events = newTestEvents();
         eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
 
-        AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 4095, false).join();
+        AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 4096, false).join();
 
-        assertTrue(slice.events.size() <= 4095);
+        assertTrue(slice.events.size() <= 4096);
 
         assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), hasItems(reverse(events)));
     }
@@ -97,7 +97,7 @@ public class ITReadAllEventsBackward extends AbstractIntegrationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failsToReadWhenMaxCountOutOfRange() {
-        eventstore.readAllEventsBackward(Position.START, 4096, false);
+        eventstore.readAllEventsBackward(Position.START, 4097, false);
     }
 
     private static List<EventData> newTestEvents() {

@@ -57,6 +57,7 @@ import static com.github.msemys.esjc.util.Numbers.isNegative;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+import static com.github.msemys.esjc.util.Ranges.BATCH_SIZE_RANGE;
 import static com.github.msemys.esjc.util.Strings.*;
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
@@ -69,7 +70,6 @@ public class EventStoreTcp implements EventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStore.class);
 
     private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;
-    protected static final int MAX_READ_SIZE = 4 * 1024;
 
     private enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
 
@@ -229,8 +229,7 @@ public class EventStoreTcp implements EventStore {
                                                                         UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         checkArgument(!isNegative(eventNumber), "eventNumber should not be negative");
-        checkArgument(isPositive(maxCount), "maxCount should be positive");
-        checkArgument(maxCount < MAX_READ_SIZE, "maxCount should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(maxCount), "maxCount is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadStreamEventsForwardOperation(result, stream, eventNumber, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -244,8 +243,7 @@ public class EventStoreTcp implements EventStore {
                                                                          boolean resolveLinkTos,
                                                                          UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-        checkArgument(isPositive(maxCount), "maxCount should be positive");
-        checkArgument(maxCount < MAX_READ_SIZE, "maxCount should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(maxCount), "maxCount is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadStreamEventsBackwardOperation(result, stream, eventNumber, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -257,8 +255,7 @@ public class EventStoreTcp implements EventStore {
                                                                   int maxCount,
                                                                   boolean resolveLinkTos,
                                                                   UserCredentials userCredentials) {
-        checkArgument(isPositive(maxCount), "maxCount should be positive");
-        checkArgument(maxCount < MAX_READ_SIZE, "maxCount should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(maxCount), "maxCount is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsForwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -270,8 +267,7 @@ public class EventStoreTcp implements EventStore {
                                                                    int maxCount,
                                                                    boolean resolveLinkTos,
                                                                    UserCredentials userCredentials) {
-        checkArgument(isPositive(maxCount), "maxCount should be positive");
-        checkArgument(maxCount < MAX_READ_SIZE, "maxCount should be less than %d. For larger reads you should page.", MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(maxCount), "maxCount is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
 
         CompletableFuture<AllEventsSlice> result = new CompletableFuture<>();
         enqueue(new ReadAllEventsBackwardOperation(result, position, maxCount, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -286,8 +282,7 @@ public class EventStoreTcp implements EventStore {
                                                               UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         checkArgument(!isNegative(eventNumber), "eventNumber should not be negative");
-        checkArgument(isPositive(batchSize), "batchSize should be positive");
-        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
         return new StreamEventsIterator(eventNumber, i -> readStreamEventsForward(stream, i, batchSize, resolveLinkTos, userCredentials));
     }
 
@@ -298,8 +293,7 @@ public class EventStoreTcp implements EventStore {
                                                                boolean resolveLinkTos,
                                                                UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-        checkArgument(isPositive(batchSize), "batchSize should be positive");
-        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
         return new StreamEventsIterator(eventNumber, i -> readStreamEventsBackward(stream, i, batchSize, resolveLinkTos, userCredentials));
     }
 
@@ -308,8 +302,7 @@ public class EventStoreTcp implements EventStore {
                                                            int batchSize,
                                                            boolean resolveLinkTos,
                                                            UserCredentials userCredentials) {
-        checkArgument(isPositive(batchSize), "batchSize should be positive");
-        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
         return new AllEventsIterator(position, p -> readAllEventsForward(p, batchSize, resolveLinkTos, userCredentials));
     }
 
@@ -318,8 +311,7 @@ public class EventStoreTcp implements EventStore {
                                                             int batchSize,
                                                             boolean resolveLinkTos,
                                                             UserCredentials userCredentials) {
-        checkArgument(isPositive(batchSize), "batchSize should be positive");
-        checkArgument(batchSize < MAX_READ_SIZE, "batchSize should be less than %d", MAX_READ_SIZE);
+        checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
         return new AllEventsIterator(position, p -> readAllEventsBackward(p, batchSize, resolveLinkTos, userCredentials));
     }
 

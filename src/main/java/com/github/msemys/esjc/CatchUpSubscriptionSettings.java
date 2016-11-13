@@ -2,6 +2,7 @@ package com.github.msemys.esjc;
 
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
+import static com.github.msemys.esjc.util.Ranges.BATCH_SIZE_RANGE;
 
 /**
  * Catch-up subscription settings.
@@ -115,8 +116,7 @@ public class CatchUpSubscriptionSettings {
             if (readBatchSize == null) {
                 readBatchSize = 500;
             } else {
-                checkArgument(isPositive(readBatchSize), "readBatchSize should be positive");
-                checkArgument(readBatchSize < EventStoreTcp.MAX_READ_SIZE, "readBatchSize should be less than %d", EventStoreTcp.MAX_READ_SIZE);
+                checkArgument(BATCH_SIZE_RANGE.contains(readBatchSize), "readBatchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
             }
 
             return new CatchUpSubscriptionSettings(this);
