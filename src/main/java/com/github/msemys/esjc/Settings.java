@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
+import static com.github.msemys.esjc.util.Ranges.ATTEMPTS_RANGE;
 
 /**
  * Client settings
@@ -495,13 +496,13 @@ public class Settings {
             if (maxOperationRetries == null) {
                 maxOperationRetries = 10;
             } else {
-                checkArgument(maxOperationRetries >= -1, "maxOperationRetries value is out of range: %d. Allowed range: [-1, infinity].", maxOperationRetries);
+                checkArgument(ATTEMPTS_RANGE.contains(maxOperationRetries), "maxOperationRetries value is out of range. Allowed range: %s.", ATTEMPTS_RANGE.toString());
             }
 
             if (maxReconnections == null) {
                 maxReconnections = 10;
             } else {
-                checkArgument(maxReconnections >= -1, "maxReconnections value is out of range: %d. Allowed range: [-1, infinity].", maxReconnections);
+                checkArgument(ATTEMPTS_RANGE.contains(maxReconnections), "maxReconnections value is out of range. Allowed range: %s.", ATTEMPTS_RANGE.toString());
             }
 
             if (persistentSubscriptionBufferSize == null) {

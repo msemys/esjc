@@ -6,6 +6,7 @@ import java.util.List;
 
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
+import static com.github.msemys.esjc.util.Ranges.ATTEMPTS_RANGE;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -274,7 +275,7 @@ public class ClusterNodeSettings {
             if (maxDiscoverAttempts == null) {
                 maxDiscoverAttempts = 10;
             } else {
-                checkArgument(maxDiscoverAttempts >= -1, "maxDiscoverAttempts value is out of range: %d. Allowed range: [-1, infinity].", maxDiscoverAttempts);
+                checkArgument(ATTEMPTS_RANGE.contains(maxDiscoverAttempts), "maxDiscoverAttempts value is out of range. Allowed range: %s.", ATTEMPTS_RANGE.toString());
             }
 
             if (discoverAttemptInterval == null) {

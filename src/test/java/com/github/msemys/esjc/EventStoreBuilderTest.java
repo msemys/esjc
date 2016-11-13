@@ -494,6 +494,36 @@ public class EventStoreBuilderTest {
     }
 
     @Test
+    public void createsClientWithUnlimitedAttemptsValues() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .clusterNodeUsingGossipSeeds(cluster -> cluster
+                .gossipSeedEndpoints(asList(new InetSocketAddress("localhost", 1001)))
+                .maxDiscoverAttempts(-1))
+            .maxOperationRetries(-1)
+            .maxReconnections(-1)
+            .build();
+
+        assertEquals(-1, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(-1, result.settings().maxOperationRetries);
+        assertEquals(-1, result.settings().maxReconnections);
+    }
+
+    @Test
+    public void createsClientWithInsaneAttemptsValues() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .clusterNodeUsingGossipSeeds(cluster -> cluster
+                .gossipSeedEndpoints(asList(new InetSocketAddress("localhost", 1001)))
+                .maxDiscoverAttempts(Integer.MAX_VALUE))
+            .maxOperationRetries(Integer.MAX_VALUE)
+            .maxReconnections(Integer.MAX_VALUE)
+            .build();
+
+        assertEquals(Integer.MAX_VALUE, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(Integer.MAX_VALUE, result.settings().maxOperationRetries);
+        assertEquals(Integer.MAX_VALUE, result.settings().maxReconnections);
+    }
+
+    @Test
     public void failsToCreateClientWithoutNodeSettings() {
         try {
             EventStoreBuilder.newBuilder().build();
@@ -527,6 +557,47 @@ public class EventStoreBuilderTest {
         } catch (Exception e) {
             assertThat(e, instanceOf(IllegalArgumentException.class));
             assertEquals("dns is null or empty", e.getMessage());
+        }
+    }
+
+    @Test
+    public void failsToCreateClusterNodeClientWithTooSmallMaxDiscoverAttemptsValue() {
+        try {
+            EventStoreBuilder.newBuilder()
+                .clusterNodeUsingDns(cluster -> cluster.dns("ok").maxDiscoverAttempts(-2))
+                .build();
+            fail("should fail with 'IllegalArgumentException'");
+        } catch (Exception e) {
+            assertThat(e, instanceOf(IllegalArgumentException.class));
+            assertEquals("maxDiscoverAttempts value is out of range. Allowed range: [-1..infinity].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void failsToCreateClientWithTooSmallMaxReconnectionsValue() {
+        try {
+            EventStoreBuilder.newBuilder()
+                .singleNodeAddress("localhost", 1009)
+                .maxReconnections(-2)
+                .build();
+            fail("should fail with 'IllegalArgumentException'");
+        } catch (Exception e) {
+            assertThat(e, instanceOf(IllegalArgumentException.class));
+            assertEquals("maxReconnections value is out of range. Allowed range: [-1..infinity].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void failsToCreateClientWithTooSmallMaxOperationRetriesValue() {
+        try {
+            EventStoreBuilder.newBuilder()
+                .singleNodeAddress("localhost", 1009)
+                .maxOperationRetries(-2)
+                .build();
+            fail("should fail with 'IllegalArgumentException'");
+        } catch (Exception e) {
+            assertThat(e, instanceOf(IllegalArgumentException.class));
+            assertEquals("maxOperationRetries value is out of range. Allowed range: [-1..infinity].", e.getMessage());
         }
     }
 }
