@@ -89,7 +89,7 @@ public class CatchUpSubscriptionSettings {
         /**
          * Sets the size of the read batch used when reading history (by default, 500 events).
          *
-         * @param readBatchSize read batch size.
+         * @param readBatchSize read batch size, allowed range [1..4096].
          * @return the builder reference
          */
         public Builder readBatchSize(int readBatchSize) {

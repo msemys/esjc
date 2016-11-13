@@ -287,7 +287,7 @@ public interface EventStore {
      *
      * @param stream         the name of the stream to read from.
      * @param eventNumber    the event number (inclusive) to read from.
-     * @param maxCount       the maximum count of events to read.
+     * @param maxCount       the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
@@ -308,7 +308,7 @@ public interface EventStore {
      *
      * @param stream          the name of the stream to read from.
      * @param eventNumber     the event number (inclusive) to read from.
-     * @param maxCount        the maximum count of events to read.
+     * @param maxCount        the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -328,7 +328,7 @@ public interface EventStore {
      *
      * @param stream         the name of the stream to read from.
      * @param eventNumber    the event number (inclusive) to read from.
-     * @param maxCount       the maximum count of events to read.
+     * @param maxCount       the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
@@ -349,7 +349,7 @@ public interface EventStore {
      *
      * @param stream          the name of the stream to read from.
      * @param eventNumber     the event number (inclusive) to read from.
-     * @param maxCount        the maximum count of events to read.
+     * @param maxCount        the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -367,7 +367,7 @@ public interface EventStore {
      * Reads all events in the node forward (e.g. beginning to end) asynchronously using default user credentials.
      *
      * @param position       the position (inclusive) to start reading from.
-     * @param maxCount       the maximum count of events to read.
+     * @param maxCount       the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
@@ -385,7 +385,7 @@ public interface EventStore {
      * Reads all events in the node forward (e.g. beginning to end) asynchronously.
      *
      * @param position        the position (inclusive) to start reading from.
-     * @param maxCount        the maximum count of events to read.
+     * @param maxCount        the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -402,7 +402,7 @@ public interface EventStore {
      * Reads all events in the node backwards (e.g. end to beginning) asynchronously using default user credentials.
      *
      * @param position       the position (inclusive) to start reading from.
-     * @param maxCount       the maximum count of events to read.
+     * @param maxCount       the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
@@ -420,7 +420,7 @@ public interface EventStore {
      * Reads all events in the node backwards (e.g. end to beginning) asynchronously.
      *
      * @param position        the position (inclusive) to start reading from.
-     * @param maxCount        the maximum count of events to read.
+     * @param maxCount        the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -438,7 +438,7 @@ public interface EventStore {
      *
      * @param stream         the name of the stream to iterate.
      * @param eventNumber    the event number (inclusive) to iterate from.
-     * @param batchSize      the number of events to return per batch.
+     * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the stream
      * @see #iterateStreamEventsForward(String, int, int, boolean, UserCredentials)
@@ -455,7 +455,7 @@ public interface EventStore {
      *
      * @param stream          the name of the stream to iterate.
      * @param eventNumber     the event number (inclusive) to iterate from.
-     * @param batchSize       the number of events to return per batch.
+     * @param batchSize       the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return an iterator over the events in the stream
@@ -471,7 +471,7 @@ public interface EventStore {
      *
      * @param stream         the name of the stream to iterate.
      * @param eventNumber    the event number (inclusive) to iterate from.
-     * @param batchSize      the number of events to return per batch.
+     * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the stream
      * @see #iterateStreamEventsBackward(String, int, int, boolean, UserCredentials)
@@ -488,7 +488,7 @@ public interface EventStore {
      *
      * @param stream          the name of the stream to iterate.
      * @param eventNumber     the event number (inclusive) to iterate from.
-     * @param batchSize       the number of events to return per batch.
+     * @param batchSize       the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return an iterator over the events in the stream
@@ -503,7 +503,7 @@ public interface EventStore {
      * Iterates over all events in the node forward from the specified start position to the end using default user credentials.
      *
      * @param position       the position (inclusive) to start iterating from.
-     * @param batchSize      the number of events to return per batch.
+     * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the $all stream
      * @see #iterateAllEventsForward(Position, int, boolean, UserCredentials)
@@ -518,7 +518,7 @@ public interface EventStore {
      * Iterates over all events in the node forward from the specified start position to the end.
      *
      * @param position        the position (inclusive) to start iterating from.
-     * @param batchSize       the number of events to return per batch.
+     * @param batchSize       the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return an iterator over the events in the $all stream
@@ -532,7 +532,7 @@ public interface EventStore {
      * Iterates over all events in the node backwards from the specified start position to the beginning using default user credentials.
      *
      * @param position       the position (inclusive) to start iterating from.
-     * @param batchSize      the number of events to return per batch.
+     * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the $all stream
      * @see #iterateAllEventsBackward(Position, int, boolean, UserCredentials)
@@ -547,7 +547,7 @@ public interface EventStore {
      * Iterates over all events in the node backwards from the specified start position to the beginning.
      *
      * @param position        the position (inclusive) to start iterating from.
-     * @param batchSize       the number of events to return per batch.
+     * @param batchSize       the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return an iterator over the events in the $all stream
