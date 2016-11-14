@@ -136,16 +136,30 @@ eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
     EventData.newBuilder()
         .type("qux")
         .jsonData("{ a : 1 }")
-        .build()))
-    .thenAccept(r -> System.out.println(r.logPosition));
+        .build())
+).thenAccept(r -> System.out.println(r.logPosition));
+```
+
+```java
+eventstore.appendToStream("foo", ExpectedVersion.of(2),
+    EventData.newBuilder()
+        .type("quux")
+        .data(new byte[0])
+        .metadata(new byte[0])
+        .build()
+).thenAccept(r -> System.out.println(r.logPosition));
 ```
 
 #### Transactional writes
 
 ```java
 try (Transaction t = eventstore.startTransaction("foo", ExpectedVersion.any()).get()) {
-    t.write(asList(EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build()));
-    t.write(asList(EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build()));
+    t.write(EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build());
+    t.write(EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build());
+    t.write(asList(
+        EventData.newBuilder().type("qux").jsonData("{ c : 3 }").build(),
+        EventData.newBuilder().type("quux").jsonData("{ d : 4 }").build())
+    );
     t.commit();
 } catch (Exception e) {
     e.printStackTrace();
@@ -154,8 +168,12 @@ try (Transaction t = eventstore.startTransaction("foo", ExpectedVersion.any()).g
 
 ```java
 eventstore.startTransaction("foo", ExpectedVersion.any()).thenAccept(t -> {
-    t.write(asList(EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build()));
-    t.write(asList(EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build()));
+    t.write(EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build());
+    t.write(EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build());
+    t.write(asList(
+        EventData.newBuilder().type("qux").jsonData("{ c : 3 }").build(),
+        EventData.newBuilder().type("quux").jsonData("{ d : 4 }").build())
+    );
     t.rollback();
 });
 ```
