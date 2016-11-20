@@ -40,6 +40,23 @@ public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
     }
 
     @Test
+    public void iteratesFirstEvent() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+
+        List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 2, false).join().events;
+
+        Position position = firstEvents.get(1).originalPosition;
+
+        Iterator<ResolvedEvent> iterator = eventstore.iterateAllEventsBackward(position, 1, false);
+
+        assertTrue(iterator.hasNext());
+        assertEquals(firstEvents.get(0).event.eventId, iterator.next().event.eventId);
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
     public void returnsEventsInReversedOrderComparedToWritten() {
         final String stream = generateStreamName();
 

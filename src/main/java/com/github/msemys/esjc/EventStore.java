@@ -401,7 +401,7 @@ public interface EventStore {
     /**
      * Reads all events in the node backwards (e.g. end to beginning) asynchronously using default user credentials.
      *
-     * @param position       the position (inclusive) to start reading from.
+     * @param position       the position (exclusive) to start reading from.
      * @param maxCount       the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
@@ -419,7 +419,7 @@ public interface EventStore {
     /**
      * Reads all events in the node backwards (e.g. end to beginning) asynchronously.
      *
-     * @param position        the position (inclusive) to start reading from.
+     * @param position        the position (exclusive) to start reading from.
      * @param maxCount        the maximum count of events to read, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
@@ -531,7 +531,7 @@ public interface EventStore {
     /**
      * Iterates over all events in the node backwards from the specified start position to the beginning using default user credentials.
      *
-     * @param position       the position (inclusive) to start iterating from.
+     * @param position       the position (exclusive) to start iterating from.
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the $all stream
@@ -546,7 +546,7 @@ public interface EventStore {
     /**
      * Iterates over all events in the node backwards from the specified start position to the beginning.
      *
-     * @param position        the position (inclusive) to start iterating from.
+     * @param position        the position (exclusive) to start iterating from.
      * @param batchSize       the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos  whether to resolve link events automatically.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).

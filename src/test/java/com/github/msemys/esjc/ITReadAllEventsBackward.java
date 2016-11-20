@@ -9,6 +9,7 @@ import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -29,6 +30,22 @@ public class ITReadAllEventsBackward extends AbstractIntegrationTest {
 
         assertTrue(slice.isEndOfStream());
         assertThat(slice.events.size(), is(0));
+    }
+
+    @Test
+    public void readsFirstEvent() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+
+        List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 2, false).join().events;
+
+        Position position = firstEvents.get(1).originalPosition;
+
+        List<ResolvedEvent> result = eventstore.readAllEventsBackward(position, 1, false).join().events;
+
+        assertEquals(1, result.size());
+        assertEquals(firstEvents.get(0).event.eventId, result.get(0).event.eventId);
     }
 
     @Test
