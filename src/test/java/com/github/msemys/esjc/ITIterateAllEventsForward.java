@@ -79,7 +79,7 @@ public class ITIterateAllEventsForward extends AbstractIntegrationTest {
         eventstore.iterateAllEventsForward(position, 3, false).forEachRemaining(e -> result.add(e.event));
 
         assertEquals(20, result.size());
-        range(0, 20).forEach(i -> assertEquals(result.get(i).eventId, result.get(i).eventId));
+        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).eventId));
     }
 
     @Test
