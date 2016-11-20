@@ -1,5 +1,6 @@
 package com.github.msemys.esjc;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -8,24 +9,31 @@ import static com.github.msemys.esjc.util.Preconditions.checkState;
 /**
  * Stream events iterator.
  */
-public class StreamEventsIterator extends AbstractEventsIterator {
-    private final Function<Integer, CompletableFuture<StreamEventsSlice>> reader;
-    private int eventNumber;
+public class StreamEventsIterator extends AbstractEventsIterator<Integer, StreamEventsSlice> {
 
     StreamEventsIterator(int eventNumber, Function<Integer, CompletableFuture<StreamEventsSlice>> reader) {
-        this.eventNumber = eventNumber;
-        this.reader = reader;
+        super(eventNumber, reader);
     }
 
     @Override
-    protected void read() {
-        StreamEventsSlice slice = reader.apply(eventNumber).join();
-
+    protected void onBatchReceived(StreamEventsSlice slice) {
         checkState(slice.status == SliceReadStatus.Success, "Unexpected read status: %s", slice.status);
+        super.onBatchReceived(slice);
+    }
 
-        eventNumber = slice.nextEventNumber;
-        iterator = slice.events.iterator();
-        endOfStream = slice.isEndOfStream;
+    @Override
+    protected Integer getNextCursor(StreamEventsSlice slice) {
+        return slice.nextEventNumber;
+    }
+
+    @Override
+    protected List<ResolvedEvent> getEvents(StreamEventsSlice slice) {
+        return slice.events;
+    }
+
+    @Override
+    protected boolean isEndOfStream(StreamEventsSlice slice) {
+        return slice.isEndOfStream;
     }
 
 }

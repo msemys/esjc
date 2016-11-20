@@ -1,27 +1,31 @@
 package com.github.msemys.esjc;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 /**
  * $all stream events iterator.
  */
-public class AllEventsIterator extends AbstractEventsIterator {
-    private final Function<Position, CompletableFuture<AllEventsSlice>> reader;
-    private Position position;
+public class AllEventsIterator extends AbstractEventsIterator<Position, AllEventsSlice> {
 
     AllEventsIterator(Position position, Function<Position, CompletableFuture<AllEventsSlice>> reader) {
-        this.position = position;
-        this.reader = reader;
+        super(position, reader);
     }
 
     @Override
-    protected void read() {
-        AllEventsSlice slice = reader.apply(position).join();
+    protected Position getNextCursor(AllEventsSlice slice) {
+        return slice.nextPosition;
+    }
 
-        position = slice.nextPosition;
-        iterator = slice.events.iterator();
-        endOfStream = slice.isEndOfStream();
+    @Override
+    protected List<ResolvedEvent> getEvents(AllEventsSlice slice) {
+        return slice.events;
+    }
+
+    @Override
+    protected boolean isEndOfStream(AllEventsSlice slice) {
+        return slice.isEndOfStream();
     }
 
 }
