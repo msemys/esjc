@@ -50,6 +50,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
+import java.util.stream.Stream;
 
 import static com.github.msemys.esjc.system.SystemStreams.isMetastream;
 import static com.github.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
@@ -65,6 +66,7 @@ import static java.time.Duration.between;
 import static java.time.Instant.now;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.StreamSupport.stream;
 
 public class EventStoreTcp implements EventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStore.class);
@@ -313,6 +315,44 @@ public class EventStoreTcp implements EventStore {
                                                             UserCredentials userCredentials) {
         checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
         return new AllEventsIterator(position, p -> readAllEventsBackward(p, batchSize, resolveLinkTos, userCredentials));
+    }
+
+    @Override
+    public Stream<ResolvedEvent> streamEventsForward(String stream,
+                                                     int eventNumber,
+                                                     int batchSize,
+                                                     boolean resolveLinkTos,
+                                                     UserCredentials userCredentials) {
+        checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
+        return stream(new StreamEventsSpliterator(eventNumber, i -> readStreamEventsForward(stream, i, batchSize, resolveLinkTos, userCredentials)), false);
+    }
+
+    @Override
+    public Stream<ResolvedEvent> streamEventsBackward(String stream,
+                                                      int eventNumber,
+                                                      int batchSize,
+                                                      boolean resolveLinkTos,
+                                                      UserCredentials userCredentials) {
+        checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
+        return stream(new StreamEventsSpliterator(eventNumber, i -> readStreamEventsBackward(stream, i, batchSize, resolveLinkTos, userCredentials)), false);
+    }
+
+    @Override
+    public Stream<ResolvedEvent> streamAllEventsForward(Position position,
+                                                        int batchSize,
+                                                        boolean resolveLinkTos,
+                                                        UserCredentials userCredentials) {
+        checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
+        return stream(new AllEventsSpliterator(position, p -> readAllEventsForward(p, batchSize, resolveLinkTos, userCredentials)), false);
+    }
+
+    @Override
+    public Stream<ResolvedEvent> streamAllEventsBackward(Position position,
+                                                         int batchSize,
+                                                         boolean resolveLinkTos,
+                                                         UserCredentials userCredentials) {
+        checkArgument(BATCH_SIZE_RANGE.contains(batchSize), "batchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
+        return stream(new AllEventsSpliterator(position, p -> readAllEventsBackward(p, batchSize, resolveLinkTos, userCredentials)), false);
     }
 
     @Override

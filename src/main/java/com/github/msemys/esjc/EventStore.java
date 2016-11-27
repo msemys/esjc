@@ -6,6 +6,7 @@ import com.github.msemys.esjc.subscription.PersistentSubscriptionDeletedExceptio
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.toBytes;
@@ -556,6 +557,138 @@ public interface EventStore {
                                                      int batchSize,
                                                      boolean resolveLinkTos,
                                                      UserCredentials userCredentials);
+
+    /**
+     * Sequentially processes events in a stream from the specified start position to the end of stream using default user credentials.
+     * Event batches are lazily loaded on demand.
+     *
+     * @param stream         the name of the stream to process.
+     * @param eventNumber    the event number (inclusive) to process from.
+     * @param batchSize      the number of events to return per batch, allowed range [1..4096].
+     * @param resolveLinkTos whether to resolve link events automatically.
+     * @return a sequential {@code Stream} over the events in the stream
+     * @see #streamEventsForward(String, int, int, boolean, UserCredentials)
+     */
+    default Stream<ResolvedEvent> streamEventsForward(String stream,
+                                                      int eventNumber,
+                                                      int batchSize,
+                                                      boolean resolveLinkTos) {
+        return streamEventsForward(stream, eventNumber, batchSize, resolveLinkTos, null);
+    }
+
+    /**
+     * Sequentially processes events in a stream from the specified start position to the end of stream.
+     * Event batches are lazily loaded on demand.
+     *
+     * @param stream          the name of the stream to process.
+     * @param eventNumber     the event number (inclusive) to process from.
+     * @param batchSize       the number of events to return per batch, allowed range [1..4096].
+     * @param resolveLinkTos  whether to resolve link events automatically.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a sequential {@code Stream} over the events in the stream
+     */
+    Stream<ResolvedEvent> streamEventsForward(String stream,
+                                              int eventNumber,
+                                              int batchSize,
+                                              boolean resolveLinkTos,
+                                              UserCredentials userCredentials);
+
+    /**
+     * Sequentially processes events in a stream backwards from the specified start position to the beginning of stream using default user credentials.
+     * Event batches are lazily loaded on demand.
+     *
+     * @param stream         the name of the stream to process.
+     * @param eventNumber    the event number (inclusive) to process from.
+     * @param batchSize      the number of events to return per batch, allowed range [1..4096].
+     * @param resolveLinkTos whether to resolve link events automatically.
+     * @return a sequential {@code Stream} over the events in the stream
+     * @see #streamEventsBackward(String, int, int, boolean, UserCredentials)
+     */
+    default Stream<ResolvedEvent> streamEventsBackward(String stream,
+                                                       int eventNumber,
+                                                       int batchSize,
+                                                       boolean resolveLinkTos) {
+        return streamEventsBackward(stream, eventNumber, batchSize, resolveLinkTos, null);
+    }
+
+    /**
+     * Sequentially processes events in a stream backwards from the specified start position to the beginning of stream.
+     * Event batches are lazily loaded on demand.
+     *
+     * @param stream          the name of the stream to process.
+     * @param eventNumber     the event number (inclusive) to process from.
+     * @param batchSize       the number of events to return per batch, allowed range [1..4096].
+     * @param resolveLinkTos  whether to resolve link events automatically.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a sequential {@code Stream} over the events in the stream
+     */
+    Stream<ResolvedEvent> streamEventsBackward(String stream,
+                                               int eventNumber,
+                                               int batchSize,
+                                               boolean resolveLinkTos,
+                                               UserCredentials userCredentials);
+
+    /**
+     * Sequentially processes all events in the node forward from the specified start position to the end using default user credentials.
+     * Event batches are lazily loaded on demand.
+     *
+     * @param position       the position (inclusive) to start processing from.
+     * @param batchSize      the number of events to return per batch, allowed range [1..4096].
+     * @param resolveLinkTos whether to resolve link events automatically.
+     * @return a sequential {@code Stream} over the events in the $all stream
+     * @see #streamAllEventsForward(Position, int, boolean, UserCredentials)
+     */
+    default Stream<ResolvedEvent> streamAllEventsForward(Position position,
+                                                         int batchSize,
+                                                         boolean resolveLinkTos) {
+        return streamAllEventsForward(position, batchSize, resolveLinkTos, null);
+    }
+
+    /**
+     * Sequentially processes all events in the node forward from the specified start position to the end.
+     * Event batches are lazily loaded on demand.
+     *
+     * @param position        the position (inclusive) to start processing from.
+     * @param batchSize       the number of events to return per batch, allowed range [1..4096].
+     * @param resolveLinkTos  whether to resolve link events automatically.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a sequential {@code Stream} over the events in the $all stream
+     */
+    Stream<ResolvedEvent> streamAllEventsForward(Position position,
+                                                 int batchSize,
+                                                 boolean resolveLinkTos,
+                                                 UserCredentials userCredentials);
+
+    /**
+     * Sequentially processes all events in the node backwards from the specified start position to the beginning using default user credentials.
+     * Event batches are lazily loaded on demand.
+     *
+     * @param position       the position (exclusive) to start processing from.
+     * @param batchSize      the number of events to return per batch, allowed range [1..4096].
+     * @param resolveLinkTos whether to resolve link events automatically.
+     * @return a sequential {@code Stream} over the events in the $all stream
+     * @see #streamAllEventsBackward(Position, int, boolean, UserCredentials)
+     */
+    default Stream<ResolvedEvent> streamAllEventsBackward(Position position,
+                                                          int batchSize,
+                                                          boolean resolveLinkTos) {
+        return streamAllEventsBackward(position, batchSize, resolveLinkTos, null);
+    }
+
+    /**
+     * Sequentially processes all events in the node backwards from the specified start position to the beginning.
+     * Event batches are lazily loaded on demand.
+     *
+     * @param position        the position (exclusive) to start processing from.
+     * @param batchSize       the number of events to return per batch, allowed range [1..4096].
+     * @param resolveLinkTos  whether to resolve link events automatically.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a sequential {@code Stream} over the events in the $all stream
+     */
+    Stream<ResolvedEvent> streamAllEventsBackward(Position position,
+                                                  int batchSize,
+                                                  boolean resolveLinkTos,
+                                                  UserCredentials userCredentials);
 
     /**
      * Subscribes to a stream asynchronously using default user credentials. New events written to the stream
