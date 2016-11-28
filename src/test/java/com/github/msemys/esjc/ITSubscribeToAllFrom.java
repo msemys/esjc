@@ -52,7 +52,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
     public void triggersOnCloseCallbackWhenAnErrorOccursWhileProcessingAnEvent() throws TimeoutException, InterruptedException {
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        eventstore.appendToStream(generateStreamName(), ExpectedVersion.any(), newTestEvent()).join();
+        eventstore.appendToStream(generateStreamName(), ExpectedVersion.ANY, newTestEvent()).join();
 
         eventstore.subscribeToAllFrom(null, new CatchUpSubscriptionListener() {
             @Override
@@ -128,7 +128,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 1, false).join();
         Position lastPosition = slice.events.get(0).originalPosition;
 
-        range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
+        range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.NO_STREAM,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
@@ -152,7 +152,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
             }
         });
 
-        range(10, 20).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
+        range(10, 20).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.NO_STREAM,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
@@ -175,7 +175,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(10);
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
+        range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.NO_STREAM,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
@@ -200,7 +200,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
             }
         });
 
-        range(10, 20).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
+        range(10, 20).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.NO_STREAM,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
@@ -225,7 +225,7 @@ public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(1);
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.noStream(),
+        range(0, 10).forEach(i -> eventstore.appendToStream(stream + "-" + i, ExpectedVersion.NO_STREAM,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 

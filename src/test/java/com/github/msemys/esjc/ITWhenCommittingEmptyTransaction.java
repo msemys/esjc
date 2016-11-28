@@ -22,7 +22,7 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
         EventData firstEvent = newTestEvent();
 
         assertEquals(2, eventstore.appendToStream(stream,
-            ExpectedVersion.noStream(),
+            ExpectedVersion.NO_STREAM,
             asList(firstEvent, newTestEvent(), newTestEvent()))
             .join().nextExpectedVersion);
 
@@ -44,14 +44,14 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
         EventData firstEvent = newTestEvent();
 
         assertEquals(2, eventstore.appendToStream(stream,
-            ExpectedVersion.noStream(),
+            ExpectedVersion.NO_STREAM,
             asList(firstEvent, newTestEvent(), newTestEvent()))
             .join().nextExpectedVersion);
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(2)).join();
         assertEquals(2, transaction.commit().join().nextExpectedVersion);
 
-        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.any(), asList(newTestEvent(), newTestEvent())).join().nextExpectedVersion);
+        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.ANY, asList(newTestEvent(), newTestEvent())).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -66,14 +66,14 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
         EventData firstEvent = newTestEvent();
 
         assertEquals(2, eventstore.appendToStream(stream,
-            ExpectedVersion.noStream(),
+            ExpectedVersion.NO_STREAM,
             asList(firstEvent, newTestEvent(), newTestEvent()))
             .join().nextExpectedVersion);
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(2)).join();
         assertEquals(2, transaction.commit().join().nextExpectedVersion);
 
-        assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.noStream(), firstEvent).join().nextExpectedVersion);
+        assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, firstEvent).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -88,7 +88,7 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
         EventData firstEvent = newTestEvent();
 
         assertEquals(2, eventstore.appendToStream(stream,
-            ExpectedVersion.noStream(),
+            ExpectedVersion.NO_STREAM,
             asList(firstEvent, newTestEvent(), newTestEvent()))
             .join().nextExpectedVersion);
 
@@ -96,7 +96,7 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
         assertEquals(2, transaction.commit().join().nextExpectedVersion);
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+            eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
             fail("should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));

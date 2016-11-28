@@ -17,34 +17,34 @@ public class ITReadAllEventsForwardWithLinkToPassedMaxCount extends AbstractInte
         final String deletedStreamName = generateStreamName();
         final String linkedStreamName = generateStreamName();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(),
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .type("testing1")
                 .jsonData("{'foo' : 4}")
                 .build()
         ).join();
 
-        eventstore.setStreamMetadata(deletedStreamName, ExpectedVersion.any(),
+        eventstore.setStreamMetadata(deletedStreamName, ExpectedVersion.ANY,
             StreamMetadata.newBuilder()
                 .maxCount(2)
                 .build()
         ).join();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(),
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .type("testing2")
                 .jsonData("{'foo' : 4}")
                 .build()
         ).join();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(),
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .type("testing3")
                 .jsonData("{'foo' : 4}")
                 .build()
         ).join();
 
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(),
+        eventstore.appendToStream(linkedStreamName, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .type(SystemEventType.LINK_TO.value)
                 .data("0@" + deletedStreamName)

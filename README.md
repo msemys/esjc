@@ -107,13 +107,13 @@ All operations are handled fully asynchronously and returns [`CompletableFuture<
 
 ```java
 // handles result asynchronously
-eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
+eventstore.appendToStream("foo", ExpectedVersion.ANY, asList(
     EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build(),
     EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build())
 ).thenAccept(r -> System.out.println(r.logPosition));
 
 // handles result synchronously
-eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
+eventstore.appendToStream("foo", ExpectedVersion.ANY, asList(
     EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build(),
     EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build())
 ).thenAccept(r -> System.out.println(r.logPosition)).get();
@@ -122,7 +122,7 @@ eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
 #### Writing events
 
 ```java
-eventstore.appendToStream("foo", ExpectedVersion.any(), asList(
+eventstore.appendToStream("foo", ExpectedVersion.ANY, asList(
     EventData.newBuilder()
         .type("bar")
         .data(new byte[]{1, 2, 3, 4, 5})
@@ -153,7 +153,7 @@ eventstore.appendToStream("foo", ExpectedVersion.of(2),
 #### Transactional writes
 
 ```java
-try (Transaction t = eventstore.startTransaction("foo", ExpectedVersion.any()).get()) {
+try (Transaction t = eventstore.startTransaction("foo", ExpectedVersion.ANY).get()) {
     t.write(EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build());
     t.write(EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build());
     t.write(asList(
@@ -167,7 +167,7 @@ try (Transaction t = eventstore.startTransaction("foo", ExpectedVersion.any()).g
 ```
 
 ```java
-eventstore.startTransaction("foo", ExpectedVersion.any()).thenAccept(t -> {
+eventstore.startTransaction("foo", ExpectedVersion.ANY).thenAccept(t -> {
     t.write(EventData.newBuilder().type("bar").jsonData("{ a : 1 }").build());
     t.write(EventData.newBuilder().type("baz").jsonData("{ b : 2 }").build());
     t.write(asList(
@@ -465,13 +465,13 @@ eventstore.deletePersistentSubscription("bar", "group").thenAccept(r -> System.o
 #### Deletes stream
 
 ```java
-eventstore.deleteStream("bar", ExpectedVersion.any()).thenAccept(r -> System.out.println(r.logPosition));
+eventstore.deleteStream("bar", ExpectedVersion.ANY).thenAccept(r -> System.out.println(r.logPosition));
 ```
 
 #### Sets stream metadata
 
 ```java
-eventstore.setStreamMetadata("foo", ExpectedVersion.any(), StreamMetadata.newBuilder()
+eventstore.setStreamMetadata("foo", ExpectedVersion.ANY, StreamMetadata.newBuilder()
     .aclReadRoles(asList("eric", "kyle", "stan", "kenny"))
     .cacheControl(Duration.ofMinutes(10))
     .maxAge(Duration.ofDays(1))
@@ -484,7 +484,7 @@ eventstore.setStreamMetadata("foo", ExpectedVersion.any(), StreamMetadata.newBui
 ```
 
 ```java
-eventstore.setStreamMetadata("foo", ExpectedVersion.any(), StreamMetadata.empty())
+eventstore.setStreamMetadata("foo", ExpectedVersion.ANY, StreamMetadata.empty())
     .thenAccept(r -> System.out.println(r.logPosition));
 ```
 

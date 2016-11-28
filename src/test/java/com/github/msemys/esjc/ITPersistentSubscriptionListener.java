@@ -37,7 +37,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             eventSignal.countDown();
         }, BUFFER_SIZE, false).join();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()));
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()));
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
     }
@@ -58,7 +58,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
 
         eventstore.subscribeToPersistent(stream, group, (s, e) -> eventSignal.countDown(), BUFFER_SIZE, true).join();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()));
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()));
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
     }
@@ -75,7 +75,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             .startFromBeginning()
             .build();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join());
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join());
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -99,7 +99,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             .startFromBeginning()
             .build();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join());
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join());
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 
@@ -121,7 +121,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             .startFromBeginning()
             .build();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream2, ExpectedVersion.any(), newTestEvent()).join());
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream2, ExpectedVersion.ANY, newTestEvent()).join());
 
         eventstore.createPersistentSubscription(stream1, group, settings).join();
 
@@ -133,7 +133,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
         }, BUFFER_SIZE, false).join();
 
         range(0, EVENT_COUNT).forEach(i ->
-            eventstore.appendToStream(stream1, ExpectedVersion.any(),
+            eventstore.appendToStream(stream1, ExpectedVersion.ANY,
                 EventData.newBuilder()
                     .linkTo(i, stream2)
                     .build()
@@ -155,7 +155,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             .startFromBeginning()
             .build();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream2, ExpectedVersion.any(), newTestEvent()).join());
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream2, ExpectedVersion.ANY, newTestEvent()).join());
 
         eventstore.createPersistentSubscription(stream1, group, settings).join();
 
@@ -165,7 +165,7 @@ public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
             }
         }, BUFFER_SIZE, true).join();
 
-        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream1, ExpectedVersion.any(),
+        range(0, EVENT_COUNT).forEach(i -> eventstore.appendToStream(stream1, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .linkTo(i, stream2)
                 .build()

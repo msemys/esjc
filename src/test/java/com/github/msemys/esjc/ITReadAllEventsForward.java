@@ -24,7 +24,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
     public void returnsEmptySliceIfAskedToReadFromEnd() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         AllEventsSlice slice = eventstore.readAllEventsForward(Position.END, 1, false).join();
 
@@ -37,7 +37,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        Position position = eventstore.appendToStream(stream, ExpectedVersion.noStream(), events.get(0)).join().logPosition;
+        Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
         eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
         eventstore.appendToStream(stream, ExpectedVersion.of(19), asList(newTestEvent(), newTestEvent())).join();
 
@@ -52,7 +52,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        Position position = eventstore.appendToStream(stream, ExpectedVersion.noStream(), events.get(0)).join().logPosition;
+        Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
         eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
 
         AllEventsSlice slice = eventstore.readAllEventsForward(position, 4096, false).join();
@@ -66,7 +66,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> allEvents = new ArrayList<>();
         Position position = Position.START;
@@ -90,7 +90,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> allEvents = new ArrayList<>();
         Position position = Position.START;

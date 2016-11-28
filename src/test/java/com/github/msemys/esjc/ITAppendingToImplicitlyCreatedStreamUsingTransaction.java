@@ -47,7 +47,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(5, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(0, writer.startTransaction(ExpectedVersion.any()).write(events.get(0)).commit().nextExpectedVersion);
+        assertEquals(0, writer.startTransaction(ExpectedVersion.ANY).write(events.get(0)).commit().nextExpectedVersion);
 
         assertEquals(events.size(), size(stream));
     }
@@ -125,7 +125,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(0, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(0, writer.startTransaction(ExpectedVersion.any()).write(events.get(0)).commit().nextExpectedVersion);
+        assertEquals(0, writer.startTransaction(ExpectedVersion.ANY).write(events.get(0)).commit().nextExpectedVersion);
 
         assertEquals(events.size(), size(stream));
     }
@@ -153,7 +153,7 @@ public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends Abstra
         TransactionalWriter writer = newTransactionalWriter(stream);
 
         assertEquals(2, writer.startTransaction(ExpectedVersion.of(-1)).write(events).commit().nextExpectedVersion);
-        assertEquals(0, writer.startTransaction(ExpectedVersion.any())
+        assertEquals(0, writer.startTransaction(ExpectedVersion.ANY)
             .write(events.get(0))
             .write(events.get(0))
             .commit().nextExpectedVersion);

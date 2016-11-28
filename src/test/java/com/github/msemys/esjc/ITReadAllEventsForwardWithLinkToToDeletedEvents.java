@@ -17,9 +17,9 @@ public class ITReadAllEventsForwardWithLinkToToDeletedEvents extends AbstractInt
         final String deletedStreamName = generateStreamName();
         final String linkedStreamName = generateStreamName();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.any(), newTestEvent()).join();
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.any(), newLinkEvent(deletedStreamName, 0)).join();
-        eventstore.deleteStream(deletedStreamName, ExpectedVersion.any()).join();
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.ANY, newTestEvent()).join();
+        eventstore.appendToStream(linkedStreamName, ExpectedVersion.ANY, newLinkEvent(deletedStreamName, 0)).join();
+        eventstore.deleteStream(deletedStreamName, ExpectedVersion.ANY).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(linkedStreamName, 0, 1, true).join();
 

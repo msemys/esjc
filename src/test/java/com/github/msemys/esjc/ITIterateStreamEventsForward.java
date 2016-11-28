@@ -64,7 +64,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void failsToCallHasNextWhenIteratingDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, 0, 5, false);
 
@@ -81,7 +81,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void failsToCallNextWhenIteratingDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, 0, 5, false);
 
@@ -98,7 +98,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void failsToCallNextAfterEndOfStreamIsReached() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, 3, 3, false);
 
@@ -123,7 +123,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> result = new ArrayList<>();
         eventstore.iterateStreamEventsForward(stream, 8, 5, false).forEachRemaining(e -> result.add(e.event));
@@ -136,7 +136,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromStartToEndWithSmallBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 2, false);
         assertThat(iterator, hasSize(10));
@@ -146,7 +146,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromStartToEndWithLargeBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 20, false);
         assertThat(iterator, hasSize(10));
@@ -156,7 +156,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromStartToEndWithMaxBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 4096, false);
         assertThat(iterator, hasSize(10));
@@ -167,7 +167,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> result = new ArrayList<>();
         eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 3, false).forEachRemaining(e -> result.add(e.event));

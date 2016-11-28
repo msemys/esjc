@@ -21,7 +21,7 @@ public class ITSubscribeToStream extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(1);
 
         eventstore.subscribeToStream(stream, false, (s, e) -> eventSignal.countDown()).join();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
     }
@@ -34,7 +34,7 @@ public class ITSubscribeToStream extends AbstractIntegrationTest {
 
         eventstore.subscribeToStream(stream, false, (s, e) -> eventSignal.countDown()).join();
         eventstore.subscribeToStream(stream, false, (s, e) -> eventSignal.countDown()).join();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
     }
@@ -69,7 +69,7 @@ public class ITSubscribeToStream extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(1);
 
         eventstore.subscribeToStream(stream, false, (s, e) -> eventSignal.countDown()).join();
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
     }

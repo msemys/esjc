@@ -22,7 +22,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
     public void setsEmptyMetadata() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), StreamMetadata.empty()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.empty()).join();
 
         RawStreamMetadataResult metadata = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata.stream);
@@ -42,7 +42,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadata1).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadata1).join();
 
         StreamMetadataResult metadataResult1 = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult1.stream);
@@ -95,7 +95,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.any(), metadata1).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.ANY, metadata1).join();
 
         StreamMetadataResult metadataResult1 = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult1.stream);
@@ -113,7 +113,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .cacheControl(Duration.ofMinutes(10))
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.any(), metadata2).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.ANY, metadata2).join();
 
         StreamMetadataResult metadataResult2 = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult2.stream);
@@ -136,7 +136,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadata).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadata).join();
 
         StreamMetadataResult metadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult.stream);
@@ -152,7 +152,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
     public void setsMetadataForExistingStream() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
 
         StreamMetadata metadata = StreamMetadata.newBuilder()
             .maxCount(17)
@@ -161,7 +161,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadata).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadata).join();
 
         StreamMetadataResult metadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult.stream);
@@ -198,9 +198,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadata).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadata).join();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         StreamMetadataResult metadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult.stream);
@@ -236,7 +236,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             "  \"customNullable\": null" +
             "}");
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), rawMetadata).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, rawMetadata).join();
 
         StreamMetadataResult metadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult.stream);
@@ -282,7 +282,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .customProperty("customNullable", (Integer) null)
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadata).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadata).join();
 
         StreamMetadataResult metadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult.stream);
@@ -318,7 +318,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .aclMetaWriteRoles(asList("mw1", "mw2"))
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadata).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadata).join();
 
         StreamMetadataResult metadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult.stream);
@@ -345,7 +345,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             "  }" +
             "}");
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), rawMetadata).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, rawMetadata).join();
 
         StreamMetadataResult metadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult.stream);

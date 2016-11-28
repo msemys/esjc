@@ -45,7 +45,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
-            .append(events.get(0), ExpectedVersion.any());
+            .append(events.get(0), ExpectedVersion.ANY);
 
         assertEquals(events.size(), size(stream));
     }
@@ -116,7 +116,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
-            .append(events.get(0), ExpectedVersion.any());
+            .append(events.get(0), ExpectedVersion.ANY);
 
         assertEquals(events.size(), size(stream));
     }
@@ -142,8 +142,8 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         newStreamWriter(stream, ExpectedVersion.of(-1))
             .append(events)
-            .append(events.get(1), ExpectedVersion.any())
-            .append(events.get(1), ExpectedVersion.any());
+            .append(events.get(1), ExpectedVersion.ANY)
+            .append(events.get(1), ExpectedVersion.ANY);
 
         assertEquals(events.size(), size(stream));
     }
@@ -167,7 +167,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
         List<EventData> events = range(0, 2).mapToObj(i -> newTestEvent()).collect(toList());
 
         eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).join();
-        eventstore.appendToStream(stream, ExpectedVersion.any(), events.get(0)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.ANY, events.get(0)).join();
 
         assertEquals(events.size(), size(stream));
     }
@@ -191,7 +191,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
         List<EventData> events = range(0, 2).mapToObj(i -> newTestEvent()).collect(toList());
 
         eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).join();
-        eventstore.appendToStream(stream, ExpectedVersion.any(), events.get(1)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.ANY, events.get(1)).join();
 
         assertEquals(events.size(), size(stream));
     }
@@ -204,7 +204,7 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(-1), events).get();
-            eventstore.appendToStream(stream, ExpectedVersion.any(),
+            eventstore.appendToStream(stream, ExpectedVersion.ANY,
                 concat(events.stream(), Stream.of(newTestEvent())).collect(toList())).get();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
@@ -239,14 +239,14 @@ public class ITAppendingToImplicitlyCreatedStream extends AbstractIntegrationTes
 
         private TailWriter append(List<EventData> events) {
             for (int i = 0; i < events.size(); i++) {
-                ExpectedVersion expectedVersion = (ExpectedVersion.any().equals(version)) ?
+                ExpectedVersion expectedVersion = (ExpectedVersion.ANY.equals(version)) ?
                     version : ExpectedVersion.of(version.value + i);
 
                 ExpectedVersion nextExpectedVersion = ExpectedVersion.of(eventstore
                     .appendToStream(stream, expectedVersion, events.get(i))
                     .join().nextExpectedVersion);
 
-                if (!ExpectedVersion.any().equals(nextExpectedVersion)) {
+                if (!ExpectedVersion.ANY.equals(nextExpectedVersion)) {
                     assertEquals(expectedVersion.value + 1, nextExpectedVersion.value);
                 }
             }

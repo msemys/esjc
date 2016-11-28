@@ -88,7 +88,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
     public void iteratesAllRemainingEventsBackward() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(31)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(31)).join();
         List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 31, false).join().events;
         Position position = firstEvents.get(30).originalPosition;
 
@@ -155,7 +155,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
     public void iteratesAndSplitsEventsBackward() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(41)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(41)).join();
         List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 41, false).join().events;
         Position position = firstEvents.get(40).originalPosition;
 
@@ -223,7 +223,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
     public void splitsAndIteratesEventsBackward() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(41)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(41)).join();
         List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 41, false).join().events;
         Position position = firstEvents.get(40).originalPosition;
 
@@ -283,7 +283,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
     public void splitsEventsBackward() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(41)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(41)).join();
         List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 41, false).join().events;
         Position position = firstEvents.get(40).originalPosition;
 
@@ -361,7 +361,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
     public void lazyReadsBatchesBackward() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(20)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(20)).join();
         List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 11, false).join().events;
         Position position = firstEvents.get(10).originalPosition;
 
@@ -399,7 +399,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
     }
 
     private Position appendEvents(String stream, List<EventData> events) {
-        Position position = eventstore.appendToStream(stream, ExpectedVersion.noStream(), events.get(0)).join().logPosition;
+        Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
         eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
         return position;
     }

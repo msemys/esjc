@@ -566,7 +566,7 @@ public class EventStoreTcp implements EventStore {
     public CompletableFuture<WriteResult> setSystemSettings(SystemSettings settings, UserCredentials userCredentials) {
         checkNotNull(settings, "settings is null");
         return appendToStream(SystemStreams.SETTINGS_STREAM,
-            ExpectedVersion.any(),
+            ExpectedVersion.ANY,
             singletonList(EventData.newBuilder()
                 .type(SystemEventType.SETTINGS.value)
                 .jsonData(settings.toJson())

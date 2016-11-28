@@ -24,7 +24,7 @@ public class ITCreatePersistentSubscription extends AbstractIntegrationTest {
             .startFromCurrent()
             .build();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
     }
@@ -113,7 +113,7 @@ public class ITCreatePersistentSubscription extends AbstractIntegrationTest {
             .startFromCurrent()
             .build();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
 
         eventstore.createPersistentSubscription(stream, group, settings).join();
 

@@ -120,7 +120,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             eventSignal.countDown();
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(),
+        eventstore.appendToStream(stream, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .eventId(eventId)
                 .type("test")
@@ -158,7 +158,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
 
         range(0, 3).forEach(i -> {
             eventIds.add(UUID.randomUUID());
-            eventstore.appendToStream(stream, ExpectedVersion.any(),
+            eventstore.appendToStream(stream, ExpectedVersion.ANY,
                 EventData.newBuilder()
                     .eventId(eventIds.get(i))
                     .type("test")
@@ -190,7 +190,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
 
         range(0, 10).forEach(i -> {
             eventIds.add(UUID.randomUUID());
-            eventstore.appendToStream(stream, ExpectedVersion.any(),
+            eventstore.appendToStream(stream, ExpectedVersion.ANY,
                 EventData.newBuilder()
                     .eventId(eventIds.get(i))
                     .type("test")
@@ -225,7 +225,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             .build();
 
         range(0, 10).forEach(i ->
-            eventstore.appendToStream(stream, ExpectedVersion.any(),
+            eventstore.appendToStream(stream, ExpectedVersion.ANY,
                 EventData.newBuilder()
                     .eventId(UUID.randomUUID())
                     .type("test")
@@ -255,7 +255,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             .build();
 
         range(0, 10).forEach(i ->
-            eventstore.appendToStream(stream, ExpectedVersion.any(),
+            eventstore.appendToStream(stream, ExpectedVersion.ANY,
                 EventData.newBuilder()
                     .eventId(UUID.randomUUID())
                     .type("test")
@@ -271,7 +271,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             eventSignal.countDown();
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(),
+        eventstore.appendToStream(stream, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .eventId(eventId)
                 .type("test")
@@ -301,7 +301,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             .build();
 
         range(0, 11).forEach(i ->
-            eventstore.appendToStream(stream, ExpectedVersion.any(),
+            eventstore.appendToStream(stream, ExpectedVersion.ANY,
                 EventData.newBuilder()
                     .eventId(UUID.randomUUID())
                     .type("test")
@@ -317,7 +317,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             eventSignal.countDown();
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(),
+        eventstore.appendToStream(stream, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .eventId(eventId)
                 .type("test")
@@ -362,7 +362,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             }
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(),
+        eventstore.appendToStream(stream, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .eventId(UUID.randomUUID())
                 .type("test")
@@ -392,7 +392,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             .build();
 
         range(0, 10).forEach(i ->
-            eventstore.appendToStream(stream, ExpectedVersion.any(),
+            eventstore.appendToStream(stream, ExpectedVersion.ANY,
                 EventData.newBuilder()
                     .eventId(UUID.randomUUID())
                     .type("test")
@@ -408,7 +408,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
             eventSignal.countDown();
         }).join();
 
-        eventstore.appendToStream(stream, ExpectedVersion.any(),
+        eventstore.appendToStream(stream, ExpectedVersion.ANY,
             EventData.newBuilder()
                 .eventId(eventId)
                 .type("test")
@@ -439,7 +439,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
 
         range(0, 10).forEach(i -> {
             eventIds.add(UUID.randomUUID());
-            eventstore.appendToStream(stream, ExpectedVersion.any(),
+            eventstore.appendToStream(stream, ExpectedVersion.ANY,
                 EventData.newBuilder()
                     .eventId(eventIds.get(i))
                     .type("test")

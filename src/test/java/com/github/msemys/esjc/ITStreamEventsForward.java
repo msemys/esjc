@@ -46,7 +46,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
     public void failsToProcessDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         Stream<ResolvedEvent> eventStream = eventstore.streamEventsForward(stream, 0, 5, false);
 
@@ -64,7 +64,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(10);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> result = eventstore.streamEventsForward(stream, 8, 5, false).collect(toList());
 
@@ -76,7 +76,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
     public void readsStreamEventsFromStartToEndWithSmallBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(10)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         assertEquals(10, eventstore.streamEventsForward(stream, StreamPosition.START, 2, false).count());
     }
@@ -85,7 +85,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
     public void readsStreamEventsFromStartToEndWithLargeBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(10)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         assertEquals(10, eventstore.streamEventsForward(stream, StreamPosition.START, 20, false).count());
     }
@@ -94,7 +94,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
     public void readsStreamEventsFromStartToEndWithMaxBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(10)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         assertEquals(10, eventstore.streamEventsForward(stream, StreamPosition.START, 4096, false).count());
     }
@@ -104,7 +104,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(10);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> result = eventstore.streamEventsForward(stream, StreamPosition.START, 3, false).collect(toList());
 
@@ -117,7 +117,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(100);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> result = eventstore.streamEventsForward(stream, StreamPosition.START, 6, false)
             .parallel()
@@ -138,7 +138,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
                 .build())
             .collect(toList());
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         assertEquals(51, eventstore.streamEventsForward(stream, StreamPosition.START, 11, false)
             .filter(e -> e.event.eventType.equals("even"))
@@ -160,7 +160,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
                 .build())
             .collect(toList());
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         assertEquals(51, eventstore.streamEventsForward(stream, StreamPosition.START, 11, false)
             .parallel()

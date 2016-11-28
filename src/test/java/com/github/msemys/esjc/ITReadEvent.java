@@ -54,7 +54,7 @@ public class ITReadEvent extends AbstractIntegrationTest {
     public void returnsStreamDeletedIfStreamWasDeleted() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         EventReadResult result = eventstore.readEvent(stream, 5, false).join();
 
@@ -68,7 +68,7 @@ public class ITReadEvent extends AbstractIntegrationTest {
     public void returnsNotFoundIfStreamDoesNotHaveEvent() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         EventReadResult result = eventstore.readEvent(stream, 5, false).join();
 
@@ -83,7 +83,7 @@ public class ITReadEvent extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         EventReadResult result = eventstore.readEvent(stream, 0, false).join();
 
@@ -99,7 +99,7 @@ public class ITReadEvent extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         EventReadResult result = eventstore.readEvent(stream, 1, false).join();
 
@@ -113,7 +113,7 @@ public class ITReadEvent extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         EventReadResult result = eventstore.readEvent(stream, -1, false).join();
 

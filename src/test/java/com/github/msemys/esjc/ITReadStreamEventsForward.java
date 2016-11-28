@@ -48,7 +48,7 @@ public class ITReadStreamEventsForward extends AbstractIntegrationTest {
     public void returnsStreamDeletedIfStreamWasDeleted() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 1, false).join();
 
@@ -68,7 +68,7 @@ public class ITReadStreamEventsForward extends AbstractIntegrationTest {
     public void returnsEmptySliceWhenCalledOnNonExistingRange() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 11, 5, false).join();
 
@@ -79,7 +79,7 @@ public class ITReadStreamEventsForward extends AbstractIntegrationTest {
     public void returnsPartialSliceIfNotEnoughEventsInStream() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 9, 5, false).join();
 
@@ -91,7 +91,7 @@ public class ITReadStreamEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, StreamPosition.START, events.size(), false).join();
 
@@ -103,7 +103,7 @@ public class ITReadStreamEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 5, 1, false).join();
 
@@ -115,7 +115,7 @@ public class ITReadStreamEventsForward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 5, 2, false).join();
 

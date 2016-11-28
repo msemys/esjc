@@ -64,7 +64,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
     public void failsToCallHasNextWhenIteratingDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, 0, 5, false);
 
@@ -81,7 +81,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
     public void failsToCallNextWhenIteratingDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, 0, 5, false);
 
@@ -98,7 +98,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
     public void failsToCallNextAfterEndOfStreamIsReached() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, 8, 3, false);
 
@@ -123,7 +123,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> result = new ArrayList<>();
         eventstore.iterateStreamEventsBackward(stream, 8, 5, false).forEachRemaining(e -> result.add(e.event));
@@ -138,7 +138,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromEndToStartWithSmallBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, StreamPosition.END, 2, false);
         assertThat(iterator, hasSize(10));
@@ -148,7 +148,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromEndToStartWithLargeBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, StreamPosition.END, 20, false);
         assertThat(iterator, hasSize(10));
@@ -158,7 +158,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromEndToStartWithMaxBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, StreamPosition.END, 4096, false);
         assertThat(iterator, hasSize(10));
@@ -169,7 +169,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> result = new ArrayList<>();
         eventstore.iterateStreamEventsBackward(stream, StreamPosition.END, 3, false).forEachRemaining(e -> result.add(e.event));
@@ -185,7 +185,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, StreamPosition.START, 5, false);
 
@@ -199,7 +199,7 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsBackward(stream, StreamPosition.END, 1, false);
 

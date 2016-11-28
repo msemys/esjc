@@ -30,7 +30,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
     public void returnsEmptyStreamIfAskedToProcessFromStart() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(20)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(20)).join();
 
         assertFalse(eventstore.streamAllEventsBackward(Position.START, 1, false).findFirst().isPresent());
     }
@@ -39,7 +39,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
     public void readsFirstEvent() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents(20)).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(20)).join();
 
         List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 2, false).join().events;
         Position position = firstEvents.get(1).originalPosition;
@@ -55,7 +55,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> result = eventstore.streamAllEventsBackward(Position.END, 6, false)
             .limit(20)
@@ -70,7 +70,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> result = eventstore.streamAllEventsBackward(Position.END, 6, false)
             .parallel()
@@ -86,7 +86,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> allEvents = eventstore.streamAllEventsBackward(Position.END, 1, false).collect(toList());
 
@@ -102,7 +102,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> allEvents = eventstore.streamAllEventsBackward(Position.END, 1, false)
             .parallel()
@@ -120,7 +120,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> allEvents = eventstore.streamAllEventsBackward(Position.END, 5, false).collect(toList());
 
@@ -136,7 +136,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> allEvents = eventstore.streamAllEventsBackward(Position.END, 5, false)
             .parallel()
@@ -154,7 +154,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> allEvents = eventstore.streamAllEventsBackward(Position.END, 4096, false).collect(toList());
 
@@ -170,7 +170,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<ResolvedEvent> allEvents = eventstore.streamAllEventsBackward(Position.END, 4096, false)
             .parallel()
@@ -194,7 +194,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
                 .build())
             .collect(toList());
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         assertEquals(51, eventstore.streamAllEventsBackward(Position.END, 17, false)
             .filter(e -> e.event.eventStreamId.equals(stream))
@@ -218,7 +218,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
                 .build())
             .collect(toList());
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         assertEquals(51, eventstore.streamAllEventsBackward(Position.END, 17, false)
             .parallel()

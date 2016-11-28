@@ -18,19 +18,19 @@ public class ITDeleteStream extends AbstractIntegrationTest {
     @Test
     public void succeedsToDeleteNonExistentStreamWithNoStreamExpectedVersion() {
         final String stream = generateStreamName();
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
     }
 
     @Test
     public void succeedsToDeleteNonExistentStreamWithAnyExpectedVersion() {
         final String stream = generateStreamName();
-        eventstore.deleteStream(stream, ExpectedVersion.any(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.ANY, true).join();
     }
 
     @Test
     public void succeedsToDeleteExistingStream() {
         final String stream = generateStreamName();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
         eventstore.deleteStream(stream, ExpectedVersion.of(0), true).join();
     }
 
@@ -49,10 +49,10 @@ public class ITDeleteStream extends AbstractIntegrationTest {
     public void failsToDeleteAlreadyDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         try {
-            eventstore.deleteStream(stream, ExpectedVersion.any(), true).join();
+            eventstore.deleteStream(stream, ExpectedVersion.ANY, true).join();
             fail("delete should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));

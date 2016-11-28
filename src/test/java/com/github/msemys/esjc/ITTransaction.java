@@ -27,7 +27,7 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void startsOnNonExistingStreamWithCorrectExpectedVersionAndCreatesStreamOnCommit() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.noStream()).join();
+        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.NO_STREAM).join();
         transaction.write(newTestEvent()).join();
 
         assertEquals(0, transaction.commit().join().nextExpectedVersion);
@@ -37,7 +37,7 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void startsOnNonExistingStreamWithExpectedVersionAnyAndCreatesStreamOnCommit() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.any()).join();
+        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.ANY).join();
         transaction.write(newTestEvent()).join();
 
         assertEquals(0, transaction.commit().join().nextExpectedVersion);
@@ -62,7 +62,7 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void doesNothingIfCommitsNoEventsToEmptyStream() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.noStream()).join();
+        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.NO_STREAM).join();
         assertEquals(-1, transaction.commit().join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 1, false).join();
@@ -73,7 +73,7 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void doesNothingIfTransactionallyWritingNoEventsToEmptyStream() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.noStream()).join();
+        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.NO_STREAM).join();
         transaction.write(emptyList()).join();
         assertEquals(-1, transaction.commit().join().nextExpectedVersion);
 
@@ -110,7 +110,7 @@ public class ITTransaction extends AbstractIntegrationTest {
 
         //500 events during transaction
         threadPool.execute(() -> {
-            Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.any()).join();
+            Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.ANY).join();
 
             CompletableFuture[] writes = new CompletableFuture[totalTransactionalWrites];
             for (int i = 0; i < totalTransactionalWrites; i++) {
@@ -132,7 +132,7 @@ public class ITTransaction extends AbstractIntegrationTest {
         threadPool.execute(() -> {
             CompletableFuture[] writes = new CompletableFuture[totalPlainWrites];
             for (int i = 0; i < totalPlainWrites; i++) {
-                writes[i] = eventstore.appendToStream(stream, ExpectedVersion.any(),
+                writes[i] = eventstore.appendToStream(stream, ExpectedVersion.ANY,
                     EventData.newBuilder()
                         .type("test")
                         .data(String.valueOf(i))
@@ -158,8 +158,8 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void failsToCommitIfStartedWithCorrectVersionButCommittingWithBad() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.noStream()).join();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.NO_STREAM).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
         transaction.write(newTestEvent()).join();
 
         try {
@@ -175,7 +175,7 @@ public class ITTransaction extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(0)).join();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
         transaction.write(newTestEvent()).join();
 
         assertEquals(1, transaction.commit().join().nextExpectedVersion);
@@ -185,9 +185,9 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void failsToCommitIfStartedWithCorrectVersionButOnCommitStreamWasDeleted() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.noStream()).join();
+        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.NO_STREAM).join();
         transaction.write(newTestEvent()).join();
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         try {
             transaction.commit().join();
@@ -206,11 +206,11 @@ public class ITTransaction extends AbstractIntegrationTest {
             .jsonData("{Value:42}")
             .build();
 
-        Transaction transaction1 = eventstore.startTransaction(stream, ExpectedVersion.any()).join();
+        Transaction transaction1 = eventstore.startTransaction(stream, ExpectedVersion.ANY).join();
         transaction1.write(event).join();
         assertEquals(0, transaction1.commit().join().nextExpectedVersion);
 
-        Transaction transaction2 = eventstore.startTransaction(stream, ExpectedVersion.any()).join();
+        Transaction transaction2 = eventstore.startTransaction(stream, ExpectedVersion.ANY).join();
         transaction2.write(event).join();
         assertEquals(0, transaction2.commit().join().nextExpectedVersion);
 

@@ -46,7 +46,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(19);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.START,
@@ -70,7 +70,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(82);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.START,
@@ -95,7 +95,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(30);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.END,
@@ -121,7 +121,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(17);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.START,
@@ -165,7 +165,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(40);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.END,
@@ -210,7 +210,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(17);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.START,
@@ -236,7 +236,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(40);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.END,
@@ -263,7 +263,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(17);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.START,
@@ -292,7 +292,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(40);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         Spliterator<ResolvedEvent> spliterator = new StreamEventsSpliterator(
             StreamPosition.END,
@@ -322,7 +322,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSpliteratorWithBatchCounter spliterator = new StreamEventsSpliteratorWithBatchCounter(
             StreamPosition.START,
@@ -362,7 +362,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents(20);
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSpliteratorWithBatchCounter spliterator = new StreamEventsSpliteratorWithBatchCounter(
             19,

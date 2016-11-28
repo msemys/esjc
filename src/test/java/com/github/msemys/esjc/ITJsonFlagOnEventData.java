@@ -17,7 +17,7 @@ public class ITJsonFlagOnEventData extends AbstractIntegrationTest {
     public void setsJsonFlag() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, asList(
             EventData.newBuilder()
                 .type("some-type")
                 .jsonData("{\"some\":\"json\"}")
@@ -35,7 +35,7 @@ public class ITJsonFlagOnEventData extends AbstractIntegrationTest {
                 .build()
         )).join();
 
-        try (Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.any()).join()) {
+        try (Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.ANY).join()) {
             transaction.write(asList(
                 EventData.newBuilder()
                     .type("some-type")

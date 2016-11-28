@@ -16,7 +16,7 @@ public class ITWhenWorkingWithMetadata extends AbstractIntegrationTest {
     public void getsMetadataForAnExistingStreamAndNoMetadataExists() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
 
         RawStreamMetadataResult metadata = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata.stream);

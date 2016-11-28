@@ -26,10 +26,10 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void allowsAppendZeroEventsToStream() throws Exception {
         final String stream1 = generateStreamName();
 
-        assertEquals(-1, eventstore.appendToStream(stream1, ExpectedVersion.any(), emptyList()).get().nextExpectedVersion);
-        assertEquals(-1, eventstore.appendToStream(stream1, ExpectedVersion.noStream(), emptyList()).get().nextExpectedVersion);
-        assertEquals(-1, eventstore.appendToStream(stream1, ExpectedVersion.any(), emptyList()).get().nextExpectedVersion);
-        assertEquals(-1, eventstore.appendToStream(stream1, ExpectedVersion.noStream(), emptyList()).get().nextExpectedVersion);
+        assertEquals(-1, eventstore.appendToStream(stream1, ExpectedVersion.ANY, emptyList()).get().nextExpectedVersion);
+        assertEquals(-1, eventstore.appendToStream(stream1, ExpectedVersion.NO_STREAM, emptyList()).get().nextExpectedVersion);
+        assertEquals(-1, eventstore.appendToStream(stream1, ExpectedVersion.ANY, emptyList()).get().nextExpectedVersion);
+        assertEquals(-1, eventstore.appendToStream(stream1, ExpectedVersion.NO_STREAM, emptyList()).get().nextExpectedVersion);
 
         StreamEventsSlice read1 = eventstore.readStreamEventsForward(stream1, 0, 2, false).get();
         assertThat(read1.events.size(), is(0));
@@ -37,10 +37,10 @@ public class ITAppendToStream extends AbstractIntegrationTest {
 
         final String stream2 = generateStreamName();
 
-        assertEquals(-1, eventstore.appendToStream(stream2, ExpectedVersion.noStream(), emptyList()).get().nextExpectedVersion);
-        assertEquals(-1, eventstore.appendToStream(stream2, ExpectedVersion.any(), emptyList()).get().nextExpectedVersion);
-        assertEquals(-1, eventstore.appendToStream(stream2, ExpectedVersion.noStream(), emptyList()).get().nextExpectedVersion);
-        assertEquals(-1, eventstore.appendToStream(stream2, ExpectedVersion.any(), emptyList()).get().nextExpectedVersion);
+        assertEquals(-1, eventstore.appendToStream(stream2, ExpectedVersion.NO_STREAM, emptyList()).get().nextExpectedVersion);
+        assertEquals(-1, eventstore.appendToStream(stream2, ExpectedVersion.ANY, emptyList()).get().nextExpectedVersion);
+        assertEquals(-1, eventstore.appendToStream(stream2, ExpectedVersion.NO_STREAM, emptyList()).get().nextExpectedVersion);
+        assertEquals(-1, eventstore.appendToStream(stream2, ExpectedVersion.ANY, emptyList()).get().nextExpectedVersion);
 
         StreamEventsSlice read2 = eventstore.readStreamEventsForward(stream2, 0, 2, false).get();
         assertThat(read2.events.size(), is(0));
@@ -50,7 +50,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void createsStreamWithNoStreamExpectedVersionOnFirstWriteIfDoesNotExist() throws Exception {
         final String stream = generateStreamName();
 
-        assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).get().nextExpectedVersion);
+        assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).get().nextExpectedVersion);
 
         StreamEventsSlice read = eventstore.readStreamEventsForward(stream, 0, 2, false).get();
         assertThat(read.events.size(), is(1));
@@ -60,7 +60,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void createsStreamWithAnyExpectedVersionOnFirstWriteIfDoesNotExist() throws Exception {
         final String stream = generateStreamName();
 
-        assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).get().nextExpectedVersion);
+        assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).get().nextExpectedVersion);
 
         StreamEventsSlice read = eventstore.readStreamEventsForward(stream, 0, 2, false).get();
         assertThat(read.events.size(), is(1));
@@ -72,8 +72,8 @@ public class ITAppendToStream extends AbstractIntegrationTest {
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent(), newTestEvent());
 
-        assertEquals(3, eventstore.appendToStream(stream, ExpectedVersion.any(), events).get().nextExpectedVersion);
-        assertEquals(3, eventstore.appendToStream(stream, ExpectedVersion.any(), events).get().nextExpectedVersion);
+        assertEquals(3, eventstore.appendToStream(stream, ExpectedVersion.ANY, events).get().nextExpectedVersion);
+        assertEquals(3, eventstore.appendToStream(stream, ExpectedVersion.ANY, events).get().nextExpectedVersion);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
         EventData event = newTestEvent();
         List<EventData> events = nCopies(6, event);
 
-        assertEquals(5, eventstore.appendToStream(stream, ExpectedVersion.any(), events).get().nextExpectedVersion);
+        assertEquals(5, eventstore.appendToStream(stream, ExpectedVersion.ANY, events).get().nextExpectedVersion);
     }
 
     @Test
@@ -93,8 +93,8 @@ public class ITAppendToStream extends AbstractIntegrationTest {
         EventData event = newTestEvent();
         List<EventData> events = nCopies(6, event);
 
-        assertEquals(5, eventstore.appendToStream(stream, ExpectedVersion.any(), events).get().nextExpectedVersion);
-        WriteResult result = eventstore.appendToStream(stream, ExpectedVersion.any(), events).get();
+        assertEquals(5, eventstore.appendToStream(stream, ExpectedVersion.ANY, events).get().nextExpectedVersion);
+        WriteResult result = eventstore.appendToStream(stream, ExpectedVersion.ANY, events).get();
         assertEquals(0, result.nextExpectedVersion);
     }
 
@@ -105,8 +105,8 @@ public class ITAppendToStream extends AbstractIntegrationTest {
         EventData event = newTestEvent();
         List<EventData> events = nCopies(6, event);
 
-        assertEquals(5, eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).get().nextExpectedVersion);
-        WriteResult result = eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).get();
+        assertEquals(5, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).get().nextExpectedVersion);
+        WriteResult result = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).get();
         assertEquals(5, result.nextExpectedVersion);
     }
 
@@ -114,10 +114,10 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void failsWritingWithCorrectExpectedVersionToDeletedStream() throws Exception {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).get();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).get();
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).get();
+            eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).get();
             fail("append should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
@@ -128,7 +128,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void returnsLogPositionWhenWriting() throws Exception {
         final String stream = generateStreamName();
 
-        WriteResult result = eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).get();
+        WriteResult result = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).get();
         assertTrue(0 < result.logPosition.preparePosition);
         assertTrue(0 < result.logPosition.commitPosition);
     }
@@ -137,10 +137,10 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void failsWritingWithAnyExpectedVersionToDeletedStream() throws Exception {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).get();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).get();
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).get();
+            eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).get();
             fail("append should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
@@ -151,7 +151,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void failsWritingWithInvalidExpectedVersionToDeletedStream() throws Exception {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).get();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).get();
 
         try {
             eventstore.appendToStream(stream, ExpectedVersion.of(5), newTestEvent()).get();
@@ -165,7 +165,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void appendsWithCorrectExpectedVersionToExistingStream() throws Exception {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).get();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).get();
 
         eventstore.appendToStream(stream, ExpectedVersion.of(0), newTestEvent()).get();
     }
@@ -174,8 +174,8 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void appendsWithAnyExpectedVersionToExistingStream() throws Exception {
         final String stream = generateStreamName();
 
-        assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).get().nextExpectedVersion);
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).get().nextExpectedVersion);
+        assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).get().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).get().nextExpectedVersion);
     }
 
     @Test
@@ -200,31 +200,31 @@ public class ITAppendToStream extends AbstractIntegrationTest {
             .metadata(String.valueOf(i))
             .build()).collect(Collectors.toList());
 
-        assertEquals(99, eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).get().nextExpectedVersion);
+        assertEquals(99, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).get().nextExpectedVersion);
     }
 
     @Test
     public void appendsWithStreamExistsExpectedVersionToExistingStream() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
-        eventstore.appendToStream(stream, ExpectedVersion.streamExists(), newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.STREAM_EXISTS, newTestEvent()).join();
     }
 
     @Test
     public void appendsWithStreamExistsExpectedVersionToStreamWithMultipleEvents() {
         final String stream = generateStreamName();
 
-        range(0, 5).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join());
-        eventstore.appendToStream(stream, ExpectedVersion.streamExists(), newTestEvent()).join();
+        range(0, 5).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join());
+        eventstore.appendToStream(stream, ExpectedVersion.STREAM_EXISTS, newTestEvent()).join();
     }
 
     @Test
     public void appendsWithStreamExistsExpectedVersionIfMetadataStreamExists() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.any(), StreamMetadata.newBuilder().maxCount(10).build()).join();
-        eventstore.appendToStream(stream, ExpectedVersion.streamExists(), newTestEvent()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.ANY, StreamMetadata.newBuilder().maxCount(10).build()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.STREAM_EXISTS, newTestEvent()).join();
     }
 
     @Test
@@ -232,7 +232,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.streamExists(), newTestEvent()).join();
+            eventstore.appendToStream(stream, ExpectedVersion.STREAM_EXISTS, newTestEvent()).join();
             fail("should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
@@ -243,10 +243,10 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void failsAppendingWithStreamExistsExpectedVersionToHardDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.streamExists(), newTestEvent()).join();
+            eventstore.appendToStream(stream, ExpectedVersion.STREAM_EXISTS, newTestEvent()).join();
             fail("should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
@@ -257,10 +257,10 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void failsAppendingWithStreamExistsExpectedVersionToSoftDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), false).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, false).join();
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.streamExists(), newTestEvent()).join();
+            eventstore.appendToStream(stream, ExpectedVersion.STREAM_EXISTS, newTestEvent()).join();
             fail("should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));

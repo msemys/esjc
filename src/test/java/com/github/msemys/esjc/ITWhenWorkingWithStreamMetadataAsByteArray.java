@@ -23,7 +23,7 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
     public void setsEmptyMetadata() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), (byte[]) null).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, (byte[]) null).join();
 
         RawStreamMetadataResult metadata = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata.stream);
@@ -37,7 +37,7 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
         final String stream = generateStreamName();
 
         byte[] metadataBytes1 = UUIDConverter.toBytes(UUID.randomUUID());
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadataBytes1).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadataBytes1).join();
         RawStreamMetadataResult metadata1 = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata1.stream);
         assertFalse(metadata1.isStreamDeleted);
@@ -70,7 +70,7 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
         final String stream = generateStreamName();
 
         byte[] metadataBytes1 = UUIDConverter.toBytes(UUID.randomUUID());
-        eventstore.setStreamMetadata(stream, ExpectedVersion.any(), metadataBytes1).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.ANY, metadataBytes1).join();
         RawStreamMetadataResult metadata1 = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata1.stream);
         assertFalse(metadata1.isStreamDeleted);
@@ -78,7 +78,7 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
         assertArrayEquals(metadataBytes1, metadata1.streamMetadata);
 
         byte[] metadataBytes2 = UUIDConverter.toBytes(UUID.randomUUID());
-        eventstore.setStreamMetadata(stream, ExpectedVersion.any(), metadataBytes2).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.ANY, metadataBytes2).join();
         RawStreamMetadataResult metadata2 = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata2.stream);
         assertFalse(metadata2.isStreamDeleted);
@@ -91,7 +91,7 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
         final String stream = generateStreamName();
 
         byte[] metadataBytes = UUIDConverter.toBytes(UUID.randomUUID());
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadataBytes).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadataBytes).join();
 
         RawStreamMetadataResult metadata = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata.stream);
@@ -104,10 +104,10 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
     public void setsMetadataForExistingStream() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), asList(newTestEvent(), newTestEvent())).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, asList(newTestEvent(), newTestEvent())).join();
 
         byte[] metadataBytes = UUIDConverter.toBytes(UUID.randomUUID());
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadataBytes).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadataBytes).join();
 
         RawStreamMetadataResult metadata = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata.stream);
@@ -120,11 +120,11 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
     public void failsToSetMetadataForDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         byte[] metadataBytes = UUIDConverter.toBytes(UUID.randomUUID());
         try {
-            eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadataBytes).join();
+            eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadataBytes).join();
             fail("should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
@@ -147,9 +147,9 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
         final String stream = generateStreamName();
 
         byte[] metadataBytes = UUIDConverter.toBytes(UUID.randomUUID());
-        eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(), metadataBytes).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, metadataBytes).join();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).join();
 
         RawStreamMetadataResult metadata = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata.stream);

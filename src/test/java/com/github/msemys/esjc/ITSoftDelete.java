@@ -23,7 +23,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamReturnsNoStreamAndNoEventsOnRead() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -37,12 +37,12 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAllowsRecreationWhenExpectedVersionAny() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent());
-        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.any(), events).join().nextExpectedVersion);
+        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.ANY, events).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -62,12 +62,12 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAllowsRecreationWhenExpectedVersionNoStream() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent());
-        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join().nextExpectedVersion);
+        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -87,7 +87,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAllowsRecreationWhenExpectedVersionIsExact() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -112,9 +112,9 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamWhenRecreatedPreservesMetadataExceptTruncateBefore() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
-        WriteResult writeResult = eventstore.setStreamMetadata(stream, ExpectedVersion.noStream(),
+        WriteResult writeResult = eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM,
             StreamMetadata.newBuilder()
                 .truncateBefore(Integer.MAX_VALUE)
                 .maxCount(100)
@@ -152,10 +152,10 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamCanBeHardDeleted() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
-        eventstore.deleteStream(stream, ExpectedVersion.any(), true).join();
+        eventstore.deleteStream(stream, ExpectedVersion.ANY, true).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.StreamDeleted, slice.status);
@@ -164,7 +164,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertTrue(streamMetadataResult.isStreamDeleted);
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.any(), newTestEvent()).join();
+            eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
             fail("append should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
@@ -175,15 +175,15 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAllowsRecreationOnlyForFirstWrite() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent());
-        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join().nextExpectedVersion);
+        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join().nextExpectedVersion);
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvent()).join();
+            eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
@@ -207,14 +207,14 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAppendsBothWritesWhenExpectedVersionAny() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
         List<EventData> events1 = asList(newTestEvent(), newTestEvent(), newTestEvent());
         List<EventData> events2 = asList(newTestEvent(), newTestEvent());
-        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.any(), events1).join().nextExpectedVersion);
-        assertEquals(6, eventstore.appendToStream(stream, ExpectedVersion.any(), events2).join().nextExpectedVersion);
+        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.ANY, events1).join().nextExpectedVersion);
+        assertEquals(6, eventstore.appendToStream(stream, ExpectedVersion.ANY, events2).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -234,7 +234,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void settingJsonMetadataOnEmptySoftDeletedStreamRecreatesStreamNotOverridingMetadata() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream()).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM).join();
 
         assertEquals(1, eventstore.setStreamMetadata(stream, ExpectedVersion.of(0),
             StreamMetadata.newBuilder()
@@ -265,7 +265,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void settingJsonMetadataOnNonEmptySoftDeletedStreamRecreatesStreamNotOverridingMetadata() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -298,7 +298,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void settingNonJsonMetadataOnEmptySoftDeletedStreamRecreatesStreamKeepingOriginalMetadata() {
         final String stream = generateStreamName();
 
-        eventstore.deleteStream(stream, ExpectedVersion.noStream()).join();
+        eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM).join();
 
         assertEquals(1, eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), new byte[256]).join().nextExpectedVersion);
 
@@ -316,7 +316,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void settingNonJsonMetadataOnNonEmptySoftDeletedStreamRecreatesStreamKeepingOriginalMetadata() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.noStream(), newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 

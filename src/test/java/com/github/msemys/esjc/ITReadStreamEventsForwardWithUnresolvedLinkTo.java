@@ -21,9 +21,9 @@ public class ITReadStreamEventsForwardWithUnresolvedLinkTo extends AbstractInteg
         final String deletedStreamName = generateStreamName();
         final String linkedStreamName = generateStreamName();
 
-        eventstore.appendToStream(deletedStreamName, ExpectedVersion.noStream(), newTestEvents()).join();
-        eventstore.appendToStream(linkedStreamName, ExpectedVersion.noStream(), newLinkEvent(deletedStreamName, 0)).join();
-        eventstore.deleteStream(deletedStreamName, ExpectedVersion.any()).join();
+        eventstore.appendToStream(deletedStreamName, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(linkedStreamName, ExpectedVersion.NO_STREAM, newLinkEvent(deletedStreamName, 0)).join();
+        eventstore.deleteStream(deletedStreamName, ExpectedVersion.ANY).join();
 
         StreamEventsSlice deletedStreamSlice = eventstore.readStreamEventsForward(deletedStreamName, 0, 100, false).join();
         assertEquals(SliceReadStatus.StreamNotFound, deletedStreamSlice.status);

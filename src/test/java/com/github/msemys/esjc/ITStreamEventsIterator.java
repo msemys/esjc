@@ -23,7 +23,7 @@ public class ITStreamEventsIterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsIteratorWithBatchCounter iterator = new StreamEventsIteratorWithBatchCounter(
             StreamPosition.START,
@@ -65,7 +65,7 @@ public class ITStreamEventsIterator extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         List<EventData> events = newTestEvents();
-        eventstore.appendToStream(stream, ExpectedVersion.noStream(), events).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsIteratorWithBatchCounter iterator = new StreamEventsIteratorWithBatchCounter(
             19,
