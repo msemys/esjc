@@ -2,6 +2,8 @@ package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.single.SingleNodeSettings;
+import com.github.msemys.esjc.operation.manager.OperationTimedOutException;
+import com.github.msemys.esjc.operation.manager.RetriesLimitReachedException;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
 import com.github.msemys.esjc.util.concurrent.DefaultThreadFactory;
@@ -374,6 +376,8 @@ public class Settings {
 
         /**
          * Sets the maximum number of operation retry attempts (by default, 10 attempts).
+         * When the specified number of retries for an operation is reached, then operation completes
+         * exceptionally with cause {@link RetriesLimitReachedException}.
          *
          * @param maxOperationRetries the maximum number of operation retry attempts (use {@code -1} for unlimited).
          * @return the builder reference
@@ -418,8 +422,9 @@ public class Settings {
         }
 
         /**
-         * Sets whether or not to raise an error if no response is received from the server for an operation.
-         * By default, it is disabled - operations are scheduled to be retried.
+         * Sets whether or not to complete operation exceptionally with cause {@link OperationTimedOutException}
+         * if no response is received from the server for an operation. By default, it is disabled - operations are
+         * scheduled to be retried.
          *
          * @param failOnNoServerResponse {@code true} to raise an error or {@code false} to schedule operation retry.
          * @return the builder reference
