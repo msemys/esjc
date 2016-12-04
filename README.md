@@ -5,7 +5,7 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 ## Requirements
 
 * Java 8
-* EventStore Server 3.2.0 - 3.9.2
+* EventStore Server 3.2.0 - 3.9.3
 
 
 ## Maven Dependency
