@@ -10,7 +10,7 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 
 ## Maven Dependency
 
-```.xml
+```xml
 <dependency>
     <groupId>com.github.msemys</groupId>
     <artifactId>esjc</artifactId>
