@@ -8,7 +8,6 @@ import java.util.List;
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.IntStream.range;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +23,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
     public void returnsEmptySliceIfAskedToReadFromEnd() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(20)).join();
 
         AllEventsSlice slice = eventstore.readAllEventsForward(Position.END, 1, false).join();
 
@@ -36,7 +35,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
     public void returnsEventsInSameOrderAsWritten() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(20);
         Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
         eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
         eventstore.appendToStream(stream, ExpectedVersion.of(19), asList(newTestEvent(), newTestEvent())).join();
@@ -51,7 +50,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
     public void readsSlice() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(20);
         Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
         eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
 
@@ -65,7 +64,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
     public void readsAllEventsOneByOneUntilEndOfStream() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(20);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> allEvents = new ArrayList<>();
@@ -89,7 +88,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
     public void readsAllEventsUntilEndOfStream() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(20);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> allEvents = new ArrayList<>();
@@ -112,10 +111,6 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
     @Test(expected = IllegalArgumentException.class)
     public void failsToReadWhenMaxCountOutOfRange() {
         eventstore.readAllEventsForward(Position.START, 4097, false);
-    }
-
-    private static List<EventData> newTestEvents() {
-        return range(0, 20).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.equalTo;
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 
 public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
@@ -56,7 +55,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
     public void returnsPartialSliceIfNoEnoughEventsInStream() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, 1, 5, false).join();
 
@@ -67,7 +66,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
     public void returnsEventsReversedComparedToWritten() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(10);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, StreamPosition.END, events.size(), false).join();
@@ -79,7 +78,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
     public void readsSingleEventFromArbitraryPosition() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(10);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, 7, 1, false).join();
@@ -91,7 +90,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
     public void readsFirstEvent() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, StreamPosition.START, 1, false).join();
 
@@ -102,7 +101,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
     public void readsLastEvent() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(10);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, StreamPosition.END, 1, false).join();
@@ -114,7 +113,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
     public void readsSliceFromArbitraryPosition() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(10);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, 3, 2, false).join();
@@ -126,10 +125,6 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
     @Test(expected = IllegalArgumentException.class)
     public void failsToReadWhenMaxCountOutOfRange() {
         eventstore.readStreamEventsBackward("foo", StreamPosition.START, Integer.MAX_VALUE, false).join();
-    }
-
-    private static List<EventData> newTestEvents() {
-        return range(0, 10).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
 }

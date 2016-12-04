@@ -14,6 +14,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Supplier;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractIntegrationTest {
@@ -64,6 +66,10 @@ public abstract class AbstractIntegrationTest {
         return EventData.newBuilder()
             .type("test")
             .build();
+    }
+
+    protected static List<EventData> newTestEvents(int count) {
+        return range(0, count).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
     protected static <T> List<T> reverse(List<T> list) {

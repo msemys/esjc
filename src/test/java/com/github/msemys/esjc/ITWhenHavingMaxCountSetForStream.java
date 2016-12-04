@@ -5,8 +5,6 @@ import org.junit.Test;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -23,7 +21,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
@@ -39,7 +37,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
@@ -55,7 +53,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
@@ -79,7 +77,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
@@ -103,7 +101,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
@@ -127,7 +125,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
@@ -143,10 +141,6 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertEquals(2, slice2.events.size());
         assertArrayEquals(events.stream().skip(3).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice2.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
-    }
-
-    private static List<EventData> newTestEvents() {
-        return range(0, 5).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
 }

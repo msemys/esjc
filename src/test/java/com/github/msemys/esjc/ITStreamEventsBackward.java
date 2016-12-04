@@ -207,8 +207,4 @@ public class ITStreamEventsBackward extends AbstractIntegrationTest {
         assertEquals(events.get(9).eventId, event.get().event.eventId);
     }
 
-    private static List<EventData> newTestEvents(int count) {
-        return range(0, count).mapToObj(i -> newTestEvent()).collect(toList());
-    }
-
 }

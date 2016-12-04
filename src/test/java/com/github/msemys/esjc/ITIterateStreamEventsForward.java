@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.github.msemys.esjc.matcher.IteratorSizeMatcher.hasSize;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
@@ -98,7 +97,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void failsToCallNextAfterEndOfStreamIsReached() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, 3, 3, false);
 
@@ -122,7 +121,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void iteratesStreamEventsToEnd() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(10);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> result = new ArrayList<>();
@@ -136,7 +135,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromStartToEndWithSmallBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 2, false);
         assertThat(iterator, hasSize(10));
@@ -146,7 +145,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromStartToEndWithLargeBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 20, false);
         assertThat(iterator, hasSize(10));
@@ -156,7 +155,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void iteratesStreamEventsFromStartToEndWithMaxBatchSize() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(10)).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 4096, false);
         assertThat(iterator, hasSize(10));
@@ -166,7 +165,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
     public void iteratesEventsInSameOrderAsWritten() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(10);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         List<RecordedEvent> result = new ArrayList<>();
@@ -174,10 +173,6 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
 
         assertEquals(10, result.size());
         range(0, 10).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).eventId));
-    }
-
-    private static List<EventData> newTestEvents() {
-        return range(0, 10).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
 }

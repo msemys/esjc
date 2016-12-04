@@ -404,10 +404,6 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         return position;
     }
 
-    private static List<EventData> newTestEvents(int count) {
-        return range(0, count).mapToObj(i -> newTestEvent()).collect(toList());
-    }
-
     private static class AllEventsSpliteratorWithBatchCounter extends AllEventsSpliterator {
         int batchCount;
 

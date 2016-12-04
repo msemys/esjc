@@ -23,7 +23,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamReturnsNoStreamAndNoEventsOnRead() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -37,7 +37,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAllowsRecreationWhenExpectedVersionAny() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -62,7 +62,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAllowsRecreationWhenExpectedVersionNoStream() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -87,7 +87,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAllowsRecreationWhenExpectedVersionIsExact() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -112,7 +112,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamWhenRecreatedPreservesMetadataExceptTruncateBefore() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         WriteResult writeResult = eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM,
             StreamMetadata.newBuilder()
@@ -152,7 +152,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamCanBeHardDeleted() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
         eventstore.deleteStream(stream, ExpectedVersion.ANY, true).join();
@@ -175,7 +175,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAllowsRecreationOnlyForFirstWrite() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -207,7 +207,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void softDeletedStreamAppendsBothWritesWhenExpectedVersionAny() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -265,7 +265,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void settingJsonMetadataOnNonEmptySoftDeletedStreamRecreatesStreamNotOverridingMetadata() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -316,7 +316,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
     public void settingNonJsonMetadataOnNonEmptySoftDeletedStreamRecreatesStreamKeepingOriginalMetadata() {
         final String stream = generateStreamName();
 
-        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join().nextExpectedVersion);
+        assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
         eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
 
@@ -332,10 +332,6 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         RawStreamMetadataResult streamMetadataResult = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(1, streamMetadataResult.metastreamVersion);
         assertArrayEquals(new byte[256], streamMetadataResult.streamMetadata);
-    }
-
-    private static List<EventData> newTestEvents() {
-        return asList(newTestEvent(), newTestEvent());
     }
 
 }

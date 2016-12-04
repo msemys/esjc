@@ -8,7 +8,6 @@ import java.util.List;
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
 import static com.github.msemys.esjc.system.SystemStreams.metastreamOf;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 
 public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractIntegrationTest {
@@ -24,7 +23,7 @@ public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractIntegra
     public void ensuresDeletedStream() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(20)).join();
         eventstore.deleteStream(stream, ExpectedVersion.ANY).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
@@ -37,7 +36,7 @@ public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractIntegra
     public void returnsAllEventsIncludingTombstone() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(20);
         Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
         eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
         eventstore.deleteStream(stream, ExpectedVersion.ANY).join();
@@ -52,10 +51,6 @@ public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractIntegra
 
         StreamMetadata metadata = StreamMetadata.fromJson(lastEvent.data);
         assertEquals(DELETED_STREAM_EVENT_NUMBER, metadata.truncateBefore);
-    }
-
-    private static List<EventData> newTestEvents() {
-        return range(0, 20).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
 }

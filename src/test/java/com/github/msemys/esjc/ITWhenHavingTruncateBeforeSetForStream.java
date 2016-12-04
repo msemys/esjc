@@ -5,8 +5,6 @@ import org.junit.Test;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -21,7 +19,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void readEventRespectsTruncateBefore() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -38,7 +36,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void readStreamForwardRespectsTruncateBefore() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -54,7 +52,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void readStreamBackwardRespectsTruncateBefore() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -70,7 +68,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void afterSettingLessStrictTruncateBeforeReadEventReadsMoreEvents() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -96,7 +94,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void afterSettingMoreStrictTruncateBeforeReadEventReadsLessEvents() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -122,7 +120,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void lessStrictMaxCountDoesntChangeAnythingForEventRead() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -148,7 +146,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void moreStrictMaxCountGivesLessEventsForEventRead() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -174,7 +172,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void afterSettingLessStrictTruncateBeforeReadStreamForwardReadsMoreEvents() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -198,7 +196,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void afterSettingMoreStrictTruncateBeforeReadStreamForwardReadsLessEvents() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -222,7 +220,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void lessStrictMaxCountDoesntChangeAnythingForStreamForwardRead() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -246,7 +244,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void moreStrictMaxCountGivesLessEventsForStreamForwardRead() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -270,7 +268,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void afterSettingLessStrictTruncateBeforeReadStreamBackwardReadsMoreEvents() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -294,7 +292,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void afterSettingMoreStrictTruncateBeforeReadStreamBackwardReadsLessEvents() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -318,7 +316,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void lessStrictMaxCountDoesntChangeAnythingForStreamBackwardRead() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -342,7 +340,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
     public void moreStrictMaxCountGivesLessEventsForStreamBackwardRead() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
@@ -360,10 +358,6 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertEquals(2, slice2.events.size());
         assertArrayEquals(events.stream().skip(3).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice2.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
-    }
-
-    private static List<EventData> newTestEvents() {
-        return range(0, 5).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
 }

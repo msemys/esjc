@@ -8,7 +8,6 @@ import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
@@ -408,10 +407,6 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
         assertEquals(20, result.size());
         List<EventData> reversedEvents = reverse(events);
         range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, result.get(i).event.eventId));
-    }
-
-    private static List<EventData> newTestEvents(int count) {
-        return range(0, count).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
     private static class StreamEventsSpliteratorWithBatchCounter extends StreamEventsSpliterator {

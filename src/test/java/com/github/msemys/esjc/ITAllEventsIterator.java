@@ -22,7 +22,7 @@ public class ITAllEventsIterator extends AbstractIntegrationTest {
     public void lazyReadsBatchesForward() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(20);
         Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
         eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
 
@@ -67,7 +67,7 @@ public class ITAllEventsIterator extends AbstractIntegrationTest {
     public void lazyReadsBatchesBackward() {
         final String stream = generateStreamName();
 
-        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(20)).join();
 
         List<ResolvedEvent> firstEvents = eventstore.readAllEventsForward(Position.START, 11, false).join().events;
 
@@ -104,10 +104,6 @@ public class ITAllEventsIterator extends AbstractIntegrationTest {
         assertEquals(10, result.size());
         List<ResolvedEvent> reversedFirstEvents = reverse(firstEvents.subList(0, 10));
         range(0, 10).forEach(i -> assertEquals(reversedFirstEvents.get(i).event.eventId, result.get(i).event.eventId));
-    }
-
-    private static List<EventData> newTestEvents() {
-        return range(0, 20).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
     private static class AllEventsIteratorWithBatchCounter extends AllEventsIterator {

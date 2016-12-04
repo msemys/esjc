@@ -173,8 +173,4 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
             .count());
     }
 
-    private static List<EventData> newTestEvents(int count) {
-        return range(0, count).mapToObj(i -> newTestEvent()).collect(toList());
-    }
-
 }

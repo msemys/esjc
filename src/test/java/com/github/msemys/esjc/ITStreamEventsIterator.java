@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 
@@ -22,7 +21,7 @@ public class ITStreamEventsIterator extends AbstractIntegrationTest {
     public void lazyReadsBatchesForward() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(20);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsIteratorWithBatchCounter iterator = new StreamEventsIteratorWithBatchCounter(
@@ -64,7 +63,7 @@ public class ITStreamEventsIterator extends AbstractIntegrationTest {
     public void lazyReadsBatchesBackward() {
         final String stream = generateStreamName();
 
-        List<EventData> events = newTestEvents();
+        List<EventData> events = newTestEvents(20);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
         StreamEventsIteratorWithBatchCounter iterator = new StreamEventsIteratorWithBatchCounter(
@@ -109,10 +108,6 @@ public class ITStreamEventsIterator extends AbstractIntegrationTest {
         assertEquals(20, result.size());
         List<EventData> reversedEvents = reverse(events);
         range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, result.get(i).event.eventId));
-    }
-
-    private static List<EventData> newTestEvents() {
-        return range(0, 20).mapToObj(i -> newTestEvent()).collect(toList());
     }
 
     private static class StreamEventsIteratorWithBatchCounter extends StreamEventsIterator {
