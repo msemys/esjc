@@ -648,7 +648,7 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void onChannelError(Throwable throwable) {
-        fireEvent(Events.errorOccurred(throwable));
+        handle(new CloseConnection("Error when processing TCP package", throwable));
     }
 
     private void onReconnect(NodeEndpoints nodeEndpoints) {
