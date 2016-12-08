@@ -591,7 +591,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public void disconnect() {
-        disconnect("exit");
+        disconnect("user initiated");
     }
 
     private void disconnect(String reason) {
