@@ -808,10 +808,14 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void handle(CloseConnection task) {
+        if (task.throwable != null) {
+            logger.error(task.reason, task.throwable);
+        }
+
         if (connectionState() == ConnectionState.CLOSED) {
-            logger.debug("CloseConnection IGNORED because connection is CLOSED, reason: " + task.reason, task.throwable);
+            logger.debug("CloseConnection IGNORED because connection is CLOSED, reason: {}", task.reason);
         } else {
-            logger.debug("CloseConnection, reason: " + task.reason, task.throwable);
+            logger.debug("CloseConnection, reason: {}", task.reason);
 
             if (task.throwable != null) {
                 fireEvent(Events.errorOccurred(task.throwable));
