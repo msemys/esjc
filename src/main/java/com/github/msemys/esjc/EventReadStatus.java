@@ -23,5 +23,5 @@ public enum EventReadStatus {
     /**
      * The stream previously existed but was deleted.
      */
-    StreamDeleted;
+    StreamDeleted
 }

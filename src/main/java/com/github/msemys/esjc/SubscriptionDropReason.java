@@ -68,5 +68,5 @@ public enum SubscriptionDropReason {
     /**
      * Target of persistent subscription was not found. Needs to be created first.
      */
-    NotFound;
+    NotFound
 }

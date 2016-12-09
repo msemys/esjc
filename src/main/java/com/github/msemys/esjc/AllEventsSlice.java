@@ -42,7 +42,7 @@ public class AllEventsSlice {
         this.nextPosition = nextPosition;
         this.events = (events == null) ? emptyList() : events.stream()
                 .map(ResolvedEvent::new)
-                .collect(toCollection(() -> new ArrayList(events.size())));
+                .collect(toCollection(() -> new ArrayList<>(events.size())));
     }
 
     /**

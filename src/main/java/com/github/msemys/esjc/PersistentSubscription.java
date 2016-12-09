@@ -108,7 +108,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
         checkArgument(events.size() <= MAX_EVENTS, "events is limited to %d to ack at a time", MAX_EVENTS);
         subscription.notifyEventsProcessed(events.stream()
             .map(e -> e.originalEvent().eventId)
-            .collect(toCollection(() -> new ArrayList(events.size()))));
+            .collect(toCollection(() -> new ArrayList<>(events.size()))));
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
         checkArgument(events.size() <= MAX_EVENTS, "events is limited to %d to ack at a time", MAX_EVENTS);
         subscription.notifyEventsFailed(events.stream()
                 .map(e -> e.originalEvent().eventId)
-                .collect(toCollection(() -> new ArrayList(events.size()))),
+                .collect(toCollection(() -> new ArrayList<>(events.size()))),
             action,
             reason);
     }

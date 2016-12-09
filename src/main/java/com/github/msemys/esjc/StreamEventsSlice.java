@@ -70,7 +70,7 @@ public class StreamEventsSlice {
         this.readDirection = readDirection;
         this.events = (events == null) ? emptyList() : events.stream()
             .map(ResolvedEvent::new)
-            .collect(toCollection(() -> new ArrayList(events.size())));
+            .collect(toCollection(() -> new ArrayList<>(events.size())));
         this.nextEventNumber = nextEventNumber;
         this.lastEventNumber = lastEventNumber;
         this.isEndOfStream = isEndOfStream;

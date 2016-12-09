@@ -18,7 +18,7 @@ public class ResettableLatch {
     public boolean await(long time, TimeUnit unit) {
         lock.lock();
         try {
-            return (!released) ? condition.await(time, unit) : true;
+            return released || condition.await(time, unit);
         } catch (InterruptedException e) {
             throw Throwables.propagate(e);
         } finally {

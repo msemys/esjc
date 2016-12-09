@@ -107,7 +107,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
             .setSubscriptionId(subscriptionId)
             .addAllProcessedEventIds(processedEvents.stream()
                 .map(uuid -> ByteString.copyFrom(toBytes(uuid)))
-                .collect(toCollection(() -> new ArrayList(processedEvents.size()))))
+                .collect(toCollection(() -> new ArrayList<>(processedEvents.size()))))
             .build();
 
         send(TcpPackage.newBuilder()
@@ -129,7 +129,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
             .setSubscriptionId(subscriptionId)
             .addAllProcessedEventIds(processedEvents.stream()
                 .map(uuid -> ByteString.copyFrom(toBytes(uuid)))
-                .collect(toCollection(() -> new ArrayList(processedEvents.size()))))
+                .collect(toCollection(() -> new ArrayList<>(processedEvents.size()))))
             .setMessage(reason)
             .setAction(NakAction.valueOf(action.name()))
             .build();
