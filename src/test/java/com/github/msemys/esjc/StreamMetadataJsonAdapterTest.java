@@ -43,11 +43,11 @@ public class StreamMetadataJsonAdapterTest {
             .customProperty("customString", "a string")
             .customProperty("customInt", -179)
             .customProperty("customDouble", 1.7)
-            .customProperty("customLong", 123123123123123123l)
+            .customProperty("customLong", 123123123123123123L)
             .customProperty("customBoolean", true)
             .customProperty("customStringArray", "a", "b", "c", null)
             .customProperty("customIntArray", 1, 2, 3, null)
-            .customProperty("customLongArray", 111111111111111111l, 222222222222222222l, 333333333333333333l, null)
+            .customProperty("customLongArray", 111111111111111111L, 222222222222222222L, 333333333333333333L, null)
             .customProperty("customDoubleArray", 1.2, 3.4, 5.6, null)
             .customProperty("customBooleanArray", true, null, false, null)
             .customProperty("customEmptyStringArray", new String[0])
@@ -149,12 +149,12 @@ public class StreamMetadataJsonAdapterTest {
         assertEquals("a string", streamMetadata.getCustomProperty("customString").toString());
         assertEquals(Integer.valueOf(-179), streamMetadata.getCustomProperty("customInt").toInteger());
         assertEquals(Double.valueOf(1.7), streamMetadata.getCustomProperty("customDouble").toDouble());
-        assertEquals(Long.valueOf(123123123123123123l), streamMetadata.getCustomProperty("customLong").toLong());
+        assertEquals(Long.valueOf(123123123123123123L), streamMetadata.getCustomProperty("customLong").toLong());
         assertTrue(streamMetadata.getCustomProperty("customBoolean").toBoolean());
 
         assertArrayEquals(new String[]{"a", "b", "c", null}, streamMetadata.getCustomProperty("customStringArray").toStrings());
         assertArrayEquals(new Integer[]{1, 2, 3, null}, streamMetadata.getCustomProperty("customIntArray").toIntegers());
-        assertArrayEquals(new Long[]{111111111111111111l, 222222222222222222l, 333333333333333333l, null}, streamMetadata.getCustomProperty("customLongArray").toLongs());
+        assertArrayEquals(new Long[]{111111111111111111L, 222222222222222222L, 333333333333333333L, null}, streamMetadata.getCustomProperty("customLongArray").toLongs());
         assertArrayEquals(new Double[]{1.2, 3.4, 5.6, null}, streamMetadata.getCustomProperty("customDoubleArray").toDoubles());
         assertArrayEquals(new Boolean[]{true, null, false, null}, streamMetadata.getCustomProperty("customBooleanArray").toBooleans());
 
@@ -172,7 +172,7 @@ public class StreamMetadataJsonAdapterTest {
 
         assertArrayEquals(new Integer[]{-179}, streamMetadata.getCustomProperty("customInt").toIntegers());
         assertArrayEquals(new Double[]{1.7}, streamMetadata.getCustomProperty("customDouble").toDoubles());
-        assertArrayEquals(new Long[]{123123123123123123l}, streamMetadata.getCustomProperty("customLong").toLongs());
+        assertArrayEquals(new Long[]{123123123123123123L}, streamMetadata.getCustomProperty("customLong").toLongs());
         assertArrayEquals(new Boolean[]{true}, streamMetadata.getCustomProperty("customBoolean").toBooleans());
 
         assertNull(streamMetadata.getCustomProperty("customNullable").toString());
