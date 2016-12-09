@@ -3,7 +3,6 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.EventRecord;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.github.msemys.esjc.util.EmptyArrays.EMPTY_BYTES;
@@ -53,7 +52,7 @@ public class RecordedEvent {
     /**
      * A datetime representing when this event was created in the system.
      */
-    public final Optional<Instant> created;
+    public final Instant created;
 
     /**
      * Creates new instance from proto message.
@@ -72,7 +71,7 @@ public class RecordedEvent {
         metadata = (eventRecord.hasMetadata()) ? eventRecord.getMetadata().toByteArray() : EMPTY_BYTES;
         isJson = eventRecord.getDataContentType() == 1;
 
-        created = eventRecord.hasCreatedEpoch() ? Optional.of(ofEpochMilli(eventRecord.getCreatedEpoch())) : Optional.empty();
+        created = eventRecord.hasCreatedEpoch() ? ofEpochMilli(eventRecord.getCreatedEpoch()) : null;
     }
 
 }

@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -149,10 +148,10 @@ public class EventStoreTcp implements EventStore {
 
         this.settings = settings;
 
-        if (settings.singleNodeSettings.isPresent()) {
-            discoverer = new SingleEndpointDiscoverer(settings.singleNodeSettings.get(), settings.sslSettings.useSslConnection);
-        } else if (settings.clusterNodeSettings.isPresent()) {
-            discoverer = new ClusterEndpointDiscoverer(settings.clusterNodeSettings.get(), group);
+        if (settings.singleNodeSettings != null) {
+            discoverer = new SingleEndpointDiscoverer(settings.singleNodeSettings, settings.sslSettings.useSslConnection);
+        } else if (settings.clusterNodeSettings != null) {
+            discoverer = new ClusterEndpointDiscoverer(settings.clusterNodeSettings, group);
         } else {
             throw new IllegalStateException("Node settings not found");
         }
@@ -667,7 +666,7 @@ public class EventStoreTcp implements EventStore {
                         handle(new CloseConnection("Reconnection limit reached"));
                     } else {
                         fireEvent(Events.clientReconnecting());
-                        discoverEndpoint(Optional.empty());
+                        discoverEndpoint(null);
                     }
                 }
                 break;
@@ -712,7 +711,7 @@ public class EventStoreTcp implements EventStore {
         }
     }
 
-    private void discoverEndpoint(Optional<CompletableFuture<Void>> result) {
+    private void discoverEndpoint(CompletableFuture<Void> result) {
         logger.debug("Discovering endpoint...");
 
         if (connectionState() == ConnectionState.INIT && connectingPhase == ConnectingPhase.RECONNECTING) {
@@ -722,10 +721,14 @@ public class EventStoreTcp implements EventStore {
                 .whenComplete((nodeEndpoints, throwable) -> {
                     if (throwable == null) {
                         tasks.enqueue(new EstablishTcpConnection(nodeEndpoints));
-                        result.ifPresent(r -> r.complete(null));
+                        if (result != null) {
+                            result.complete(null);
+                        }
                     } else {
                         tasks.enqueue(new CloseConnection("Failed to resolve TCP endpoint to which to connect.", throwable));
-                        result.ifPresent(r -> r.completeExceptionally(new CannotEstablishConnectionException("Cannot resolve target end point.", throwable)));
+                        if (result != null) {
+                            result.completeExceptionally(new CannotEstablishConnectionException("Cannot resolve target end point.", throwable));
+                        }
                     }
                 });
         }
@@ -761,7 +764,7 @@ public class EventStoreTcp implements EventStore {
         switch (connectionState()) {
             case INIT:
                 connectingPhase = ConnectingPhase.RECONNECTING;
-                discoverEndpoint(Optional.of(task.result));
+                discoverEndpoint(task.result);
                 break;
             case CONNECTING:
             case CONNECTED:

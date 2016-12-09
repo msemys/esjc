@@ -9,7 +9,6 @@ import com.github.msemys.esjc.tcp.TcpSettings;
 import com.github.msemys.esjc.util.concurrent.DefaultThreadFactory;
 
 import java.time.Duration;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -32,12 +31,12 @@ public class Settings {
     /**
      * Single node settings (optional).
      */
-    public final Optional<SingleNodeSettings> singleNodeSettings;
+    public final SingleNodeSettings singleNodeSettings;
 
     /**
      * Cluster node settings (optional).
      */
-    public final Optional<ClusterNodeSettings> clusterNodeSettings;
+    public final ClusterNodeSettings clusterNodeSettings;
 
     /**
      * SSL settings.
@@ -74,7 +73,7 @@ public class Settings {
     /**
      * The default user credentials to use for operations where other user credentials are not explicitly supplied.
      */
-    public final Optional<UserCredentials> userCredentials;
+    public final UserCredentials userCredentials;
 
     /**
      * The amount of time before an operation is considered to have timed out.
@@ -128,14 +127,14 @@ public class Settings {
 
     private Settings(Builder builder) {
         tcpSettings = builder.tcpSettings;
-        singleNodeSettings = Optional.ofNullable(builder.singleNodeSettings);
-        clusterNodeSettings = Optional.ofNullable(builder.clusterNodeSettings);
+        singleNodeSettings = builder.singleNodeSettings;
+        clusterNodeSettings = builder.clusterNodeSettings;
         sslSettings = builder.sslSettings;
         reconnectionDelay = builder.reconnectionDelay;
         heartbeatInterval = builder.heartbeatInterval;
         heartbeatTimeout = builder.heartbeatTimeout;
         requireMaster = builder.requireMaster;
-        userCredentials = Optional.ofNullable(builder.userCredentials);
+        userCredentials = builder.userCredentials;
         operationTimeout = builder.operationTimeout;
         operationTimeoutCheckInterval = builder.operationTimeoutCheckInterval;
         maxOperationQueueSize = builder.maxOperationQueueSize;

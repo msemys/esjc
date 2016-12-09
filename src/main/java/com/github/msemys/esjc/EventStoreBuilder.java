@@ -67,33 +67,35 @@ public class EventStoreBuilder {
             .failOnNoServerResponse(settings.failOnNoServerResponse)
             .executor(settings.executor);
 
-        settings.userCredentials.ifPresent(u -> settingsBuilder.userCredentials(u.username, u.password));
+        if (settings.userCredentials != null) {
+            settingsBuilder.userCredentials(settings.userCredentials.username, settings.userCredentials.password);
+        }
 
         // populate single-node settings builder
         SingleNodeSettings.Builder singleNodeSettingsBuilder = null;
 
-        if (settings.singleNodeSettings.isPresent()) {
-            singleNodeSettingsBuilder = SingleNodeSettings.newBuilder().address(settings.singleNodeSettings.get().address);
+        if (settings.singleNodeSettings != null) {
+            singleNodeSettingsBuilder = SingleNodeSettings.newBuilder().address(settings.singleNodeSettings.address);
         }
 
         // populate cluster-node settings builders
         BuilderForDnsDiscoverer clusterNodeUsingDnsSettingsBuilder = null;
         BuilderForGossipSeedDiscoverer clusterNodeUsingGossipSeedSettingsBuilder = null;
 
-        if (settings.clusterNodeSettings.isPresent()) {
-            if (!settings.clusterNodeSettings.get().gossipSeeds.isEmpty()) {
+        if (settings.clusterNodeSettings != null) {
+            if (!settings.clusterNodeSettings.gossipSeeds.isEmpty()) {
                 clusterNodeUsingGossipSeedSettingsBuilder = ClusterNodeSettings.forGossipSeedDiscoverer()
-                    .maxDiscoverAttempts(settings.clusterNodeSettings.get().maxDiscoverAttempts)
-                    .discoverAttemptInterval(settings.clusterNodeSettings.get().discoverAttemptInterval)
-                    .gossipSeeds(settings.clusterNodeSettings.get().gossipSeeds)
-                    .gossipTimeout(settings.clusterNodeSettings.get().gossipTimeout);
+                    .maxDiscoverAttempts(settings.clusterNodeSettings.maxDiscoverAttempts)
+                    .discoverAttemptInterval(settings.clusterNodeSettings.discoverAttemptInterval)
+                    .gossipSeeds(settings.clusterNodeSettings.gossipSeeds)
+                    .gossipTimeout(settings.clusterNodeSettings.gossipTimeout);
             } else {
                 clusterNodeUsingDnsSettingsBuilder = ClusterNodeSettings.forDnsDiscoverer()
-                    .maxDiscoverAttempts(settings.clusterNodeSettings.get().maxDiscoverAttempts)
-                    .discoverAttemptInterval(settings.clusterNodeSettings.get().discoverAttemptInterval)
-                    .dns(settings.clusterNodeSettings.get().dns)
-                    .externalGossipPort(settings.clusterNodeSettings.get().externalGossipPort)
-                    .gossipTimeout(settings.clusterNodeSettings.get().gossipTimeout);
+                    .maxDiscoverAttempts(settings.clusterNodeSettings.maxDiscoverAttempts)
+                    .discoverAttemptInterval(settings.clusterNodeSettings.discoverAttemptInterval)
+                    .dns(settings.clusterNodeSettings.dns)
+                    .externalGossipPort(settings.clusterNodeSettings.externalGossipPort)
+                    .gossipTimeout(settings.clusterNodeSettings.gossipTimeout);
             }
         }
 

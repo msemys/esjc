@@ -91,7 +91,7 @@ public class ITReadEvent extends AbstractIntegrationTest {
         assertEquals(events.get(0).eventId, result.event.originalEvent().eventId);
         assertEquals(stream, result.stream);
         assertEquals(0, result.eventNumber);
-        assertTrue(result.event.originalEvent().created.isPresent());
+        assertNotNull(result.event.originalEvent().created);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class ITReadEvent extends AbstractIntegrationTest {
         assertEquals(events.get(1).eventId, result.event.originalEvent().eventId);
         assertEquals(stream, result.stream);
         assertEquals(-1, result.eventNumber);
-        assertTrue(result.event.originalEvent().created.isPresent());
+        assertNotNull(result.event.originalEvent().created);
     }
 
     private static List<EventData> newTestEvents() {

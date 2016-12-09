@@ -10,11 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.function.Consumer;
 
+import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class AuthenticationHandler extends SimpleChannelInboundHandler<TcpPackage> {
@@ -24,13 +24,13 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<TcpPackag
         SUCCESS, FAILED, TIMEOUT, IGNORED
     }
 
-    private final Optional<UserCredentials> userCredentials;
+    private final UserCredentials userCredentials;
     private final long timeoutMillis;
     private volatile ScheduledFuture<?> timeoutTask;
     private UUID correlationId;
-    private Optional<Consumer<AuthenticationStatus>> completionConsumer = Optional.empty();
+    private Consumer<AuthenticationStatus> completionConsumer;
 
-    public AuthenticationHandler(Optional<UserCredentials> userCredentials, Duration timeout) {
+    public AuthenticationHandler(UserCredentials userCredentials, Duration timeout) {
         this.userCredentials = userCredentials;
         this.timeoutMillis = timeout.toMillis();
     }
@@ -55,15 +55,15 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<TcpPackag
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        if (userCredentials.isPresent()) {
+        if (userCredentials != null) {
             correlationId = UUID.randomUUID();
 
             ctx.writeAndFlush(TcpPackage.newBuilder()
                 .command(TcpCommand.Authenticate)
                 .flag(TcpFlag.Authenticated)
                 .correlationId(correlationId)
-                .login(userCredentials.get().username)
-                .password(userCredentials.get().password)
+                .login(userCredentials.username)
+                .password(userCredentials.password)
                 .build());
 
             timeoutTask = ctx.executor().schedule(() -> {
@@ -82,14 +82,18 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<TcpPackag
     }
 
     public AuthenticationHandler whenComplete(Consumer<AuthenticationStatus> consumer) {
-        completionConsumer = Optional.of(consumer);
+        checkNotNull(consumer, "consumer is null");
+        completionConsumer = consumer;
         return this;
     }
 
     private void complete(ChannelHandlerContext ctx, AuthenticationStatus status) {
         logger.info("Authentication {}", status);
         ctx.channel().pipeline().remove(this);
-        completionConsumer.ifPresent(c -> c.accept(status));
+
+        if (completionConsumer != null) {
+            completionConsumer.accept(status);
+        }
     }
 
     private void cancelTimeoutTask() {

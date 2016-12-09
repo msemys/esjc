@@ -16,14 +16,16 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+
 public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
     private static final Logger logger = LoggerFactory.getLogger(OperationHandler.class);
 
     private final OperationManager operationManager;
     private final SubscriptionManager subscriptionManager;
-    private Optional<Consumer<TcpPackage>> badRequestConsumer = Optional.empty();
-    private Optional<Consumer<Throwable>> channelErrorConsumer = Optional.empty();
-    private Optional<Consumer<NodeEndpoints>> reconnectConsumer = Optional.empty();
+    private Consumer<TcpPackage> badRequestConsumer;
+    private Consumer<Throwable> channelErrorConsumer;
+    private Consumer<NodeEndpoints> reconnectConsumer;
 
     public OperationHandler(OperationManager operationManager, SubscriptionManager subscriptionManager) {
         this.operationManager = operationManager;
@@ -35,7 +37,9 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
         switch (msg.command) {
             case BadRequest:
                 if (msg.correlationId == null) {
-                    badRequestConsumer.ifPresent(c -> c.accept(msg));
+                    if (badRequestConsumer != null) {
+                        badRequestConsumer.accept(msg);
+                    }
                     break;
                 }
             default:
@@ -58,7 +62,9 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                             operationManager.scheduleOperationRetry(item);
                             break;
                         case Reconnect:
-                            reconnectConsumer.ifPresent(c -> c.accept(new NodeEndpoints(result.address.orElse(null), result.secureAddress.orElse(null))));
+                            if (reconnectConsumer != null) {
+                                reconnectConsumer.accept(new NodeEndpoints(result.address, result.secureAddress));
+                            }
                             operationManager.scheduleOperationRetry(item);
                             break;
                         default:
@@ -85,7 +91,9 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                                 subscriptionManager.scheduleSubscriptionRetry(item);
                                 break;
                             case Reconnect:
-                                reconnectConsumer.ifPresent(c -> c.accept(new NodeEndpoints(result.address.orElse(null), result.secureAddress.orElse(null))));
+                                if (reconnectConsumer != null) {
+                                    reconnectConsumer.accept(new NodeEndpoints(result.address, result.secureAddress));
+                                }
                                 subscriptionManager.scheduleSubscriptionRetry(item);
                                 break;
                             case Subscribed:
@@ -103,21 +111,26 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        channelErrorConsumer.ifPresent(c -> c.accept(cause));
+        if (channelErrorConsumer != null) {
+            channelErrorConsumer.accept(cause);
+        }
     }
 
     public OperationHandler whenBadRequest(Consumer<TcpPackage> consumer) {
-        badRequestConsumer = Optional.of(consumer);
+        checkNotNull(consumer, "consumer is null");
+        badRequestConsumer = consumer;
         return this;
     }
 
     public OperationHandler whenChannelError(Consumer<Throwable> consumer) {
-        channelErrorConsumer = Optional.of(consumer);
+        checkNotNull(consumer, "consumer is null");
+        channelErrorConsumer = consumer;
         return this;
     }
 
     public OperationHandler whenReconnect(Consumer<NodeEndpoints> consumer) {
-        reconnectConsumer = Optional.of(consumer);
+        checkNotNull(consumer, "consumer is null");
+        reconnectConsumer = consumer;
         return this;
     }
 

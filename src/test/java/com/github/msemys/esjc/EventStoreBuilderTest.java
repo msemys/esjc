@@ -139,7 +139,7 @@ public class EventStoreBuilderTest {
         EventStore result = EventStoreBuilder.newBuilder(settings).build();
 
         assertEquals(settings.toString(), result.settings().toString());
-        assertFalse(result.settings().userCredentials.isPresent());
+        assertNull(result.settings().userCredentials);
     }
 
     @Test
@@ -199,9 +199,9 @@ public class EventStoreBuilderTest {
             .failOnNoServerResponse(true)
             .build();
 
-        assertEquals(2020, result.settings().singleNodeSettings.get().address.getPort());
-        assertEquals("usr", result.settings().userCredentials.get().username);
-        assertEquals("psw", result.settings().userCredentials.get().password);
+        assertEquals(2020, result.settings().singleNodeSettings.address.getPort());
+        assertEquals("usr", result.settings().userCredentials.username);
+        assertEquals("psw", result.settings().userCredentials.password);
         assertTrue(result.settings().tcpSettings.keepAlive);
         assertTrue(result.settings().tcpSettings.noDelay);
         assertEquals(11110, result.settings().tcpSettings.sendBufferSize);
@@ -253,8 +253,8 @@ public class EventStoreBuilderTest {
             .failOnNoServerResponse(true)
             .build();
 
-        assertEquals(2020, result.settings().singleNodeSettings.get().address.getPort());
-        assertFalse(result.settings().userCredentials.isPresent());
+        assertEquals(2020, result.settings().singleNodeSettings.address.getPort());
+        assertNull(result.settings().userCredentials);
         assertTrue(result.settings().tcpSettings.keepAlive);
         assertTrue(result.settings().tcpSettings.noDelay);
         assertEquals(11110, result.settings().tcpSettings.sendBufferSize);
@@ -284,18 +284,18 @@ public class EventStoreBuilderTest {
                 .maxDiscoverAttempts(10))
             .build();
 
-        assertFalse(result.settings().singleNodeSettings.isPresent());
-        assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
-        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
-        assertThat(result.settings().clusterNodeSettings.get().gossipSeeds.stream()
+        assertNull(result.settings().singleNodeSettings);
+        assertNotNull(result.settings().clusterNodeSettings);
+        assertEquals(10, result.settings().clusterNodeSettings.maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.discoverAttemptInterval);
+        assertThat(result.settings().clusterNodeSettings.gossipSeeds.stream()
                 .map(GossipSeed::toString)
                 .collect(toList()),
             hasItems(
                 new GossipSeed(new InetSocketAddress("localhost", 1001)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
-        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.get().gossipTimeout);
+        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.gossipTimeout);
     }
 
     @Test
@@ -318,14 +318,14 @@ public class EventStoreBuilderTest {
                 .maxDiscoverAttempts(10))
             .build();
 
-        assertFalse(result.settings().singleNodeSettings.isPresent());
-        assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("dns2", result.settings().clusterNodeSettings.get().dns);
-        assertEquals(1234, result.settings().clusterNodeSettings.get().externalGossipPort);
-        assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
-        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
-        assertTrue(result.settings().clusterNodeSettings.get().gossipSeeds.isEmpty());
-        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.get().gossipTimeout);
+        assertNull(result.settings().singleNodeSettings);
+        assertNotNull(result.settings().clusterNodeSettings);
+        assertEquals("dns2", result.settings().clusterNodeSettings.dns);
+        assertEquals(1234, result.settings().clusterNodeSettings.externalGossipPort);
+        assertEquals(10, result.settings().clusterNodeSettings.maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.discoverAttemptInterval);
+        assertTrue(result.settings().clusterNodeSettings.gossipSeeds.isEmpty());
+        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.gossipTimeout);
     }
 
     @Test
@@ -344,10 +344,10 @@ public class EventStoreBuilderTest {
             .singleNodeAddress("localhost", 1009)
             .build();
 
-        assertTrue(result.settings().singleNodeSettings.isPresent());
-        assertFalse(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("localhost", result.settings().singleNodeSettings.get().address.getHostName());
-        assertEquals(1009, result.settings().singleNodeSettings.get().address.getPort());
+        assertNotNull(result.settings().singleNodeSettings);
+        assertNull(result.settings().clusterNodeSettings);
+        assertEquals("localhost", result.settings().singleNodeSettings.address.getHostName());
+        assertEquals(1009, result.settings().singleNodeSettings.address.getPort());
     }
 
     @Test
@@ -367,18 +367,18 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(120)))
             .build();
 
-        assertFalse(result.settings().singleNodeSettings.isPresent());
-        assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
-        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
-        assertThat(result.settings().clusterNodeSettings.get().gossipSeeds.stream()
+        assertNull(result.settings().singleNodeSettings);
+        assertNotNull(result.settings().clusterNodeSettings);
+        assertEquals(10, result.settings().clusterNodeSettings.maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.discoverAttemptInterval);
+        assertThat(result.settings().clusterNodeSettings.gossipSeeds.stream()
                 .map(GossipSeed::toString)
                 .collect(toList()),
             hasItems(
                 new GossipSeed(new InetSocketAddress("localhost", 1001)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
-        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.get().gossipTimeout);
+        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.gossipTimeout);
     }
 
     @Test
@@ -396,14 +396,14 @@ public class EventStoreBuilderTest {
                 .maxDiscoverAttempts(10))
             .build();
 
-        assertFalse(result.settings().singleNodeSettings.isPresent());
-        assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("dns", result.settings().clusterNodeSettings.get().dns);
-        assertEquals(1234, result.settings().clusterNodeSettings.get().externalGossipPort);
-        assertEquals(10, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
-        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
-        assertTrue(result.settings().clusterNodeSettings.get().gossipSeeds.isEmpty());
-        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.get().gossipTimeout);
+        assertNull(result.settings().singleNodeSettings);
+        assertNotNull(result.settings().clusterNodeSettings);
+        assertEquals("dns", result.settings().clusterNodeSettings.dns);
+        assertEquals(1234, result.settings().clusterNodeSettings.externalGossipPort);
+        assertEquals(10, result.settings().clusterNodeSettings.maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.discoverAttemptInterval);
+        assertTrue(result.settings().clusterNodeSettings.gossipSeeds.isEmpty());
+        assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.gossipTimeout);
     }
 
     @Test
@@ -412,10 +412,10 @@ public class EventStoreBuilderTest {
             .singleNodeAddress("localhost", 1009)
             .build();
 
-        assertTrue(result.settings().singleNodeSettings.isPresent());
-        assertFalse(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("localhost", result.settings().singleNodeSettings.get().address.getHostName());
-        assertEquals(1009, result.settings().singleNodeSettings.get().address.getPort());
+        assertNotNull(result.settings().singleNodeSettings);
+        assertNull(result.settings().clusterNodeSettings);
+        assertEquals("localhost", result.settings().singleNodeSettings.address.getHostName());
+        assertEquals(1009, result.settings().singleNodeSettings.address.getPort());
     }
 
     @Test
@@ -431,20 +431,20 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(73)))
             .build();
 
-        assertFalse(result.settings().singleNodeSettings.isPresent());
-        assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("", result.settings().clusterNodeSettings.get().dns);
-        assertEquals(-1, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
-        assertEquals(Duration.ofMinutes(5), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
-        assertEquals(0, result.settings().clusterNodeSettings.get().externalGossipPort);
-        assertThat(result.settings().clusterNodeSettings.get().gossipSeeds.stream()
+        assertNull(result.settings().singleNodeSettings);
+        assertNotNull(result.settings().clusterNodeSettings);
+        assertEquals("", result.settings().clusterNodeSettings.dns);
+        assertEquals(-1, result.settings().clusterNodeSettings.maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(5), result.settings().clusterNodeSettings.discoverAttemptInterval);
+        assertEquals(0, result.settings().clusterNodeSettings.externalGossipPort);
+        assertThat(result.settings().clusterNodeSettings.gossipSeeds.stream()
                 .map(GossipSeed::toString)
                 .collect(toList()),
             hasItems(
                 new GossipSeed(new InetSocketAddress("localhost", 1001)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
-        assertEquals(Duration.ofSeconds(73), result.settings().clusterNodeSettings.get().gossipTimeout);
+        assertEquals(Duration.ofSeconds(73), result.settings().clusterNodeSettings.gossipTimeout);
     }
 
     @Test
@@ -458,14 +458,14 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(83)))
             .build();
 
-        assertFalse(result.settings().singleNodeSettings.isPresent());
-        assertTrue(result.settings().clusterNodeSettings.isPresent());
-        assertEquals("dns", result.settings().clusterNodeSettings.get().dns);
-        assertEquals(3, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
-        assertEquals(Duration.ofMinutes(6), result.settings().clusterNodeSettings.get().discoverAttemptInterval);
-        assertEquals(1717, result.settings().clusterNodeSettings.get().externalGossipPort);
-        assertTrue(result.settings().clusterNodeSettings.get().gossipSeeds.isEmpty());
-        assertEquals(Duration.ofSeconds(83), result.settings().clusterNodeSettings.get().gossipTimeout);
+        assertNull(result.settings().singleNodeSettings);
+        assertNotNull(result.settings().clusterNodeSettings);
+        assertEquals("dns", result.settings().clusterNodeSettings.dns);
+        assertEquals(3, result.settings().clusterNodeSettings.maxDiscoverAttempts);
+        assertEquals(Duration.ofMinutes(6), result.settings().clusterNodeSettings.discoverAttemptInterval);
+        assertEquals(1717, result.settings().clusterNodeSettings.externalGossipPort);
+        assertTrue(result.settings().clusterNodeSettings.gossipSeeds.isEmpty());
+        assertEquals(Duration.ofSeconds(83), result.settings().clusterNodeSettings.gossipTimeout);
     }
 
     @Test
@@ -503,7 +503,7 @@ public class EventStoreBuilderTest {
             .maxReconnections(-1)
             .build();
 
-        assertEquals(-1, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(-1, result.settings().clusterNodeSettings.maxDiscoverAttempts);
         assertEquals(-1, result.settings().maxOperationRetries);
         assertEquals(-1, result.settings().maxReconnections);
     }
@@ -518,7 +518,7 @@ public class EventStoreBuilderTest {
             .maxReconnections(Integer.MAX_VALUE)
             .build();
 
-        assertEquals(Integer.MAX_VALUE, result.settings().clusterNodeSettings.get().maxDiscoverAttempts);
+        assertEquals(Integer.MAX_VALUE, result.settings().clusterNodeSettings.maxDiscoverAttempts);
         assertEquals(Integer.MAX_VALUE, result.settings().maxOperationRetries);
         assertEquals(Integer.MAX_VALUE, result.settings().maxReconnections);
     }

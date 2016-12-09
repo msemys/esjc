@@ -1,7 +1,6 @@
 package com.github.msemys.esjc.operation;
 
 import java.net.InetSocketAddress;
-import java.util.Optional;
 
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
@@ -9,14 +8,14 @@ import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 public class InspectionResult {
     public final InspectionDecision decision;
     public final String description;
-    public final Optional<InetSocketAddress> address;
-    public final Optional<InetSocketAddress> secureAddress;
+    public final InetSocketAddress address;
+    public final InetSocketAddress secureAddress;
 
     private InspectionResult(Builder builder) {
         this.decision = builder.decision;
         this.description = builder.description;
-        this.address = Optional.ofNullable(builder.address);
-        this.secureAddress = Optional.ofNullable(builder.secureAddress);
+        this.address = builder.address;
+        this.secureAddress = builder.secureAddress;
     }
 
     public static Builder newBuilder() {
