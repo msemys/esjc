@@ -309,13 +309,24 @@ public class Settings {
          * Sets the default user credentials to be used for operations.
          * If user credentials are not given for an operation, these credentials will be used.
          *
+         * @param userCredentials user credentials.
+         * @return the builder reference
+         */
+        public Builder userCredentials(UserCredentials userCredentials) {
+            this.userCredentials = userCredentials;
+            return this;
+        }
+
+        /**
+         * Sets the default user credentials to be used for operations.
+         * If user credentials are not given for an operation, these credentials will be used.
+         *
          * @param username user name.
          * @param password user password.
          * @return the builder reference
          */
         public Builder userCredentials(String username, String password) {
-            this.userCredentials = new UserCredentials(username, password);
-            return this;
+            return userCredentials(new UserCredentials(username, password));
         }
 
         /**
@@ -323,10 +334,10 @@ public class Settings {
          *
          * @return the builder reference
          * @see #userCredentials(String, String)
+         * @see #userCredentials(UserCredentials)
          */
         public Builder noUserCredentials() {
-            this.userCredentials = null;
-            return this;
+            return userCredentials(null);
         }
 
         /**

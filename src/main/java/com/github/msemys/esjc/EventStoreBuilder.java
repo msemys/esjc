@@ -56,6 +56,7 @@ public class EventStoreBuilder {
             .heartbeatInterval(settings.heartbeatInterval)
             .heartbeatTimeout(settings.heartbeatTimeout)
             .requireMaster(settings.requireMaster)
+            .userCredentials(settings.userCredentials)
             .operationTimeout(settings.operationTimeout)
             .operationTimeoutCheckInterval(settings.operationTimeoutCheckInterval)
             .maxOperationQueueSize(settings.maxOperationQueueSize)
@@ -66,10 +67,6 @@ public class EventStoreBuilder {
             .persistentSubscriptionAutoAck(settings.persistentSubscriptionAutoAck)
             .failOnNoServerResponse(settings.failOnNoServerResponse)
             .executor(settings.executor);
-
-        if (settings.userCredentials != null) {
-            settingsBuilder.userCredentials(settings.userCredentials.username, settings.userCredentials.password);
-        }
 
         // populate single-node settings builder
         SingleNodeSettings.Builder singleNodeSettingsBuilder = null;
@@ -302,6 +299,18 @@ public class EventStoreBuilder {
      * Sets the default user credentials to be used for operations.
      * If user credentials are not given for an operation, these credentials will be used.
      *
+     * @param userCredentials user credentials.
+     * @return the builder reference
+     */
+    public EventStoreBuilder userCredentials(UserCredentials userCredentials) {
+        settingsBuilder.userCredentials(userCredentials);
+        return this;
+    }
+
+    /**
+     * Sets the default user credentials to be used for operations.
+     * If user credentials are not given for an operation, these credentials will be used.
+     *
      * @param username user name.
      * @param password user password.
      * @return the builder reference
@@ -316,6 +325,7 @@ public class EventStoreBuilder {
      *
      * @return the builder reference
      * @see #userCredentials(String, String)
+     * @see #userCredentials(UserCredentials)
      */
     public EventStoreBuilder noUserCredentials() {
         settingsBuilder.noUserCredentials();
