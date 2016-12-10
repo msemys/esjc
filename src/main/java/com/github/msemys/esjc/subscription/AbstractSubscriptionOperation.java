@@ -286,6 +286,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
         } while (!actionQueue.isEmpty() && actionExecuting.compareAndSet(false, true));
     }
 
+    @SuppressWarnings("unchecked")
     protected static <R extends MessageLite> R newInstance(R message, byte[] data) {
         try {
             return (R) message.getParserForType().parseFrom(data);

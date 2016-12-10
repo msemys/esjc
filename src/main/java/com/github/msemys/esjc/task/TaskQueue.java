@@ -21,6 +21,7 @@ public class TaskQueue {
         this.executor = executor;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Task> void register(Class<T> type, Consumer<T> handler) {
         checkNotNull(type, "type is null");
         checkNotNull(handler, "handler is null");

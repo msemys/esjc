@@ -65,6 +65,7 @@ public abstract class AbstractOperation<T, R extends MessageLite> implements Ope
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public InspectionResult inspect(TcpPackage tcpPackage) {
         try {
             if (tcpPackage.command == responseCommand) {

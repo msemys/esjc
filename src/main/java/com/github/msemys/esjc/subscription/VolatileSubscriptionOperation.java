@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 public class VolatileSubscriptionOperation extends AbstractSubscriptionOperation<VolatileSubscription> {
 
+    @SuppressWarnings("unchecked")
     public VolatileSubscriptionOperation(CompletableFuture<Subscription> result,
                                          String streamId,
                                          boolean resolveLinkTos,
