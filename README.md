@@ -276,6 +276,54 @@ eventstore.iterateAllEventsBackward(Position.END, 10, false).forEachRemaining(e 
         new String(e.originalEvent().data)));
 ```
 
+#### Streaming events forward to the end of stream
+
+```java
+eventstore.streamEventsForward("foo", 10, 500, false)
+    .filter(e -> e.originalEvent().eventType.equals("bar"))
+    .forEach(e -> System.out.format("#%d  id: '%s'; type: '%s'; data: '%s'\n",
+        e.originalEvent().eventNumber,
+        e.originalEvent().eventId,
+        e.originalEvent().eventType,
+        new String(e.originalEvent().data)));
+```
+
+#### Streaming events backward to the beginning of stream
+
+```java
+eventstore.streamEventsBackward("foo", 10, 500, false)
+    .filter(e -> e.originalEvent().eventType.equals("bar"))
+    .forEach(e -> System.out.format("#%d  id: '%s'; type: '%s'; data: '%s'\n",
+        e.originalEvent().eventNumber,
+        e.originalEvent().eventId,
+        e.originalEvent().eventType,
+        new String(e.originalEvent().data)));
+```
+
+#### Streaming all events forward to the end of ALL stream
+
+```java
+eventstore.streamAllEventsForward(Position.START, 500, false)
+    .filter(e -> !e.originalEvent().eventType.startsWith("$"))
+    .forEach(e -> System.out.format("@%s  id: '%s'; type: '%s'; data: '%s'\n",
+        e.originalPosition,
+        e.originalEvent().eventId,
+        e.originalEvent().eventType,
+        new String(e.originalEvent().data)));
+```
+
+#### Streaming all events backward to the beginning of ALL stream
+
+```java
+eventstore.streamAllEventsBackward(Position.END, 500, false)
+    .filter(e -> !e.originalEvent().eventType.startsWith("$"))
+    .forEach(e -> System.out.format("@%s  id: '%s'; type: '%s'; data: '%s'\n",
+        e.originalPosition,
+        e.originalEvent().eventId,
+        e.originalEvent().eventType,
+        new String(e.originalEvent().data)));
+```
+
 #### Subscribes to stream (volatile subscription)
 
 ```java
