@@ -232,10 +232,10 @@ eventstore.readAllEventsBackward(Position.END, 10, false).thenAccept(e ->
         new String(i.originalEvent().data))));
 ```
 
-#### Iterates over stream events forwards
+#### Iterates over stream events forward to the end of stream
 
 ```java
-eventstore.iterateStreamEventsForward("foo", 10, 5, false).forEachRemaining(e ->
+eventstore.iterateStreamEventsForward("foo", 10, 500, false).forEachRemaining(e ->
     System.out.format("#%d  id: '%s'; type: '%s'; data: '%s'\n",
         e.originalEvent().eventNumber,
         e.originalEvent().eventId,
@@ -243,10 +243,10 @@ eventstore.iterateStreamEventsForward("foo", 10, 5, false).forEachRemaining(e ->
         new String(e.originalEvent().data)));
 ```
 
-#### Iterates over stream events backwards
+#### Iterates over stream events backward to the beginning of stream
 
 ```java
-eventstore.iterateStreamEventsBackward("foo", 10, 5, false).forEachRemaining(e ->
+eventstore.iterateStreamEventsBackward("foo", 10, 500, false).forEachRemaining(e ->
     System.out.format("#%d  id: '%s'; type: '%s'; data: '%s'\n",
         e.originalEvent().eventNumber,
         e.originalEvent().eventId,
@@ -254,10 +254,10 @@ eventstore.iterateStreamEventsBackward("foo", 10, 5, false).forEachRemaining(e -
         new String(e.originalEvent().data)));
 ```
 
-#### Iterates over all events forwards
+#### Iterates over all events forward to the end of ALL stream
 
 ```java
-eventstore.iterateAllEventsForward(Position.START, 10, false).forEachRemaining(e ->
+eventstore.iterateAllEventsForward(Position.START, 500, false).forEachRemaining(e ->
     System.out.format("@%s  id: '%s'; type: '%s'; data: '%s'\n",
         e.originalPosition,
         e.originalEvent().eventId,
@@ -265,10 +265,10 @@ eventstore.iterateAllEventsForward(Position.START, 10, false).forEachRemaining(e
         new String(e.originalEvent().data)));
 ```
 
-#### Iterates over all events backwards
+#### Iterates over all events backward to the beginning of ALL stream
 
 ```java
-eventstore.iterateAllEventsBackward(Position.END, 10, false).forEachRemaining(e ->
+eventstore.iterateAllEventsBackward(Position.END, 500, false).forEachRemaining(e ->
     System.out.format("@%s  id: '%s'; type: '%s'; data: '%s'\n",
         e.originalPosition,
         e.originalEvent().eventId,
