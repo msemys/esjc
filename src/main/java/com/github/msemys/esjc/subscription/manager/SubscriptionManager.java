@@ -38,10 +38,12 @@ public class SubscriptionManager {
     }
 
     public void cleanUp() {
-        ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.");
+        if (!activeSubscriptions.isEmpty() || !waitingSubscriptions.isEmpty() || !retryPendingSubscriptions.isEmpty()) {
+            ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.");
 
-        concat(activeSubscriptions.values().stream(), concat(waitingSubscriptions.stream(), retryPendingSubscriptions.stream()))
-            .forEach(item -> item.operation.drop(SubscriptionDropReason.ConnectionClosed, connectionClosedException));
+            concat(activeSubscriptions.values().stream(), concat(waitingSubscriptions.stream(), retryPendingSubscriptions.stream()))
+                .forEach(item -> item.operation.drop(SubscriptionDropReason.ConnectionClosed, connectionClosedException));
+        }
 
         activeSubscriptions.clear();
         waitingSubscriptions.clear();

@@ -39,10 +39,12 @@ public class OperationManager {
     }
 
     public void cleanUp() {
-        ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.");
+        if (!activeOperations.isEmpty() || !waitingOperations.isEmpty() || !retryPendingOperations.isEmpty()) {
+            ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.");
 
-        concat(activeOperations.values().stream(), concat(waitingOperations.stream(), retryPendingOperations.stream()))
-            .forEach(item -> item.operation.fail(connectionClosedException));
+            concat(activeOperations.values().stream(), concat(waitingOperations.stream(), retryPendingOperations.stream()))
+                .forEach(item -> item.operation.fail(connectionClosedException));
+        }
 
         activeOperations.clear();
         waitingOperations.clear();
