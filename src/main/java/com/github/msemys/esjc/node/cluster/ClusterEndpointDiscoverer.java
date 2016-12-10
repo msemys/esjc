@@ -97,9 +97,8 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
         List<GossipSeed> gossipCandidates = (oldGossipCopy != null) ?
             getGossipCandidatesFromOldGossip(oldGossipCopy, failedEndpoint) : getGossipCandidatesFromDns();
 
-        Iterator<GossipSeed> iterator = gossipCandidates.iterator();
-        while (iterator.hasNext()) {
-            Optional<ClusterInfoDto> gossip = tryGetGossipFrom(iterator.next())
+        for (GossipSeed gossipCandidate : gossipCandidates) {
+            Optional<ClusterInfoDto> gossip = tryGetGossipFrom(gossipCandidate)
                 .filter(c -> c.members != null && !c.members.isEmpty());
 
             if (gossip.isPresent()) {
