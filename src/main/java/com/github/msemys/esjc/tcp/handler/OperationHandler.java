@@ -62,9 +62,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                             operationManager.scheduleOperationRetry(item);
                             break;
                         case Reconnect:
-                            if (reconnectConsumer != null) {
-                                reconnectConsumer.accept(new NodeEndpoints(result.address, result.secureAddress));
-                            }
+                            reconnectTo(new NodeEndpoints(result.address, result.secureAddress));
                             operationManager.scheduleOperationRetry(item);
                             break;
                         default:
@@ -91,9 +89,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                                 subscriptionManager.scheduleSubscriptionRetry(item);
                                 break;
                             case Reconnect:
-                                if (reconnectConsumer != null) {
-                                    reconnectConsumer.accept(new NodeEndpoints(result.address, result.secureAddress));
-                                }
+                                reconnectTo(new NodeEndpoints(result.address, result.secureAddress));
                                 subscriptionManager.scheduleSubscriptionRetry(item);
                                 break;
                             case Subscribed:
@@ -132,6 +128,12 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
         checkNotNull(consumer, "consumer is null");
         reconnectConsumer = consumer;
         return this;
+    }
+
+    private void reconnectTo(NodeEndpoints endPoints) {
+        if (reconnectConsumer != null) {
+            reconnectConsumer.accept(endPoints);
+        }
     }
 
 }
