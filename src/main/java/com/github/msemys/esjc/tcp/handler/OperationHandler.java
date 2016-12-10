@@ -1,5 +1,6 @@
 package com.github.msemys.esjc.tcp.handler;
 
+import com.github.msemys.esjc.EventStoreException;
 import com.github.msemys.esjc.node.NodeEndpoints;
 import com.github.msemys.esjc.operation.InspectionResult;
 import com.github.msemys.esjc.operation.manager.OperationItem;
@@ -7,7 +8,6 @@ import com.github.msemys.esjc.operation.manager.OperationManager;
 import com.github.msemys.esjc.subscription.manager.SubscriptionItem;
 import com.github.msemys.esjc.subscription.manager.SubscriptionManager;
 import com.github.msemys.esjc.tcp.TcpPackage;
-import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                             operationManager.scheduleOperationRetry(item);
                             break;
                         default:
-                            throw new ChannelException("Unknown InspectionDecision: " + result.decision);
+                            throw new EventStoreException("Unknown InspectionDecision: " + result.decision);
                     }
                     operationManager.scheduleWaitingOperations(ctx.channel());
                 } else {
@@ -100,7 +100,7 @@ public class OperationHandler extends SimpleChannelInboundHandler<TcpPackage> {
                                 item.isSubscribed = true;
                                 break;
                             default:
-                                throw new ChannelException("Unknown InspectionDecision: " + result.decision);
+                                throw new EventStoreException("Unknown InspectionDecision: " + result.decision);
                         }
                     } else {
                         logger.debug("HandleTcpPackage UNMAPPED PACKAGE with CorrelationId {}, Command: {}", msg.correlationId, msg.command);
