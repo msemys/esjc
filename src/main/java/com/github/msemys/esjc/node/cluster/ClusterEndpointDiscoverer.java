@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -29,8 +29,7 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
     private static final Logger logger = LoggerFactory.getLogger(ClusterEndpointDiscoverer.class);
 
     private final ScheduledExecutorService scheduler;
-    private List<MemberInfoDto> oldGossip;
-    private final ReentrantLock oldGossipLock = new ReentrantLock();
+    private final AtomicReference<List<MemberInfoDto>> oldGossip = new AtomicReference<>();
     private final ClusterNodeSettings settings;
     private final Gson gson;
 
@@ -85,14 +84,7 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
     }
 
     private Optional<NodeEndpoints> tryDiscover(InetSocketAddress failedEndpoint) {
-        oldGossipLock.lock();
-        List<MemberInfoDto> oldGossipCopy;
-        try {
-            oldGossipCopy = oldGossip;
-            oldGossip = null;
-        } finally {
-            oldGossipLock.unlock();
-        }
+        List<MemberInfoDto> oldGossipCopy = oldGossip.getAndSet(null);
 
         List<GossipSeed> gossipCandidates = (oldGossipCopy != null) ?
             getGossipCandidatesFromOldGossip(oldGossipCopy, failedEndpoint) : getGossipCandidatesFromDns();
@@ -105,13 +97,8 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
                 Optional<NodeEndpoints> bestNode = tryDetermineBestNode(gossip.get().members);
 
                 if (bestNode.isPresent()) {
-                    oldGossipLock.lock();
-                    try {
-                        oldGossip = gossip.get().members;
-                        return bestNode;
-                    } finally {
-                        oldGossipLock.unlock();
-                    }
+                    oldGossip.set(gossip.get().members);
+                    return bestNode;
                 }
             }
         }
