@@ -436,6 +436,8 @@ public interface EventStore {
 
     /**
      * Iterates over events in a stream from the specified start position to the end of stream using default user credentials.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param stream         the name of the stream to iterate.
      * @param eventNumber    the event number (inclusive) to iterate from.
@@ -453,6 +455,8 @@ public interface EventStore {
 
     /**
      * Iterates over events in a stream from the specified start position to the end of stream.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param stream          the name of the stream to iterate.
      * @param eventNumber     the event number (inclusive) to iterate from.
@@ -469,6 +473,8 @@ public interface EventStore {
 
     /**
      * Iterates over events in a stream backwards from the specified start position to the beginning of stream using default user credentials.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param stream         the name of the stream to iterate.
      * @param eventNumber    the event number (inclusive) to iterate from.
@@ -486,6 +492,8 @@ public interface EventStore {
 
     /**
      * Iterates over events in a stream backwards from the specified start position to the beginning of stream.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param stream          the name of the stream to iterate.
      * @param eventNumber     the event number (inclusive) to iterate from.
@@ -502,6 +510,8 @@ public interface EventStore {
 
     /**
      * Iterates over all events in the node forward from the specified start position to the end using default user credentials.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param position       the position (inclusive) to start iterating from.
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
@@ -517,6 +527,8 @@ public interface EventStore {
 
     /**
      * Iterates over all events in the node forward from the specified start position to the end.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param position        the position (inclusive) to start iterating from.
      * @param batchSize       the number of events to return per batch, allowed range [1..4096].
@@ -531,6 +543,8 @@ public interface EventStore {
 
     /**
      * Iterates over all events in the node backwards from the specified start position to the beginning using default user credentials.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param position       the position (exclusive) to start iterating from.
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
@@ -546,6 +560,8 @@ public interface EventStore {
 
     /**
      * Iterates over all events in the node backwards from the specified start position to the beginning.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param position        the position (exclusive) to start iterating from.
      * @param batchSize       the number of events to return per batch, allowed range [1..4096].
@@ -560,7 +576,8 @@ public interface EventStore {
 
     /**
      * Sequentially processes events in a stream from the specified start position to the end of stream using default user credentials.
-     * Event batches are lazily loaded on demand.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param stream         the name of the stream to process.
      * @param eventNumber    the event number (inclusive) to process from.
@@ -578,7 +595,8 @@ public interface EventStore {
 
     /**
      * Sequentially processes events in a stream from the specified start position to the end of stream.
-     * Event batches are lazily loaded on demand.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param stream          the name of the stream to process.
      * @param eventNumber     the event number (inclusive) to process from.
@@ -595,7 +613,8 @@ public interface EventStore {
 
     /**
      * Sequentially processes events in a stream backwards from the specified start position to the beginning of stream using default user credentials.
-     * Event batches are lazily loaded on demand.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param stream         the name of the stream to process.
      * @param eventNumber    the event number (inclusive) to process from.
@@ -613,7 +632,8 @@ public interface EventStore {
 
     /**
      * Sequentially processes events in a stream backwards from the specified start position to the beginning of stream.
-     * Event batches are lazily loaded on demand.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param stream          the name of the stream to process.
      * @param eventNumber     the event number (inclusive) to process from.
@@ -630,7 +650,8 @@ public interface EventStore {
 
     /**
      * Sequentially processes all events in the node forward from the specified start position to the end using default user credentials.
-     * Event batches are lazily loaded on demand.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param position       the position (inclusive) to start processing from.
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
@@ -646,7 +667,8 @@ public interface EventStore {
 
     /**
      * Sequentially processes all events in the node forward from the specified start position to the end.
-     * Event batches are lazily loaded on demand.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param position        the position (inclusive) to start processing from.
      * @param batchSize       the number of events to return per batch, allowed range [1..4096].
@@ -661,7 +683,8 @@ public interface EventStore {
 
     /**
      * Sequentially processes all events in the node backwards from the specified start position to the beginning using default user credentials.
-     * Event batches are lazily loaded on demand.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param position       the position (exclusive) to start processing from.
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
@@ -677,7 +700,8 @@ public interface EventStore {
 
     /**
      * Sequentially processes all events in the node backwards from the specified start position to the beginning.
-     * Event batches are lazily loaded on demand.
+     * <p>
+     * Events are read in batches on demand.
      *
      * @param position        the position (exclusive) to start processing from.
      * @param batchSize       the number of events to return per batch, allowed range [1..4096].
