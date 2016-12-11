@@ -90,7 +90,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
 
     /**
      * Acknowledge that the specified message have completed processing (this will tell the server it has been processed).
-     * <p><u>NOTE:</u> there is no need to ack a message if you have Auto Ack enabled.</p>
+     * <p><b>Note:</b> there is no need to ack a message if you have Auto Ack enabled.</p>
      *
      * @param event the event to acknowledge.
      */
@@ -100,7 +100,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
 
     /**
      * Acknowledge that the specified messages have completed processing (this will tell the server it has been processed).
-     * <p><u>NOTE:</u> there is no need to ack a message if you have Auto Ack enabled.</p>
+     * <p><b>Note:</b> there is no need to ack a message if you have Auto Ack enabled.</p>
      *
      * @param events the events to acknowledge.
      */

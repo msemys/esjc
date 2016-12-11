@@ -51,7 +51,7 @@ public class Settings {
     /**
      * The interval at which to send heartbeat messages.
      * <p>
-     * <u>NOTE</u>: heartbeat request will be sent only if connection is idle (no writes) for the specified time.
+     * <b>Note:</b> heartbeat request will be sent only if connection is idle (no writes) for the specified time.
      * </p>
      */
     public final Duration heartbeatInterval;
@@ -65,7 +65,7 @@ public class Settings {
     /**
      * Whether or not all write and read requests to be served only by master.
      * <p>
-     * <u>NOTE</u>: this option is used for cluster only.
+     * <b>Note:</b> this option is used for cluster only.
      * </p>
      */
     public final boolean requireMaster;
@@ -267,7 +267,7 @@ public class Settings {
         /**
          * Sets the interval at which to send heartbeat messages (by default, 500 milliseconds).
          * <p>
-         * <u>NOTE</u>: heartbeat request will be sent only if connection is idle (no writes) for the specified time.
+         * <b>Note:</b> heartbeat request will be sent only if connection is idle (no writes) for the specified time.
          * </p>
          *
          * @param heartbeatInterval the interval at which to send heartbeat messages.
@@ -294,7 +294,7 @@ public class Settings {
          * Specifies whether or not all write and read requests to be served only by master.
          * By default, it is enabled - master node required.
          * <p>
-         * <u>NOTE</u>: this option is used for cluster only.
+         * <b>Note:</b> this option is used for cluster only.
          * </p>
          *
          * @param requireMaster {@code true} to require master.

@@ -795,7 +795,7 @@ public interface EventStore {
      * use the event number of the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code eventNumber} will result in missing
+     * <b>Note:</b> using {@link StreamPosition#START} for {@code eventNumber} will result in missing
      * the first event in the stream.
      * </p>
      *
@@ -825,7 +825,7 @@ public interface EventStore {
      * use the event number of the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code eventNumber} will result in missing
+     * <b>Note:</b> using {@link StreamPosition#START} for {@code eventNumber} will result in missing
      * the first event in the stream.
      * </p>
      *
@@ -852,7 +852,7 @@ public interface EventStore {
      * use the event number of the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code eventNumber} will result in missing
+     * <b>Note:</b> using {@link StreamPosition#START} for {@code eventNumber} will result in missing
      * the first event in the stream.
      * </p>
      *
@@ -881,7 +881,7 @@ public interface EventStore {
      * use the event number of the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link StreamPosition#START} for {@code eventNumber} will result in missing
+     * <b>Note:</b> using {@link StreamPosition#START} for {@code eventNumber} will result in missing
      * the first event in the stream.
      * </p>
      *
@@ -910,7 +910,7 @@ public interface EventStore {
      * use the position representing the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link Position#START} for {@code position} will result in missing
+     * <b>Note:</b> using {@link Position#START} for {@code position} will result in missing
      * the first event in the stream.
      * </p>
      *
@@ -934,7 +934,7 @@ public interface EventStore {
      * use the position representing the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link Position#START} for {@code position} will result in missing
+     * <b>Note:</b> using {@link Position#START} for {@code position} will result in missing
      * the first event in the stream.
      * </p>
      *
@@ -962,7 +962,7 @@ public interface EventStore {
      * use the position representing the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link Position#START} for {@code position} will result in missing
+     * <b>Note:</b> using {@link Position#START} for {@code position} will result in missing
      * the first event in the stream.
      * </p>
      *
@@ -989,7 +989,7 @@ public interface EventStore {
      * use the position representing the last event processed which appeared on the subscription.
      * </p>
      * <p>
-     * <u>NOTE</u>: using {@link Position#START} for {@code position} will result in missing
+     * <b>Note:</b> using {@link Position#START} for {@code position} will result in missing
      * the first event in the stream.
      * </p>
      *

@@ -190,7 +190,7 @@ public class PersistentSubscriptionSettings {
 
         /**
          * Specifies whether or not to include further latency statistics (by default, it is disabled).
-         * <p><u>NOTE:</u> these statistics have a cost and should not be used in high performance situations.</p>
+         * <p><b>Note:</b> these statistics have a cost and should not be used in high performance situations.</p>
          *
          * @param timingStatistics {@code true} to include further latency statistics.
          * @return the builder reference
