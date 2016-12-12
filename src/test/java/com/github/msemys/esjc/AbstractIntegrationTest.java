@@ -1,6 +1,8 @@
 package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.event.ClientConnected;
+import com.github.msemys.esjc.event.ClientDisconnected;
+import com.github.msemys.esjc.util.Throwables;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,7 +59,7 @@ public abstract class AbstractIntegrationTest {
 
     @After
     public void tearDown() throws Exception {
-        eventstore.disconnect();
+        awaitDisconnected(eventstore);
     }
 
     protected abstract EventStore createEventStore();
@@ -110,6 +112,24 @@ public abstract class AbstractIntegrationTest {
         }
 
         return result;
+    }
+
+    protected static void awaitDisconnected(EventStore eventstore) {
+        CountDownLatch clientDisconnectedSignal = new CountDownLatch(1);
+
+        eventstore.addListener(event -> {
+            if (event instanceof ClientDisconnected) {
+                clientDisconnectedSignal.countDown();
+            }
+        });
+
+        eventstore.disconnect();
+
+        try {
+            assertTrue("client disconnect timeout", clientDisconnectedSignal.await(15, SECONDS));
+        } catch (InterruptedException e) {
+            throw Throwables.propagate(e);
+        }
     }
 
 }

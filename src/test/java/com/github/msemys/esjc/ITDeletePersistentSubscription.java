@@ -90,7 +90,7 @@ public class ITDeletePersistentSubscription extends AbstractIntegrationTest {
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(AccessDeniedException.class));
         } finally {
-            unauthenticatedEventstore.disconnect();
+            awaitDisconnected(unauthenticatedEventstore);
         }
     }
 
