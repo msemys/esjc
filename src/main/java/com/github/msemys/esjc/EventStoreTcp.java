@@ -1,6 +1,7 @@
 package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.event.Event;
+import com.github.msemys.esjc.event.EventQueue;
 import com.github.msemys.esjc.event.Events;
 import com.github.msemys.esjc.node.EndpointDiscoverer;
 import com.github.msemys.esjc.node.NodeEndpoints;
@@ -45,9 +46,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
@@ -92,7 +91,7 @@ public class EventStoreTcp implements EventStore {
     private final ReconnectionInfo reconnectionInfo = new ReconnectionInfo();
     private Instant lastOperationTimeoutCheck = Instant.MIN;
 
-    private final Set<EventStoreListener> listeners = new CopyOnWriteArraySet<>();
+    private final EventQueue events;
 
     private final Object mutex = new Object();
 
@@ -163,6 +162,8 @@ public class EventStoreTcp implements EventStore {
         tasks.register(StartOperation.class, this::handle);
         tasks.register(StartSubscription.class, this::handle);
         tasks.register(StartPersistentSubscription.class, this::handle);
+
+        events = new EventQueue(executor());
     }
 
     @Override
@@ -617,12 +618,12 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public void addListener(EventStoreListener listener) {
-        listeners.add(listener);
+        events.register(listener);
     }
 
     @Override
     public void removeListener(EventStoreListener listener) {
-        listeners.remove(listener);
+        events.unregister(listener);
     }
 
     private Executor executor() {
@@ -630,7 +631,7 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void fireEvent(Event event) {
-        executor().execute(() -> listeners.forEach(l -> l.onEvent(event)));
+        events.enqueue(event);
     }
 
     private void onAuthenticationCompleted(AuthenticationStatus status) {
