@@ -618,11 +618,13 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public void addListener(EventStoreListener listener) {
+        checkNotNull(listener, "listener is null");
         events.register(listener);
     }
 
     @Override
     public void removeListener(EventStoreListener listener) {
+        checkNotNull(listener, "listener is null");
         events.unregister(listener);
     }
 
