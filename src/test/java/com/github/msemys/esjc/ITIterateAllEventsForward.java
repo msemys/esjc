@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;

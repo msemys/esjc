@@ -6,13 +6,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsCollectionContaining;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.github.msemys.esjc.util.Strings.newString;
-import static org.hamcrest.core.AllOf.allOf;
 
 public class RecordedEventMatcher extends TypeSafeMatcher<RecordedEvent> {
 
@@ -52,18 +47,6 @@ public class RecordedEventMatcher extends TypeSafeMatcher<RecordedEvent> {
     @Factory
     public static Matcher<RecordedEvent> equalTo(EventData item) {
         return new RecordedEventMatcher(item);
-    }
-
-    @Factory
-    public static Matcher<Iterable<? super RecordedEvent>> hasItem(EventData item) {
-        return new IsCollectionContaining<>(equalTo(item));
-    }
-
-    @Factory
-    public static Matcher<Iterable<RecordedEvent>> hasItems(Iterable<EventData> items) {
-        List<Matcher<? super Iterable<RecordedEvent>>> all = new ArrayList<>();
-        items.forEach(item -> all.add(hasItem(item)));
-        return allOf(all);
     }
 
 }

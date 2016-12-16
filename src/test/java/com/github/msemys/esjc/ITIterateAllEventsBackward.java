@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.github.msemys.esjc.matcher.RecordedEventMatcher.hasItems;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
