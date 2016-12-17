@@ -7,7 +7,6 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class RecordedEventListMatcher extends TypeSafeMatcher<List<RecordedEvent>> {
@@ -21,23 +20,23 @@ public class RecordedEventListMatcher extends TypeSafeMatcher<List<RecordedEvent
 
     @Override
     protected boolean matchesSafely(List<RecordedEvent> actual) {
-        Iterator<EventData> expectedIterator = expected.iterator();
-        Iterator<RecordedEvent> actualIterator = actual.iterator();
+        if (expected.size() == actual.size()) {
+            for (int i = 0; i < expected.size(); i++) {
+                EventData expectedItem = expected.get(i);
+                RecordedEvent actualItem = actual.get(i);
 
-        while (expectedIterator.hasNext() && actualIterator.hasNext()) {
-            EventData expectedItem = expectedIterator.next();
-            RecordedEvent actualItem = actualIterator.next();
+                elementMatcher = RecordedEventMatcher.equalTo(expectedItem);
+                elementIndex = i;
 
-            elementMatcher = RecordedEventMatcher.equalTo(expectedItem);
-
-            if (!elementMatcher.matches(actualItem)) {
-                return false;
+                if (!elementMatcher.matches(actualItem)) {
+                    return false;
+                }
             }
 
-            elementIndex++;
+            return true;
+        } else {
+            return false;
         }
-
-        return !expectedIterator.hasNext() && !actualIterator.hasNext();
     }
 
     @Override
@@ -55,18 +54,18 @@ public class RecordedEventListMatcher extends TypeSafeMatcher<List<RecordedEvent
 
     @Override
     protected void describeMismatchSafely(List<RecordedEvent> actual, Description mismatchDescription) {
+        mismatchDescription.appendText("collection with size ").appendValue(actual.size());
+
         if (elementMatcher != null && elementIndex < actual.size()) {
             RecordedEvent actualItem = actual.get(elementIndex);
 
             mismatchDescription
-                .appendText("collection has event ")
+                .appendText(" has event ")
                 .appendValue(actualItem.eventType)
                 .appendText(" ")
                 .appendValue(actualItem.eventId)
                 .appendText(" at index ")
                 .appendValue(elementIndex);
-        } else {
-            mismatchDescription.appendText("collection size is ").appendValue(actual.size());
         }
     }
 
