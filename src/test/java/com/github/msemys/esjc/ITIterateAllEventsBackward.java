@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
@@ -67,7 +67,7 @@ public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
 
         List<RecordedEvent> result = range(0, 20).mapToObj(i -> iterator.next().event).collect(toList());
 
-        assertThat(result, hasItems(reverse(events)));
+        assertThat(result, containsInOrder(reverse(events)));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
         List<RecordedEvent> allEvents = new ArrayList<>();
         eventstore.iterateAllEventsBackward(Position.END, 1, false).forEachRemaining(e -> allEvents.add(e.event));
 
-        assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(reverse(events)));
+        assertThat(allEvents.stream().limit(events.size()).collect(toList()), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
         List<RecordedEvent> allEvents = new ArrayList<>();
         eventstore.iterateAllEventsBackward(Position.END, 5, false).forEachRemaining(e -> allEvents.add(e.event));
 
-        assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(reverse(events)));
+        assertThat(allEvents.stream().limit(events.size()).collect(toList()), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
         List<RecordedEvent> allEvents = new ArrayList<>();
         eventstore.iterateAllEventsBackward(Position.END, 4096, false).forEachRemaining(e -> allEvents.add(e.event));
 
-        assertThat(allEvents.stream().limit(events.size()).collect(toList()), hasItems(reverse(events)));
+        assertThat(allEvents.stream().limit(events.size()).collect(toList()), containsInOrder(reverse(events)));
     }
 
 }

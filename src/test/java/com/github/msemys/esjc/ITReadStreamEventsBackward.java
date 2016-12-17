@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.equalTo;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
@@ -71,7 +71,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, StreamPosition.END, events.size(), false).join();
 
-        assertThat(slice.events.stream().map(e -> e.event).collect(toList()), hasItems(reverse(events)));
+        assertThat(slice.events.stream().map(e -> e.event).collect(toList()), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, 3, 2, false).join();
 
         List<EventData> expectedEvents = reverse(events.stream().skip(2).limit(2).collect(toList()));
-        assertThat(slice.events.stream().map(e -> e.event).collect(toList()), hasItems(expectedEvents));
+        assertThat(slice.events.stream().map(e -> e.event).collect(toList()), containsInOrder(expectedEvents));
     }
 
     @Test(expected = IllegalArgumentException.class)

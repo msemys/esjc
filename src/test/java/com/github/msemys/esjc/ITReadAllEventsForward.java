@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.core.Is.is;
@@ -43,7 +43,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
         AllEventsSlice slice = eventstore.readAllEventsForward(position, events.size() + 10, false).join();
 
         assertTrue(slice.events.size() >= events.size() + 2);
-        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), hasItems(events));
+        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), containsInOrder(events));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
         AllEventsSlice slice = eventstore.readAllEventsForward(position, 4096, false).join();
 
         assertTrue(slice.events.size() >= events.size());
-        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), hasItems(events));
+        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), containsInOrder(events));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
             .findFirst()
             .get());
 
-        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), hasItems(events));
+        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), containsInOrder(events));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
             .findFirst()
             .get());
 
-        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), hasItems(events));
+        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), containsInOrder(events));
     }
 
     @Test(expected = IllegalArgumentException.class)

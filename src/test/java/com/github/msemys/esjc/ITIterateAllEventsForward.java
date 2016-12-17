@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
@@ -78,7 +78,7 @@ public class ITIterateAllEventsForward extends AbstractIntegrationTest {
         eventstore.iterateAllEventsForward(position, 3, false).forEachRemaining(e -> result.add(e.event));
 
         assertEquals(20, result.size());
-        assertThat(result, hasItems(events));
+        assertThat(result, containsInOrder(events));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ITIterateAllEventsForward extends AbstractIntegrationTest {
             .findFirst()
             .get());
 
-        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), hasItems(events));
+        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), containsInOrder(events));
     }
 
     @Test
@@ -114,7 +114,7 @@ public class ITIterateAllEventsForward extends AbstractIntegrationTest {
             .findFirst()
             .get());
 
-        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), hasItems(events));
+        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), containsInOrder(events));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class ITIterateAllEventsForward extends AbstractIntegrationTest {
             .findFirst()
             .get());
 
-        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), hasItems(events));
+        assertThat(allEvents.stream().skip(index).limit(events.size()).collect(toList()), containsInOrder(events));
     }
 
 }

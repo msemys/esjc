@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static com.github.msemys.esjc.system.SystemStreams.metastreamOf;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
@@ -43,7 +43,7 @@ public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractIntegra
 
         AllEventsSlice slice = eventstore.readAllEventsForward(position, events.size() + 10, false).join();
 
-        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), hasItems(events));
+        assertThat(slice.events.stream().limit(events.size()).map(e -> e.event).collect(toList()), containsInOrder(events));
 
         RecordedEvent lastEvent = slice.events.get(slice.events.size() - 1).event;
         assertEquals(metastreamOf(stream), lastEvent.eventStreamId);

@@ -71,7 +71,7 @@ public class RecordedEventListMatcher extends TypeSafeMatcher<List<RecordedEvent
     }
 
     @Factory
-    public static Matcher<List<RecordedEvent>> hasItems(List<EventData> items) {
+    public static Matcher<List<RecordedEvent>> containsInOrder(List<EventData> items) {
         return new RecordedEventListMatcher(items);
     }
 

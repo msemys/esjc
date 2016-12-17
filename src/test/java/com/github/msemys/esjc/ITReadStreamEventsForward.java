@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static com.github.msemys.esjc.matcher.RecordedEventMatcher.equalTo;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
@@ -94,7 +94,7 @@ public class ITReadStreamEventsForward extends AbstractIntegrationTest {
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, StreamPosition.START, events.size(), false).join();
 
-        assertThat(slice.events.stream().map(e -> e.event).collect(toList()), hasItems(events));
+        assertThat(slice.events.stream().map(e -> e.event).collect(toList()), containsInOrder(events));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ITReadStreamEventsForward extends AbstractIntegrationTest {
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 5, 2, false).join();
 
         assertThat(slice.events.stream().map(e -> e.event).collect(toList()),
-            hasItems(events.stream().skip(5).limit(2).collect(toList())));
+            containsInOrder(events.stream().skip(5).limit(2).collect(toList())));
     }
 
 }
