@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.github.msemys.esjc.matcher.IteratorSizeMatcher.hasSize;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
@@ -128,10 +128,8 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
         List<RecordedEvent> result = new ArrayList<>();
         eventstore.iterateStreamEventsBackward(stream, 8, 5, false).forEachRemaining(e -> result.add(e.event));
 
-        List<EventData> reversedEvents = reverse(events.stream().limit(9).collect(toList()));
-
         assertEquals(9, result.size());
-        range(0, 9).forEach(i -> assertEquals(reversedEvents.get(i).eventId, result.get(i).eventId));
+        assertThat(result, hasItems(reverse(events.stream().limit(9).collect(toList()))));
     }
 
     @Test
@@ -174,10 +172,8 @@ public class ITIterateStreamEventsBackward extends AbstractIntegrationTest {
         List<RecordedEvent> result = new ArrayList<>();
         eventstore.iterateStreamEventsBackward(stream, StreamPosition.END, 3, false).forEachRemaining(e -> result.add(e.event));
 
-        List<EventData> reversedEvents = reverse(events);
-
         assertEquals(10, result.size());
-        range(0, 10).forEach(i -> assertEquals(reversedEvents.get(i).eventId, result.get(i).eventId));
+        assertThat(result, hasItems(reverse(events)));
     }
 
     @Test

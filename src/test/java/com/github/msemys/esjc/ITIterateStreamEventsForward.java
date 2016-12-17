@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.github.msemys.esjc.matcher.IteratorSizeMatcher.hasSize;
-import static java.util.stream.IntStream.range;
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
@@ -128,7 +129,7 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
         eventstore.iterateStreamEventsForward(stream, 8, 5, false).forEachRemaining(e -> result.add(e.event));
 
         assertEquals(2, result.size());
-        range(0, 2).forEach(i -> assertEquals(events.get(8 + i).eventId, result.get(i).eventId));
+        assertThat(result, hasItems(events.stream().skip(8).collect(toList())));
     }
 
     @Test
@@ -172,7 +173,8 @@ public class ITIterateStreamEventsForward extends AbstractIntegrationTest {
         eventstore.iterateStreamEventsForward(stream, StreamPosition.START, 3, false).forEachRemaining(e -> result.add(e.event));
 
         assertEquals(10, result.size());
-        range(0, 10).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).eventId));
+
+        assertThat(result, hasItems(events));
     }
 
 }

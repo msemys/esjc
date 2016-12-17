@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
 
 import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.hasItems;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
@@ -79,7 +78,7 @@ public class ITIterateAllEventsForward extends AbstractIntegrationTest {
         eventstore.iterateAllEventsForward(position, 3, false).forEachRemaining(e -> result.add(e.event));
 
         assertEquals(20, result.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).eventId));
+        assertThat(result, hasItems(events));
     }
 
     @Test

@@ -65,12 +65,9 @@ public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateAllEventsBackward(Position.END, 6, false);
 
-        List<RecordedEvent> result = new ArrayList<>();
-        range(0, 20).forEach(i -> result.add(iterator.next().event));
+        List<RecordedEvent> result = range(0, 20).mapToObj(i -> iterator.next().event).collect(toList());
 
-        List<EventData> reversedEvents = reverse(events);
-
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, result.get(i).eventId));
+        assertThat(result, hasItems(reverse(events)));
     }
 
     @Test
