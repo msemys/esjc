@@ -16,6 +16,7 @@ abstract class AbstractEventsSpliterator<T, R> implements Spliterator<ResolvedEv
     private T cursor;
     private Spliterator<ResolvedEvent> spliterator;
     private boolean endOfStream;
+    private long estimate = Long.MAX_VALUE;
 
     AbstractEventsSpliterator(T cursor, Function<T, CompletableFuture<R>> reader) {
         this.cursor = cursor;
@@ -61,7 +62,7 @@ abstract class AbstractEventsSpliterator<T, R> implements Spliterator<ResolvedEv
 
     @Override
     public long estimateSize() {
-        return Long.MAX_VALUE;
+        return estimate;
     }
 
     @Override
@@ -71,8 +72,13 @@ abstract class AbstractEventsSpliterator<T, R> implements Spliterator<ResolvedEv
 
     private List<ResolvedEvent> nextBatch() {
         R slice = reader.apply(cursor).join();
+
         onBatchReceived(slice);
-        return getEvents(slice);
+
+        List<ResolvedEvent> events = getEvents(slice);
+        estimate = events.size();
+
+        return events;
     }
 
     protected void onBatchReceived(R slice) {
