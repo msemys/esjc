@@ -8,6 +8,7 @@ import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -58,7 +59,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertNull(spliterator.trySplit());
 
         assertEquals(19, result.size());
-        range(0, 19).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
@@ -81,7 +82,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertNull(spliterator.trySplit());
 
         assertEquals(82, result.size());
-        range(0, 82).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
@@ -148,7 +149,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertNull(spliterator.trySplit());
 
         assertEquals(17, result.size());
-        range(0, 17).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
@@ -216,7 +217,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertNull(spliterator.trySplit());
 
         assertEquals(17, result.size());
-        range(0, 17).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
@@ -276,7 +277,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertFalse(spliterator.tryAdvance(result::add));
 
         assertEquals(17, result.size());
-        range(0, 17).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
@@ -354,7 +355,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         });
 
         assertEquals(20, result.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test

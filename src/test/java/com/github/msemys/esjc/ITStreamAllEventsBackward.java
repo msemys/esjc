@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
@@ -61,8 +62,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
             .limit(20)
             .collect(toList());
 
-        List<EventData> reversedEvents = reverse(events);
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -77,8 +77,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
             .limit(20)
             .collect(toList());
 
-        List<EventData> reversedEvents = reverse(events);
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -93,8 +92,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        List<EventData> reversedEvents = reverse(events);
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -111,8 +109,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        List<EventData> reversedEvents = reverse(events);
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -127,8 +124,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        List<EventData> reversedEvents = reverse(events);
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -145,8 +141,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        List<EventData> reversedEvents = reverse(events);
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -161,8 +156,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        List<EventData> reversedEvents = reverse(events);
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(reverse(events)));
     }
 
     @Test
@@ -179,8 +173,7 @@ public class ITStreamAllEventsBackward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        List<EventData> reversedEvents = reverse(events);
-        range(0, 20).forEach(i -> assertEquals(reversedEvents.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(reverse(events)));
     }
 
     @Test

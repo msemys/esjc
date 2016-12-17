@@ -80,6 +80,10 @@ public abstract class AbstractIntegrationTest {
         return reversedList;
     }
 
+    protected static List<RecordedEvent> recordedEventsFrom(List<ResolvedEvent> events) {
+        return events.stream().map(e -> e.event).collect(toList());
+    }
+
     /**
      * Generates unique stream name based on test class and current method name.
      *

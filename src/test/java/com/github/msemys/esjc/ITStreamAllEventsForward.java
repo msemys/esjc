@@ -4,10 +4,12 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 public class ITStreamAllEventsForward extends AbstractIntegrationTest {
 
@@ -46,7 +48,7 @@ public class ITStreamAllEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> result = eventstore.streamAllEventsForward(position, 3, false).collect(toList());
 
         assertEquals(20, result.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
@@ -62,7 +64,7 @@ public class ITStreamAllEventsForward extends AbstractIntegrationTest {
             .collect(toList());
 
         assertEquals(20, result.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
@@ -82,7 +84,7 @@ public class ITStreamAllEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().skip(index).limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(events));
     }
 
     @Test
@@ -104,7 +106,7 @@ public class ITStreamAllEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().skip(index).limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(events));
     }
 
     @Test
@@ -124,7 +126,7 @@ public class ITStreamAllEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().skip(index).limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(events));
     }
 
     @Test
@@ -146,7 +148,7 @@ public class ITStreamAllEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().skip(index).limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(events));
     }
 
     @Test
@@ -166,7 +168,7 @@ public class ITStreamAllEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().skip(index).limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(events));
     }
 
     @Test
@@ -188,7 +190,7 @@ public class ITStreamAllEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> allEventsSlice = allEvents.stream().skip(index).limit(events.size()).collect(toList());
 
         assertEquals(20, allEventsSlice.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, allEventsSlice.get(i).event.eventId));
+        assertThat(recordedEventsFrom(allEventsSlice), containsInOrder(events));
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -69,7 +70,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> result = eventstore.streamEventsForward(stream, 8, 5, false).collect(toList());
 
         assertEquals(2, result.size());
-        range(0, 2).forEach(i -> assertEquals(events.get(8 + i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events.stream().skip(8).collect(toList())));
     }
 
     @Test
@@ -109,7 +110,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
         List<ResolvedEvent> result = eventstore.streamEventsForward(stream, StreamPosition.START, 3, false).collect(toList());
 
         assertEquals(10, result.size());
-        range(0, 10).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
@@ -124,7 +125,7 @@ public class ITStreamEventsForward extends AbstractIntegrationTest {
             .collect(toList());
 
         assertEquals(100, result.size());
-        range(0, 100).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test

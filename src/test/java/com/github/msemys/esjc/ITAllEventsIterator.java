@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
@@ -60,7 +61,7 @@ public class ITAllEventsIterator extends AbstractIntegrationTest {
         });
 
         assertEquals(20, result.size());
-        range(0, 20).forEach(i -> assertEquals(events.get(i).eventId, result.get(i).event.eventId));
+        assertThat(recordedEventsFrom(result), containsInOrder(events));
     }
 
     @Test
