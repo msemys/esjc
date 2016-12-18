@@ -14,7 +14,7 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 <dependency>
     <groupId>com.github.msemys</groupId>
     <artifactId>esjc</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
 </dependency>
 ```
 
