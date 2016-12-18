@@ -12,6 +12,7 @@ import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsIn
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class ITAllEventsSpliterator extends AbstractIntegrationTest {
@@ -106,8 +107,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertNull(spliterator.trySplit());
 
         assertEquals(30, result.size());
-        List<ResolvedEvent> reversedFirstEvents = reverse(firstEvents.subList(0, 30));
-        range(0, 30).forEach(i -> assertEquals(reversedFirstEvents.get(i).event.eventId, result.get(i).event.eventId));
+        assertThat(eventIdsFrom(result), is(eventIdsFrom(reverse(firstEvents.subList(0, 30)))));
     }
 
     @Test
@@ -192,8 +192,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertNull(spliterator.trySplit());
 
         assertEquals(40, result.size());
-        List<ResolvedEvent> reversedFirstEvents = reverse(firstEvents.subList(0, 40));
-        range(0, 40).forEach(i -> assertEquals(reversedFirstEvents.get(i).event.eventId, result.get(i).event.eventId));
+        assertThat(eventIdsFrom(result), is(eventIdsFrom(reverse(firstEvents.subList(0, 40)))));
     }
 
     @Test
@@ -242,8 +241,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertNull(spliterator.trySplit());
 
         assertEquals(40, result.size());
-        List<ResolvedEvent> reversedFirstEvents = reverse(firstEvents.subList(0, 40));
-        range(0, 40).forEach(i -> assertEquals(reversedFirstEvents.get(i).event.eventId, result.get(i).event.eventId));
+        assertThat(eventIdsFrom(result), is(eventIdsFrom(reverse(firstEvents.subList(0, 40)))));
     }
 
     @Test
@@ -312,8 +310,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         assertFalse(spliterator.tryAdvance(result::add));
 
         assertEquals(40, result.size());
-        List<ResolvedEvent> reversedFirstEvents = reverse(firstEvents.subList(0, 40));
-        range(0, 40).forEach(i -> assertEquals(reversedFirstEvents.get(i).event.eventId, result.get(i).event.eventId));
+        assertThat(eventIdsFrom(result), is(eventIdsFrom(reverse(firstEvents.subList(0, 40)))));
     }
 
     @Test
@@ -395,8 +392,7 @@ public class ITAllEventsSpliterator extends AbstractIntegrationTest {
         });
 
         assertEquals(10, result.size());
-        List<ResolvedEvent> reversedFirstEvents = reverse(firstEvents.subList(0, 10));
-        range(0, 10).forEach(i -> assertEquals(reversedFirstEvents.get(i).event.eventId, result.get(i).event.eventId));
+        assertThat(eventIdsFrom(result), is(eventIdsFrom(reverse(firstEvents.subList(0, 10)))));
     }
 
     private Position appendEvents(String stream, List<EventData> events) {

@@ -10,6 +10,7 @@ import java.util.function.Function;
 import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class ITAllEventsIterator extends AbstractIntegrationTest {
@@ -103,8 +104,7 @@ public class ITAllEventsIterator extends AbstractIntegrationTest {
         });
 
         assertEquals(10, result.size());
-        List<ResolvedEvent> reversedFirstEvents = reverse(firstEvents.subList(0, 10));
-        range(0, 10).forEach(i -> assertEquals(reversedFirstEvents.get(i).event.eventId, result.get(i).event.eventId));
+        assertThat(eventIdsFrom(result), is(eventIdsFrom(reverse(firstEvents.subList(0, 10)))));
     }
 
     private static class AllEventsIteratorWithBatchCounter extends AllEventsIterator {

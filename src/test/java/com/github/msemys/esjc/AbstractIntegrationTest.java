@@ -84,6 +84,10 @@ public abstract class AbstractIntegrationTest {
         return events.stream().map(e -> e.event).collect(toList());
     }
 
+    protected static List<UUID> eventIdsFrom(List<ResolvedEvent> events) {
+        return events.stream().map(e -> e.event.eventId).collect(toList());
+    }
+
     /**
      * Generates unique stream name based on test class and current method name.
      *
