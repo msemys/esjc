@@ -11,7 +11,7 @@ import com.github.msemys.esjc.tcp.TcpSettings;
 
 import java.net.InetSocketAddress;
 import java.time.Duration;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
@@ -431,7 +431,7 @@ public class EventStoreBuilder {
      * @param executor the executor to execute client internal tasks and run subscriptions.
      * @return the builder reference
      */
-    public EventStoreBuilder executor(Executor executor) {
+    public EventStoreBuilder executor(ExecutorService executor) {
         this.settingsBuilder.executor(executor);
         return this;
     }
