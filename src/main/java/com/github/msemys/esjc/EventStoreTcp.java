@@ -48,6 +48,7 @@ import java.time.Instant;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Stream;
 
 import static com.github.msemys.esjc.system.SystemStreams.isMetastream;
@@ -592,6 +593,17 @@ public class EventStoreTcp implements EventStore {
     @Override
     public void disconnect() {
         disconnect("user initiated");
+    }
+
+    @Override
+    public void shutdown() {
+        disconnect("shutdown");
+
+        if (executor() instanceof ExecutorService) {
+            ((ExecutorService) executor()).shutdown();
+        }
+
+        group.shutdownGracefully();
     }
 
     private void disconnect(String reason) {

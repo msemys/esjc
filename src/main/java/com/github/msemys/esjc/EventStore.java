@@ -36,6 +36,13 @@ public interface EventStore {
     void disconnect();
 
     /**
+     * Disconnects client from server and initiates executor services shutdown.
+     * That causes client to reject any new operations and it will be not possible
+     * to establish connection to server.
+     */
+    void shutdown();
+
+    /**
      * Deletes a stream from the Event Store asynchronously using soft-deletion mode and default user credentials.
      *
      * @param stream          the name of the stream to delete.
