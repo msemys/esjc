@@ -18,8 +18,8 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TcpPackage> {
     private static final Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
 
     private final long timeoutMillis;
-    private volatile ScheduledFuture<?> timeoutTask;
-    private Object timeoutTaskLock = new Object();
+    private ScheduledFuture<?> timeoutTask;
+    private final Object timeoutTaskLock = new Object();
 
     public HeartbeatHandler(Duration timeout) {
         timeoutMillis = timeout.toMillis();
@@ -49,8 +49,8 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TcpPackage> {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        synchronized (this.timeoutTaskLock) {
-            if (evt instanceof IdleStateEvent && this.timeoutTask == null) {
+        synchronized (timeoutTaskLock) {
+            if (evt instanceof IdleStateEvent && timeoutTask == null) {
                 ctx.writeAndFlush(TcpPackage.newBuilder()
                     .command(TcpCommand.HeartbeatRequestCommand)
                     .correlationId(UUID.randomUUID())
@@ -64,7 +64,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TcpPackage> {
     }
 
     private void cancelTimeoutTask() {
-        synchronized (this.timeoutTaskLock) {
+        synchronized (timeoutTaskLock) {
             if (timeoutTask != null) {
                 timeoutTask.cancel(true);
                 timeoutTask = null;
