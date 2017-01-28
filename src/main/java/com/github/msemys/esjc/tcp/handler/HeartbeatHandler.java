@@ -49,16 +49,18 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TcpPackage> {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        synchronized (timeoutTaskLock) {
-            if (evt instanceof IdleStateEvent && timeoutTask == null) {
-                ctx.writeAndFlush(TcpPackage.newBuilder()
-                    .command(TcpCommand.HeartbeatRequestCommand)
-                    .correlationId(UUID.randomUUID())
-                    .build());
-                timeoutTask = ctx.executor().schedule(() -> {
-                    logger.info("Closing TCP connection [{}, L{}] due to HEARTBEAT TIMEOUT.", ctx.channel().remoteAddress(), ctx.channel().localAddress());
-                    ctx.close();
-                }, timeoutMillis, MILLISECONDS);
+        if (evt instanceof IdleStateEvent) {
+            synchronized (timeoutTaskLock) {
+                if (timeoutTask == null) {
+                    ctx.writeAndFlush(TcpPackage.newBuilder()
+                        .command(TcpCommand.HeartbeatRequestCommand)
+                        .correlationId(UUID.randomUUID())
+                        .build());
+                    timeoutTask = ctx.executor().schedule(() -> {
+                        logger.info("Closing TCP connection [{}, L{}] due to HEARTBEAT TIMEOUT.", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+                        ctx.close();
+                    }, timeoutMillis, MILLISECONDS);
+                }
             }
         }
     }
