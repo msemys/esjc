@@ -19,6 +19,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TcpPackage> {
 
     private final long timeoutMillis;
     private volatile ScheduledFuture<?> timeoutTask;
+    private Object timeoutTaskLock = new Object();
 
     public HeartbeatHandler(Duration timeout) {
         timeoutMillis = timeout.toMillis();
@@ -48,22 +49,26 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TcpPackage> {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof IdleStateEvent) {
-            ctx.writeAndFlush(TcpPackage.newBuilder()
-                .command(TcpCommand.HeartbeatRequestCommand)
-                .correlationId(UUID.randomUUID())
-                .build());
-            timeoutTask = ctx.executor().schedule(() -> {
-                logger.info("Closing TCP connection [{}, L{}] due to HEARTBEAT TIMEOUT.", ctx.channel().remoteAddress(), ctx.channel().localAddress());
-                ctx.close();
-            }, timeoutMillis, MILLISECONDS);
+        synchronized (this.timeoutTaskLock) {
+            if (evt instanceof IdleStateEvent && this.timeoutTask == null) {
+                ctx.writeAndFlush(TcpPackage.newBuilder()
+                    .command(TcpCommand.HeartbeatRequestCommand)
+                    .correlationId(UUID.randomUUID())
+                    .build());
+                timeoutTask = ctx.executor().schedule(() -> {
+                    logger.info("Closing TCP connection [{}, L{}] due to HEARTBEAT TIMEOUT.", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+                    ctx.close();
+                }, timeoutMillis, MILLISECONDS);
+            }
         }
     }
 
     private void cancelTimeoutTask() {
-        if (timeoutTask != null) {
-            timeoutTask.cancel(true);
-            timeoutTask = null;
+        synchronized (this.timeoutTaskLock) {
+            if (timeoutTask != null) {
+                timeoutTask.cancel(true);
+                timeoutTask = null;
+            }
         }
     }
 
