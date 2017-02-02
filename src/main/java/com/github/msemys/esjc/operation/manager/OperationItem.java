@@ -23,7 +23,7 @@ public class OperationItem implements Comparable<OperationItem> {
     public ChannelId connectionId;
     public UUID correlationId;
     public int retryCount;
-    public Instant lastUpdated;
+    public long lastUpdated;
 
     public OperationItem(Operation operation, int maxRetries, Duration timeout) {
         checkNotNull(operation, "operation is null");
@@ -35,7 +35,7 @@ public class OperationItem implements Comparable<OperationItem> {
 
         correlationId = UUID.randomUUID();
         retryCount = 0;
-        lastUpdated = Instant.now();
+        lastUpdated = System.nanoTime();
     }
 
     @Override

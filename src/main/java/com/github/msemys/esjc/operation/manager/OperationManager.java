@@ -64,7 +64,7 @@ public class OperationManager {
             if (!item.connectionId.equals(connectionId)) {
                 retryOperations.add(item);
             } else if (!item.timeout.isZero() &&
-                Duration.between(Instant.now(), item.lastUpdated).compareTo(settings.operationTimeout) > 0) {
+                Duration.ofNanos(System.nanoTime() - item.lastUpdated).compareTo(settings.operationTimeout) > 0) {
                 String error = String.format("Operation never got response from server. UTC now: %s, operation: %s.",
                     Instant.now(), item.toString());
 
@@ -145,7 +145,7 @@ public class OperationManager {
             waitingOperations.offer(item);
         } else {
             item.connectionId = ChannelId.of(connection);
-            item.lastUpdated = Instant.now();
+            item.lastUpdated = System.nanoTime();
             activeOperations.put(item.correlationId, item);
 
             TcpPackage tcpPackage = item.operation.create(item.correlationId);
