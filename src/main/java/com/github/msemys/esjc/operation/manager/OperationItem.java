@@ -2,6 +2,7 @@ package com.github.msemys.esjc.operation.manager;
 
 import com.github.msemys.esjc.operation.Operation;
 import com.github.msemys.esjc.tcp.ChannelId;
+import com.github.msemys.esjc.util.SystemTime;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -23,7 +24,7 @@ public class OperationItem implements Comparable<OperationItem> {
     public ChannelId connectionId;
     public UUID correlationId;
     public int retryCount;
-    public long lastUpdated;
+    public final SystemTime lastUpdated;
 
     public OperationItem(Operation operation, int maxRetries, Duration timeout) {
         checkNotNull(operation, "operation is null");
@@ -35,7 +36,7 @@ public class OperationItem implements Comparable<OperationItem> {
 
         correlationId = UUID.randomUUID();
         retryCount = 0;
-        lastUpdated = System.nanoTime();
+        lastUpdated = SystemTime.now();
     }
 
     @Override

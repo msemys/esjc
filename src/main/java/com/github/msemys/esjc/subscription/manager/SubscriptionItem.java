@@ -2,6 +2,7 @@ package com.github.msemys.esjc.subscription.manager;
 
 import com.github.msemys.esjc.subscription.SubscriptionOperation;
 import com.github.msemys.esjc.tcp.ChannelId;
+import com.github.msemys.esjc.util.SystemTime;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -19,7 +20,7 @@ public class SubscriptionItem {
     public UUID correlationId;
     public boolean isSubscribed;
     public int retryCount;
-    public Instant lastUpdated;
+    public final SystemTime lastUpdated;
 
     public SubscriptionItem(SubscriptionOperation operation, int maxRetries, Duration timeout) {
         checkNotNull(operation, "operation is null");
@@ -31,7 +32,7 @@ public class SubscriptionItem {
 
         correlationId = UUID.randomUUID();
         retryCount = 0;
-        lastUpdated = Instant.now();
+        lastUpdated = SystemTime.now();
     }
 
     @Override

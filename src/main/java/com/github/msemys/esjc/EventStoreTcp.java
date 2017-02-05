@@ -27,6 +27,7 @@ import com.github.msemys.esjc.tcp.handler.HeartbeatHandler;
 import com.github.msemys.esjc.tcp.handler.OperationHandler;
 import com.github.msemys.esjc.transaction.TransactionManager;
 import com.github.msemys.esjc.util.Strings;
+import com.github.msemys.esjc.util.SystemTime;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -44,7 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.time.Instant;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -61,8 +61,6 @@ import static com.github.msemys.esjc.util.Ranges.BATCH_SIZE_RANGE;
 import static com.github.msemys.esjc.util.Strings.*;
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static java.time.Duration.between;
-import static java.time.Instant.now;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.StreamSupport.stream;
@@ -90,7 +88,7 @@ public class EventStoreTcp implements EventStore {
     private final TaskQueue tasks;
     private final EndpointDiscoverer discoverer;
     private final ReconnectionInfo reconnectionInfo = new ReconnectionInfo();
-    private Instant lastOperationTimeoutCheck = Instant.MIN;
+    private final SystemTime lastOperationTimeoutCheck = SystemTime.zero();
 
     private final EventQueue events;
 
@@ -672,7 +670,7 @@ public class EventStoreTcp implements EventStore {
     private void timerTick() {
         switch (connectionState()) {
             case INIT:
-                if (connectingPhase == ConnectingPhase.RECONNECTING && between(reconnectionInfo.timestamp, now()).compareTo(settings.reconnectionDelay) > 0) {
+                if (connectingPhase == ConnectingPhase.RECONNECTING && reconnectionInfo.timestamp.isElapsed(settings.reconnectionDelay)) {
                     logger.debug("Checking reconnection...");
 
                     reconnectionInfo.inc();
@@ -692,10 +690,10 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void checkOperationTimeout() {
-        if (between(lastOperationTimeoutCheck, now()).compareTo(settings.operationTimeoutCheckInterval) > 0) {
+        if (lastOperationTimeoutCheck.isElapsed(settings.operationTimeoutCheckInterval)) {
             operationManager.checkTimeoutsAndRetry(connection);
             subscriptionManager.checkTimeoutsAndRetry(connection);
-            lastOperationTimeoutCheck = now();
+            lastOperationTimeoutCheck.update();
         }
     }
 
@@ -992,7 +990,7 @@ public class EventStoreTcp implements EventStore {
 
     private static class ReconnectionInfo {
         int reconnectionAttempt;
-        Instant timestamp;
+        final SystemTime timestamp = SystemTime.zero();
 
         void inc() {
             reconnectionAttempt++;
@@ -1005,7 +1003,7 @@ public class EventStoreTcp implements EventStore {
         }
 
         void touch() {
-            timestamp = now();
+            timestamp.update();
         }
     }
 }

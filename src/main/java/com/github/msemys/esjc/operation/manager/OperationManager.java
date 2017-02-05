@@ -8,7 +8,6 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,8 +62,7 @@ public class OperationManager {
         activeOperations.values().forEach(item -> {
             if (!item.connectionId.equals(connectionId)) {
                 retryOperations.add(item);
-            } else if (!item.timeout.isZero() &&
-                Duration.ofNanos(System.nanoTime() - item.lastUpdated).compareTo(settings.operationTimeout) > 0) {
+            } else if (!item.timeout.isZero() && item.lastUpdated.isElapsed(settings.operationTimeout)) {
                 String error = String.format("Operation never got response from server. UTC now: %s, operation: %s.",
                     Instant.now(), item.toString());
 
@@ -145,7 +143,7 @@ public class OperationManager {
             waitingOperations.offer(item);
         } else {
             item.connectionId = ChannelId.of(connection);
-            item.lastUpdated = System.nanoTime();
+            item.lastUpdated.update();
             activeOperations.put(item.correlationId, item);
 
             TcpPackage tcpPackage = item.operation.create(item.correlationId);

@@ -15,8 +15,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
-import static java.time.Duration.between;
-import static java.time.Instant.now;
 import static java.util.stream.Stream.concat;
 
 public class SubscriptionManager {
@@ -76,7 +74,7 @@ public class SubscriptionManager {
             .forEach(s -> {
                 if (!s.connectionId.equals(connectionId)) {
                     retrySubscriptions.add(s);
-                } else if (!s.timeout.isZero() && between(now(), s.lastUpdated).compareTo(settings.operationTimeout) > 0) {
+                } else if (!s.timeout.isZero() && s.lastUpdated.isElapsed(settings.operationTimeout)) {
                     String error = String.format("Subscription never got confirmation from server. UTC now: %s, operation: %s.",
                         Instant.now(), s);
 
@@ -145,7 +143,7 @@ public class SubscriptionManager {
 
         item.correlationId = UUID.randomUUID();
         item.connectionId = ChannelId.of(connection);
-        item.lastUpdated = now();
+        item.lastUpdated.update();
 
         activeSubscriptions.put(item.correlationId, item);
 
