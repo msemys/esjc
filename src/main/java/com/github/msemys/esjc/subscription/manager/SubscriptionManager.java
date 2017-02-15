@@ -35,9 +35,9 @@ public class SubscriptionManager {
         return Optional.ofNullable(activeSubscriptions.get(correlationId));
     }
 
-    public void cleanUp() {
+    public void cleanUp(Throwable cause) {
         if (!activeSubscriptions.isEmpty() || !waitingSubscriptions.isEmpty() || !retryPendingSubscriptions.isEmpty()) {
-            ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.");
+            ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.", cause);
 
             concat(activeSubscriptions.values().stream(), concat(waitingSubscriptions.stream(), retryPendingSubscriptions.stream()))
                 .forEach(item -> item.operation.drop(SubscriptionDropReason.ConnectionClosed, connectionClosedException));
