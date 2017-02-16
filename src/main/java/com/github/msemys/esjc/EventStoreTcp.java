@@ -590,12 +590,12 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public void disconnect() {
-        disconnect("user initiated");
+        disconnect("user initiated", null);
     }
 
     @Override
     public void shutdown() {
-        disconnect("shutdown");
+        disconnect("shutdown", null);
 
         if (executor() instanceof ExecutorService) {
             ((ExecutorService) executor()).shutdown();
@@ -604,12 +604,12 @@ public class EventStoreTcp implements EventStore {
         group.shutdownGracefully();
     }
 
-    private void disconnect(String reason) {
+    private void disconnect(String reason, Throwable cause) {
         if (isRunning()) {
             timer.cancel(true);
             timer = null;
-            operationManager.cleanUp();
-            subscriptionManager.cleanUp();
+            operationManager.cleanUp(cause);
+            subscriptionManager.cleanUp(cause);
             closeTcpConnection(reason);
             connectingPhase = ConnectingPhase.INVALID;
             fireEvent(Events.clientDisconnected());
@@ -837,7 +837,7 @@ public class EventStoreTcp implements EventStore {
                 fireEvent(Events.errorOccurred(task.throwable));
             }
 
-            disconnect(task.reason);
+            disconnect(task.reason, task.throwable);
         }
     }
 

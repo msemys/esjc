@@ -37,9 +37,9 @@ public class OperationManager {
         return totalOperationCount;
     }
 
-    public void cleanUp() {
+    public void cleanUp(Throwable cause) {
         if (!activeOperations.isEmpty() || !waitingOperations.isEmpty() || !retryPendingOperations.isEmpty()) {
-            ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.");
+            ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.", cause);
 
             concat(activeOperations.values().stream(), concat(waitingOperations.stream(), retryPendingOperations.stream()))
                 .forEach(item -> item.operation.fail(connectionClosedException));
