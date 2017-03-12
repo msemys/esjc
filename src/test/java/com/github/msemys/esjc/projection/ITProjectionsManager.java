@@ -321,7 +321,7 @@ public class ITProjectionsManager extends AbstractIntegrationTest {
             projectionManager.enable(SystemProjections.BY_CATEGORY).join();
             projectionManager.createContinuous(projection, query).join();
 
-            boolean completed = projectionManager.awaitStatus(projection, p -> p.eventsProcessedAfterRestart >= 12, Duration.ofSeconds(10));
+            boolean completed = projectionManager.awaitStatus(projection, p -> p.eventsProcessedAfterRestart >= 12, Duration.ofSeconds(30));
             assertTrue("Projection '" + projection + "' is not completed", completed);
 
             String state1 = projectionManager.getPartitionState(projection, stream1).join();
@@ -405,7 +405,7 @@ public class ITProjectionsManager extends AbstractIntegrationTest {
 
         projectionManager.createTransient(projection, query);
 
-        boolean completed = projectionManager.awaitStatus(projection, p -> p.status.contains("Completed"), Duration.ofSeconds(10));
+        boolean completed = projectionManager.awaitStatus(projection, p -> p.status.contains("Completed"), Duration.ofSeconds(30));
         assertTrue("Projection '" + projection + "' is not completed", completed);
 
         Projection result = projectionManager.getStatus(projection).join();
