@@ -7,12 +7,10 @@ import org.junit.Test;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Strings.newString;
 import static java.util.Arrays.asList;
-import static java.util.concurrent.CompletableFuture.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
@@ -31,19 +29,13 @@ public class ITProjectionsManager extends AbstractIntegrationTest {
         projectionManager = ProjectionManagerBuilder.newBuilder()
             .address("127.0.0.1", 2113)
             .userCredentials("admin", "changeit")
+            .operationTimeout(Duration.ofSeconds(30))
             .build();
     }
 
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-
-        allOf(projectionManager.listAll().join().stream()
-            .filter(p -> !p.name.startsWith("$") && !p.status.contains("Stopped"))
-            .map(p -> projectionManager.disable(p.name))
-            .toArray(CompletableFuture[]::new)
-        ).join();
-
         projectionManager.shutdown();
     }
 
