@@ -140,9 +140,12 @@ public class HttpClient implements AutoCloseable {
             channel.writeAndFlush(operation.request).await();
 
             if (!received.await(operationTimeoutMillis, MILLISECONDS)) {
+                channel.close().awaitUninterruptibly();
+
                 String message = String.format("%s %s request never got response from server.",
                     operation.request.getMethod().name(),
                     operation.request.getUri());
+
                 operation.response.completeExceptionally(new TimeoutException(message));
             }
         } catch (InterruptedException e) {
