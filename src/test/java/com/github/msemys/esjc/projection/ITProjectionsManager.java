@@ -56,6 +56,26 @@ public class ITProjectionsManager extends AbstractIntegrationTest {
     }
 
     @Test
+    public void createsNamedOneTimeProjection() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
+
+        String projection = "projection-" + stream;
+        String query = createStandardQuery(stream);
+
+        int oneTimeProjectionCount = projectionManager.listOneTime().join().size();
+
+        projectionManager.createOneTime(projection, query).join();
+
+        assertEquals(oneTimeProjectionCount + 1, projectionManager.listOneTime().join().size());
+
+        Projection result = projectionManager.getStatus(projection).join();
+        assertNotNull(result);
+    }
+
+    @Test
     public void createsTransientProjection() {
         final String stream = generateStreamName();
 

@@ -100,10 +100,10 @@ public interface ProjectionManager {
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
      * or {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #createOneTime(String, UserCredentials)
+     * @see #createOneTime(String, String)
      */
     default CompletableFuture<Void> createOneTime(String query) {
-        return createOneTime(query, null);
+        return createOneTime(null, query);
     }
 
     /**
@@ -115,8 +115,40 @@ public interface ProjectionManager {
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
      * or {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
+     * @see #createOneTime(String, String, UserCredentials)
      */
-    CompletableFuture<Void> createOneTime(String query, UserCredentials userCredentials);
+    default CompletableFuture<Void> createOneTime(String query, UserCredentials userCredentials) {
+        return createOneTime(null, query, userCredentials);
+    }
+
+    /**
+     * Creates a named one-time projection, that will run until completion and then stops.
+     * Default user credentials is used for this operation.
+     *
+     * @param name  the name of the projection (may be {@code null}).
+     * @param query the JavaScript source code for the query.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
+     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * @see #createOneTime(String, String, UserCredentials)
+     */
+    default CompletableFuture<Void> createOneTime(String name, String query) {
+        return createOneTime(name, query, null);
+    }
+
+    /**
+     * Creates a named one-time projection, that will run until completion and then stops.
+     *
+     * @param name            the name of the projection (may be {@code null}).
+     * @param query           the JavaScript source code for the query.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
+     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
+     */
+    CompletableFuture<Void> createOneTime(String name, String query, UserCredentials userCredentials);
 
     /**
      * Creates an ad-hoc projection, that runs until completion and is automatically deleted afterwards.

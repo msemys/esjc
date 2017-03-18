@@ -78,10 +78,16 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
-    public CompletableFuture<Void> createOneTime(String query, UserCredentials userCredentials) {
+    public CompletableFuture<Void> createOneTime(String name, String query, UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(query), "query is null or empty");
 
-        return post("/projections/onetime?type=JS", query, userCredentials, HttpResponseStatus.CREATED);
+        QueryStringEncoder queryStringEncoder = new QueryStringEncoder("/projections/onetime");
+        if (!isNullOrEmpty(name)) {
+            queryStringEncoder.addParam("name", name);
+        }
+        queryStringEncoder.addParam("type", "JS");
+
+        return post(queryStringEncoder.toString(), query, userCredentials, HttpResponseStatus.CREATED);
     }
 
     @Override
