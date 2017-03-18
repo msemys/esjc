@@ -136,7 +136,7 @@ public class ITProjectionsManager extends AbstractIntegrationTest {
         Projection result = projectionManager.getStatus(projection).join();
 
         assertNotNull(result);
-        assertEquals("Stopped", result.status);
+        assertThat(result.status, containsString("Stopped"));
     }
 
     @Test
