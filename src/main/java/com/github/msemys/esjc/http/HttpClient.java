@@ -152,6 +152,7 @@ public class HttpClient implements AutoCloseable {
             operation.response.completeExceptionally(e);
         } finally {
             responseHandler.pendingResponse = null;
+            channel.closeFuture().awaitUninterruptibly();
         }
     }
 
@@ -186,6 +187,7 @@ public class HttpClient implements AutoCloseable {
         checkArgument(!isNullOrEmpty(uri), "uri is null or empty");
 
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, method, uri);
+        request.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
 
         if (userCredentials != null) {
             addAuthorizationHeader(request, userCredentials);
@@ -203,6 +205,7 @@ public class HttpClient implements AutoCloseable {
         ByteBuf data = copiedBuffer(body, UTF_8);
 
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, method, uri, data);
+        request.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
         request.headers().set(HttpHeaders.Names.CONTENT_TYPE, contentType);
         request.headers().set(HttpHeaders.Names.CONTENT_LENGTH, data.readableBytes());
 
