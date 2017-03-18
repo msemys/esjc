@@ -356,7 +356,7 @@ public class ITProjectionsManager extends AbstractIntegrationTest {
             String result2 = projectionManager.getPartitionResult(projection, stream2).join();
             assertEquals("{\"availableBalance\":99.99}", result2);
         } finally {
-            projectionManager.disable(SystemProjections.BY_CATEGORY).exceptionally(t -> null).join();
+            projectionManager.disable(SystemProjections.BY_CATEGORY).join();
         }
     }
 
