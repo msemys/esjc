@@ -29,7 +29,7 @@ public class ITProjectionsManager extends AbstractIntegrationTest {
         projectionManager = ProjectionManagerBuilder.newBuilder()
             .address("127.0.0.1", 2113)
             .userCredentials("admin", "changeit")
-            .operationTimeout(Duration.ofSeconds(14))
+            .operationTimeout(Duration.ofSeconds(20))
             .build();
     }
 
