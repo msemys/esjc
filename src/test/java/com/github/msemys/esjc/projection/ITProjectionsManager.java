@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Strings.newString;
+import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
@@ -323,6 +324,8 @@ public class ITProjectionsManager extends AbstractIntegrationTest {
 
             boolean completed = projectionManager.awaitStatus(projection, p -> p.eventsProcessedAfterRestart >= 12, Duration.ofSeconds(30));
             assertTrue("Projection '" + projection + "' is not completed", completed);
+
+            sleepUninterruptibly(3000);
 
             String state1 = projectionManager.getPartitionState(projection, stream1).join();
             assertEquals("{\"balance\":20,\"creditCount\":4,\"debitCount\":1}", state1);
