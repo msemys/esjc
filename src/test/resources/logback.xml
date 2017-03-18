@@ -6,6 +6,7 @@
     </appender>
 
     <logger name="com.github.msemys" level="WARN"/>
+    <logger name="com.github.msemys.esjc.http.HttpClient" level="TRACE" />
     <logger name="io.netty" level="INFO"/>
 
     <root level="INFO">
