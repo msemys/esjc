@@ -578,7 +578,7 @@ public interface ProjectionManager {
      * @see #awaitStatus(String, Predicate, Duration, Duration, UserCredentials)
      */
     default boolean awaitStatus(String name, Predicate<Projection> matcher, Duration timeout) {
-        return awaitStatus(name, matcher, timeout, null);
+        return awaitStatus(name, matcher, Duration.ofSeconds(1), timeout);
     }
 
     /**
@@ -594,6 +594,21 @@ public interface ProjectionManager {
      */
     default boolean awaitStatus(String name, Predicate<Projection> matcher, Duration timeout, UserCredentials userCredentials) {
         return awaitStatus(name, matcher, Duration.ofSeconds(1), timeout, userCredentials);
+    }
+
+    /**
+     * Waits for projection status that matches the specified {@code matcher} using default user credentials.
+     *
+     * @param name     the name of the projection.
+     * @param matcher  the matcher to apply to received projection status.
+     * @param interval the time interval to pull the projection status.
+     * @param timeout  the maximum wait time before it should timeout.
+     * @return {@code true} if status that matches the specified {@code matcher} was received before the waiting time elapsed,
+     * otherwise {@code false}.
+     * @see #awaitStatus(String, Predicate, Duration, Duration, UserCredentials)
+     */
+    default boolean awaitStatus(String name, Predicate<Projection> matcher, Duration interval, Duration timeout) {
+        return awaitStatus(name, matcher, interval, timeout, null);
     }
 
     /**
