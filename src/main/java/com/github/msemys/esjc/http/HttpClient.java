@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.Future;
 
 import java.net.InetSocketAddress;
 import java.time.Duration;
@@ -30,6 +31,7 @@ import static com.github.msemys.esjc.util.Strings.*;
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * HTTP client without pipelining support
@@ -160,12 +162,14 @@ public class HttpClient implements AutoCloseable {
 
     @Override
     public void close() {
-        group.shutdownGracefully();
+        Future shutdownFuture = group.shutdownGracefully(0, 15, SECONDS);
 
         HttpOperation operation;
         while ((operation = queue.poll()) != null) {
             operation.response.completeExceptionally(new HttpClientException("Client closed"));
         }
+
+        shutdownFuture.awaitUninterruptibly();
     }
 
     private Executor executor() {
