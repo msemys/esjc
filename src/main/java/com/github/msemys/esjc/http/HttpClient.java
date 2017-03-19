@@ -21,7 +21,7 @@ import java.util.Base64;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,6 +30,7 @@ import static com.github.msemys.esjc.util.Preconditions.*;
 import static com.github.msemys.esjc.util.Strings.*;
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -43,6 +44,7 @@ public class HttpClient implements AutoCloseable {
     private final boolean acceptGzip;
     private final long operationTimeoutMillis;
 
+    private final ExecutorService queueExecutor = newSingleThreadExecutor(new DefaultThreadFactory("es-http-queue"));
     private final Queue<HttpOperation> queue = new ConcurrentLinkedQueue<>();
     private final AtomicBoolean isProcessing = new AtomicBoolean();
     private final ResettableLatch received = new ResettableLatch(false);
@@ -99,7 +101,7 @@ public class HttpClient implements AutoCloseable {
         queue.offer(operation);
 
         if (isProcessing.compareAndSet(false, true)) {
-            executor().execute(this::processQueue);
+            queueExecutor.execute(this::processQueue);
         }
     }
 
@@ -163,6 +165,7 @@ public class HttpClient implements AutoCloseable {
     @Override
     public void close() {
         Future shutdownFuture = group.shutdownGracefully(0, 15, SECONDS);
+        queueExecutor.shutdown();
 
         HttpOperation operation;
         while ((operation = queue.poll()) != null) {
@@ -170,10 +173,12 @@ public class HttpClient implements AutoCloseable {
         }
 
         shutdownFuture.awaitUninterruptibly();
-    }
 
-    private Executor executor() {
-        return group;
+        try {
+            queueExecutor.awaitTermination(5, SECONDS);
+        } catch (InterruptedException e) {
+            // ignore
+        }
     }
 
     private static void addAuthorizationHeader(FullHttpRequest request, UserCredentials userCredentials) {
