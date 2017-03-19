@@ -55,6 +55,7 @@ public class HttpClient implements AutoCloseable {
         bootstrap = new Bootstrap()
             .remoteAddress(builder.address)
             .option(ChannelOption.TCP_NODELAY, true)
+            .option(ChannelOption.SO_REUSEADDR, false)
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) builder.connectTimeout.toMillis())
             .group(group)
             .channel(NioSocketChannel.class)
