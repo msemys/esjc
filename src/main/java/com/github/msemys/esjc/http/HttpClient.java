@@ -108,17 +108,15 @@ public class HttpClient implements AutoCloseable {
             while ((operation = queue.poll()) != null) {
                 if (channel == null || !channel.isActive()) {
                     try {
-                        ChannelFuture future = bootstrap.connect().await();
-
-                        if (future.isSuccess()) {
-                            channel = future.channel();
-                        } else {
-                            operation.response.completeExceptionally(future.cause());
-                            continue;
-                        }
+                        channel = bootstrap.connect().syncUninterruptibly().channel();
                     } catch (Exception e) {
                         operation.response.completeExceptionally(e);
-                        continue;
+
+                        if (isRunning()) {
+                            continue;
+                        } else {
+                            break;
+                        }
                     }
                 }
 
