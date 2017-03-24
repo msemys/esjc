@@ -140,7 +140,7 @@ public class HttpClient implements AutoCloseable {
         responseHandler.pendingResponse = operation.response;
 
         try {
-            channel.writeAndFlush(operation.request).await();
+            channel.writeAndFlush(operation.request).sync();
 
             if (!received.await(operationTimeoutMillis, MILLISECONDS)) {
                 channel.close().awaitUninterruptibly();
@@ -151,7 +151,7 @@ public class HttpClient implements AutoCloseable {
 
                 operation.response.completeExceptionally(new TimeoutException(message));
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             operation.response.completeExceptionally(e);
         } finally {
             responseHandler.pendingResponse = null;
