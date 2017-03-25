@@ -22,7 +22,6 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.github.msemys.esjc.util.Numbers.isPositive;
@@ -144,12 +143,7 @@ public class HttpClient implements AutoCloseable {
 
             if (!received.await(operationTimeoutMillis, MILLISECONDS)) {
                 channel.close().awaitUninterruptibly();
-
-                String message = String.format("%s %s request never got response from server.",
-                    operation.request.getMethod().name(),
-                    operation.request.getUri());
-
-                operation.response.completeExceptionally(new TimeoutException(message));
+                operation.response.completeExceptionally(new HttpOperationTimedOutException(operation.request));
             }
         } catch (Exception e) {
             operation.response.completeExceptionally(e);
