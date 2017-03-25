@@ -258,7 +258,7 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     private CompletableFuture<String> get(String uri, UserCredentials userCredentials, HttpResponseStatus expectedStatus) {
-        FullHttpRequest request = newRequest(HttpMethod.GET, uri, defaultIfNull(userCredentials));
+        FullHttpRequest request = newRequest(HttpMethod.GET, uri, defaultOr(userCredentials));
 
         return client.send(request).thenApply(response -> {
             if (response.getStatus().code() == expectedStatus.code()) {
@@ -270,7 +270,7 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     private CompletableFuture<Void> delete(String uri, UserCredentials userCredentials, HttpResponseStatus expectedStatus) {
-        FullHttpRequest request = newRequest(HttpMethod.DELETE, uri, defaultIfNull(userCredentials));
+        FullHttpRequest request = newRequest(HttpMethod.DELETE, uri, defaultOr(userCredentials));
 
         return client.send(request).thenAccept(response -> {
             if (response.getStatus().code() != expectedStatus.code()) {
@@ -280,7 +280,7 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     private CompletableFuture<Void> put(String uri, String content, UserCredentials userCredentials, HttpResponseStatus expectedStatus) {
-        FullHttpRequest request = newRequest(HttpMethod.PUT, uri, content, APPLICATION_JSON, defaultIfNull(userCredentials));
+        FullHttpRequest request = newRequest(HttpMethod.PUT, uri, content, APPLICATION_JSON, defaultOr(userCredentials));
 
         return client.send(request).thenAccept(response -> {
             if (response.getStatus().code() != expectedStatus.code()) {
@@ -290,7 +290,7 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     private CompletableFuture<Void> post(String uri, String content, UserCredentials userCredentials, HttpResponseStatus expectedStatus) {
-        FullHttpRequest request = newRequest(HttpMethod.POST, uri, content, APPLICATION_JSON, defaultIfNull(userCredentials));
+        FullHttpRequest request = newRequest(HttpMethod.POST, uri, content, APPLICATION_JSON, defaultOr(userCredentials));
 
         return client.send(request).thenAccept(response -> {
             if (response.getStatus().code() == HttpResponseStatus.CONFLICT.code()) {
@@ -301,7 +301,7 @@ public class ProjectionManagerHttp implements ProjectionManager {
         });
     }
 
-    private UserCredentials defaultIfNull(UserCredentials userCredentials) {
+    private UserCredentials defaultOr(UserCredentials userCredentials) {
         return (userCredentials == null) ? this.userCredentials : userCredentials;
     }
 
