@@ -3,7 +3,6 @@ package com.github.msemys.esjc.system;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 
 public class SystemStreams {
-    public static final String STREAMS_STREAM = "$streams";
     public static final String SETTINGS_STREAM = "$settings";
     public static final String STATS_STREAM_PREFIX = "$stats";
     public static final String METASTREAM_PREFIX = "$$";
