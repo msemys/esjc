@@ -15,7 +15,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
-public class ITProjectionsManager extends AbstractIntegrationTest {
+public class ITProjectionManager extends AbstractIntegrationTest {
 
     private ProjectionManager projectionManager;
 
