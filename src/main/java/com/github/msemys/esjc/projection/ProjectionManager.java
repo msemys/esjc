@@ -92,6 +92,36 @@ public interface ProjectionManager {
     CompletableFuture<Void> abort(String name, UserCredentials userCredentials);
 
     /**
+     * Resets a projection using default user credentials.
+     * <p>
+     * <b>Note:</b> this will re-emit events, streams that are written to from the projection will also be soft deleted.
+     *
+     * @param name the name of the projection.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
+     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * @see #reset(String, UserCredentials)
+     */
+    default CompletableFuture<Void> reset(String name) {
+        return reset(name, null);
+    }
+
+    /**
+     * Resets a projection.
+     * <p>
+     * <b>Note:</b> this will re-emit events, streams that are written to from the projection will also be soft deleted.
+     *
+     * @param name            the name of the projection.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
+     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
+     */
+    CompletableFuture<Void> reset(String name, UserCredentials userCredentials);
+
+    /**
      * Creates a one-time projection, that will run until completion and then stops.
      * Default user credentials is used for this operation.
      *

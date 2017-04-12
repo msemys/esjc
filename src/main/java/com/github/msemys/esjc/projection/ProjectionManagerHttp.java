@@ -78,6 +78,13 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
+    public CompletableFuture<Void> reset(String name, UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(name), "name is null or empty");
+
+        return post(projectionUri(name) + "/command/reset", EMPTY, userCredentials, HttpResponseStatus.OK);
+    }
+
+    @Override
     public CompletableFuture<Void> createOneTime(String name, String query, UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(query), "query is null or empty");
 

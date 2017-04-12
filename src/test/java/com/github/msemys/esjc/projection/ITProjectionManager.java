@@ -201,6 +201,29 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     }
 
     @Test
+    public void resetsProjection() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
+        eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
+
+        String projection = "projection-" + stream;
+        String query = createStandardQuery(stream);
+
+        projectionManager.createContinuous(projection, query).join();
+
+        projectionManager.awaitStatus(projection, p -> p.eventsProcessedAfterRestart == 2, Duration.ofSeconds(15));
+        projectionManager.disable(projection).join();
+        projectionManager.awaitStatus(projection, p -> p.status.contains("Stopped"), Duration.ofSeconds(15));
+
+        assertEquals(2, projectionManager.getStatus(projection).join().eventsProcessedAfterRestart);
+
+        projectionManager.reset(projection).join();
+
+        assertEquals(0, projectionManager.getStatus(projection).join().eventsProcessedAfterRestart);
+    }
+
+    @Test
     public void listsAllProjections() {
         List<Projection> projections = projectionManager.listAll().join();
         assertFalse(projections.isEmpty());
