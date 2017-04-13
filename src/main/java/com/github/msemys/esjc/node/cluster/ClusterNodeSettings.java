@@ -47,6 +47,11 @@ public class ClusterNodeSettings {
      */
     public final Duration gossipTimeout;
 
+    /**
+     * Prefer a randomly selected node.
+     */
+    public final boolean preferRandomNode;
+
     private ClusterNodeSettings(Builder builder) {
         dns = builder.dns;
         maxDiscoverAttempts = builder.maxDiscoverAttempts;
@@ -54,6 +59,7 @@ public class ClusterNodeSettings {
         externalGossipPort = builder.externalGossipPort;
         gossipSeeds = builder.gossipSeeds;
         gossipTimeout = builder.gossipTimeout;
+        preferRandomNode = builder.preferRandomNode;
     }
 
     /**
@@ -83,6 +89,7 @@ public class ClusterNodeSettings {
         sb.append(", externalGossipPort=").append(externalGossipPort);
         sb.append(", gossipSeeds=").append(gossipSeeds);
         sb.append(", gossipTimeout=").append(gossipTimeout);
+        sb.append(", preferRandomNode=").append(preferRandomNode);
         sb.append('}');
         return sb.toString();
     }
@@ -153,6 +160,17 @@ public class ClusterNodeSettings {
          */
         public BuilderForGossipSeedDiscoverer gossipTimeout(Duration gossipTimeout) {
             super.gossipTimeout = gossipTimeout;
+            return this;
+        }
+
+        /**
+         * Whether to prefer a random node selection or master (by default, always preferring the master node).
+         *
+         * @param preferRandomNode {@code true} to prefer a random node.
+         * @return the builder reference
+         */
+        public BuilderForGossipSeedDiscoverer preferRandomNode(boolean preferRandomNode) {
+            super.preferRandomNode = preferRandomNode;
             return this;
         }
 
@@ -240,6 +258,17 @@ public class ClusterNodeSettings {
         }
 
         /**
+         * Whether to prefer a random node selection or master (by default, always preferring the master node).
+         *
+         * @param preferRandomNode {@code true} to prefer a random node.
+         * @return the builder reference
+         */
+        public BuilderForDnsDiscoverer preferRandomNode(boolean preferRandomNode) {
+            super.preferRandomNode = preferRandomNode;
+            return this;
+        }
+
+        /**
          * Builds a cluster node settings.
          *
          * @return cluster node settings
@@ -266,6 +295,7 @@ public class ClusterNodeSettings {
         private Integer externalGossipPort;
         private List<GossipSeed> gossipSeeds;
         private Duration gossipTimeout;
+        private Boolean preferRandomNode;
 
         public ClusterNodeSettings build() {
             if (dns == null) {
@@ -296,6 +326,10 @@ public class ClusterNodeSettings {
 
             if (gossipTimeout == null) {
                 gossipTimeout = Duration.ofSeconds(1);
+            }
+
+            if (preferRandomNode == null) {
+                preferRandomNode = false;
             }
 
             return new ClusterNodeSettings(this);

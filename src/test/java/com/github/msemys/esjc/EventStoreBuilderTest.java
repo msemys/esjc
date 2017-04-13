@@ -281,7 +281,8 @@ public class EventStoreBuilderTest {
             .clusterNodeUsingGossipSeeds(cluster -> cluster
                 .gossipTimeout(Duration.ofSeconds(120))
                 .discoverAttemptInterval(Duration.ofMinutes(4))
-                .maxDiscoverAttempts(10))
+                .maxDiscoverAttempts(10)
+                .preferRandomNode(true))
             .build();
 
         assertNull(result.settings().singleNodeSettings);
@@ -296,6 +297,7 @@ public class EventStoreBuilderTest {
                 new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
         assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.gossipTimeout);
+        assertTrue(result.settings().clusterNodeSettings.preferRandomNode);
     }
 
     @Test
@@ -315,7 +317,8 @@ public class EventStoreBuilderTest {
                 .dns("dns2")
                 .gossipTimeout(Duration.ofSeconds(120))
                 .discoverAttemptInterval(Duration.ofMinutes(4))
-                .maxDiscoverAttempts(10))
+                .maxDiscoverAttempts(10)
+                .preferRandomNode(true))
             .build();
 
         assertNull(result.settings().singleNodeSettings);
@@ -326,6 +329,7 @@ public class EventStoreBuilderTest {
         assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.discoverAttemptInterval);
         assertTrue(result.settings().clusterNodeSettings.gossipSeeds.isEmpty());
         assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.gossipTimeout);
+        assertTrue(result.settings().clusterNodeSettings.preferRandomNode);
     }
 
     @Test
@@ -445,6 +449,7 @@ public class EventStoreBuilderTest {
                 new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
         assertEquals(Duration.ofSeconds(73), result.settings().clusterNodeSettings.gossipTimeout);
+        assertFalse(result.settings().clusterNodeSettings.preferRandomNode);
     }
 
     @Test
@@ -466,6 +471,7 @@ public class EventStoreBuilderTest {
         assertEquals(1717, result.settings().clusterNodeSettings.externalGossipPort);
         assertTrue(result.settings().clusterNodeSettings.gossipSeeds.isEmpty());
         assertEquals(Duration.ofSeconds(83), result.settings().clusterNodeSettings.gossipTimeout);
+        assertFalse(result.settings().clusterNodeSettings.preferRandomNode);
     }
 
     @Test

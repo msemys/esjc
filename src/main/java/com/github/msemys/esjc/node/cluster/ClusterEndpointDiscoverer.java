@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toList;
 
 public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
     private static final Logger logger = LoggerFactory.getLogger(ClusterEndpointDiscoverer.class);
@@ -202,9 +203,16 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
         Predicate<VNodeState> matchesNotAllowedStates = s ->
             s == VNodeState.Manager || s == VNodeState.ShuttingDown || s == VNodeState.Shutdown;
 
-        return members.stream()
+        List<MemberInfoDto> aliveMembers = members.stream()
             .filter(m -> m.isAlive && !matchesNotAllowedStates.test(m.state))
             .sorted((a, b) -> a.state.ordinal() > b.state.ordinal() ? -1 : 1)
+            .collect(toList());
+
+        if (settings.preferRandomNode) {
+            Collections.shuffle(aliveMembers);
+        }
+
+        return aliveMembers.stream()
             .findFirst()
             .map(n -> {
                 InetSocketAddress tcp = new InetSocketAddress(n.externalTcpIp, n.externalTcpPort);
