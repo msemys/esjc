@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,6 +20,7 @@ import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
 import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toCollection;
 
@@ -89,13 +91,24 @@ public abstract class PersistentSubscription implements AutoCloseable {
                                                                          UserCredentials userCredentials);
 
     /**
+     * Acknowledge that the specified {@code eventIds} of the messages have completed processing (this will tell the server it has been processed).
+     * <p><b>Note:</b> there is no need to ack a message if you have Auto Ack enabled.</p>
+     *
+     * @param eventIds the event ids to acknowledge.
+     */
+    public void acknowledge(UUID... eventIds) {
+        checkArgument(eventIds.length <= MAX_EVENTS, "events is limited to %d to ack at a time", MAX_EVENTS);
+        subscription.notifyEventsProcessed(asList(eventIds));
+    }
+
+    /**
      * Acknowledge that the specified message have completed processing (this will tell the server it has been processed).
      * <p><b>Note:</b> there is no need to ack a message if you have Auto Ack enabled.</p>
      *
      * @param event the event to acknowledge.
      */
     public void acknowledge(ResolvedEvent event) {
-        subscription.notifyEventsProcessed(singletonList(event.originalEvent().eventId));
+        acknowledge(event.originalEvent().eventId);
     }
 
     /**
@@ -105,10 +118,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
      * @param events the events to acknowledge.
      */
     public void acknowledge(List<ResolvedEvent> events) {
-        checkArgument(events.size() <= MAX_EVENTS, "events is limited to %d to ack at a time", MAX_EVENTS);
-        subscription.notifyEventsProcessed(events.stream()
-            .map(e -> e.originalEvent().eventId)
-            .collect(toCollection(() -> new ArrayList<>(events.size()))));
+        acknowledge(events.stream().map(e -> e.originalEvent().eventId).toArray(UUID[]::new));
     }
 
     /**
