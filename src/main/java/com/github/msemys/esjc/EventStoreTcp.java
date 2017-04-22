@@ -193,6 +193,20 @@ public class EventStoreTcp implements EventStore {
     }
 
     @Override
+    public CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
+                                                                   ExpectedVersion expectedVersion,
+                                                                   Iterable<EventData> events,
+                                                                   UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkNotNull(expectedVersion, "expectedVersion is null");
+        checkNotNull(events, "events is null");
+
+        CompletableFuture<WriteAttemptResult> result = new CompletableFuture<>();
+        enqueue(new TryAppendToStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, events, userCredentials));
+        return result;
+    }
+
+    @Override
     public CompletableFuture<Transaction> startTransaction(String stream,
                                                            ExpectedVersion expectedVersion,
                                                            UserCredentials userCredentials) {

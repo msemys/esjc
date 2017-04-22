@@ -205,6 +205,82 @@ public interface EventStore {
                                                   UserCredentials userCredentials);
 
     /**
+     * Appends single event to a stream and returns the status of this operation asynchronously using default user credentials.
+     *
+     * @param stream          the name of the stream to append event to.
+     * @param expectedVersion the version at which we currently expect the stream to be,
+     *                        in order that an optimistic concurrency check can be performed.
+     * @param event           the event to append.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link InvalidTransactionException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException} or
+     * {@link ServerErrorException} on exceptional completion.
+     * @see #tryAppendToStream(String, ExpectedVersion, EventData, UserCredentials)
+     */
+    default CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
+                                                                    ExpectedVersion expectedVersion,
+                                                                    EventData event) {
+        return tryAppendToStream(stream, expectedVersion, event, null);
+    }
+
+    /**
+     * Appends single event to a stream and returns the status of this operation asynchronously.
+     *
+     * @param stream          the name of the stream to append event to.
+     * @param expectedVersion the version at which we currently expect the stream to be,
+     *                        in order that an optimistic concurrency check can be performed.
+     * @param event           the event to append.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link InvalidTransactionException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException} or
+     * {@link ServerErrorException} on exceptional completion.
+     */
+    default CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
+                                                                    ExpectedVersion expectedVersion,
+                                                                    EventData event,
+                                                                    UserCredentials userCredentials) {
+        return tryAppendToStream(stream, expectedVersion, singletonList(event), userCredentials);
+    }
+
+    /**
+     * Appends events to a stream and returns the status of this operation asynchronously using default user credentials.
+     *
+     * @param stream          the name of the stream to append events to.
+     * @param expectedVersion the version at which we currently expect the stream to be,
+     *                        in order that an optimistic concurrency check can be performed.
+     * @param events          the events to append.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link InvalidTransactionException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException} or
+     * {@link ServerErrorException} on exceptional completion.
+     * @see #tryAppendToStream(String, ExpectedVersion, Iterable, UserCredentials)
+     */
+    default CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
+                                                                    ExpectedVersion expectedVersion,
+                                                                    Iterable<EventData> events) {
+        return tryAppendToStream(stream, expectedVersion, events, null);
+    }
+
+    /**
+     * Appends events to a stream and returns the status of this operation asynchronously.
+     *
+     * @param stream          the name of the stream to append events to.
+     * @param expectedVersion the version at which we currently expect the stream to be,
+     *                        in order that an optimistic concurrency check can be performed.
+     * @param events          the events to append.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link InvalidTransactionException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException} or
+     * {@link ServerErrorException} on exceptional completion.
+     */
+    CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
+                                                            ExpectedVersion expectedVersion,
+                                                            Iterable<EventData> events,
+                                                            UserCredentials userCredentials);
+
+    /**
      * Starts a transaction in the Event Store on a given stream asynchronously using default user credentials.
      *
      * @param stream          the name of the stream to start a transaction on.
