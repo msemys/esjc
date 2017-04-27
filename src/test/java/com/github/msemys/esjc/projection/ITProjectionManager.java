@@ -1,8 +1,11 @@
 package com.github.msemys.esjc.projection;
 
 import com.github.msemys.esjc.*;
+import com.github.msemys.esjc.http.HttpOperationTimedOutException;
+import com.github.msemys.esjc.rule.Retryable;
+import com.github.msemys.esjc.rule.RetryableMethodRule;
 import com.github.msemys.esjc.system.SystemProjections;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -18,6 +21,9 @@ import static org.junit.Assert.*;
 public class ITProjectionManager extends AbstractIntegrationTest {
 
     private ProjectionManager projectionManager;
+
+    @Rule
+    public RetryableMethodRule retryableMethodRule = new RetryableMethodRule();
 
     @Override
     protected EventStore createEventStore() {
@@ -319,7 +325,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore
+    @Retryable(HttpOperationTimedOutException.class)
     public void getsPartitionStateAndResult() {
         final String stream1 = "account-" + UUID.randomUUID().toString().replace("-", "");
         final String stream2 = "account-" + UUID.randomUUID().toString().replace("-", "");
