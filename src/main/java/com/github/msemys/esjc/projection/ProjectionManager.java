@@ -429,7 +429,8 @@ public interface ProjectionManager {
      * @param query the JavaScript source code for the query.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
-     * {@link ProjectionException} on exceptional completion.
+     * {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
      * @see #updateQuery(String, String, UserCredentials)
      */
     default CompletableFuture<Void> updateQuery(String name, String query) {
@@ -444,7 +445,8 @@ public interface ProjectionManager {
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
-     * {@link ProjectionException} on exceptional completion.
+     * {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
      */
     CompletableFuture<Void> updateQuery(String name, String query, UserCredentials userCredentials);
 
