@@ -57,11 +57,11 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        int oneTimeProjectionCount = projectionManager.listOneTime().join().size();
+        int oneTimeProjectionCount = projectionManager.findByMode(ONE_TIME).join().size();
 
         projectionManager.create(projection, query, ONE_TIME).join();
 
-        assertEquals(oneTimeProjectionCount + 1, projectionManager.listOneTime().join().size());
+        assertEquals(oneTimeProjectionCount + 1, projectionManager.findByMode(ONE_TIME).join().size());
 
         Projection result = projectionManager.getStatus(projection).join();
         assertNotNull(result);
@@ -97,7 +97,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
 
         projectionManager.create(projection, query, CONTINUOUS).join();
 
-        Projection result = projectionManager.listContinuous().join().stream()
+        Projection result = projectionManager.findByMode(CONTINUOUS).join().stream()
             .filter(p -> p.effectiveName.equals(projection))
             .findFirst()
             .orElseThrow(() -> new IllegalStateException(String.format("Projection '%s' not found", projection)));
@@ -126,7 +126,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
             .build()
         ).join();
 
-        Projection result = projectionManager.listContinuous().join().stream()
+        Projection result = projectionManager.findByMode(CONTINUOUS).join().stream()
             .filter(p -> p.effectiveName.equals(projection))
             .findFirst()
             .orElseThrow(() -> new IllegalStateException(String.format("Projection '%s' not found", projection)));
@@ -231,7 +231,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
 
         projectionManager.create(UUID.randomUUID().toString(), query, ONE_TIME).join();
 
-        List<Projection> projections = projectionManager.listOneTime().join();
+        List<Projection> projections = projectionManager.findByMode(ONE_TIME).join();
         assertFalse(projections.isEmpty());
     }
 
@@ -242,7 +242,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
 
         projectionManager.create(projection, query, CONTINUOUS).join();
 
-        assertTrue(projectionManager.listContinuous().join().stream()
+        assertTrue(projectionManager.findByMode(CONTINUOUS).join().stream()
             .anyMatch(p -> p.effectiveName.equals(projection)));
     }
 

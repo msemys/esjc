@@ -112,13 +112,10 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
-    public CompletableFuture<List<Projection>> listOneTime(UserCredentials userCredentials) {
-        return get("/projections/onetime", userCredentials, HttpResponseStatus.OK).thenApply(ProjectionManagerHttp::asProjectionList);
-    }
+    public CompletableFuture<List<Projection>> findByMode(ProjectionMode mode, UserCredentials userCredentials) {
+        checkNotNull(mode, "mode is null");
 
-    @Override
-    public CompletableFuture<List<Projection>> listContinuous(UserCredentials userCredentials) {
-        return get("/projections/continuous", userCredentials, HttpResponseStatus.OK).thenApply(ProjectionManagerHttp::asProjectionList);
+        return get(projectionsUri(mode), userCredentials, HttpResponseStatus.OK).thenApply(ProjectionManagerHttp::asProjectionList);
     }
 
     @Override

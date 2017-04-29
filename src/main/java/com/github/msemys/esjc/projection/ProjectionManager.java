@@ -227,48 +227,28 @@ public interface ProjectionManager {
     CompletableFuture<List<Projection>> findAll(UserCredentials userCredentials);
 
     /**
-     * Gets all one-time projections using default user credentials.
+     * Finds all projections with the specified mode using default user credentials.
      *
+     * @param mode projection mode.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
      * on exceptional completion.
-     * @see #listOneTime(UserCredentials)
+     * @see #findByMode(ProjectionMode, UserCredentials)
      */
-    default CompletableFuture<List<Projection>> listOneTime() {
-        return listOneTime(null);
+    default CompletableFuture<List<Projection>> findByMode(ProjectionMode mode) {
+        return findByMode(mode, null);
     }
 
     /**
-     * Gets all one-time projections.
+     * Finds all projections with the specified mode.
      *
+     * @param mode            projection mode.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
      * on exceptional completion.
      */
-    CompletableFuture<List<Projection>> listOneTime(UserCredentials userCredentials);
-
-    /**
-     * Gets all continuous projections using default user credentials.
-     *
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
-     * @see #listContinuous(UserCredentials)
-     */
-    default CompletableFuture<List<Projection>> listContinuous() {
-        return listContinuous(null);
-    }
-
-    /**
-     * Gets all continuous projections.
-     *
-     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
-     */
-    CompletableFuture<List<Projection>> listContinuous(UserCredentials userCredentials);
+    CompletableFuture<List<Projection>> findByMode(ProjectionMode mode, UserCredentials userCredentials);
 
     /**
      * Gets the status of a projection using default user credentials.
