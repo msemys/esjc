@@ -20,9 +20,9 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException},
+     * {@link ProjectionConflictException} or {@link ProjectionException} on exceptional completion.
+     * In case of successful completion, the future's methods {@code get} and {@code join} returns {@code null}.
      * @see #enable(String, UserCredentials)
      */
     default CompletableFuture<Void> enable(String name) {
@@ -35,9 +35,9 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException},
+     * {@link ProjectionConflictException} or {@link ProjectionException} on exceptional completion.
+     * In case of successful completion, the future's methods {@code get} and {@code join} returns {@code null}.
      */
     CompletableFuture<Void> enable(String name, UserCredentials userCredentials);
 
@@ -46,9 +46,9 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException},
+     * {@link ProjectionConflictException} or {@link ProjectionException} on exceptional completion.
+     * In case of successful completion, the future's methods {@code get} and {@code join} returns {@code null}.
      * @see #disable(String, UserCredentials)
      */
     default CompletableFuture<Void> disable(String name) {
@@ -61,9 +61,9 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException},
+     * {@link ProjectionConflictException} or {@link ProjectionException} on exceptional completion.
+     * In case of successful completion, the future's methods {@code get} and {@code join} returns {@code null}.
      */
     CompletableFuture<Void> disable(String name, UserCredentials userCredentials);
 
@@ -72,9 +72,9 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException},
+     * {@link ProjectionConflictException} or {@link ProjectionException} on exceptional completion.
+     * In case of successful completion, the future's methods {@code get} and {@code join} returns {@code null}.
      * @see #abort(String, UserCredentials)
      */
     default CompletableFuture<Void> abort(String name) {
@@ -87,9 +87,9 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException},
+     * {@link ProjectionConflictException} or {@link ProjectionException} on exceptional completion.
+     * In case of successful completion, the future's methods {@code get} and {@code join} returns {@code null}.
      */
     CompletableFuture<Void> abort(String name, UserCredentials userCredentials);
 
@@ -100,9 +100,9 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException},
+     * {@link ProjectionConflictException} or {@link ProjectionException} on exceptional completion.
+     * In case of successful completion, the future's methods {@code get} and {@code join} returns {@code null}.
      * @see #reset(String, UserCredentials)
      */
     default CompletableFuture<Void> reset(String name) {
@@ -117,9 +117,9 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException},
+     * {@link ProjectionConflictException} or {@link ProjectionException} on exceptional completion.
+     * In case of successful completion, the future's methods {@code get} and {@code join} returns {@code null}.
      */
     CompletableFuture<Void> reset(String name, UserCredentials userCredentials);
 
@@ -255,8 +255,8 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException}  or
+     * {@link ProjectionException} on exceptional completion.
      * @see #getStatus(String, UserCredentials)
      */
     default CompletableFuture<Projection> getStatus(String name) {
@@ -269,8 +269,8 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      */
     CompletableFuture<Projection> getStatus(String name, UserCredentials userCredentials);
 
@@ -279,8 +279,8 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      * @see #getState(String, UserCredentials)
      */
     default CompletableFuture<String> getState(String name) {
@@ -293,8 +293,8 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      */
     CompletableFuture<String> getState(String name, UserCredentials userCredentials);
 
@@ -304,8 +304,8 @@ public interface ProjectionManager {
      * @param name      the name of the projection.
      * @param partition the id of the partition.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      * @see #getPartitionState(String, String, UserCredentials)
      */
     default CompletableFuture<String> getPartitionState(String name, String partition) {
@@ -319,8 +319,8 @@ public interface ProjectionManager {
      * @param partition       the id of the partition.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      */
     CompletableFuture<String> getPartitionState(String name, String partition, UserCredentials userCredentials);
 
@@ -329,8 +329,8 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      * @see #getResult(String, UserCredentials)
      */
     default CompletableFuture<String> getResult(String name) {
@@ -343,8 +343,8 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      */
     CompletableFuture<String> getResult(String name, UserCredentials userCredentials);
 
@@ -354,8 +354,8 @@ public interface ProjectionManager {
      * @param name      the name of the projection.
      * @param partition the id of the partition.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      * @see #getPartitionResult(String, String, UserCredentials)
      */
     default CompletableFuture<String> getPartitionResult(String name, String partition) {
@@ -369,8 +369,8 @@ public interface ProjectionManager {
      * @param partition       the id of the partition.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      */
     CompletableFuture<String> getPartitionResult(String name, String partition, UserCredentials userCredentials);
 
@@ -379,8 +379,8 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      * @see #getStatistics(String, UserCredentials)
      */
     default CompletableFuture<String> getStatistics(String name) {
@@ -393,8 +393,8 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      */
     CompletableFuture<String> getStatistics(String name, UserCredentials userCredentials);
 
@@ -403,8 +403,8 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      * @see #getQuery(String, UserCredentials)
      */
     default CompletableFuture<String> getQuery(String name) {
@@ -417,8 +417,8 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      */
     CompletableFuture<String> getQuery(String name, UserCredentials userCredentials);
 
@@ -428,8 +428,8 @@ public interface ProjectionManager {
      * @param name  the name of the projection.
      * @param query the JavaScript source code for the query.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      * @see #updateQuery(String, String, UserCredentials)
      */
     default CompletableFuture<Void> updateQuery(String name, String query) {
@@ -443,8 +443,8 @@ public interface ProjectionManager {
      * @param query           the JavaScript source code for the query.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion.
      */
     CompletableFuture<Void> updateQuery(String name, String query, UserCredentials userCredentials);
 
@@ -454,9 +454,9 @@ public interface ProjectionManager {
      *
      * @param name the name of the projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion. In case of successful completion, the future's methods {@code get} and {@code join}
-     * returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
      * @see #delete(String, boolean, UserCredentials)
      */
     default CompletableFuture<Void> delete(String name) {
@@ -469,9 +469,9 @@ public interface ProjectionManager {
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion. In case of successful completion, the future's methods {@code get} and {@code join}
-     * returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
      * @see #delete(String, boolean, UserCredentials)
      */
     default CompletableFuture<Void> delete(String name, UserCredentials userCredentials) {
@@ -484,9 +484,9 @@ public interface ProjectionManager {
      * @param name                 the name of the projection.
      * @param deleteEmittedStreams whether to delete the streams that were emitted by this projection.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion. In case of successful completion, the future's methods {@code get} and {@code join}
-     * returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
      * @see #delete(String, boolean, UserCredentials)
      */
     default CompletableFuture<Void> delete(String name, boolean deleteEmittedStreams) {
@@ -500,9 +500,9 @@ public interface ProjectionManager {
      * @param deleteEmittedStreams whether to delete the streams that were emitted by this projection.
      * @param userCredentials      user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
-     * on exceptional completion. In case of successful completion, the future's methods {@code get} and {@code join}
-     * returns {@code null}.
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
      */
     CompletableFuture<Void> delete(String name, boolean deleteEmittedStreams, UserCredentials userCredentials);
 

@@ -17,6 +17,7 @@ import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Strings.newString;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
 public class ITProjectionManager extends AbstractIntegrationTest {
@@ -158,6 +159,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     }
 
     @Test
+    public void failsToDisableProjectionWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.disable(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
+    }
+
+    @Test
     public void enablesProjection() {
         final String stream = generateStreamName();
 
@@ -178,6 +189,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     }
 
     @Test
+    public void failsToEnableProjectionWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.enable(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
+    }
+
+    @Test
     public void abortsProjection() {
         final String stream = generateStreamName();
 
@@ -194,6 +215,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
 
         assertNotNull(result);
         assertThat(result.status, containsString("Aborted"));
+    }
+
+    @Test
+    public void failsToAbortProjectionWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.abort(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
     }
 
     @Test
@@ -217,6 +248,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         projectionManager.reset(projection).join();
 
         assertEquals(0, projectionManager.getStatus(projection).join().eventsProcessedAfterRestart);
+    }
+
+    @Test
+    public void failsToResetProjectionWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.reset(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
     }
 
     @Test
@@ -264,6 +305,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     }
 
     @Test
+    public void failsToGetStateWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.getState(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
+    }
+
+    @Test
     public void getsProjectionStatusWhileRunning() {
         final String stream = generateStreamName();
 
@@ -278,6 +329,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         Projection result = projectionManager.getStatus(projection).join();
 
         assertNotNull(result);
+    }
+
+    @Test
+    public void failsToGetStatusWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.getStatus(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
     }
 
     @Test
@@ -298,6 +359,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     }
 
     @Test
+    public void failsToGetResultWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.getResult(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
+    }
+
+    @Test
     public void getsProjectionQueryWhileRunning() {
         final String stream = generateStreamName();
 
@@ -312,6 +383,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String result = projectionManager.getQuery(projection).join();
 
         assertEquals(query, result);
+    }
+
+    @Test
+    public void failsToGetQueryWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.getQuery(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
     }
 
     @Test
@@ -399,6 +480,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     }
 
     @Test
+    public void failsToGetStatisticsWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.getStatistics(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
+    }
+
+    @Test
     public void updatesProjectionQuery() {
         final String stream = generateStreamName();
 
@@ -418,6 +509,18 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     }
 
     @Test
+    public void failsToUpdateQueryWhenProjectionDoesNotExists() {
+        String query = createStandardQuery(generateStreamName());
+
+        try {
+            projectionManager.updateQuery(UUID.randomUUID().toString(), query).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
+    }
+
+    @Test
     public void deletesProjection() {
         final String stream = generateStreamName();
 
@@ -433,6 +536,16 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         projectionManager.disable(projection).join();
         projectionManager.delete(projection).join();
         assertFalse(projectionManager.findAll().join().stream().anyMatch(p -> p.name.equals(projection)));
+    }
+
+    @Test
+    public void failsToDeleteWhenProjectionDoesNotExists() {
+        try {
+            projectionManager.delete(UUID.randomUUID().toString()).join();
+            fail("should fail with 'ProjectionNotFoundException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));
+        }
     }
 
     @Test
