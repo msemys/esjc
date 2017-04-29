@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
+import static com.github.msemys.esjc.projection.ProjectionMode.*;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Strings.newString;
 import static java.util.Arrays.asList;
@@ -53,28 +54,12 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
         eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
 
-        int oneTimeProjectionCount = projectionManager.listOneTime().join().size();
-
-        String query = createStandardQuery(stream);
-
-        projectionManager.createOneTime(query).join();
-
-        assertEquals(oneTimeProjectionCount + 1, projectionManager.listOneTime().join().size());
-    }
-
-    @Test
-    public void createsNamedOneTimeProjection() {
-        final String stream = generateStreamName();
-
-        eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
-        eventstore.appendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
-
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
         int oneTimeProjectionCount = projectionManager.listOneTime().join().size();
 
-        projectionManager.createOneTime(projection, query).join();
+        projectionManager.create(projection, query, ONE_TIME).join();
 
         assertEquals(oneTimeProjectionCount + 1, projectionManager.listOneTime().join().size());
 
@@ -92,7 +77,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createTransient(projection, query).join();
+        projectionManager.create(projection, query, TRANSIENT).join();
 
         Projection result = projectionManager.getStatus(projection).join();
 
@@ -110,7 +95,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String emittedStream = "emittedStream-" + stream;
         String query = createEmittingQuery(stream, emittedStream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
 
         Projection result = projectionManager.listContinuous().join().stream()
             .filter(p -> p.effectiveName.equals(projection))
@@ -134,7 +119,12 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String emittedStream = "emittedStream-" + stream;
         String query = createEmittingQuery(stream, emittedStream);
 
-        projectionManager.createContinuous(projection, query, true).join();
+        projectionManager.create(projection, query, ProjectionSettings.newBuilder()
+            .mode(CONTINUOUS)
+            .emit(true)
+            .trackEmittedStreams(true)
+            .build()
+        ).join();
 
         Projection result = projectionManager.listContinuous().join().stream()
             .filter(p -> p.effectiveName.equals(projection))
@@ -158,7 +148,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
         projectionManager.disable(projection).join();
 
         Projection result = projectionManager.getStatus(projection).join();
@@ -177,7 +167,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
         projectionManager.disable(projection).join();
         projectionManager.enable(projection).join();
 
@@ -197,7 +187,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
         projectionManager.abort(projection).join();
 
         Projection result = projectionManager.getStatus(projection).join();
@@ -216,7 +206,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
 
         projectionManager.awaitStatus(projection, p -> p.eventsProcessedAfterRestart == 2, Duration.ofSeconds(15));
         projectionManager.disable(projection).join();
@@ -239,7 +229,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
     public void listsOneTimeProjections() {
         String query = createStandardQuery(UUID.randomUUID().toString());
 
-        projectionManager.createOneTime(query).join();
+        projectionManager.create(UUID.randomUUID().toString(), query, ONE_TIME).join();
 
         List<Projection> projections = projectionManager.listOneTime().join();
         assertFalse(projections.isEmpty());
@@ -250,7 +240,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String query = createStandardQuery(UUID.randomUUID().toString());
         String projection = "projection-" + UUID.randomUUID().toString();
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
 
         assertTrue(projectionManager.listContinuous().join().stream()
             .anyMatch(p -> p.effectiveName.equals(projection)));
@@ -266,7 +256,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
 
         String state = projectionManager.getState(projection).join();
 
@@ -283,7 +273,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
 
         Projection result = projectionManager.getStatus(projection).join();
 
@@ -300,7 +290,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
 
         String result = projectionManager.getResult(projection).join();
 
@@ -317,7 +307,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
 
         String result = projectionManager.getQuery(projection).join();
 
@@ -370,7 +360,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
 
         try {
             projectionManager.enable(SystemProjections.BY_CATEGORY).join();
-            projectionManager.createContinuous(projection, query).join();
+            projectionManager.create(projection, query, CONTINUOUS).join();
 
             boolean completed = projectionManager.awaitStatus(projection, p -> p.eventsProcessedAfterRestart >= 12, Duration.ofSeconds(30));
             assertTrue("Projection '" + projection + "' is not completed", completed);
@@ -401,7 +391,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
 
         String statistics = projectionManager.getStatistics(projection).join();
 
@@ -419,7 +409,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String originalQuery = createStandardQuery(stream);
         String newQuery = createStandardQuery("DifferentStream");
 
-        projectionManager.createContinuous(projection, originalQuery).join();
+        projectionManager.create(projection, originalQuery, CONTINUOUS).join();
         projectionManager.updateQuery(projection, newQuery).join();
 
         String result = projectionManager.getQuery(projection).join();
@@ -437,7 +427,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createContinuous(projection, query).join();
+        projectionManager.create(projection, query, CONTINUOUS).join();
         assertTrue(projectionManager.listAll().join().stream().anyMatch(p -> p.name.equals(projection)));
 
         projectionManager.disable(projection).join();
@@ -454,7 +444,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String projection = "projection-" + stream;
         String query = createStandardQuery(stream);
 
-        projectionManager.createTransient(projection, query);
+        projectionManager.create(projection, query, TRANSIENT);
 
         boolean completed = projectionManager.awaitStatus(projection, p -> p.status.contains("Completed"), Duration.ofSeconds(30));
         assertTrue("Projection '" + projection + "' is not completed", completed);

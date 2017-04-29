@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
+import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+
 /**
  * Projection manager for managing projections in the Event Store.
  * It is recommended that only one instance per application is created.
@@ -122,157 +124,85 @@ public interface ProjectionManager {
     CompletableFuture<Void> reset(String name, UserCredentials userCredentials);
 
     /**
-     * Creates a one-time projection, that will run until completion and then stops.
-     * Default user credentials is used for this operation.
-     *
-     * @param query the JavaScript source code for the query.
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #createOneTime(String, String)
-     */
-    default CompletableFuture<Void> createOneTime(String query) {
-        return createOneTime(null, query);
-    }
-
-    /**
-     * Creates a one-time projection, that will run until completion and then stops.
-     *
-     * @param query           the JavaScript source code for the query.
-     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #createOneTime(String, String, UserCredentials)
-     */
-    default CompletableFuture<Void> createOneTime(String query, UserCredentials userCredentials) {
-        return createOneTime(null, query, userCredentials);
-    }
-
-    /**
-     * Creates a named one-time projection, that will run until completion and then stops.
-     * Default user credentials is used for this operation.
-     *
-     * @param name  the name of the projection (may be {@code null}).
-     * @param query the JavaScript source code for the query.
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #createOneTime(String, String, UserCredentials)
-     */
-    default CompletableFuture<Void> createOneTime(String name, String query) {
-        return createOneTime(name, query, null);
-    }
-
-    /**
-     * Creates a named one-time projection, that will run until completion and then stops.
-     *
-     * @param name            the name of the projection (may be {@code null}).
-     * @param query           the JavaScript source code for the query.
-     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
-     */
-    CompletableFuture<Void> createOneTime(String name, String query, UserCredentials userCredentials);
-
-    /**
-     * Creates an ad-hoc projection, that runs until completion and is automatically deleted afterwards.
-     * Default user credentials is used for this operation.
+     * Creates a projection with default settings of the specified mode using default user credentials.
      *
      * @param name  the name of the projection.
      * @param query the JavaScript source code for the query.
+     * @param mode  projection mode.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
      * or {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #createTransient(String, String, UserCredentials)
+     * @see #create(String, String, ProjectionMode, UserCredentials)
      */
-    default CompletableFuture<Void> createTransient(String name, String query) {
-        return createTransient(name, query, null);
+    default CompletableFuture<Void> create(String name, String query, ProjectionMode mode) {
+        return create(name, query, mode, null);
     }
 
     /**
-     * Creates an ad-hoc projection, that runs until completion and is automatically deleted afterwards.
+     * Creates a projection with default settings of the specified mode.
      *
      * @param name            the name of the projection.
      * @param query           the JavaScript source code for the query.
+     * @param mode            projection mode.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
+     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * @see #create(String, String, ProjectionSettings, UserCredentials)
+     */
+    default CompletableFuture<Void> create(String name, String query, ProjectionMode mode, UserCredentials userCredentials) {
+        checkNotNull(mode, "mode is null");
+
+        ProjectionSettings settings;
+
+        switch (mode) {
+            case TRANSIENT:
+                settings = ProjectionSettings.DEFAULT_TRANSIENT;
+                break;
+            case ONE_TIME:
+                settings = ProjectionSettings.DEFAULT_ONE_TIME;
+                break;
+            case CONTINUOUS:
+                settings = ProjectionSettings.DEFAULT_CONTINUOUS;
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported projection mode: " + mode);
+        }
+
+        return create(name, query, settings, userCredentials);
+    }
+
+    /**
+     * Creates a projection using default user credentials.
+     *
+     * @param name     the name of the projection.
+     * @param query    the JavaScript source code for the query.
+     * @param settings projection settings.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
+     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * @see #create(String, String, ProjectionSettings, UserCredentials)
+     */
+    default CompletableFuture<Void> create(String name, String query, ProjectionSettings settings) {
+        return create(name, query, settings, null);
+    }
+
+    /**
+     * Creates a projection.
+     *
+     * @param name            the name of the projection.
+     * @param query           the JavaScript source code for the query.
+     * @param settings        projection settings.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
      * or {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
      */
-    CompletableFuture<Void> createTransient(String name, String query, UserCredentials userCredentials);
-
-    /**
-     * Creates a continuous projection (without tracking the streams emitted by this projection),
-     * that will continuously run unless disabled or an unrecoverable error has been encountered.
-     * Default user credentials is used for this operation.
-     *
-     * @param name  the name of the projection.
-     * @param query the JavaScript source code for the query.
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #createContinuous(String, String, boolean, UserCredentials)
-     */
-    default CompletableFuture<Void> createContinuous(String name, String query) {
-        return createContinuous(name, query, false, null);
-    }
-
-    /**
-     * Creates a continuous projection (without tracking the streams emitted by this projection),
-     * that will continuously run unless disabled or an unrecoverable error has been encountered.
-     *
-     * @param name            the name of the projection.
-     * @param query           the JavaScript source code for the query.
-     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #createContinuous(String, String, boolean, UserCredentials)
-     */
-    default CompletableFuture<Void> createContinuous(String name, String query, UserCredentials userCredentials) {
-        return createContinuous(name, query, false, userCredentials);
-    }
-
-    /**
-     * Creates a continuous projection, that will continuously run unless disabled or an unrecoverable error has been encountered.
-     * Default user credentials is used for this operation.
-     *
-     * @param name                the name of the projection.
-     * @param query               the JavaScript source code for the query.
-     * @param trackEmittedStreams whether the streams emitted by this projection should be tracked.
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #createContinuous(String, String, boolean, UserCredentials)
-     */
-    default CompletableFuture<Void> createContinuous(String name, String query, boolean trackEmittedStreams) {
-        return createContinuous(name, query, trackEmittedStreams, null);
-    }
-
-    /**
-     * Creates a continuous projection, that will continuously run unless disabled or an unrecoverable error has been encountered.
-     *
-     * @param name                the name of the projection.
-     * @param query               the JavaScript source code for the query.
-     * @param trackEmittedStreams whether the streams emitted by this projection should be tracked.
-     * @param userCredentials     user credentials to be used for this operation (use {@code null} for default user credentials).
-     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
-     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
-     * or {@link ProjectionException} on exceptional completion. In case of successful completion,
-     * the future's methods {@code get} and {@code join} returns {@code null}.
-     */
-    CompletableFuture<Void> createContinuous(String name, String query, boolean trackEmittedStreams, UserCredentials userCredentials);
+    CompletableFuture<Void> create(String name, String query, ProjectionSettings settings, UserCredentials userCredentials);
 
     /**
      * Gets all projections using default user credentials.

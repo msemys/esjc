@@ -85,40 +85,23 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
-    public CompletableFuture<Void> createOneTime(String name, String query, UserCredentials userCredentials) {
+    public CompletableFuture<Void> create(String name, String query, ProjectionSettings settings, UserCredentials userCredentials) {
+        checkArgument(!isNullOrEmpty(name), "name is null or empty");
         checkArgument(!isNullOrEmpty(query), "query is null or empty");
+        checkNotNull(settings, "settings is null");
 
-        QueryStringEncoder queryStringEncoder = new QueryStringEncoder("/projections/onetime");
-        if (!isNullOrEmpty(name)) {
-            queryStringEncoder.addParam("name", name);
+        QueryStringEncoder queryStringEncoder = new QueryStringEncoder(projectionsUri(settings.mode));
+        queryStringEncoder.addParam("name", name);
+        queryStringEncoder.addParam("type", "JS");
+        queryStringEncoder.addParam("enabled", Boolean.toString(settings.enabled));
+
+        switch (settings.mode) {
+            case ONE_TIME:
+                queryStringEncoder.addParam("checkpoints", Boolean.toString(settings.checkpoints));
+            case CONTINUOUS:
+                queryStringEncoder.addParam("emit", Boolean.toString(settings.emit));
+                queryStringEncoder.addParam("trackemittedstreams", Boolean.toString(settings.trackEmittedStreams));
         }
-        queryStringEncoder.addParam("type", "JS");
-
-        return post(queryStringEncoder.toString(), query, userCredentials, HttpResponseStatus.CREATED);
-    }
-
-    @Override
-    public CompletableFuture<Void> createTransient(String name, String query, UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(name), "name is null or empty");
-        checkArgument(!isNullOrEmpty(query), "query is null or empty");
-
-        QueryStringEncoder queryStringEncoder = new QueryStringEncoder("/projections/transient");
-        queryStringEncoder.addParam("name", name);
-        queryStringEncoder.addParam("type", "JS");
-
-        return post(queryStringEncoder.toString(), query, userCredentials, HttpResponseStatus.CREATED);
-    }
-
-    @Override
-    public CompletableFuture<Void> createContinuous(String name, String query, boolean trackEmittedStreams, UserCredentials userCredentials) {
-        checkArgument(!isNullOrEmpty(name), "name is null or empty");
-        checkArgument(!isNullOrEmpty(query), "query is null or empty");
-
-        QueryStringEncoder queryStringEncoder = new QueryStringEncoder("/projections/continuous");
-        queryStringEncoder.addParam("name", name);
-        queryStringEncoder.addParam("type", "JS");
-        queryStringEncoder.addParam("emit", "1");
-        queryStringEncoder.addParam("trackemittedstreams", Boolean.toString(trackEmittedStreams));
 
         return post(queryStringEncoder.toString(), query, userCredentials, HttpResponseStatus.CREATED);
     }
@@ -327,6 +310,19 @@ public class ProjectionManagerHttp implements ProjectionManager {
 
     private static String projectionUri(String name) {
         return "/projection/" + name.trim();
+    }
+
+    private static String projectionsUri(ProjectionMode mode) {
+        switch (mode) {
+            case TRANSIENT:
+                return "/projections/transient";
+            case ONE_TIME:
+                return "/projections/onetime";
+            case CONTINUOUS:
+                return "/projections/continuous";
+            default:
+                throw new IllegalArgumentException("Unsupported projection mode: " + mode);
+        }
     }
 
 }
