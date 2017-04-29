@@ -221,7 +221,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
 
     @Test
     public void listsAllProjections() {
-        List<Projection> projections = projectionManager.listAll().join();
+        List<Projection> projections = projectionManager.findAll().join();
         assertFalse(projections.isEmpty());
     }
 
@@ -428,11 +428,11 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String query = createStandardQuery(stream);
 
         projectionManager.create(projection, query, CONTINUOUS).join();
-        assertTrue(projectionManager.listAll().join().stream().anyMatch(p -> p.name.equals(projection)));
+        assertTrue(projectionManager.findAll().join().stream().anyMatch(p -> p.name.equals(projection)));
 
         projectionManager.disable(projection).join();
         projectionManager.delete(projection).join();
-        assertFalse(projectionManager.listAll().join().stream().anyMatch(p -> p.name.equals(projection)));
+        assertFalse(projectionManager.findAll().join().stream().anyMatch(p -> p.name.equals(projection)));
     }
 
     @Test

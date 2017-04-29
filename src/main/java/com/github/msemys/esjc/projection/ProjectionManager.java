@@ -205,26 +205,26 @@ public interface ProjectionManager {
     CompletableFuture<Void> create(String name, String query, ProjectionSettings settings, UserCredentials userCredentials);
 
     /**
-     * Gets all projections using default user credentials.
+     * Finds all projections using default user credentials.
      *
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
      * on exceptional completion.
-     * @see #listAll(UserCredentials)
+     * @see #findAll(UserCredentials)
      */
-    default CompletableFuture<List<Projection>> listAll() {
-        return listAll(null);
+    default CompletableFuture<List<Projection>> findAll() {
+        return findAll(null);
     }
 
     /**
-     * Gets all projections.
+     * Finds all projections.
      *
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionException}
      * on exceptional completion.
      */
-    CompletableFuture<List<Projection>> listAll(UserCredentials userCredentials);
+    CompletableFuture<List<Projection>> findAll(UserCredentials userCredentials);
 
     /**
      * Gets all one-time projections using default user credentials.

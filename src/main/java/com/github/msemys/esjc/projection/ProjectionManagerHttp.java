@@ -107,7 +107,7 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
-    public CompletableFuture<List<Projection>> listAll(UserCredentials userCredentials) {
+    public CompletableFuture<List<Projection>> findAll(UserCredentials userCredentials) {
         return get("/projections/any", userCredentials, HttpResponseStatus.OK).thenApply(ProjectionManagerHttp::asProjectionList);
     }
 
