@@ -451,7 +451,7 @@ public interface ProjectionManager {
     CompletableFuture<Void> updateQuery(String name, String query, UserCredentials userCredentials);
 
     /**
-     * Deletes a projection without deleting the streams that were emitted by this projection.
+     * Deletes a projection without deleting the streams that were created by this projection.
      * Default user credentials is used for this operation.
      *
      * @param name the name of the projection.
@@ -459,14 +459,14 @@ public interface ProjectionManager {
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
      * {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #delete(String, boolean, UserCredentials)
+     * @see #delete(String, DeleteOptions, UserCredentials)
      */
     default CompletableFuture<Void> delete(String name) {
-        return delete(name, false, null);
+        return delete(name, DeleteOptions.PROJECTION_ONLY, null);
     }
 
     /**
-     * Deletes a projection without deleting the streams that were emitted by this projection.
+     * Deletes a projection without deleting the streams that were created by this projection.
      *
      * @param name            the name of the projection.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
@@ -474,39 +474,39 @@ public interface ProjectionManager {
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
      * {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #delete(String, boolean, UserCredentials)
+     * @see #delete(String, DeleteOptions, UserCredentials)
      */
     default CompletableFuture<Void> delete(String name, UserCredentials userCredentials) {
-        return delete(name, false, userCredentials);
+        return delete(name, DeleteOptions.PROJECTION_ONLY, userCredentials);
     }
 
     /**
      * Deletes a projection using default user credentials.
      *
-     * @param name                 the name of the projection.
-     * @param deleteEmittedStreams whether to delete the streams that were emitted by this projection.
+     * @param name    the name of the projection.
+     * @param options delete operation options.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
      * {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #delete(String, boolean, UserCredentials)
+     * @see #delete(String, DeleteOptions, UserCredentials)
      */
-    default CompletableFuture<Void> delete(String name, boolean deleteEmittedStreams) {
-        return delete(name, deleteEmittedStreams, null);
+    default CompletableFuture<Void> delete(String name, DeleteOptions options) {
+        return delete(name, options, null);
     }
 
     /**
      * Deletes a projection.
      *
-     * @param name                 the name of the projection.
-     * @param deleteEmittedStreams whether to delete the streams that were emitted by this projection.
-     * @param userCredentials      user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @param name            the name of the projection.
+     * @param options         delete operation options.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
      * {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
      */
-    CompletableFuture<Void> delete(String name, boolean deleteEmittedStreams, UserCredentials userCredentials);
+    CompletableFuture<Void> delete(String name, DeleteOptions options, UserCredentials userCredentials);
 
     /**
      * Waits for projection status that matches the specified {@code matcher} using 1s interval for status check

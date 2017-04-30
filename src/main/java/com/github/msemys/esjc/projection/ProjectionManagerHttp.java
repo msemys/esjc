@@ -178,10 +178,16 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
-    public CompletableFuture<Void> delete(String name, boolean deleteEmittedStreams, UserCredentials userCredentials) {
+    public CompletableFuture<Void> delete(String name, DeleteOptions options, UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(name), "name is null or empty");
+        checkNotNull(options, "options is null");
 
-        return delete(projectionUri(name) + "?deleteEmittedStreams=" + Boolean.toString(deleteEmittedStreams), userCredentials, HttpResponseStatus.OK);
+        QueryStringEncoder queryStringEncoder = new QueryStringEncoder(projectionUri(name));
+        queryStringEncoder.addParam("deleteStateStream", Boolean.toString(options.deleteStateStream));
+        queryStringEncoder.addParam("deleteCheckpointStream", Boolean.toString(options.deleteCheckpointStream));
+        queryStringEncoder.addParam("deleteEmittedStreams", Boolean.toString(options.deleteEmittedStreams));
+
+        return delete(queryStringEncoder.toString(), userCredentials, HttpResponseStatus.OK);
     }
 
     @Override
