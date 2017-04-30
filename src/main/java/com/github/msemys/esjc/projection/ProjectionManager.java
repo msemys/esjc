@@ -124,7 +124,7 @@ public interface ProjectionManager {
     CompletableFuture<Void> reset(String name, UserCredentials userCredentials);
 
     /**
-     * Creates a projection with default settings of the specified mode using default user credentials.
+     * Creates a projection with default options of the specified mode using default user credentials.
      *
      * @param name  the name of the projection.
      * @param query the JavaScript source code for the query.
@@ -140,7 +140,7 @@ public interface ProjectionManager {
     }
 
     /**
-     * Creates a projection with default settings of the specified mode.
+     * Creates a projection with default options of the specified mode.
      *
      * @param name            the name of the projection.
      * @param query           the JavaScript source code for the query.
@@ -150,44 +150,44 @@ public interface ProjectionManager {
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
      * or {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #create(String, String, ProjectionSettings, UserCredentials)
+     * @see #create(String, String, CreateOptions, UserCredentials)
      */
     default CompletableFuture<Void> create(String name, String query, ProjectionMode mode, UserCredentials userCredentials) {
         checkNotNull(mode, "mode is null");
 
-        ProjectionSettings settings;
+        CreateOptions options;
 
         switch (mode) {
             case TRANSIENT:
-                settings = ProjectionSettings.DEFAULT_TRANSIENT;
+                options = CreateOptions.TRANSIENT;
                 break;
             case ONE_TIME:
-                settings = ProjectionSettings.DEFAULT_ONE_TIME;
+                options = CreateOptions.ONE_TIME;
                 break;
             case CONTINUOUS:
-                settings = ProjectionSettings.DEFAULT_CONTINUOUS;
+                options = CreateOptions.CONTINUOUS;
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported projection mode: " + mode);
         }
 
-        return create(name, query, settings, userCredentials);
+        return create(name, query, options, userCredentials);
     }
 
     /**
      * Creates a projection using default user credentials.
      *
-     * @param name     the name of the projection.
-     * @param query    the JavaScript source code for the query.
-     * @param settings projection settings.
+     * @param name    the name of the projection.
+     * @param query   the JavaScript source code for the query.
+     * @param options create operation options.
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
      * or {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #create(String, String, ProjectionSettings, UserCredentials)
+     * @see #create(String, String, CreateOptions, UserCredentials)
      */
-    default CompletableFuture<Void> create(String name, String query, ProjectionSettings settings) {
-        return create(name, query, settings, null);
+    default CompletableFuture<Void> create(String name, String query, CreateOptions options) {
+        return create(name, query, options, null);
     }
 
     /**
@@ -195,14 +195,14 @@ public interface ProjectionManager {
      *
      * @param name            the name of the projection.
      * @param query           the JavaScript source code for the query.
-     * @param settings        projection settings.
+     * @param options         create operation options.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionConflictException}
      * or {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
      */
-    CompletableFuture<Void> create(String name, String query, ProjectionSettings settings, UserCredentials userCredentials);
+    CompletableFuture<Void> create(String name, String query, CreateOptions options, UserCredentials userCredentials);
 
     /**
      * Finds all projections using default user credentials.

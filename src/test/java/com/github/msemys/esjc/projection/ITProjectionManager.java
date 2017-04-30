@@ -120,7 +120,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String emittedStream = "emittedStream-" + stream;
         String query = createEmittingQuery(stream, emittedStream);
 
-        projectionManager.create(projection, query, ProjectionSettings.newBuilder()
+        projectionManager.create(projection, query, CreateOptions.newBuilder()
             .mode(CONTINUOUS)
             .emit(true)
             .trackEmittedStreams(true)

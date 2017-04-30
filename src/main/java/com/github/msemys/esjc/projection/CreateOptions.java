@@ -1,33 +1,32 @@
 package com.github.msemys.esjc.projection;
 
-import static com.github.msemys.esjc.projection.ProjectionMode.*;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 
 /**
- * Projection settings.
+ * Create operation options.
  */
-public class ProjectionSettings {
+public class CreateOptions {
 
     /**
-     * Default transient projection settings.
+     * Transient projection default options.
      *
      * @see ProjectionMode#TRANSIENT
      */
-    public static final ProjectionSettings DEFAULT_TRANSIENT = newBuilder().mode(TRANSIENT).build();
+    public static final CreateOptions TRANSIENT = newBuilder().mode(ProjectionMode.TRANSIENT).build();
 
     /**
-     * Default one-time projection settings.
+     * One-time projection default options.
      *
      * @see ProjectionMode#ONE_TIME
      */
-    public static final ProjectionSettings DEFAULT_ONE_TIME = newBuilder().mode(ONE_TIME).build();
+    public static final CreateOptions ONE_TIME = newBuilder().mode(ProjectionMode.ONE_TIME).build();
 
     /**
-     * Default continuous projection settings.
+     * Continuous projection default options.
      *
      * @see ProjectionMode#CONTINUOUS
      */
-    public static final ProjectionSettings DEFAULT_CONTINUOUS = newBuilder().mode(CONTINUOUS).emit(true).build();
+    public static final CreateOptions CONTINUOUS = newBuilder().mode(ProjectionMode.CONTINUOUS).emit(true).build();
 
 
     /**
@@ -59,7 +58,7 @@ public class ProjectionSettings {
     public final boolean trackEmittedStreams;
 
 
-    private ProjectionSettings(Builder builder) {
+    private CreateOptions(Builder builder) {
         mode = builder.mode;
         enabled = builder.enabled;
         checkpoints = builder.checkpoints;
@@ -69,7 +68,7 @@ public class ProjectionSettings {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ProjectionSettings{");
+        final StringBuilder sb = new StringBuilder("CreateOptions{");
         sb.append("mode=").append(mode);
         sb.append(", enabled=").append(enabled);
         sb.append(", checkpoints=").append(checkpoints);
@@ -80,16 +79,16 @@ public class ProjectionSettings {
     }
 
     /**
-     * Creates a new projection settings builder.
+     * Creates a new create operation options builder.
      *
-     * @return projection settings builder
+     * @return create operation options builder
      */
     public static Builder newBuilder() {
         return new Builder();
     }
 
     /**
-     * Projection settings builder.
+     * Create operation options builder.
      */
     public static class Builder {
         private ProjectionMode mode;
@@ -157,11 +156,11 @@ public class ProjectionSettings {
         }
 
         /**
-         * Builds a projection settings.
+         * Builds a create operation options.
          *
-         * @return projection settings
+         * @return create operation options
          */
-        public ProjectionSettings build() {
+        public CreateOptions build() {
             checkNotNull(mode, "mode is null");
 
             if (enabled == null) {
@@ -180,7 +179,7 @@ public class ProjectionSettings {
                 trackEmittedStreams = false;
             }
 
-            return new ProjectionSettings(this);
+            return new CreateOptions(this);
         }
     }
 

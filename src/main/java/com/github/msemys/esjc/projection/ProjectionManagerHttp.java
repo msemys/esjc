@@ -85,22 +85,22 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
-    public CompletableFuture<Void> create(String name, String query, ProjectionSettings settings, UserCredentials userCredentials) {
+    public CompletableFuture<Void> create(String name, String query, CreateOptions options, UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(name), "name is null or empty");
         checkArgument(!isNullOrEmpty(query), "query is null or empty");
-        checkNotNull(settings, "settings is null");
+        checkNotNull(options, "options is null");
 
-        QueryStringEncoder queryStringEncoder = new QueryStringEncoder(projectionsUri(settings.mode));
+        QueryStringEncoder queryStringEncoder = new QueryStringEncoder(projectionsUri(options.mode));
         queryStringEncoder.addParam("name", name);
         queryStringEncoder.addParam("type", "JS");
-        queryStringEncoder.addParam("enabled", Boolean.toString(settings.enabled));
+        queryStringEncoder.addParam("enabled", Boolean.toString(options.enabled));
 
-        switch (settings.mode) {
+        switch (options.mode) {
             case ONE_TIME:
-                queryStringEncoder.addParam("checkpoints", Boolean.toString(settings.checkpoints));
+                queryStringEncoder.addParam("checkpoints", Boolean.toString(options.checkpoints));
             case CONTINUOUS:
-                queryStringEncoder.addParam("emit", Boolean.toString(settings.emit));
-                queryStringEncoder.addParam("trackemittedstreams", Boolean.toString(settings.trackEmittedStreams));
+                queryStringEncoder.addParam("emit", Boolean.toString(options.emit));
+                queryStringEncoder.addParam("trackemittedstreams", Boolean.toString(options.trackEmittedStreams));
         }
 
         return post(queryStringEncoder.toString(), query, userCredentials, HttpResponseStatus.CREATED);
