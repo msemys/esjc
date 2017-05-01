@@ -170,11 +170,19 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
-    public CompletableFuture<Void> update(String name, String query, UserCredentials userCredentials) {
+    public CompletableFuture<Void> update(String name, String query, UpdateOptions options, UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(name), "name is null or empty");
         checkArgument(!isNullOrEmpty(query), "query is null or empty");
+        checkNotNull(options, "options is null");
 
-        return put(projectionUri(name) + "/query?type=JS", query, userCredentials, HttpResponseStatus.OK);
+        QueryStringEncoder queryStringEncoder = new QueryStringEncoder(projectionUri(name) + "/query");
+        queryStringEncoder.addParam("type", "JS");
+
+        if (options.emit != null) {
+            queryStringEncoder.addParam("emit", Boolean.toString(options.emit));
+        }
+
+        return put(queryStringEncoder.toString(), query, userCredentials, HttpResponseStatus.OK);
     }
 
     @Override

@@ -423,7 +423,7 @@ public interface ProjectionManager {
     CompletableFuture<String> getQuery(String name, UserCredentials userCredentials);
 
     /**
-     * Updates a projection using default user credentials.
+     * Updates a projection's query using default user credentials.
      *
      * @param name  the name of the projection.
      * @param query the JavaScript source code for the query.
@@ -434,11 +434,11 @@ public interface ProjectionManager {
      * @see #update(String, String, UserCredentials)
      */
     default CompletableFuture<Void> update(String name, String query) {
-        return update(name, query, null);
+        return update(name, query, (UserCredentials) null);
     }
 
     /**
-     * Updates a projection.
+     * Updates a projection's query.
      *
      * @param name            the name of the projection.
      * @param query           the JavaScript source code for the query.
@@ -447,8 +447,41 @@ public interface ProjectionManager {
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
      * {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
+     * @see #update(String, String, UpdateOptions, UserCredentials)
      */
-    CompletableFuture<Void> update(String name, String query, UserCredentials userCredentials);
+    default CompletableFuture<Void> update(String name, String query, UserCredentials userCredentials) {
+        return update(name, query, UpdateOptions.QUERY_ONLY, userCredentials);
+    }
+
+    /**
+     * Updates a projection using default user credentials.
+     *
+     * @param name    the name of the projection.
+     * @param query   the JavaScript source code for the query.
+     * @param options update operation options.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
+     * @see #update(String, String, UpdateOptions, UserCredentials)
+     */
+    default CompletableFuture<Void> update(String name, String query, UpdateOptions options) {
+        return update(name, query, options, null);
+    }
+
+    /**
+     * Updates a projection.
+     *
+     * @param name            the name of the projection.
+     * @param query           the JavaScript source code for the query.
+     * @param options         update operation options.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
+     * {@link ProjectionException} on exceptional completion. In case of successful completion,
+     * the future's methods {@code get} and {@code join} returns {@code null}.
+     */
+    CompletableFuture<Void> update(String name, String query, UpdateOptions options, UserCredentials userCredentials);
 
     /**
      * Deletes a projection without deleting the streams that were created by this projection.
