@@ -501,7 +501,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String newQuery = createStandardQuery("DifferentStream");
 
         projectionManager.create(projection, originalQuery, CONTINUOUS).join();
-        projectionManager.updateQuery(projection, newQuery).join();
+        projectionManager.update(projection, newQuery).join();
 
         String result = projectionManager.getQuery(projection).join();
 
@@ -513,7 +513,7 @@ public class ITProjectionManager extends AbstractIntegrationTest {
         String query = createStandardQuery(generateStreamName());
 
         try {
-            projectionManager.updateQuery(UUID.randomUUID().toString(), query).join();
+            projectionManager.update(UUID.randomUUID().toString(), query).join();
             fail("should fail with 'ProjectionNotFoundException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(ProjectionNotFoundException.class));

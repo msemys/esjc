@@ -423,7 +423,7 @@ public interface ProjectionManager {
     CompletableFuture<String> getQuery(String name, UserCredentials userCredentials);
 
     /**
-     * Updates a projection's query using default user credentials.
+     * Updates a projection using default user credentials.
      *
      * @param name  the name of the projection.
      * @param query the JavaScript source code for the query.
@@ -431,14 +431,14 @@ public interface ProjectionManager {
      * {@code get} and {@code join} can throw an exception with cause {@link ProjectionNotFoundException} or
      * {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
-     * @see #updateQuery(String, String, UserCredentials)
+     * @see #update(String, String, UserCredentials)
      */
-    default CompletableFuture<Void> updateQuery(String name, String query) {
-        return updateQuery(name, query, null);
+    default CompletableFuture<Void> update(String name, String query) {
+        return update(name, query, null);
     }
 
     /**
-     * Updates a projection's query.
+     * Updates a projection.
      *
      * @param name            the name of the projection.
      * @param query           the JavaScript source code for the query.
@@ -448,7 +448,7 @@ public interface ProjectionManager {
      * {@link ProjectionException} on exceptional completion. In case of successful completion,
      * the future's methods {@code get} and {@code join} returns {@code null}.
      */
-    CompletableFuture<Void> updateQuery(String name, String query, UserCredentials userCredentials);
+    CompletableFuture<Void> update(String name, String query, UserCredentials userCredentials);
 
     /**
      * Deletes a projection without deleting the streams that were created by this projection.

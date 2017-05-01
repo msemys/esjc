@@ -170,7 +170,7 @@ public class ProjectionManagerHttp implements ProjectionManager {
     }
 
     @Override
-    public CompletableFuture<Void> updateQuery(String name, String query, UserCredentials userCredentials) {
+    public CompletableFuture<Void> update(String name, String query, UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(name), "name is null or empty");
         checkArgument(!isNullOrEmpty(query), "query is null or empty");
 
