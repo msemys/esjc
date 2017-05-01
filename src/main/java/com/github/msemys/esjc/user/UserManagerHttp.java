@@ -36,11 +36,7 @@ public class UserManagerHttp implements UserManager {
     private final HttpClient client;
     private final UserCredentials userCredentials;
 
-    public UserManagerHttp(HttpClient client) {
-        this(client, null);
-    }
-
-    public UserManagerHttp(HttpClient client, UserCredentials userCredentials) {
+    protected UserManagerHttp(HttpClient client, UserCredentials userCredentials) {
         checkNotNull(client, "client is null");
         this.client = client;
         this.userCredentials = userCredentials;

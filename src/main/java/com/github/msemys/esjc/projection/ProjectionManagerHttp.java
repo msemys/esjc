@@ -46,11 +46,7 @@ public class ProjectionManagerHttp implements ProjectionManager {
     private final UserCredentials userCredentials;
     private final Timer timer = new HashedWheelTimer(new DefaultThreadFactory("es-pm-timer"), 200, MILLISECONDS);
 
-    public ProjectionManagerHttp(HttpClient client) {
-        this(client, null);
-    }
-
-    public ProjectionManagerHttp(HttpClient client, UserCredentials userCredentials) {
+    protected ProjectionManagerHttp(HttpClient client, UserCredentials userCredentials) {
         checkNotNull(client, "client is null");
         this.client = client;
         this.userCredentials = userCredentials;
