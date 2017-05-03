@@ -150,6 +150,20 @@ eventstore.appendToStream("foo", ExpectedVersion.of(2),
 ).thenAccept(r -> System.out.println(r.logPosition));
 ```
 
+```java
+eventstore.tryAppendToStream("foo", ExpectedVersion.ANY,
+    EventData.newBuilder()
+        .type("corge")
+        .build()
+).thenAccept(r -> {
+    if (r.status == WriteStatus.Success) {
+        System.out.println(r.logPosition);
+    } else {
+        System.err.println(r.status);
+    }
+});
+```
+
 #### Transactional writes
 
 ```java
