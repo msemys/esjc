@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsInOrder;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ITReadAllEventsBackward extends AbstractIntegrationTest {
 
@@ -114,6 +113,78 @@ public class ITReadAllEventsBackward extends AbstractIntegrationTest {
     @Test(expected = IllegalArgumentException.class)
     public void failsToReadWhenMaxCountOutOfRange() {
         eventstore.readAllEventsBackward(Position.START, 4097, false);
+    }
+
+    @Test
+    public void returnsEventsIfResolveLinkTosIsDisabledAndLinkedStreamIsHardDeleted() {
+        final String stream1 = generateStreamName();
+        final String stream2 = generateStreamName();
+        final String stream3 = generateStreamName();
+
+        eventstore.appendToStream(stream1, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream2, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream3, ExpectedVersion.NO_STREAM, asList(
+            newTestEvent(),
+            EventData.newBuilder()
+                .linkTo(0, stream1)
+                .build(),
+            EventData.newBuilder()
+                .linkTo(0, stream2)
+                .build(),
+            newTestEvent()
+        )).join();
+
+        eventstore.deleteStream(stream1, ExpectedVersion.ANY, true).join();
+
+        AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 10, false).join();
+
+        List<ResolvedEvent> streamEvents = reverse(slice.events.stream()
+            .filter(e -> e.originalStreamId().equals(stream3))
+            .collect(toList()));
+
+        assertEquals(4, streamEvents.size());
+
+        assertNotNull(streamEvents.get(1).event);
+        assertNull(streamEvents.get(1).link);
+
+        assertNotNull(streamEvents.get(2).event);
+        assertNull(streamEvents.get(2).link);
+    }
+
+    @Test
+    public void returnsEventsIfResolveLinkTosIsEnabledAndLinkedStreamIsHardDeleted() {
+        final String stream1 = generateStreamName();
+        final String stream2 = generateStreamName();
+        final String stream3 = generateStreamName();
+
+        eventstore.appendToStream(stream1, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream2, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream3, ExpectedVersion.NO_STREAM, asList(
+            newTestEvent(),
+            EventData.newBuilder()
+                .linkTo(0, stream1)
+                .build(),
+            EventData.newBuilder()
+                .linkTo(0, stream2)
+                .build(),
+            newTestEvent()
+        )).join();
+
+        eventstore.deleteStream(stream1, ExpectedVersion.ANY, true).join();
+
+        AllEventsSlice slice = eventstore.readAllEventsBackward(Position.END, 10, true).join();
+
+        List<ResolvedEvent> streamEvents = reverse(slice.events.stream()
+            .filter(e -> e.originalStreamId().equals(stream3))
+            .collect(toList()));
+
+        assertEquals(4, streamEvents.size());
+
+        assertNull(streamEvents.get(1).event);
+        assertNotNull(streamEvents.get(1).link);
+
+        assertNotNull(streamEvents.get(2).event);
+        assertNotNull(streamEvents.get(2).link);
     }
 
 }

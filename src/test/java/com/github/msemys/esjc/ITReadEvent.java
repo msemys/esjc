@@ -124,6 +124,66 @@ public class ITReadEvent extends AbstractIntegrationTest {
         assertNotNull(result.event.originalEvent().created);
     }
 
+    @Test
+    public void returnsEventIfResolveLinkTosIsDisabledAndLinkedStreamIsHardDeleted() {
+        final String stream1 = generateStreamName();
+        final String stream2 = generateStreamName();
+        final String stream3 = generateStreamName();
+
+        eventstore.appendToStream(stream1, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream2, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream3, ExpectedVersion.NO_STREAM, asList(
+            newTestEvent(),
+            EventData.newBuilder()
+                .linkTo(0, stream1)
+                .build(),
+            EventData.newBuilder()
+                .linkTo(0, stream2)
+                .build(),
+            newTestEvent()
+        )).join();
+
+        eventstore.deleteStream(stream1, ExpectedVersion.ANY, true).join();
+
+        EventReadResult result1 = eventstore.readEvent(stream3, 1, false).join();
+        assertNotNull(result1.event.event);
+        assertNull(result1.event.link);
+
+        EventReadResult result2 = eventstore.readEvent(stream3, 2, false).join();
+        assertNotNull(result2.event.event);
+        assertNull(result2.event.link);
+    }
+
+    @Test
+    public void returnsEventIfResolveLinkTosIsEnabledAndLinkedStreamIsHardDeleted() {
+        final String stream1 = generateStreamName();
+        final String stream2 = generateStreamName();
+        final String stream3 = generateStreamName();
+
+        eventstore.appendToStream(stream1, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream2, ExpectedVersion.NO_STREAM, newTestEvent()).join();
+        eventstore.appendToStream(stream3, ExpectedVersion.NO_STREAM, asList(
+            newTestEvent(),
+            EventData.newBuilder()
+                .linkTo(0, stream1)
+                .build(),
+            EventData.newBuilder()
+                .linkTo(0, stream2)
+                .build(),
+            newTestEvent()
+        )).join();
+
+        eventstore.deleteStream(stream1, ExpectedVersion.ANY, true).join();
+
+        EventReadResult result1 = eventstore.readEvent(stream3, 1, true).join();
+        assertNull(result1.event.event);
+        assertNotNull(result1.event.link);
+
+        EventReadResult result2 = eventstore.readEvent(stream3, 2, true).join();
+        assertNotNull(result2.event.event);
+        assertNotNull(result2.event.link);
+    }
+
     private static List<EventData> newTestEvents() {
         return asList(
             EventData.newBuilder()
