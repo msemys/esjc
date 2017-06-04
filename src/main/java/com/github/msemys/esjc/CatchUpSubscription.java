@@ -167,17 +167,19 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                     VolatileSubscriptionListener subscriptionListener = new VolatileSubscriptionListener() {
                         @Override
                         public void onEvent(Subscription s, ResolvedEvent event) {
-                            logger.trace("Catch-up subscription to {}: event appeared ({}, {}, {} @ {}).",
-                                streamId(), event.originalStreamId(), event.originalEventNumber(),
-                                event.originalEvent().eventType, event.originalPosition);
+                            if (dropData.get() == null) {
+                                logger.trace("Catch-up subscription to {}: event appeared ({}, {}, {} @ {}).",
+                                    streamId(), event.originalStreamId(), event.originalEventNumber(),
+                                    event.originalEvent().eventType, event.originalPosition);
 
-                            if (liveQueue.size() >= maxPushQueueSize) {
-                                enqueueSubscriptionDropNotification(SubscriptionDropReason.ProcessingQueueOverflow, null);
-                                subscription.unsubscribe();
-                            } else {
-                                liveQueue.offer(event);
-                                if (allowProcessing) {
-                                    ensureProcessingPushQueue();
+                                if (liveQueue.size() >= maxPushQueueSize) {
+                                    enqueueSubscriptionDropNotification(SubscriptionDropReason.ProcessingQueueOverflow, null);
+                                    subscription.unsubscribe();
+                                } else {
+                                    liveQueue.offer(event);
+                                    if (allowProcessing) {
+                                        ensureProcessingPushQueue();
+                                    }
                                 }
                             }
                         }
