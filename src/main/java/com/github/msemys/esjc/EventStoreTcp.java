@@ -1,5 +1,6 @@
 package com.github.msemys.esjc;
 
+
 import com.github.msemys.esjc.event.Event;
 import com.github.msemys.esjc.event.EventQueue;
 import com.github.msemys.esjc.event.Events;
@@ -627,6 +628,8 @@ public class EventStoreTcp implements EventStore {
             closeTcpConnection(reason);
             connectingPhase = ConnectingPhase.INVALID;
             fireEvent(Events.clientDisconnected());
+            this.group.shutdownGracefully();
+            this.settings.executor.shutdown();
             logger.info("Disconnected, reason: {}", reason);
         }
     }

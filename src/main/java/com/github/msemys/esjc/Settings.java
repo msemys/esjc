@@ -9,7 +9,7 @@ import com.github.msemys.esjc.tcp.TcpSettings;
 import com.github.msemys.esjc.util.concurrent.DefaultThreadFactory;
 
 import java.time.Duration;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -123,7 +123,7 @@ public class Settings {
     /**
      * The executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
      */
-    public final Executor executor;
+    public final ExecutorService executor;
 
     private Settings(Builder builder) {
         tcpSettings = builder.tcpSettings;
@@ -204,7 +204,7 @@ public class Settings {
         private Integer persistentSubscriptionBufferSize;
         private Boolean persistentSubscriptionAutoAck;
         private Boolean failOnNoServerResponse;
-        private Executor executor;
+        private ExecutorService executor;
 
         private Builder() {
         }
@@ -450,7 +450,7 @@ public class Settings {
          * @param executor the executor to execute client internal tasks and run subscriptions.
          * @return the builder reference
          */
-        public Builder executor(Executor executor) {
+        public Builder executor(ExecutorService executor) {
             this.executor = executor;
             return this;
         }
