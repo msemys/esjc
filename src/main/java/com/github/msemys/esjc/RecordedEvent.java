@@ -54,6 +54,44 @@ public class RecordedEvent {
      */
     public final Instant created;
 
+    
+    /**
+     * Creates new instance with provided data.
+     * 
+     * @param eventStreamId The event stream that this event belongs to.
+     * @param eventId The unique identifier representing this event.
+     * @param eventNumber The number of this event in the stream.
+     * @param eventType The type of event.
+     * @param data A byte array representing the data of this event.
+     * @param metadata A byte array representing the metadata associated with this event.
+     * @param isJson Indicates whether the content is internally marked as JSON.
+     * @param created A datetime representing when this event was created in the system.
+     */    
+    public RecordedEvent(String eventStreamId, UUID eventId, int eventNumber, String eventType, byte[] data,
+            byte[] metadata, boolean isJson, Optional<Instant> created) {
+        super();
+        if (eventStreamId == null) {
+            throw new IllegalArgumentException("eventStreamId == null");
+        }
+        if (eventId == null) {
+            throw new IllegalArgumentException("eventId == null");
+        }
+        if (eventType == null) {
+            throw new IllegalArgumentException("eventType == null");
+        }
+        this.eventStreamId = eventStreamId;
+        this.eventId = eventId;
+        this.eventNumber = eventNumber;
+        this.eventType = eventType;
+        this.data = (data == null ? EMPTY_BYTES : data);
+        this.metadata = (metadata == null ? EMPTY_BYTES : metadata);
+        this.isJson = isJson;
+        this.created = (created == null ? Optional.empty() : created);
+    }
+
+
+
+
     /**
      * Creates new instance from proto message.
      *
