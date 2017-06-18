@@ -258,9 +258,9 @@ public class ProjectionManagerHttp implements ProjectionManager {
         FullHttpRequest request = newRequest(HttpMethod.GET, uri, defaultOr(userCredentials));
 
         return client.send(request).thenApply(response -> {
-            if (response.getStatus().code() == expectedStatus.code()) {
+            if (response.status().code() == expectedStatus.code()) {
                 return response.content().toString(UTF_8);
-            } else if (response.getStatus().code() == HttpResponseStatus.NOT_FOUND.code()) {
+            } else if (response.status().code() == HttpResponseStatus.NOT_FOUND.code()) {
                 throw new ProjectionNotFoundException(request, response);
             } else {
                 throw new ProjectionException(request, response);
@@ -272,9 +272,9 @@ public class ProjectionManagerHttp implements ProjectionManager {
         FullHttpRequest request = newRequest(HttpMethod.DELETE, uri, defaultOr(userCredentials));
 
         return client.send(request).thenAccept(response -> {
-            if (response.getStatus().code() == HttpResponseStatus.NOT_FOUND.code()) {
+            if (response.status().code() == HttpResponseStatus.NOT_FOUND.code()) {
                 throw new ProjectionNotFoundException(request, response);
-            } else if (response.getStatus().code() != expectedStatus.code()) {
+            } else if (response.status().code() != expectedStatus.code()) {
                 throw new ProjectionException(request, response);
             }
         });
@@ -284,9 +284,9 @@ public class ProjectionManagerHttp implements ProjectionManager {
         FullHttpRequest request = newRequest(HttpMethod.PUT, uri, content, APPLICATION_JSON, defaultOr(userCredentials));
 
         return client.send(request).thenAccept(response -> {
-            if (response.getStatus().code() == HttpResponseStatus.NOT_FOUND.code()) {
+            if (response.status().code() == HttpResponseStatus.NOT_FOUND.code()) {
                 throw new ProjectionNotFoundException(request, response);
-            } else if (response.getStatus().code() != expectedStatus.code()) {
+            } else if (response.status().code() != expectedStatus.code()) {
                 throw new ProjectionException(request, response);
             }
         });
@@ -296,11 +296,11 @@ public class ProjectionManagerHttp implements ProjectionManager {
         FullHttpRequest request = newRequest(HttpMethod.POST, uri, content, APPLICATION_JSON, defaultOr(userCredentials));
 
         return client.send(request).thenAccept(response -> {
-            if (response.getStatus().code() == HttpResponseStatus.NOT_FOUND.code()) {
+            if (response.status().code() == HttpResponseStatus.NOT_FOUND.code()) {
                 throw new ProjectionNotFoundException(request, response);
-            } else if (response.getStatus().code() == HttpResponseStatus.CONFLICT.code()) {
+            } else if (response.status().code() == HttpResponseStatus.CONFLICT.code()) {
                 throw new ProjectionConflictException(request, response);
-            } else if (response.getStatus().code() != expectedStatus.code()) {
+            } else if (response.status().code() != expectedStatus.code()) {
                 throw new ProjectionException(request, response);
             }
         });

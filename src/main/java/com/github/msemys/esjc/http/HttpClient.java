@@ -82,10 +82,10 @@ public class HttpClient implements AutoCloseable {
         checkNotNull(request, "request is null");
         checkState(isRunning(), "HTTP client is closed");
 
-        request.headers().set(HttpHeaders.Names.HOST, host);
+        request.headers().set(HttpHeaderNames.HOST, host);
 
         if (acceptGzip) {
-            request.headers().set(HttpHeaders.Names.ACCEPT_ENCODING, HttpHeaders.Values.GZIP);
+            request.headers().set(HttpHeaderNames.ACCEPT_ENCODING, HttpHeaderValues.GZIP);
         }
 
         CompletableFuture<FullHttpResponse> response = new CompletableFuture<>();
@@ -180,7 +180,7 @@ public class HttpClient implements AutoCloseable {
         checkNotNull(userCredentials, "userCredentials is null");
 
         byte[] encodedCredentials = Base64.getEncoder().encode(toBytes(userCredentials.username + ":" + userCredentials.password));
-        request.headers().add(HttpHeaders.Names.AUTHORIZATION, "Basic " + newString(encodedCredentials));
+        request.headers().add(HttpHeaderNames.AUTHORIZATION, "Basic " + newString(encodedCredentials));
     }
 
     public static FullHttpRequest newRequest(HttpMethod method, String uri, UserCredentials userCredentials) {
@@ -205,8 +205,8 @@ public class HttpClient implements AutoCloseable {
         ByteBuf data = copiedBuffer(body, UTF_8);
 
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, method, uri, data);
-        request.headers().set(HttpHeaders.Names.CONTENT_TYPE, contentType);
-        request.headers().set(HttpHeaders.Names.CONTENT_LENGTH, data.readableBytes());
+        request.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
+        request.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.readableBytes());
 
         if (userCredentials != null) {
             addAuthorizationHeader(request, userCredentials);

@@ -34,11 +34,11 @@ public class UserException extends RuntimeException {
      * @param response HTTP response.
      */
     public UserException(HttpRequest request, FullHttpResponse response) {
-        this(response.getStatus().code(), String.format("Server returned %d (%s) for %s on %s",
-            response.getStatus().code(),
-            defaultIfEmpty(response.content().toString(UTF_8), response.getStatus().reasonPhrase()),
-            request.getMethod().name(),
-            request.getUri()));
+        this(response.status().code(), String.format("Server returned %d (%s) for %s on %s",
+            response.status().code(),
+            defaultIfEmpty(response.content().toString(UTF_8), response.status().reasonPhrase()),
+            request.method().name(),
+            request.uri()));
     }
 
 }

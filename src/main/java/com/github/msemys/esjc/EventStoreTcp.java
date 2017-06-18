@@ -102,8 +102,9 @@ public class EventStoreTcp implements EventStore {
             .option(ChannelOption.TCP_NODELAY, settings.tcpSettings.noDelay)
             .option(ChannelOption.SO_SNDBUF, settings.tcpSettings.sendBufferSize)
             .option(ChannelOption.SO_RCVBUF, settings.tcpSettings.receiveBufferSize)
-            .option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, settings.tcpSettings.writeBufferLowWaterMark)
-            .option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, settings.tcpSettings.writeBufferHighWaterMark)
+            .option(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(
+                settings.tcpSettings.writeBufferLowWaterMark,
+                settings.tcpSettings.writeBufferHighWaterMark))
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) settings.tcpSettings.connectTimeout.toMillis())
             .group(group)
             .channel(NioSocketChannel.class)

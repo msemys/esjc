@@ -12,7 +12,7 @@ public class HttpOperationTimedOutException extends HttpClientException {
     }
 
     public HttpOperationTimedOutException(HttpRequest request) {
-        super(String.format("%s %s request never got response from server.", request.getMethod().name(), request.getUri()));
+        super(String.format("%s %s request never got response from server.", request.method().name(), request.uri()));
     }
 
 }
