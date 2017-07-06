@@ -96,7 +96,7 @@ public class AppendToStreamOperation extends AbstractOperation<WriteResult, Writ
                     .description("CommitTimeout")
                     .build();
             case WrongExpectedVersion:
-                fail(new WrongExpectedVersionException(String.format("Append failed due to WrongExpectedVersion. Stream: %s, Expected version: %d", stream, expectedVersion)));
+                fail(new WrongExpectedVersionException(String.format("Append failed due to WrongExpectedVersion. Stream: %s, Expected version: %d, Current version: %d", stream, expectedVersion, response.getCurrentVersion())));
                 return InspectionResult.newBuilder()
                     .decision(InspectionDecision.EndOperation)
                     .description("WrongExpectedVersion")
