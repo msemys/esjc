@@ -53,7 +53,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
     }
 
     @Override
-    protected PersistentSubscriptionChannel createSubscription(long lastCommitPosition, Integer lastEventNumber) {
+    protected PersistentSubscriptionChannel createSubscription(long lastCommitPosition, Long lastEventNumber) {
         return new PersistentSubscriptionChannel(this, streamId, lastCommitPosition, lastEventNumber);
     }
 

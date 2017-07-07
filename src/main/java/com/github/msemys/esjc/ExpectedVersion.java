@@ -24,9 +24,9 @@ public class ExpectedVersion {
     /**
      * Stream version value
      */
-    public final int value;
+    public final long value;
 
-    private ExpectedVersion(int value) {
+    private ExpectedVersion(long value) {
         this.value = value;
     }
 
@@ -42,7 +42,7 @@ public class ExpectedVersion {
 
     @Override
     public int hashCode() {
-        return value;
+        return Long.hashCode(value);
     }
 
     /**
@@ -51,7 +51,7 @@ public class ExpectedVersion {
      * @param eventNumber event number that you expect the target stream to currently be at.
      * @return expected version of the specified event number.
      */
-    public static ExpectedVersion of(int eventNumber) {
+    public static ExpectedVersion of(long eventNumber) {
         return new ExpectedVersion(eventNumber);
     }
 

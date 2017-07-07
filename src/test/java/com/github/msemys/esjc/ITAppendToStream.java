@@ -223,7 +223,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
     public void appendsWithStreamExistsExpectedVersionIfMetadataStreamExists() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.ANY, StreamMetadata.newBuilder().maxCount(10).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.ANY, StreamMetadata.newBuilder().maxCount(10L).build()).join();
         eventstore.appendToStream(stream, ExpectedVersion.STREAM_EXISTS, newTestEvent()).join();
     }
 

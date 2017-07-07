@@ -408,7 +408,7 @@ public class ITStreamEventsSpliterator extends AbstractIntegrationTest {
     private static class StreamEventsSpliteratorWithBatchCounter extends StreamEventsSpliterator {
         int batchCount;
 
-        StreamEventsSpliteratorWithBatchCounter(int eventNumber, Function<Integer, CompletableFuture<StreamEventsSlice>> reader) {
+        StreamEventsSpliteratorWithBatchCounter(long eventNumber, Function<Long, CompletableFuture<StreamEventsSlice>> reader) {
             super(eventNumber, reader);
         }
 

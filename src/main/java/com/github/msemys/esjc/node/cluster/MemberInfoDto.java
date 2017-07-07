@@ -35,7 +35,7 @@ public class MemberInfoDto {
     public long chaserCheckpoint;
 
     public long epochPosition;
-    public int epochNumber;
+    public long epochNumber;
     public UUID epochId;
 
     public int nodePriority;

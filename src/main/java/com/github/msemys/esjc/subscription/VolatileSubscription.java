@@ -9,7 +9,7 @@ public class VolatileSubscription extends Subscription {
     public VolatileSubscription(VolatileSubscriptionOperation operation,
                                 String streamId,
                                 long lastCommitPosition,
-                                Integer lastEventNumber) {
+                                Long lastEventNumber) {
         super(streamId, lastCommitPosition, lastEventNumber);
         this.operation = operation;
     }

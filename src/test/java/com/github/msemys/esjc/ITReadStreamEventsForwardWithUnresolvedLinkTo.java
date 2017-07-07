@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.system.SystemEventType;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -31,10 +30,9 @@ public class ITReadStreamEventsForwardWithUnresolvedLinkTo extends AbstractInteg
         assertNotNull(linkedStreamSlice.events.get(0).link);
     }
 
-    private static EventData newLinkEvent(String stream, int eventNumber) {
+    private static EventData newLinkEvent(String stream, long eventNumber) {
         return EventData.newBuilder()
-            .type(SystemEventType.LINK_TO.value)
-            .data(eventNumber + "@" + stream)
+            .linkTo(eventNumber, stream)
             .build();
     }
 

@@ -16,13 +16,13 @@ import static com.github.msemys.esjc.util.Strings.defaultIfEmpty;
 public class ReadEventOperation extends AbstractOperation<EventReadResult, ReadEventCompleted> {
 
     private final String stream;
-    private final int eventNumber;
+    private final long eventNumber;
     private final boolean resolveLinkTo;
     private final boolean requireMaster;
 
     public ReadEventOperation(CompletableFuture<EventReadResult> result,
                               String stream,
-                              int eventNumber,
+                              long eventNumber,
                               boolean resolveLinkTo,
                               boolean requireMaster,
                               UserCredentials userCredentials) {

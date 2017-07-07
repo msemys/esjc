@@ -36,9 +36,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         final String stream = generateStreamName();
 
         StreamMetadata metadata1 = StreamMetadata.newBuilder()
-            .maxCount(17)
+            .maxCount(17L)
             .maxAge(Duration.ofMinutes(10))
-            .truncateBefore(10)
+            .truncateBefore(10L)
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
@@ -54,9 +54,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         assertEquals(metadata1.cacheControl, metadataResult1.streamMetadata.cacheControl);
 
         StreamMetadata metadata2 = StreamMetadata.newBuilder()
-            .maxCount(37)
+            .maxCount(37L)
             .maxAge(Duration.ofMinutes(20))
-            .truncateBefore(24)
+            .truncateBefore(24L)
             .cacheControl(Duration.ofMinutes(10))
             .build();
 
@@ -89,9 +89,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         final String stream = generateStreamName();
 
         StreamMetadata metadata1 = StreamMetadata.newBuilder()
-            .maxCount(17)
+            .maxCount(17L)
             .maxAge(Duration.ofMinutes(10))
-            .truncateBefore(10)
+            .truncateBefore(10L)
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
@@ -107,9 +107,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         assertEquals(metadata1.cacheControl, metadataResult1.streamMetadata.cacheControl);
 
         StreamMetadata metadata2 = StreamMetadata.newBuilder()
-            .maxCount(37)
+            .maxCount(37L)
             .maxAge(Duration.ofMinutes(20))
-            .truncateBefore(24)
+            .truncateBefore(24L)
             .cacheControl(Duration.ofMinutes(10))
             .build();
 
@@ -130,9 +130,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         final String stream = generateStreamName();
 
         StreamMetadata metadata = StreamMetadata.newBuilder()
-            .maxCount(17)
+            .maxCount(17L)
             .maxAge(Duration.ofMinutes(10))
-            .truncateBefore(10)
+            .truncateBefore(10L)
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
@@ -155,9 +155,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
 
         StreamMetadata metadata = StreamMetadata.newBuilder()
-            .maxCount(17)
+            .maxCount(17L)
             .maxAge(Duration.ofMinutes(10))
-            .truncateBefore(10)
+            .truncateBefore(10L)
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
@@ -192,9 +192,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         final String stream = generateStreamName();
 
         StreamMetadata metadata = StreamMetadata.newBuilder()
-            .maxCount(17)
+            .maxCount(17L)
             .maxAge(Duration.ofMinutes(10))
-            .truncateBefore(10)
+            .truncateBefore(10L)
             .cacheControl(Duration.ofMinutes(5))
             .build();
 
@@ -205,7 +205,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         StreamMetadataResult metadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult.stream);
         assertTrue(metadataResult.isStreamDeleted);
-        assertEquals(Integer.MAX_VALUE, metadataResult.metastreamVersion);
+        assertEquals(Long.MAX_VALUE, metadataResult.metastreamVersion);
         assertNull(metadataResult.streamMetadata.maxCount);
         assertNull(metadataResult.streamMetadata.maxAge);
         assertNull(metadataResult.streamMetadata.truncateBefore);
@@ -242,9 +242,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         assertEquals(stream, metadataResult.stream);
         assertFalse(metadataResult.isStreamDeleted);
         assertEquals(0, metadataResult.metastreamVersion);
-        assertEquals(Integer.valueOf(17), metadataResult.streamMetadata.maxCount);
+        assertEquals(Long.valueOf(17), metadataResult.streamMetadata.maxCount);
         assertEquals(Duration.ofSeconds(123321), metadataResult.streamMetadata.maxAge);
-        assertEquals(Integer.valueOf(23), metadataResult.streamMetadata.truncateBefore);
+        assertEquals(Long.valueOf(23), metadataResult.streamMetadata.truncateBefore);
         assertEquals(Duration.ofSeconds(7654321), metadataResult.streamMetadata.cacheControl);
 
         assertNotNull(metadataResult.streamMetadata.acl);
@@ -266,9 +266,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         final String stream = generateStreamName();
 
         StreamMetadata metadata = StreamMetadata.newBuilder()
-            .maxCount(17)
+            .maxCount(17L)
             .maxAge(Duration.ofSeconds(123321))
-            .truncateBefore(23)
+            .truncateBefore(23L)
             .cacheControl(Duration.ofSeconds(7654321))
             .aclReadRoles(asList("readRole"))
             .aclWriteRoles(asList("writeRole"))
@@ -288,9 +288,9 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         assertEquals(stream, metadataResult.stream);
         assertFalse(metadataResult.isStreamDeleted);
         assertEquals(0, metadataResult.metastreamVersion);
-        assertEquals(Integer.valueOf(17), metadataResult.streamMetadata.maxCount);
+        assertEquals(Long.valueOf(17), metadataResult.streamMetadata.maxCount);
         assertEquals(Duration.ofSeconds(123321), metadataResult.streamMetadata.maxAge);
-        assertEquals(Integer.valueOf(23), metadataResult.streamMetadata.truncateBefore);
+        assertEquals(Long.valueOf(23), metadataResult.streamMetadata.truncateBefore);
         assertEquals(Duration.ofSeconds(7654321), metadataResult.streamMetadata.cacheControl);
 
         assertNotNull(metadataResult.streamMetadata.acl);

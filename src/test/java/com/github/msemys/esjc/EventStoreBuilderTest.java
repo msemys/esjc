@@ -22,6 +22,7 @@ public class EventStoreBuilderTest {
     @Test
     public void createsSingleNodeClientFromSettings() {
         Settings settings = Settings.newBuilder()
+            .connectionName("test")
             .nodeSettings(SingleNodeSettings.newBuilder()
                 .address("localhost", 1010)
                 .build())
@@ -191,6 +192,7 @@ public class EventStoreBuilderTest {
             .build();
 
         EventStore result = EventStoreBuilder.newBuilder(settings)
+            .connectionName("test")
             .singleNodeAddress("localhost", 2020)
             .userCredentials("usr", "psw")
             .tcpSettings(tcp -> tcp.keepAlive(true).noDelay(true).sendBufferSize(11110))
@@ -199,6 +201,7 @@ public class EventStoreBuilderTest {
             .failOnNoServerResponse(true)
             .build();
 
+        assertEquals("test", result.settings().connectionName);
         assertEquals(2020, result.settings().singleNodeSettings.address.getPort());
         assertEquals("usr", result.settings().userCredentials.username);
         assertEquals("psw", result.settings().userCredentials.password);
@@ -213,6 +216,7 @@ public class EventStoreBuilderTest {
     @Test
     public void createsCustomizedClientWithoutUserCredentialsFromSettings() {
         Settings settings = Settings.newBuilder()
+            .connectionName("test")
             .nodeSettings(SingleNodeSettings.newBuilder()
                 .address("localhost", 1010)
                 .build())
@@ -253,6 +257,7 @@ public class EventStoreBuilderTest {
             .failOnNoServerResponse(true)
             .build();
 
+        assertEquals("test", result.settings().connectionName);
         assertEquals(2020, result.settings().singleNodeSettings.address.getPort());
         assertNull(result.settings().userCredentials);
         assertTrue(result.settings().tcpSettings.keepAlive);
@@ -527,6 +532,25 @@ public class EventStoreBuilderTest {
         assertEquals(Integer.MAX_VALUE, result.settings().clusterNodeSettings.maxDiscoverAttempts);
         assertEquals(Integer.MAX_VALUE, result.settings().maxOperationRetries);
         assertEquals(Integer.MAX_VALUE, result.settings().maxReconnections);
+    }
+
+    @Test
+    public void createsClientWithDefaultConnectionName() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .singleNodeAddress("localhost", 1009)
+            .build();
+
+        assertTrue(result.settings().connectionName.startsWith("ESJC-"));
+    }
+
+    @Test
+    public void createsClientWithCustomConnectionName() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .connectionName("test")
+            .singleNodeAddress("localhost", 1009)
+            .build();
+
+        assertEquals("test", result.settings().connectionName);
     }
 
     @Test

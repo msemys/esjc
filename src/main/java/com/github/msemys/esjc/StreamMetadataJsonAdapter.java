@@ -96,13 +96,13 @@ public class StreamMetadataJsonAdapter extends TypeAdapter<StreamMetadata> {
             String name = reader.nextName();
             switch (name) {
                 case MAX_COUNT:
-                    builder.maxCount(reader.nextInt());
+                    builder.maxCount(reader.nextLong());
                     break;
                 case MAX_AGE:
                     builder.maxAge(Duration.ofSeconds(reader.nextLong()));
                     break;
                 case TRUNCATE_BEFORE:
-                    builder.truncateBefore(reader.nextInt());
+                    builder.truncateBefore(reader.nextLong());
                     break;
                 case CACHE_CONTROL:
                     builder.cacheControl(Duration.ofSeconds(reader.nextLong()));

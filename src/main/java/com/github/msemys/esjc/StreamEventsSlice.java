@@ -28,7 +28,7 @@ public class StreamEventsSlice {
     /**
      * The starting point (represented as a sequence number) of the read operation.
      */
-    public final int fromEventNumber;
+    public final long fromEventNumber;
 
     /**
      * The direction of read request.
@@ -43,12 +43,12 @@ public class StreamEventsSlice {
     /**
      * The next event number that can be read.
      */
-    public final int nextEventNumber;
+    public final long nextEventNumber;
 
     /**
      * The last event number in the stream.
      */
-    public final int lastEventNumber;
+    public final long lastEventNumber;
 
     /**
      * Indicating whether or not this is the end of the stream.
@@ -57,11 +57,11 @@ public class StreamEventsSlice {
 
     public StreamEventsSlice(SliceReadStatus status,
                              String stream,
-                             int fromEventNumber,
+                             long fromEventNumber,
                              ReadDirection readDirection,
                              List<ResolvedIndexedEvent> events,
-                             int nextEventNumber,
-                             int lastEventNumber,
+                             long nextEventNumber,
+                             long lastEventNumber,
                              boolean isEndOfStream) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         this.status = status;

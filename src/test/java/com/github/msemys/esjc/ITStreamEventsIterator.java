@@ -113,7 +113,7 @@ public class ITStreamEventsIterator extends AbstractIntegrationTest {
     private static class StreamEventsIteratorWithBatchCounter extends StreamEventsIterator {
         int batchCount;
 
-        StreamEventsIteratorWithBatchCounter(int eventNumber, Function<Integer, CompletableFuture<StreamEventsSlice>> reader) {
+        StreamEventsIteratorWithBatchCounter(long eventNumber, Function<Long, CompletableFuture<StreamEventsSlice>> reader) {
             super(eventNumber, reader);
         }
 

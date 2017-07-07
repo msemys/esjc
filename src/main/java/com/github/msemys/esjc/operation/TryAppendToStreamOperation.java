@@ -21,7 +21,7 @@ public class TryAppendToStreamOperation extends AbstractOperation<WriteAttemptRe
 
     private final boolean requireMaster;
     private final String stream;
-    private final int expectedVersion;
+    private final long expectedVersion;
     private final Iterable<EventData> events;
 
     private boolean wasCommitTimeout;
@@ -29,7 +29,7 @@ public class TryAppendToStreamOperation extends AbstractOperation<WriteAttemptRe
     public TryAppendToStreamOperation(CompletableFuture<WriteAttemptResult> result,
                                       boolean requireMaster,
                                       String stream,
-                                      int expectedVersion,
+                                      long expectedVersion,
                                       Iterable<EventData> events,
                                       UserCredentials userCredentials) {
         super(result, TcpCommand.WriteEvents, TcpCommand.WriteEventsCompleted, userCredentials);
@@ -123,7 +123,7 @@ public class TryAppendToStreamOperation extends AbstractOperation<WriteAttemptRe
 
     @Override
     protected WriteAttemptResult transformResponseMessage(WriteEventsCompleted response) {
-        int nextExpectedVersion;
+        long nextExpectedVersion;
         Position position = null;
         WriteStatus status;
 

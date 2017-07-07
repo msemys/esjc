@@ -19,7 +19,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
     public void readStreamForwardRespectsMaxCount() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3L).build()).join();
 
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
@@ -35,7 +35,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
     public void readStreamBackwardRespectsMaxCount() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3L).build()).join();
 
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
@@ -51,7 +51,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
     public void afterSettingLessStrictMaxCountReadStreamForwardReadsMoreEvents() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3L).build()).join();
 
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
@@ -62,7 +62,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             slice1.events.stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(4).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(4L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -75,7 +75,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
     public void afterSettingMoreStrictMaxCountReadStreamForwardReadsLessEvents() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3L).build()).join();
 
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
@@ -86,7 +86,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             slice1.events.stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(2L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -99,7 +99,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
     public void afterSettingLessStrictMaxCountReadStreamBackwardReadsMoreEvents() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3L).build()).join();
 
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
@@ -110,7 +110,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice1.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(4).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(4L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -123,7 +123,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
     public void afterSettingMoreStrictMaxCountReadStreamBackwardReadsLessEvents() {
         final String stream = generateStreamName();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().maxCount(3L).build()).join();
 
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
@@ -134,7 +134,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice1.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(2L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);

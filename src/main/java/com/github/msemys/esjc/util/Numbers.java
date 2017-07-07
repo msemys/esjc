@@ -6,6 +6,10 @@ public class Numbers {
         return value > 0;
     }
 
+    public static boolean isPositive(long value) {
+        return value > 0;
+    }
+
     public static boolean isNegative(int value) {
         return value < 0;
     }

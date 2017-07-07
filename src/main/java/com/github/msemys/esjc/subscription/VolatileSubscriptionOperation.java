@@ -3,9 +3,9 @@ package com.github.msemys.esjc.subscription;
 import com.github.msemys.esjc.ResolvedEvent;
 import com.github.msemys.esjc.Subscription;
 import com.github.msemys.esjc.SubscriptionListener;
+import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.operation.InspectionDecision;
 import com.github.msemys.esjc.operation.InspectionResult;
-import com.github.msemys.esjc.UserCredentials;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.StreamEventAppeared;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.SubscribeToStream;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.SubscriptionConfirmation;
@@ -40,7 +40,7 @@ public class VolatileSubscriptionOperation extends AbstractSubscriptionOperation
     }
 
     @Override
-    protected VolatileSubscription createSubscription(long lastCommitPosition, Integer lastEventNumber) {
+    protected VolatileSubscription createSubscription(long lastCommitPosition, Long lastEventNumber) {
         return new VolatileSubscription(this, streamId, lastCommitPosition, lastEventNumber);
     }
 

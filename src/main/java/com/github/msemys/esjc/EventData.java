@@ -197,7 +197,7 @@ public class EventData {
          * @param stream      target stream name.
          * @return the builder reference
          */
-        public Builder linkTo(int eventNumber, String stream) {
+        public Builder linkTo(long eventNumber, String stream) {
             checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
             return type(SystemEventType.LINK_TO.value).data(eventNumber + "@" + stream);
         }

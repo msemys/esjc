@@ -263,7 +263,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
-        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9L, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 events.add(event);
@@ -310,7 +310,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
-        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9, new CatchUpSubscriptionListener() {
+        CatchUpSubscription subscription = eventstore.subscribeToStreamFrom(stream, 9L, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
                 events.add(event);

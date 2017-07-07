@@ -342,9 +342,9 @@ public interface EventStore {
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #readEvent(String, int, boolean, UserCredentials)
+     * @see #readEvent(String, long, boolean, UserCredentials)
      */
-    default CompletableFuture<EventReadResult> readEvent(String stream, int eventNumber, boolean resolveLinkTos) {
+    default CompletableFuture<EventReadResult> readEvent(String stream, long eventNumber, boolean resolveLinkTos) {
         return readEvent(stream, eventNumber, resolveLinkTos, null);
     }
 
@@ -361,7 +361,7 @@ public interface EventStore {
      * on exceptional completion.
      */
     CompletableFuture<EventReadResult> readEvent(String stream,
-                                                 int eventNumber,
+                                                 long eventNumber,
                                                  boolean resolveLinkTos,
                                                  UserCredentials userCredentials);
 
@@ -377,10 +377,10 @@ public interface EventStore {
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #readStreamEventsForward(String, int, int, boolean, UserCredentials)
+     * @see #readStreamEventsForward(String, long, int, boolean, UserCredentials)
      */
     default CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
-                                                                         int eventNumber,
+                                                                         long eventNumber,
                                                                          int maxCount,
                                                                          boolean resolveLinkTos) {
         return readStreamEventsForward(stream, eventNumber, maxCount, resolveLinkTos, null);
@@ -401,7 +401,7 @@ public interface EventStore {
      * on exceptional completion.
      */
     CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
-                                                                 int eventNumber,
+                                                                 long eventNumber,
                                                                  int maxCount,
                                                                  boolean resolveLinkTos,
                                                                  UserCredentials userCredentials);
@@ -418,10 +418,10 @@ public interface EventStore {
      * {@code get} and {@code join} can throw an exception with cause {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #readStreamEventsBackward(String, int, int, boolean, UserCredentials)
+     * @see #readStreamEventsBackward(String, long, int, boolean, UserCredentials)
      */
     default CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
-                                                                          int eventNumber,
+                                                                          long eventNumber,
                                                                           int maxCount,
                                                                           boolean resolveLinkTos) {
         return readStreamEventsBackward(stream, eventNumber, maxCount, resolveLinkTos, null);
@@ -442,7 +442,7 @@ public interface EventStore {
      * on exceptional completion.
      */
     CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
-                                                                  int eventNumber,
+                                                                  long eventNumber,
                                                                   int maxCount,
                                                                   boolean resolveLinkTos,
                                                                   UserCredentials userCredentials);
@@ -527,10 +527,10 @@ public interface EventStore {
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the stream
-     * @see #iterateStreamEventsForward(String, int, int, boolean, UserCredentials)
+     * @see #iterateStreamEventsForward(String, long, int, boolean, UserCredentials)
      */
     default Iterator<ResolvedEvent> iterateStreamEventsForward(String stream,
-                                                               int eventNumber,
+                                                               long eventNumber,
                                                                int batchSize,
                                                                boolean resolveLinkTos) {
         return iterateStreamEventsForward(stream, eventNumber, batchSize, resolveLinkTos, null);
@@ -549,7 +549,7 @@ public interface EventStore {
      * @return an iterator over the events in the stream
      */
     Iterator<ResolvedEvent> iterateStreamEventsForward(String stream,
-                                                       int eventNumber,
+                                                       long eventNumber,
                                                        int batchSize,
                                                        boolean resolveLinkTos,
                                                        UserCredentials userCredentials);
@@ -564,10 +564,10 @@ public interface EventStore {
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return an iterator over the events in the stream
-     * @see #iterateStreamEventsBackward(String, int, int, boolean, UserCredentials)
+     * @see #iterateStreamEventsBackward(String, long, int, boolean, UserCredentials)
      */
     default Iterator<ResolvedEvent> iterateStreamEventsBackward(String stream,
-                                                                int eventNumber,
+                                                                long eventNumber,
                                                                 int batchSize,
                                                                 boolean resolveLinkTos) {
         return iterateStreamEventsBackward(stream, eventNumber, batchSize, resolveLinkTos, null);
@@ -586,7 +586,7 @@ public interface EventStore {
      * @return an iterator over the events in the stream
      */
     Iterator<ResolvedEvent> iterateStreamEventsBackward(String stream,
-                                                        int eventNumber,
+                                                        long eventNumber,
                                                         int batchSize,
                                                         boolean resolveLinkTos,
                                                         UserCredentials userCredentials);
@@ -667,10 +667,10 @@ public interface EventStore {
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a sequential {@code Stream} over the events in the stream
-     * @see #streamEventsForward(String, int, int, boolean, UserCredentials)
+     * @see #streamEventsForward(String, long, int, boolean, UserCredentials)
      */
     default Stream<ResolvedEvent> streamEventsForward(String stream,
-                                                      int eventNumber,
+                                                      long eventNumber,
                                                       int batchSize,
                                                       boolean resolveLinkTos) {
         return streamEventsForward(stream, eventNumber, batchSize, resolveLinkTos, null);
@@ -689,7 +689,7 @@ public interface EventStore {
      * @return a sequential {@code Stream} over the events in the stream
      */
     Stream<ResolvedEvent> streamEventsForward(String stream,
-                                              int eventNumber,
+                                              long eventNumber,
                                               int batchSize,
                                               boolean resolveLinkTos,
                                               UserCredentials userCredentials);
@@ -704,10 +704,10 @@ public interface EventStore {
      * @param batchSize      the number of events to return per batch, allowed range [1..4096].
      * @param resolveLinkTos whether to resolve link events automatically.
      * @return a sequential {@code Stream} over the events in the stream
-     * @see #streamEventsBackward(String, int, int, boolean, UserCredentials)
+     * @see #streamEventsBackward(String, long, int, boolean, UserCredentials)
      */
     default Stream<ResolvedEvent> streamEventsBackward(String stream,
-                                                       int eventNumber,
+                                                       long eventNumber,
                                                        int batchSize,
                                                        boolean resolveLinkTos) {
         return streamEventsBackward(stream, eventNumber, batchSize, resolveLinkTos, null);
@@ -726,7 +726,7 @@ public interface EventStore {
      * @return a sequential {@code Stream} over the events in the stream
      */
     Stream<ResolvedEvent> streamEventsBackward(String stream,
-                                               int eventNumber,
+                                               long eventNumber,
                                                int batchSize,
                                                boolean resolveLinkTos,
                                                UserCredentials userCredentials);
@@ -887,10 +887,10 @@ public interface EventStore {
      * @param settings    subscription settings.
      * @param listener    subscription listener.
      * @return catch-up subscription
-     * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
+     * @see #subscribeToStreamFrom(String, Long, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     default CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                      Integer eventNumber,
+                                                      Long eventNumber,
                                                       CatchUpSubscriptionSettings settings,
                                                       CatchUpSubscriptionListener listener) {
         return subscribeToStreamFrom(stream, eventNumber, settings, listener, null);
@@ -916,10 +916,10 @@ public interface EventStore {
      * @param eventNumber the event number (exclusive) from which to start (use {@code null} to receive all events).
      * @param listener    subscription listener.
      * @return catch-up subscription
-     * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
+     * @see #subscribeToStreamFrom(String, Long, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     default CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                      Integer eventNumber,
+                                                      Long eventNumber,
                                                       CatchUpSubscriptionListener listener) {
         return subscribeToStreamFrom(stream, eventNumber, CatchUpSubscriptionSettings.DEFAULT, listener, null);
     }
@@ -944,10 +944,10 @@ public interface EventStore {
      * @param listener        subscription listener.
      * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
      * @return catch-up subscription
-     * @see #subscribeToStreamFrom(String, Integer, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
+     * @see #subscribeToStreamFrom(String, Long, CatchUpSubscriptionSettings, CatchUpSubscriptionListener, UserCredentials)
      */
     default CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                      Integer eventNumber,
+                                                      Long eventNumber,
                                                       CatchUpSubscriptionListener listener,
                                                       UserCredentials userCredentials) {
         return subscribeToStreamFrom(stream, eventNumber, CatchUpSubscriptionSettings.DEFAULT, listener, userCredentials);
@@ -976,7 +976,7 @@ public interface EventStore {
      * @return catch-up subscription
      */
     CatchUpSubscription subscribeToStreamFrom(String stream,
-                                              Integer eventNumber,
+                                              Long eventNumber,
                                               CatchUpSubscriptionSettings settings,
                                               CatchUpSubscriptionListener listener,
                                               UserCredentials userCredentials);

@@ -26,7 +26,7 @@ public class ITReadAllEventsForwardWithLinkToPassedMaxCount extends AbstractInte
 
         eventstore.setStreamMetadata(deletedStreamName, ExpectedVersion.ANY,
             StreamMetadata.newBuilder()
-                .maxCount(2)
+                .maxCount(2L)
                 .build()
         ).join();
 

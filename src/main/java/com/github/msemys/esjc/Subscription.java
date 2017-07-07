@@ -20,9 +20,9 @@ public abstract class Subscription implements AutoCloseable {
     /**
      * The last event number seen on the subscription (if this is a subscription to a single stream).
      */
-    public final Integer lastEventNumber;
+    public final Long lastEventNumber;
 
-    public Subscription(String streamId, long lastCommitPosition, Integer lastEventNumber) {
+    public Subscription(String streamId, long lastCommitPosition, Long lastEventNumber) {
         this.streamId = streamId;
         this.lastCommitPosition = lastCommitPosition;
         this.lastEventNumber = lastEventNumber;

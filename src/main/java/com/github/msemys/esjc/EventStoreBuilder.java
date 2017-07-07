@@ -51,6 +51,7 @@ public class EventStoreBuilder {
 
         // populate settings builder
         Settings.Builder settingsBuilder = Settings.newBuilder()
+            .connectionName(settings.connectionName)
             .sslSettings(settings.sslSettings)
             .reconnectionDelay(settings.reconnectionDelay)
             .heartbeatInterval(settings.heartbeatInterval)
@@ -229,6 +230,17 @@ public class EventStoreBuilder {
      */
     public EventStoreBuilder noSslConnection() {
         settingsBuilder.sslSettings(SslSettings.noSsl());
+        return this;
+    }
+
+    /**
+     * Sets client connection name.
+     *
+     * @param connectionName client connection name.
+     * @return the builder reference
+     */
+    public EventStoreBuilder connectionName(String connectionName) {
+        settingsBuilder.connectionName(connectionName);
         return this;
     }
 

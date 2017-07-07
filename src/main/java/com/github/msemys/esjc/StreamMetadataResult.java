@@ -22,7 +22,7 @@ public class StreamMetadataResult {
     /**
      * The version of the metadata format.
      */
-    public final int metastreamVersion;
+    public final long metastreamVersion;
 
     /**
      * User-specified stream metadata.
@@ -37,7 +37,7 @@ public class StreamMetadataResult {
      * @param metastreamVersion the version of the metadata format.
      * @param streamMetadata    user-specified stream metadata.
      */
-    public StreamMetadataResult(String stream, boolean isStreamDeleted, int metastreamVersion, StreamMetadata streamMetadata) {
+    public StreamMetadataResult(String stream, boolean isStreamDeleted, long metastreamVersion, StreamMetadata streamMetadata) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         this.stream = stream;
         this.isStreamDeleted = isStreamDeleted;

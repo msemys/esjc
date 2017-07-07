@@ -8,7 +8,7 @@ public class WriteResult {
     /**
      * The next expected version for the stream.
      */
-    public final int nextExpectedVersion;
+    public final long nextExpectedVersion;
 
     /**
      * The position of the write in the log.
@@ -21,7 +21,7 @@ public class WriteResult {
      * @param nextExpectedVersion the next expected version for the stream.
      * @param logPosition         the position of the write in the log.
      */
-    public WriteResult(int nextExpectedVersion, Position logPosition) {
+    public WriteResult(long nextExpectedVersion, Position logPosition) {
         this.nextExpectedVersion = nextExpectedVersion;
         this.logPosition = logPosition;
     }

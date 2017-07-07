@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractIntegrationTest {
 
-    private static final Integer DELETED_STREAM_EVENT_NUMBER = Integer.MAX_VALUE;
+    private static final Long DELETED_STREAM_EVENT_NUMBER = Long.MAX_VALUE;
 
     @Override
     protected EventStore createEventStore() {

@@ -24,7 +24,7 @@ public class AppendToStreamOperation extends AbstractOperation<WriteResult, Writ
 
     private final boolean requireMaster;
     private final String stream;
-    private final int expectedVersion;
+    private final long expectedVersion;
     private final Iterable<EventData> events;
 
     private boolean wasCommitTimeout;
@@ -32,7 +32,7 @@ public class AppendToStreamOperation extends AbstractOperation<WriteResult, Writ
     public AppendToStreamOperation(CompletableFuture<WriteResult> result,
                                    boolean requireMaster,
                                    String stream,
-                                   int expectedVersion,
+                                   long expectedVersion,
                                    Iterable<EventData> events,
                                    UserCredentials userCredentials) {
         super(result, TcpCommand.WriteEvents, TcpCommand.WriteEventsCompleted, userCredentials);

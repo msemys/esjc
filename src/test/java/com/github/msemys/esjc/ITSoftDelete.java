@@ -50,8 +50,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(3, slice.events.size());
         assertArrayEquals(events.stream().map(e -> e.eventId).toArray(UUID[]::new),
             slice.events.stream().map(e -> e.originalEvent().eventId).toArray(UUID[]::new));
-        assertArrayEquals(new Integer[]{2, 3, 4},
-            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Integer[]::new));
+        assertArrayEquals(new Long[]{2L, 3L, 4L},
+            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Long[]::new));
 
         StreamMetadataResult streamMetadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(2, streamMetadataResult.streamMetadata.truncateBefore.intValue());
@@ -75,8 +75,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(3, slice.events.size());
         assertArrayEquals(events.stream().map(e -> e.eventId).toArray(UUID[]::new),
             slice.events.stream().map(e -> e.originalEvent().eventId).toArray(UUID[]::new));
-        assertArrayEquals(new Integer[]{2, 3, 4},
-            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Integer[]::new));
+        assertArrayEquals(new Long[]{2L, 3L, 4L},
+            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Long[]::new));
 
         StreamMetadataResult streamMetadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(2, streamMetadataResult.streamMetadata.truncateBefore.intValue());
@@ -100,8 +100,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(3, slice.events.size());
         assertArrayEquals(events.stream().map(e -> e.eventId).toArray(UUID[]::new),
             slice.events.stream().map(e -> e.originalEvent().eventId).toArray(UUID[]::new));
-        assertArrayEquals(new Integer[]{2, 3, 4},
-            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Integer[]::new));
+        assertArrayEquals(new Long[]{2L, 3L, 4L},
+            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Long[]::new));
 
         StreamMetadataResult streamMetadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(2, streamMetadataResult.streamMetadata.truncateBefore.intValue());
@@ -116,8 +116,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         WriteResult writeResult = eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM,
             StreamMetadata.newBuilder()
-                .truncateBefore(Integer.MAX_VALUE)
-                .maxCount(100)
+                .truncateBefore(Long.MAX_VALUE)
+                .maxCount(100L)
                 .aclDeleteRoles(asList("some-role"))
                 .customProperty("key1", true)
                 .customProperty("key2", 17)
@@ -135,8 +135,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(3, slice.events.size());
         assertArrayEquals(events.stream().map(e -> e.eventId).toArray(UUID[]::new),
             slice.events.stream().map(e -> e.originalEvent().eventId).toArray(UUID[]::new));
-        assertArrayEquals(new Integer[]{2, 3, 4},
-            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Integer[]::new));
+        assertArrayEquals(new Long[]{2L, 3L, 4L},
+            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Long[]::new));
 
         StreamMetadataResult streamMetadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(1, streamMetadataResult.metastreamVersion);
@@ -195,8 +195,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(3, slice.events.size());
         assertArrayEquals(events.stream().map(e -> e.eventId).toArray(UUID[]::new),
             slice.events.stream().map(e -> e.originalEvent().eventId).toArray(UUID[]::new));
-        assertArrayEquals(new Integer[]{2, 3, 4},
-            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Integer[]::new));
+        assertArrayEquals(new Long[]{2L, 3L, 4L},
+            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Long[]::new));
 
         StreamMetadataResult streamMetadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(2, streamMetadataResult.streamMetadata.truncateBefore.intValue());
@@ -222,8 +222,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(5, slice.events.size());
         assertArrayEquals(Stream.concat(events1.stream(), events2.stream()).map(e -> e.eventId).toArray(UUID[]::new),
             slice.events.stream().map(e -> e.originalEvent().eventId).toArray(UUID[]::new));
-        assertArrayEquals(new Integer[]{2, 3, 4, 5, 6},
-            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Integer[]::new));
+        assertArrayEquals(new Long[]{2L, 3L, 4L, 5L, 6L},
+            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Long[]::new));
 
         StreamMetadataResult streamMetadataResult = eventstore.getStreamMetadata(stream).join();
         assertEquals(2, streamMetadataResult.streamMetadata.truncateBefore.intValue());
@@ -238,7 +238,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.setStreamMetadata(stream, ExpectedVersion.of(0),
             StreamMetadata.newBuilder()
-                .maxCount(100)
+                .maxCount(100L)
                 .aclDeleteRoles(asList("some-role"))
                 .customProperty("key1", true)
                 .customProperty("key2", 17)
@@ -271,7 +271,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.setStreamMetadata(stream, ExpectedVersion.of(0),
             StreamMetadata.newBuilder()
-                .maxCount(100)
+                .maxCount(100L)
                 .aclDeleteRoles(asList("some-role"))
                 .customProperty("key1", true)
                 .customProperty("key2", 17)
@@ -326,8 +326,8 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(SliceReadStatus.Success, slice.status);
         assertEquals(1, slice.lastEventNumber);
         assertEquals(2, slice.events.size());
-        assertArrayEquals(new Integer[]{0, 1},
-            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Integer[]::new));
+        assertArrayEquals(new Long[]{0L, 1L},
+            slice.events.stream().map(e -> e.originalEvent().eventNumber).toArray(Long[]::new));
 
         RawStreamMetadataResult streamMetadataResult = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(1, streamMetadataResult.metastreamVersion);

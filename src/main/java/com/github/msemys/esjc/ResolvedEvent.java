@@ -80,7 +80,7 @@ public class ResolvedEvent {
      * @return event number
      * @see #originalEvent()
      */
-    public int originalEventNumber() {
+    public long originalEventNumber() {
         return originalEvent().eventNumber;
     }
 

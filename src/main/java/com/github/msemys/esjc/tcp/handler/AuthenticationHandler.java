@@ -94,6 +94,8 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<TcpPackag
         if (completionConsumer != null) {
             completionConsumer.accept(status);
         }
+
+        ctx.fireUserEventTriggered(new AuthenticationEvent(status));
     }
 
     private void cancelTimeoutTask() {

@@ -15,13 +15,13 @@ public class DeleteStreamOperation extends AbstractOperation<DeleteResult, Delet
 
     private final boolean requireMaster;
     private final String stream;
-    private final int expectedVersion;
+    private final long expectedVersion;
     private final boolean hardDelete;
 
     public DeleteStreamOperation(CompletableFuture<DeleteResult> result,
                                  boolean requireMaster,
                                  String stream,
-                                 int expectedVersion,
+                                 long expectedVersion,
                                  boolean hardDelete,
                                  UserCredentials userCredentials) {
         super(result, TcpCommand.DeleteStream, TcpCommand.DeleteStreamCompleted, userCredentials);

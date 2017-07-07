@@ -12,7 +12,7 @@ public class PersistentSubscriptionChannel extends Subscription implements Persi
     public PersistentSubscriptionChannel(PersistentSubscriptionProtocol protocol,
                                          String streamId,
                                          long lastCommitPosition,
-                                         Integer lastEventNumber) {
+                                         Long lastEventNumber) {
         super(streamId, lastCommitPosition, lastEventNumber);
         this.protocol = protocol;
     }

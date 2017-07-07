@@ -29,7 +29,7 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
                                   boolean resolveLinkTos,
                                   UserCredentials userCredentials,
                                   Long lastCommitPosition,
-                                  Integer lastEventNumber) throws Exception {
+                                  Long lastEventNumber) throws Exception {
         boolean done;
 
         do {
@@ -81,7 +81,7 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
     }
 
     @Override
-    public int lastProcessedEventNumber() {
+    public long lastProcessedEventNumber() {
         throw new UnsupportedOperationException("The last processed event number is not available to ALL stream catch-up subscriptions.");
     }
 }

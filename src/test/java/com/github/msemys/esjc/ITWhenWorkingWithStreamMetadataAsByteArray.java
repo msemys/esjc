@@ -154,7 +154,7 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
         RawStreamMetadataResult metadata = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata.stream);
         assertTrue(metadata.isStreamDeleted);
-        assertEquals(Integer.MAX_VALUE, metadata.metastreamVersion);
+        assertEquals(Long.MAX_VALUE, metadata.metastreamVersion);
         assertArrayEquals(EmptyArrays.EMPTY_BYTES, metadata.streamMetadata);
     }
 

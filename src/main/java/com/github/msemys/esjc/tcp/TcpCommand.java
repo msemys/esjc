@@ -74,7 +74,9 @@ public enum TcpCommand {
     NotHandled(0xF1),
     Authenticate(0xF2),
     Authenticated(0xF3),
-    NotAuthenticated(0xF4);
+    NotAuthenticated(0xF4),
+    IdentifyClient(0xF5),
+    ClientIdentified(0xF6);
 
     public final byte value;
 

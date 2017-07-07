@@ -24,6 +24,8 @@ import com.github.msemys.esjc.tcp.TcpPackageEncoder;
 import com.github.msemys.esjc.tcp.handler.AuthenticationHandler;
 import com.github.msemys.esjc.tcp.handler.AuthenticationHandler.AuthenticationStatus;
 import com.github.msemys.esjc.tcp.handler.HeartbeatHandler;
+import com.github.msemys.esjc.tcp.handler.IdentificationHandler;
+import com.github.msemys.esjc.tcp.handler.IdentificationHandler.IdentificationStatus;
 import com.github.msemys.esjc.tcp.handler.OperationHandler;
 import com.github.msemys.esjc.transaction.TransactionManager;
 import com.github.msemys.esjc.util.Strings;
@@ -72,7 +74,7 @@ public class EventStoreTcp implements EventStore {
 
     private enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
 
-    private enum ConnectingPhase {INVALID, RECONNECTING, ENDPOINT_DISCOVERY, CONNECTION_ESTABLISHING, AUTHENTICATION, CONNECTED}
+    private enum ConnectingPhase {INVALID, RECONNECTING, ENDPOINT_DISCOVERY, CONNECTION_ESTABLISHING, AUTHENTICATION, IDENTIFICATION, CONNECTED}
 
     private final EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("esio"));
     private final Bootstrap bootstrap;
@@ -135,6 +137,8 @@ public class EventStoreTcp implements EventStore {
                     pipeline.addLast("heartbeat-handler", new HeartbeatHandler(settings.heartbeatTimeout));
                     pipeline.addLast("authentication-handler", new AuthenticationHandler(settings.userCredentials, settings.operationTimeout)
                         .whenComplete(EventStoreTcp.this::onAuthenticationCompleted));
+                    pipeline.addLast("identification-handler", new IdentificationHandler(settings.connectionName, settings.operationTimeout)
+                        .whenComplete(EventStoreTcp.this::onIdentificationCompleted));
                     pipeline.addLast("operation-handler", new OperationHandler(operationManager, subscriptionManager)
                         .whenBadRequest(EventStoreTcp.this::onBadRequest)
                         .whenChannelError(EventStoreTcp.this::onChannelError)
@@ -226,7 +230,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CompletableFuture<EventReadResult> readEvent(String stream,
-                                                        int eventNumber,
+                                                        long eventNumber,
                                                         boolean resolveLinkTos,
                                                         UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
@@ -239,7 +243,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CompletableFuture<StreamEventsSlice> readStreamEventsForward(String stream,
-                                                                        int eventNumber,
+                                                                        long eventNumber,
                                                                         int maxCount,
                                                                         boolean resolveLinkTos,
                                                                         UserCredentials userCredentials) {
@@ -254,7 +258,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CompletableFuture<StreamEventsSlice> readStreamEventsBackward(String stream,
-                                                                         int eventNumber,
+                                                                         long eventNumber,
                                                                          int maxCount,
                                                                          boolean resolveLinkTos,
                                                                          UserCredentials userCredentials) {
@@ -292,7 +296,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public Iterator<ResolvedEvent> iterateStreamEventsForward(String stream,
-                                                              int eventNumber,
+                                                              long eventNumber,
                                                               int batchSize,
                                                               boolean resolveLinkTos,
                                                               UserCredentials userCredentials) {
@@ -304,7 +308,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public Iterator<ResolvedEvent> iterateStreamEventsBackward(String stream,
-                                                               int eventNumber,
+                                                               long eventNumber,
                                                                int batchSize,
                                                                boolean resolveLinkTos,
                                                                UserCredentials userCredentials) {
@@ -333,7 +337,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public Stream<ResolvedEvent> streamEventsForward(String stream,
-                                                     int eventNumber,
+                                                     long eventNumber,
                                                      int batchSize,
                                                      boolean resolveLinkTos,
                                                      UserCredentials userCredentials) {
@@ -343,7 +347,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public Stream<ResolvedEvent> streamEventsBackward(String stream,
-                                                      int eventNumber,
+                                                      long eventNumber,
                                                       int batchSize,
                                                       boolean resolveLinkTos,
                                                       UserCredentials userCredentials) {
@@ -395,7 +399,7 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CatchUpSubscription subscribeToStreamFrom(String stream,
-                                                     Integer eventNumber,
+                                                     Long eventNumber,
                                                      CatchUpSubscriptionSettings settings,
                                                      CatchUpSubscriptionListener listener,
                                                      UserCredentials userCredentials) {
@@ -565,7 +569,7 @@ public class EventStoreTcp implements EventStore {
                         result.complete(new RawStreamMetadataResult(stream, false, -1, EMPTY_BYTES));
                         break;
                     case StreamDeleted:
-                        result.complete(new RawStreamMetadataResult(stream, true, Integer.MAX_VALUE, EMPTY_BYTES));
+                        result.complete(new RawStreamMetadataResult(stream, true, Long.MAX_VALUE, EMPTY_BYTES));
                         break;
                     default:
                         result.completeExceptionally(new IllegalStateException("Unexpected ReadEventResult: " + r.status));
@@ -663,9 +667,15 @@ public class EventStoreTcp implements EventStore {
 
     private void onAuthenticationCompleted(AuthenticationStatus status) {
         if (status == AuthenticationStatus.SUCCESS || status == AuthenticationStatus.IGNORED) {
-            gotoConnectedPhase();
+            gotoIdentificationPhase();
         } else {
             fireEvent(Events.authenticationFailed());
+        }
+    }
+
+    private void onIdentificationCompleted(IdentificationStatus status) {
+        if (status == IdentificationStatus.SUCCESS) {
+            gotoConnectedPhase();
         }
     }
 
@@ -710,6 +720,11 @@ public class EventStoreTcp implements EventStore {
             subscriptionManager.checkTimeoutsAndRetry(connection);
             lastOperationTimeoutCheck.update();
         }
+    }
+
+    private void gotoIdentificationPhase() {
+        checkNotNull(connection, "connection is null");
+        connectingPhase = ConnectingPhase.IDENTIFICATION;
     }
 
     private void gotoConnectedPhase() {

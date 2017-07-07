@@ -21,9 +21,9 @@ public class StreamMetadataTest {
     @Test
     public void duplicatedStreamMetadataShouldBeEqual() {
         StreamMetadata streamMetadata = StreamMetadata.newBuilder()
-            .maxCount(19)
+            .maxCount(19L)
             .maxAge(Duration.ofSeconds(82))
-            .truncateBefore(8)
+            .truncateBefore(8L)
             .cacheControl(Duration.ofSeconds(17))
             .aclReadRoles(asList("eric", "kyle", "stan", "kenny"))
             .aclWriteRoles(asList("butters"))
@@ -61,9 +61,9 @@ public class StreamMetadataTest {
     @Test
     public void populatedStreamMetadataBuilderShouldBeMutable() {
         StreamMetadata streamMetadata = StreamMetadata.newBuilder()
-            .maxCount(19)
+            .maxCount(19L)
             .maxAge(Duration.ofSeconds(82))
-            .truncateBefore(8)
+            .truncateBefore(8L)
             .cacheControl(Duration.ofSeconds(17))
             .aclReadRoles(asList("eric", "kyle", "stan", "kenny"))
             .aclWriteRoles(asList("butters"))
@@ -81,9 +81,9 @@ public class StreamMetadataTest {
             .build();
 
         StreamMetadata expectedStreamMetadata = StreamMetadata.newBuilder()
-            .maxCount(19)
+            .maxCount(19L)
             .maxAge(Duration.ofSeconds(17))
-            .truncateBefore(8)
+            .truncateBefore(8L)
             .cacheControl(Duration.ofDays(82))
             .aclReadRoles(asList("foo"))
             .aclWriteRoles(asList("bar"))
@@ -173,7 +173,7 @@ public class StreamMetadataTest {
     @Test
     public void shouldRemoveAcl() {
         StreamMetadata streamMetadata = StreamMetadata.newBuilder()
-            .maxCount(123)
+            .maxCount(123L)
             .aclReadRoles(asList("eric", "kyle", "stan", "kenny"))
             .aclWriteRoles(asList("butters"))
             .aclDeleteRoles(asList("$admins"))
@@ -183,7 +183,7 @@ public class StreamMetadataTest {
             .build();
 
         StreamMetadata expectedStreamMetadata = StreamMetadata.newBuilder()
-            .maxCount(123)
+            .maxCount(123L)
             .customProperty("customStringArray", "a", "b", "c", "d")
             .customProperty("customIntArray", 1, 2, 3, 4)
             .build();
@@ -199,9 +199,9 @@ public class StreamMetadataTest {
     @Test
     public void findsCustomProperties() {
         StreamMetadata streamMetadata = StreamMetadata.newBuilder()
-            .maxCount(19)
+            .maxCount(19L)
             .maxAge(Duration.ofSeconds(17))
-            .truncateBefore(8)
+            .truncateBefore(8L)
             .cacheControl(Duration.ofDays(82))
             .customProperty("customString", "a string")
             .customProperty("customInt", 123)

@@ -74,7 +74,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
 
     protected abstract MessageLite createSubscribeMessage();
 
-    protected abstract T createSubscription(long lastCommitPosition, Integer lastEventNumber);
+    protected abstract T createSubscription(long lastCommitPosition, Long lastEventNumber);
 
     protected abstract boolean inspect(TcpPackage tcpPackage, InspectionResult.Builder builder);
 
@@ -232,7 +232,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
         drop(SubscriptionDropReason.UserInitiated, null, connectionSupplier.get());
     }
 
-    protected void confirmSubscription(long lastCommitPosition, Integer lastEventNumber) {
+    protected void confirmSubscription(long lastCommitPosition, Long lastEventNumber) {
         checkArgument(lastCommitPosition >= -1, "Invalid lastCommitPosition %d on subscription confirmation.", lastCommitPosition);
         checkState(subscription == null, "Double confirmation of subscription.");
 

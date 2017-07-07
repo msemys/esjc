@@ -90,7 +90,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                                            boolean resolveLinkTos,
                                            UserCredentials userCredentials,
                                            Long lastCommitPosition,
-                                           Integer lastEventNumber) throws Exception;
+                                           Long lastEventNumber) throws Exception;
 
     protected abstract void tryProcess(ResolvedEvent event);
 
@@ -291,7 +291,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
      *
      * @return event number
      */
-    public abstract int lastProcessedEventNumber();
+    public abstract long lastProcessedEventNumber();
 
     /**
      * The last position processed on the subscription.

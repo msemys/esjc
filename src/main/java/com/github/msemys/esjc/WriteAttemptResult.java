@@ -17,7 +17,7 @@ public class WriteAttemptResult extends WriteResult {
      * @param logPosition         the position of the write in the log.
      * @param status              the status of the write operation.
      */
-    public WriteAttemptResult(int nextExpectedVersion, Position logPosition, WriteStatus status) {
+    public WriteAttemptResult(long nextExpectedVersion, Position logPosition, WriteStatus status) {
         super(nextExpectedVersion, logPosition);
         this.status = status;
     }

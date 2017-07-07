@@ -13,12 +13,12 @@ public class Projection {
     /**
      * Projection version
      */
-    public final int version;
+    public final long version;
 
     /**
      * The epoch
      */
-    public final int epoch;
+    public final long epoch;
 
     /**
      * Projection effective name
@@ -78,7 +78,7 @@ public class Projection {
     /**
      * The number of events processed after restart
      */
-    public final int eventsProcessedAfterRestart;
+    public final long eventsProcessedAfterRestart;
 
     /**
      * Projection status URL
@@ -118,7 +118,7 @@ public class Projection {
     /**
      * The number of buffered events
      */
-    public final int bufferedEvents;
+    public final long bufferedEvents;
 
     /**
      * The number of write pending events before checkpoint
@@ -131,8 +131,8 @@ public class Projection {
     public final int writePendingEventsAfterCheckpoint;
 
     public Projection(long coreProcessingTime,
-                      int version,
-                      int epoch,
+                      long version,
+                      long epoch,
                       String effectiveName,
                       int writesInProgress,
                       int readsInProgress,
@@ -144,7 +144,7 @@ public class Projection {
                       String position,
                       float progress,
                       String lastCheckpoint,
-                      int eventsProcessedAfterRestart,
+                      long eventsProcessedAfterRestart,
                       String statusUrl,
                       String stateUrl,
                       String resultUrl,
@@ -152,7 +152,7 @@ public class Projection {
                       String enableCommandUrl,
                       String disableCommandUrl,
                       String checkpointStatus,
-                      int bufferedEvents,
+                      long bufferedEvents,
                       int writePendingEventsBeforeCheckpoint,
                       int writePendingEventsAfterCheckpoint) {
         this.coreProcessingTime = coreProcessingTime;

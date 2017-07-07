@@ -27,7 +27,7 @@ public class RecordedEvent {
     /**
      * The number of this event in the stream.
      */
-    public final int eventNumber;
+    public final long eventNumber;
 
     /**
      * The type of event.

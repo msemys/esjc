@@ -12,9 +12,9 @@ public class StreamMetadataJsonAdapterTest {
     @Test
     public void serializesWithAcl() {
         StreamMetadata streamMetadata = StreamMetadata.newBuilder()
-            .maxCount(19)
+            .maxCount(19L)
             .maxAge(Duration.ofSeconds(82))
-            .truncateBefore(8)
+            .truncateBefore(8L)
             .cacheControl(Duration.ofSeconds(17))
             .aclReadRoles(asList("eric", "kyle", "stan", "kenny"))
             .aclWriteRoles(asList("butters"))
@@ -39,7 +39,7 @@ public class StreamMetadataJsonAdapterTest {
     public void serializesWithCustomProperties() {
         StreamMetadata streamMetadata = StreamMetadata.newBuilder()
             .maxAge(Duration.ofSeconds(2))
-            .truncateBefore(17)
+            .truncateBefore(17L)
             .customProperty("customString", "a string")
             .customProperty("customInt", -179)
             .customProperty("customDouble", 1.7)
@@ -101,9 +101,9 @@ public class StreamMetadataJsonAdapterTest {
             "\"$mr\":[\"victoria\",\"mackey\"]," +
             "\"$mw\":\"randy\"}}");
 
-        assertEquals(new Integer(19), streamMetadata.maxCount);
+        assertEquals(Long.valueOf(19), streamMetadata.maxCount);
         assertEquals(Duration.ofSeconds(82), streamMetadata.maxAge);
-        assertEquals(new Integer(8), streamMetadata.truncateBefore);
+        assertEquals(Long.valueOf(8), streamMetadata.truncateBefore);
         assertEquals(Duration.ofSeconds(17), streamMetadata.cacheControl);
         assertNotNull(streamMetadata.acl);
         assertNotNull(streamMetadata.acl.readRoles);
@@ -141,7 +141,7 @@ public class StreamMetadataJsonAdapterTest {
 
         assertNull(streamMetadata.maxCount);
         assertEquals(Duration.ofSeconds(2), streamMetadata.maxAge);
-        assertEquals(new Integer(17), streamMetadata.truncateBefore);
+        assertEquals(Long.valueOf(17), streamMetadata.truncateBefore);
         assertNull(streamMetadata.cacheControl);
         assertNull(streamMetadata.acl);
         assertNotNull(streamMetadata.customProperties);

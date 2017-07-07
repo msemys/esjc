@@ -9,9 +9,9 @@ import static com.github.msemys.esjc.util.Preconditions.checkState;
 /**
  * Stream events spliterator.
  */
-public class StreamEventsSpliterator extends AbstractEventsSpliterator<Integer, StreamEventsSlice> {
+public class StreamEventsSpliterator extends AbstractEventsSpliterator<Long, StreamEventsSlice> {
 
-    StreamEventsSpliterator(int eventNumber, Function<Integer, CompletableFuture<StreamEventsSlice>> reader) {
+    StreamEventsSpliterator(long eventNumber, Function<Long, CompletableFuture<StreamEventsSlice>> reader) {
         super(eventNumber, reader);
     }
 
@@ -22,7 +22,7 @@ public class StreamEventsSpliterator extends AbstractEventsSpliterator<Integer, 
     }
 
     @Override
-    protected Integer getNextCursor(StreamEventsSlice slice) {
+    protected Long getNextCursor(StreamEventsSlice slice) {
         return slice.nextEventNumber;
     }
 

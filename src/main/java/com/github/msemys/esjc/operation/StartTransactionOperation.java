@@ -14,13 +14,13 @@ public class StartTransactionOperation extends AbstractOperation<Transaction, Tr
 
     private final boolean requireMaster;
     private final String stream;
-    private final int expectedVersion;
+    private final long expectedVersion;
     private final TransactionManager transactionManager;
 
     public StartTransactionOperation(CompletableFuture<Transaction> result,
                                      boolean requireMaster,
                                      String stream,
-                                     int expectedVersion,
+                                     long expectedVersion,
                                      TransactionManager transactionManager,
                                      UserCredentials userCredentials) {
         super(result, TcpCommand.TransactionStart, TcpCommand.TransactionStartCompleted, userCredentials);

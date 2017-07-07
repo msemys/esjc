@@ -26,7 +26,7 @@ public class PersistentSubscriptionSettings {
     /**
      * The event number from which to start.
      */
-    public final int startFrom;
+    public final long startFrom;
 
     /**
      * Whether or not in depth latency statistics should be tracked on this subscription.
@@ -135,7 +135,7 @@ public class PersistentSubscriptionSettings {
      */
     public static class Builder {
         private Boolean resolveLinkTos;
-        private Integer startFrom;
+        private Long startFrom;
         private Boolean timingStatistics;
         private Duration messageTimeout;
         private Integer readBatchSize;
@@ -183,7 +183,7 @@ public class PersistentSubscriptionSettings {
          * @param startFrom the event number from which to start.
          * @return the builder reference
          */
-        public Builder startFrom(int startFrom) {
+        public Builder startFrom(long startFrom) {
             this.startFrom = startFrom;
             return this;
         }

@@ -39,7 +39,7 @@ public class StreamMetadata {
     /**
      * The maximum number of events allowed in the stream.
      */
-    public final Integer maxCount;
+    public final Long maxCount;
 
     /**
      * The maximum age of events allowed in the stream.
@@ -50,7 +50,7 @@ public class StreamMetadata {
      * The event number from which previous events can be scavenged.
      * This is used to implement soft-deletion of streams.
      */
-    public final Integer truncateBefore;
+    public final Long truncateBefore;
 
     /**
      * The amount of time for which the stream head is cachable.
@@ -189,9 +189,9 @@ public class StreamMetadata {
      * Stream metadata builder.
      */
     public static class Builder {
-        private Integer maxCount;
+        private Long maxCount;
         private Duration maxAge;
-        private Integer truncateBefore;
+        private Long truncateBefore;
         private Duration cacheControl;
         private StreamAcl.Builder aclBuilder;
         private List<Property> customProperties = new ArrayList<>();
@@ -205,7 +205,7 @@ public class StreamMetadata {
          * @param maxCount the maximum number of events allowed in the stream.
          * @return the builder reference
          */
-        public Builder maxCount(Integer maxCount) {
+        public Builder maxCount(Long maxCount) {
             this.maxCount = maxCount;
             return this;
         }
@@ -227,7 +227,7 @@ public class StreamMetadata {
          * @param truncateBefore the event number from which previous events can be scavenged.
          * @return the builder reference
          */
-        public Builder truncateBefore(Integer truncateBefore) {
+        public Builder truncateBefore(Long truncateBefore) {
             this.truncateBefore = truncateBefore;
             return this;
         }

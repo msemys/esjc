@@ -17,14 +17,14 @@ import static com.github.msemys.esjc.util.Strings.defaultIfEmpty;
 public class ReadStreamEventsForwardOperation extends AbstractOperation<StreamEventsSlice, ReadStreamEventsCompleted> {
 
     private final String stream;
-    private final int fromEventNumber;
+    private final long fromEventNumber;
     private final int maxCount;
     private final boolean resolveLinkTos;
     private final boolean requireMaster;
 
     public ReadStreamEventsForwardOperation(CompletableFuture<StreamEventsSlice> result,
                                             String stream,
-                                            int fromEventNumber,
+                                            long fromEventNumber,
                                             int maxCount,
                                             boolean resolveLinkTos,
                                             boolean requireMaster,

@@ -9,6 +9,7 @@ import com.github.msemys.esjc.tcp.TcpSettings;
 import com.github.msemys.esjc.util.concurrent.DefaultThreadFactory;
 
 import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,11 +18,17 @@ import java.util.concurrent.TimeUnit;
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Ranges.ATTEMPTS_RANGE;
+import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 
 /**
  * Client settings
  */
 public class Settings {
+
+    /**
+     * Client connection name.
+     */
+    public final String connectionName;
 
     /**
      * TCP settings.
@@ -126,6 +133,7 @@ public class Settings {
     public final Executor executor;
 
     private Settings(Builder builder) {
+        connectionName = builder.connectionName;
         tcpSettings = builder.tcpSettings;
         singleNodeSettings = builder.singleNodeSettings;
         clusterNodeSettings = builder.clusterNodeSettings;
@@ -150,7 +158,8 @@ public class Settings {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Settings{");
-        sb.append("tcpSettings=").append(tcpSettings);
+        sb.append("connectionName='").append(connectionName).append('\'');
+        sb.append(", tcpSettings=").append(tcpSettings);
         sb.append(", singleNodeSettings=").append(singleNodeSettings);
         sb.append(", clusterNodeSettings=").append(clusterNodeSettings);
         sb.append(", sslSettings=").append(sslSettings);
@@ -186,6 +195,7 @@ public class Settings {
      * Client settings builder.
      */
     public static class Builder {
+        private String connectionName;
         private TcpSettings tcpSettings;
         private SingleNodeSettings singleNodeSettings;
         private ClusterNodeSettings clusterNodeSettings;
@@ -207,6 +217,17 @@ public class Settings {
         private Executor executor;
 
         private Builder() {
+        }
+
+        /**
+         * Sets client connection name.
+         *
+         * @param connectionName client connection name.
+         * @return the builder reference
+         */
+        public Builder connectionName(String connectionName) {
+            this.connectionName = connectionName;
+            return this;
         }
 
         /**
@@ -463,6 +484,10 @@ public class Settings {
         public Settings build() {
             checkArgument(singleNodeSettings != null || clusterNodeSettings != null, "Missing node settings");
             checkArgument(singleNodeSettings == null || clusterNodeSettings == null, "Usage of 'single-node' and 'cluster-node' settings at once is not allowed");
+
+            if (isNullOrEmpty(connectionName)) {
+                connectionName = "ESJC-" + UUID.randomUUID().toString();
+            }
 
             if (tcpSettings == null) {
                 tcpSettings = TcpSettings.newBuilder().build();

@@ -22,7 +22,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         EventReadResult result1 = eventstore.readEvent(stream, 1, false).join();
         assertEquals(EventReadStatus.NotFound, result1.status);
@@ -39,7 +39,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -55,7 +55,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -71,7 +71,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         EventReadResult result1 = eventstore.readEvent(stream, 1, false).join();
         assertEquals(EventReadStatus.NotFound, result1.status);
@@ -80,7 +80,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertEquals(EventReadStatus.Success, result2.status);
         assertEquals(events.get(2).eventId, result2.event.originalEvent().eventId);
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(1).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(1L).build()).join();
 
         EventReadResult result3 = eventstore.readEvent(stream, 0, false).join();
         assertEquals(EventReadStatus.NotFound, result3.status);
@@ -97,7 +97,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         EventReadResult result1 = eventstore.readEvent(stream, 1, false).join();
         assertEquals(EventReadStatus.NotFound, result1.status);
@@ -106,7 +106,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertEquals(EventReadStatus.Success, result2.status);
         assertEquals(events.get(2).eventId, result2.event.originalEvent().eventId);
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(3L).build()).join();
 
         EventReadResult result3 = eventstore.readEvent(stream, 2, false).join();
         assertEquals(EventReadStatus.NotFound, result3.status);
@@ -123,7 +123,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         EventReadResult result1 = eventstore.readEvent(stream, 1, false).join();
         assertEquals(EventReadStatus.NotFound, result1.status);
@@ -132,7 +132,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertEquals(EventReadStatus.Success, result2.status);
         assertEquals(events.get(2).eventId, result2.event.originalEvent().eventId);
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2).maxCount(4).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2L).maxCount(4L).build()).join();
 
         EventReadResult result3 = eventstore.readEvent(stream, 1, false).join();
         assertEquals(EventReadStatus.NotFound, result3.status);
@@ -149,7 +149,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         EventReadResult result1 = eventstore.readEvent(stream, 1, false).join();
         assertEquals(EventReadStatus.NotFound, result1.status);
@@ -158,7 +158,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertEquals(EventReadStatus.Success, result2.status);
         assertEquals(events.get(2).eventId, result2.event.originalEvent().eventId);
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2).maxCount(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2L).maxCount(2L).build()).join();
 
         EventReadResult result3 = eventstore.readEvent(stream, 2, false).join();
         assertEquals(EventReadStatus.NotFound, result3.status);
@@ -175,7 +175,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice1.status);
@@ -183,7 +183,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             slice1.events.stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(1).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(1L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -199,7 +199,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice1.status);
@@ -207,7 +207,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             slice1.events.stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(3L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -223,7 +223,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice1.status);
@@ -231,7 +231,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             slice1.events.stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2).maxCount(4).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2L).maxCount(4L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -247,7 +247,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice1.status);
@@ -255,7 +255,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             slice1.events.stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2).maxCount(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2L).maxCount(2L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -271,7 +271,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice1.status);
@@ -279,7 +279,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice1.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(1).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(1L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -295,7 +295,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice1.status);
@@ -303,7 +303,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice1.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(3).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(3L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -319,7 +319,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice1.status);
@@ -327,7 +327,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice1.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2).maxCount(4).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2L).maxCount(4L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -343,7 +343,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         List<EventData> events = newTestEvents(5);
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.NO_STREAM, StreamMetadata.newBuilder().truncateBefore(2L).build()).join();
 
         StreamEventsSlice slice1 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice1.status);
@@ -351,7 +351,7 @@ public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationT
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice1.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2).maxCount(2).build()).join();
+        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().truncateBefore(2L).maxCount(2L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);

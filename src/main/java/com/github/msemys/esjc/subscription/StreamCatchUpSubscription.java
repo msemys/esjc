@@ -10,12 +10,12 @@ import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
 
 public class StreamCatchUpSubscription extends CatchUpSubscription {
-    private int nextReadEventNumber;
-    private int lastProcessedEventNumber;
+    private long nextReadEventNumber;
+    private long lastProcessedEventNumber;
 
     public StreamCatchUpSubscription(EventStore eventstore,
                                      String streamId,
-                                     Integer eventNumber,
+                                     Long eventNumber,
                                      boolean resolveLinkTos,
                                      CatchUpSubscriptionListener listener,
                                      UserCredentials userCredentials,
@@ -33,7 +33,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
                                   boolean resolveLinkTos,
                                   UserCredentials userCredentials,
                                   Long lastCommitPosition,
-                                  Integer lastEventNumber) throws Exception {
+                                  Long lastEventNumber) throws Exception {
         boolean done;
 
         do {
@@ -80,7 +80,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
     }
 
     @Override
-    public int lastProcessedEventNumber() {
+    public long lastProcessedEventNumber() {
         return lastProcessedEventNumber;
     }
 
