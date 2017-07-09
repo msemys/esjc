@@ -196,11 +196,12 @@ public class HttpClient implements AutoCloseable {
         return request;
     }
 
-    public static FullHttpRequest newRequest(HttpMethod method, String uri, String body, String contentType, UserCredentials userCredentials) {
+    public static FullHttpRequest newRequest(HttpMethod method, String uri, String body, CharSequence contentType, UserCredentials userCredentials) {
         checkNotNull(method, "method is null");
         checkArgument(!isNullOrEmpty(uri), "uri is null or empty");
         checkNotNull(body, "body is null");
-        checkArgument(!isNullOrEmpty(contentType), "contentType is null or empty");
+        checkNotNull(contentType, "contentType is null");
+        checkArgument(contentType.length() > 0, "contentType is empty");
 
         ByteBuf data = copiedBuffer(body, UTF_8);
 

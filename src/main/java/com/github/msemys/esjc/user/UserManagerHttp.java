@@ -19,7 +19,7 @@ import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Strings.EMPTY;
 import static com.github.msemys.esjc.util.Strings.isNullOrEmpty;
-import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_JSON;
+import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 
