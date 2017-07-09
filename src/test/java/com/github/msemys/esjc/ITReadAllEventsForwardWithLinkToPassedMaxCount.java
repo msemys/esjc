@@ -1,6 +1,5 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.system.SystemEventType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -46,8 +45,7 @@ public class ITReadAllEventsForwardWithLinkToPassedMaxCount extends AbstractInte
 
         eventstore.appendToStream(linkedStreamName, ExpectedVersion.ANY,
             EventData.newBuilder()
-                .type(SystemEventType.LINK_TO.value)
-                .data("0@" + deletedStreamName)
+                .linkTo(0, deletedStreamName)
                 .build()
         ).join();
 

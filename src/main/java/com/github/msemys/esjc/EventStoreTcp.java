@@ -14,7 +14,7 @@ import com.github.msemys.esjc.ssl.CommonNameTrustManagerFactory;
 import com.github.msemys.esjc.subscription.*;
 import com.github.msemys.esjc.subscription.manager.SubscriptionItem;
 import com.github.msemys.esjc.subscription.manager.SubscriptionManager;
-import com.github.msemys.esjc.system.SystemEventType;
+import com.github.msemys.esjc.system.SystemEventTypes;
 import com.github.msemys.esjc.system.SystemStreams;
 import com.github.msemys.esjc.task.*;
 import com.github.msemys.esjc.tcp.ChannelId;
@@ -507,7 +507,7 @@ public class EventStoreTcp implements EventStore {
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
 
         EventData metaevent = EventData.newBuilder()
-            .type(SystemEventType.STREAM_METADATA.value)
+            .type(SystemEventTypes.STREAM_METADATA)
             .jsonData(metadata)
             .build();
 
@@ -581,7 +581,7 @@ public class EventStoreTcp implements EventStore {
         return appendToStream(SystemStreams.SETTINGS_STREAM,
             ExpectedVersion.ANY,
             singletonList(EventData.newBuilder()
-                .type(SystemEventType.SETTINGS.value)
+                .type(SystemEventTypes.SETTINGS)
                 .jsonData(settings.toJson())
                 .build()),
             userCredentials);

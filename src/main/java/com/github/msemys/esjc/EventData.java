@@ -1,6 +1,6 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.system.SystemEventType;
+import com.github.msemys.esjc.system.SystemEventTypes;
 import com.github.msemys.esjc.util.EmptyArrays;
 
 import java.util.UUID;
@@ -199,7 +199,7 @@ public class EventData {
          */
         public Builder linkTo(long eventNumber, String stream) {
             checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-            return type(SystemEventType.LINK_TO.value).data(eventNumber + "@" + stream);
+            return type(SystemEventTypes.LINK_TO).data(eventNumber + "@" + stream);
         }
 
         /**

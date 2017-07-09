@@ -1,6 +1,6 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.system.SystemEventType;
+import com.github.msemys.esjc.system.SystemEventTypes;
 import org.junit.Test;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractIntegra
 
         RecordedEvent lastEvent = slice.events.get(slice.events.size() - 1).event;
         assertEquals(metastreamOf(stream), lastEvent.eventStreamId);
-        assertEquals(SystemEventType.STREAM_METADATA.value, lastEvent.eventType);
+        assertEquals(SystemEventTypes.STREAM_METADATA, lastEvent.eventType);
 
         StreamMetadata metadata = StreamMetadata.fromJson(lastEvent.data);
         assertEquals(DELETED_STREAM_EVENT_NUMBER, metadata.truncateBefore);
