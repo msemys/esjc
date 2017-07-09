@@ -45,7 +45,7 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
         assertArrayEquals(metadataBytes1, metadata1.streamMetadata);
 
         byte[] metadataBytes2 = UUIDConverter.toBytes(UUID.randomUUID());
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), metadataBytes2).join();
+        eventstore.setStreamMetadata(stream, 0, metadataBytes2).join();
         RawStreamMetadataResult metadata2 = eventstore.getStreamMetadataAsRawBytes(stream).join();
         assertEquals(stream, metadata2.stream);
         assertFalse(metadata2.isStreamDeleted);
@@ -58,7 +58,7 @@ public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrat
         final String stream = generateStreamName();
 
         try {
-            eventstore.setStreamMetadata(stream, ExpectedVersion.of(5), new byte[100]).join();
+            eventstore.setStreamMetadata(stream, 5, new byte[100]).join();
             fail("should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));

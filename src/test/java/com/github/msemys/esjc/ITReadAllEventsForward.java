@@ -36,8 +36,8 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
 
         List<EventData> events = newTestEvents(20);
         Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
-        eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
-        eventstore.appendToStream(stream, ExpectedVersion.of(19), asList(newTestEvent(), newTestEvent())).join();
+        eventstore.appendToStream(stream, 0, events.stream().skip(1).collect(toList())).join();
+        eventstore.appendToStream(stream, 19, asList(newTestEvent(), newTestEvent())).join();
 
         AllEventsSlice slice = eventstore.readAllEventsForward(position, events.size() + 10, false).join();
 
@@ -51,7 +51,7 @@ public class ITReadAllEventsForward extends AbstractIntegrationTest {
 
         List<EventData> events = newTestEvents(20);
         Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
-        eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
+        eventstore.appendToStream(stream, 0, events.stream().skip(1).collect(toList())).join();
 
         AllEventsSlice slice = eventstore.readAllEventsForward(position, 4096, false).join();
 

@@ -47,7 +47,7 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void failsToCommitNonExistingStreamWithWrongExpectedVersion() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(1)).join();
+        Transaction transaction = eventstore.startTransaction(stream, 1).join();
         transaction.write(newTestEvent()).join();
 
         try {
@@ -85,7 +85,7 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void validatesExpectationsOnCommit() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(100500)).join();
+        Transaction transaction = eventstore.startTransaction(stream, 100500).join();
         transaction.write(newTestEvent()).join();
 
         try {
@@ -174,7 +174,7 @@ public class ITTransaction extends AbstractIntegrationTest {
     public void succeedsToCommitIfStartedWithWrongVersionButCommittingWithCorrectVersion() {
         final String stream = generateStreamName();
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(0)).join();
+        Transaction transaction = eventstore.startTransaction(stream, 0).join();
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
         transaction.write(newTestEvent()).join();
 

@@ -60,7 +60,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
             .cacheControl(Duration.ofMinutes(10))
             .build();
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), metadata2).join();
+        eventstore.setStreamMetadata(stream, 0, metadata2).join();
 
         StreamMetadataResult metadataResult2 = eventstore.getStreamMetadata(stream).join();
         assertEquals(stream, metadataResult2.stream);
@@ -77,7 +77,7 @@ public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractInt
         final String stream = generateStreamName();
 
         try {
-            eventstore.setStreamMetadata(stream, ExpectedVersion.of(2), StreamMetadata.empty()).join();
+            eventstore.setStreamMetadata(stream, 2, StreamMetadata.empty()).join();
             fail("should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));

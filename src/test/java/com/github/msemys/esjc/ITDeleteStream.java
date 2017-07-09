@@ -31,14 +31,14 @@ public class ITDeleteStream extends AbstractIntegrationTest {
     public void succeedsToDeleteExistingStream() {
         final String stream = generateStreamName();
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).join();
-        eventstore.deleteStream(stream, ExpectedVersion.of(0), true).join();
+        eventstore.deleteStream(stream, 0, true).join();
     }
 
     @Test
     public void failsToDeleteNonExistentStreamWithInvalidExpectedVersion() {
         final String stream = generateStreamName();
         try {
-            eventstore.deleteStream(stream, ExpectedVersion.of(1), true).join();
+            eventstore.deleteStream(stream, 1, true).join();
             fail("delete should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));

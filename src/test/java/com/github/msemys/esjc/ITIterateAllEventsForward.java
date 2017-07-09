@@ -35,7 +35,7 @@ public class ITIterateAllEventsForward extends AbstractIntegrationTest {
 
         List<EventData> events = newTestEvents(20);
         Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
-        eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
+        eventstore.appendToStream(stream, 0, events.stream().skip(1).collect(toList())).join();
 
         Iterator<ResolvedEvent> iterator = eventstore.iterateAllEventsForward(position, 3, false);
 
@@ -72,7 +72,7 @@ public class ITIterateAllEventsForward extends AbstractIntegrationTest {
 
         List<EventData> events = newTestEvents(20);
         Position position = eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events.get(0)).join().logPosition;
-        eventstore.appendToStream(stream, ExpectedVersion.of(0), events.stream().skip(1).collect(toList())).join();
+        eventstore.appendToStream(stream, 0, events.stream().skip(1).collect(toList())).join();
 
         List<RecordedEvent> result = new ArrayList<>();
         eventstore.iterateAllEventsForward(position, 3, false).forEachRemaining(e -> result.add(e.event));

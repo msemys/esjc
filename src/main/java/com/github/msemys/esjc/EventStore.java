@@ -52,9 +52,10 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #deleteStream(String, ExpectedVersion, boolean, UserCredentials)
+     * @see #deleteStream(String, long, boolean, UserCredentials)
+     * @see ExpectedVersion
      */
-    default CompletableFuture<DeleteResult> deleteStream(String stream, ExpectedVersion expectedVersion) {
+    default CompletableFuture<DeleteResult> deleteStream(String stream, long expectedVersion) {
         return deleteStream(stream, expectedVersion, false, null);
     }
 
@@ -69,10 +70,11 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #deleteStream(String, ExpectedVersion, boolean, UserCredentials)
+     * @see #deleteStream(String, long, boolean, UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<DeleteResult> deleteStream(String stream,
-                                                         ExpectedVersion expectedVersion,
+                                                         long expectedVersion,
                                                          UserCredentials userCredentials) {
         return deleteStream(stream, expectedVersion, false, userCredentials);
     }
@@ -93,10 +95,11 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #deleteStream(String, ExpectedVersion, boolean, UserCredentials)
+     * @see #deleteStream(String, long, boolean, UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<DeleteResult> deleteStream(String stream,
-                                                         ExpectedVersion expectedVersion,
+                                                         long expectedVersion,
                                                          boolean hardDelete) {
         return deleteStream(stream, expectedVersion, hardDelete, null);
     }
@@ -118,9 +121,10 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
+     * @see ExpectedVersion
      */
     CompletableFuture<DeleteResult> deleteStream(String stream,
-                                                 ExpectedVersion expectedVersion,
+                                                 long expectedVersion,
                                                  boolean hardDelete,
                                                  UserCredentials userCredentials);
 
@@ -136,10 +140,11 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #appendToStream(String, ExpectedVersion, EventData, UserCredentials)
+     * @see #appendToStream(String, long, EventData, UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteResult> appendToStream(String stream,
-                                                          ExpectedVersion expectedVersion,
+                                                          long expectedVersion,
                                                           EventData event) {
         return appendToStream(stream, expectedVersion, event, null);
     }
@@ -157,9 +162,10 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteResult> appendToStream(String stream,
-                                                          ExpectedVersion expectedVersion,
+                                                          long expectedVersion,
                                                           EventData event,
                                                           UserCredentials userCredentials) {
         return appendToStream(stream, expectedVersion, singletonList(event), userCredentials);
@@ -177,10 +183,11 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #appendToStream(String, ExpectedVersion, Iterable, UserCredentials)
+     * @see #appendToStream(String, long, Iterable, UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteResult> appendToStream(String stream,
-                                                          ExpectedVersion expectedVersion,
+                                                          long expectedVersion,
                                                           Iterable<EventData> events) {
         return appendToStream(stream, expectedVersion, events, null);
     }
@@ -198,9 +205,10 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
+     * @see ExpectedVersion
      */
     CompletableFuture<WriteResult> appendToStream(String stream,
-                                                  ExpectedVersion expectedVersion,
+                                                  long expectedVersion,
                                                   Iterable<EventData> events,
                                                   UserCredentials userCredentials);
 
@@ -215,10 +223,11 @@ public interface EventStore {
      * {@code get} and {@code join} can throw an exception with cause {@link InvalidTransactionException},
      * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException} or
      * {@link ServerErrorException} on exceptional completion.
-     * @see #tryAppendToStream(String, ExpectedVersion, EventData, UserCredentials)
+     * @see #tryAppendToStream(String, long, EventData, UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
-                                                                    ExpectedVersion expectedVersion,
+                                                                    long expectedVersion,
                                                                     EventData event) {
         return tryAppendToStream(stream, expectedVersion, event, null);
     }
@@ -235,9 +244,10 @@ public interface EventStore {
      * {@code get} and {@code join} can throw an exception with cause {@link InvalidTransactionException},
      * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException} or
      * {@link ServerErrorException} on exceptional completion.
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
-                                                                    ExpectedVersion expectedVersion,
+                                                                    long expectedVersion,
                                                                     EventData event,
                                                                     UserCredentials userCredentials) {
         return tryAppendToStream(stream, expectedVersion, singletonList(event), userCredentials);
@@ -254,10 +264,11 @@ public interface EventStore {
      * {@code get} and {@code join} can throw an exception with cause {@link InvalidTransactionException},
      * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException} or
      * {@link ServerErrorException} on exceptional completion.
-     * @see #tryAppendToStream(String, ExpectedVersion, Iterable, UserCredentials)
+     * @see #tryAppendToStream(String, long, Iterable, UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
-                                                                    ExpectedVersion expectedVersion,
+                                                                    long expectedVersion,
                                                                     Iterable<EventData> events) {
         return tryAppendToStream(stream, expectedVersion, events, null);
     }
@@ -274,9 +285,10 @@ public interface EventStore {
      * {@code get} and {@code join} can throw an exception with cause {@link InvalidTransactionException},
      * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException} or
      * {@link ServerErrorException} on exceptional completion.
+     * @see ExpectedVersion
      */
     CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
-                                                            ExpectedVersion expectedVersion,
+                                                            long expectedVersion,
                                                             Iterable<EventData> events,
                                                             UserCredentials userCredentials);
 
@@ -290,9 +302,10 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #startTransaction(String, ExpectedVersion, UserCredentials)
+     * @see #startTransaction(String, long, UserCredentials)
+     * @see ExpectedVersion
      */
-    default CompletableFuture<Transaction> startTransaction(String stream, ExpectedVersion expectedVersion) {
+    default CompletableFuture<Transaction> startTransaction(String stream, long expectedVersion) {
         return startTransaction(stream, expectedVersion, null);
     }
 
@@ -307,9 +320,10 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
+     * @see ExpectedVersion
      */
     CompletableFuture<Transaction> startTransaction(String stream,
-                                                    ExpectedVersion expectedVersion,
+                                                    long expectedVersion,
                                                     UserCredentials userCredentials);
 
     /**
@@ -1355,10 +1369,11 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
+     * @see #setStreamMetadata(String, long, byte[], UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteResult> setStreamMetadata(String stream,
-                                                             ExpectedVersion expectedMetastreamVersion,
+                                                             long expectedMetastreamVersion,
                                                              StreamMetadata metadata) {
         checkNotNull(metadata, "metadata is null");
         return setStreamMetadata(stream, expectedMetastreamVersion, toBytes(metadata.toJson()), null);
@@ -1376,10 +1391,11 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
+     * @see #setStreamMetadata(String, long, byte[], UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteResult> setStreamMetadata(String stream,
-                                                             ExpectedVersion expectedMetastreamVersion,
+                                                             long expectedMetastreamVersion,
                                                              StreamMetadata metadata,
                                                              UserCredentials userCredentials) {
         checkNotNull(metadata, "metadata is null");
@@ -1397,10 +1413,11 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
-     * @see #setStreamMetadata(String, ExpectedVersion, byte[], UserCredentials)
+     * @see #setStreamMetadata(String, long, byte[], UserCredentials)
+     * @see ExpectedVersion
      */
     default CompletableFuture<WriteResult> setStreamMetadata(String stream,
-                                                             ExpectedVersion expectedMetastreamVersion,
+                                                             long expectedMetastreamVersion,
                                                              byte[] metadata) {
         return setStreamMetadata(stream, expectedMetastreamVersion, metadata, null);
     }
@@ -1417,9 +1434,10 @@ public interface EventStore {
      * {@link StreamDeletedException}, {@link InvalidTransactionException}, {@link CommandNotExpectedException},
      * {@link NotAuthenticatedException}, {@link AccessDeniedException} or {@link ServerErrorException}
      * on exceptional completion.
+     * @see ExpectedVersion
      */
     CompletableFuture<WriteResult> setStreamMetadata(String stream,
-                                                     ExpectedVersion expectedMetastreamVersion,
+                                                     long expectedMetastreamVersion,
                                                      byte[] metadata,
                                                      UserCredentials userCredentials);
 

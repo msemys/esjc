@@ -129,11 +129,11 @@ public class TryAppendToStreamOperation extends AbstractOperation<WriteAttemptRe
 
         switch (response.getResult()) {
             case WrongExpectedVersion:
-                nextExpectedVersion = ExpectedVersion.ANY.value;
+                nextExpectedVersion = ExpectedVersion.ANY;
                 status = WriteStatus.WrongExpectedVersion;
                 break;
             case StreamDeleted:
-                nextExpectedVersion = ExpectedVersion.ANY.value;
+                nextExpectedVersion = ExpectedVersion.ANY;
                 status = WriteStatus.StreamDeleted;
                 break;
             default:

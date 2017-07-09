@@ -62,7 +62,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             slice1.events.stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(4L).build()).join();
+        eventstore.setStreamMetadata(stream, 0, StreamMetadata.newBuilder().maxCount(4L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -86,7 +86,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             slice1.events.stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(2L).build()).join();
+        eventstore.setStreamMetadata(stream, 0, StreamMetadata.newBuilder().maxCount(2L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -110,7 +110,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice1.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(4L).build()).join();
+        eventstore.setStreamMetadata(stream, 0, StreamMetadata.newBuilder().maxCount(4L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);
@@ -134,7 +134,7 @@ public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
         assertArrayEquals(events.stream().skip(2).map(e -> e.eventId).toArray(UUID[]::new),
             reverse(slice1.events).stream().map(e -> e.event.eventId).toArray(UUID[]::new));
 
-        eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), StreamMetadata.newBuilder().maxCount(2L).build()).join();
+        eventstore.setStreamMetadata(stream, 0, StreamMetadata.newBuilder().maxCount(2L).build()).join();
 
         StreamEventsSlice slice2 = eventstore.readStreamEventsBackward(stream, -1, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice2.status);

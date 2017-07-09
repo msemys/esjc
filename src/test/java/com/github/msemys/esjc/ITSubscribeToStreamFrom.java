@@ -215,7 +215,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(20);
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        range(0, 10).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
+        range(0, 10).forEach(i -> eventstore.appendToStream(stream, i - 1,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
@@ -237,7 +237,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             }
         });
 
-        range(10, 20).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
+        range(10, 20).forEach(i -> eventstore.appendToStream(stream, i - 1,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
@@ -259,7 +259,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(20);
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        range(0, 20).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
+        range(0, 20).forEach(i -> eventstore.appendToStream(stream, i - 1,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
@@ -281,7 +281,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
             }
         });
 
-        range(20, 30).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
+        range(20, 30).forEach(i -> eventstore.appendToStream(stream, i - 1,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 
@@ -306,7 +306,7 @@ public class ITSubscribeToStreamFrom extends AbstractIntegrationTest {
         CountDownLatch eventSignal = new CountDownLatch(10);
         CountDownLatch closeSignal = new CountDownLatch(1);
 
-        range(0, 20).forEach(i -> eventstore.appendToStream(stream, ExpectedVersion.of(i - 1),
+        range(0, 20).forEach(i -> eventstore.appendToStream(stream, i - 1,
             EventData.newBuilder().type("et-" + i).build()
         ).join());
 

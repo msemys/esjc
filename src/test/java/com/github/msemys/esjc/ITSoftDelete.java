@@ -25,7 +25,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.StreamNotFound, slice.status);
@@ -39,7 +39,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent());
         assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.ANY, events).join().nextExpectedVersion);
@@ -64,7 +64,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent());
         assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join().nextExpectedVersion);
@@ -89,10 +89,10 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent());
-        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.of(1), events).join().nextExpectedVersion);
+        assertEquals(4, eventstore.appendToStream(stream, 1, events).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -127,7 +127,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
         assertEquals(0, writeResult.nextExpectedVersion);
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent());
-        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.of(1), events).join().nextExpectedVersion);
+        assertEquals(4, eventstore.appendToStream(stream, 1, events).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -154,7 +154,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
         eventstore.deleteStream(stream, ExpectedVersion.ANY, true).join();
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
@@ -177,7 +177,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
 
         List<EventData> events = asList(newTestEvent(), newTestEvent(), newTestEvent());
         assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, events).join().nextExpectedVersion);
@@ -209,7 +209,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
 
         List<EventData> events1 = asList(newTestEvent(), newTestEvent(), newTestEvent());
         List<EventData> events2 = asList(newTestEvent(), newTestEvent());
@@ -236,7 +236,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM).join();
 
-        assertEquals(1, eventstore.setStreamMetadata(stream, ExpectedVersion.of(0),
+        assertEquals(1, eventstore.setStreamMetadata(stream, 0,
             StreamMetadata.newBuilder()
                 .maxCount(100L)
                 .aclDeleteRoles(asList("some-role"))
@@ -267,9 +267,9 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
 
-        assertEquals(1, eventstore.setStreamMetadata(stream, ExpectedVersion.of(0),
+        assertEquals(1, eventstore.setStreamMetadata(stream, 0,
             StreamMetadata.newBuilder()
                 .maxCount(100L)
                 .aclDeleteRoles(asList("some-role"))
@@ -300,7 +300,7 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM).join();
 
-        assertEquals(1, eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), new byte[256]).join().nextExpectedVersion);
+        assertEquals(1, eventstore.setStreamMetadata(stream, 0, new byte[256]).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.StreamNotFound, slice.status);
@@ -318,9 +318,9 @@ public class ITSoftDelete extends AbstractIntegrationTest {
 
         assertEquals(1, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(2)).join().nextExpectedVersion);
 
-        eventstore.deleteStream(stream, ExpectedVersion.of(1)).join();
+        eventstore.deleteStream(stream, 1).join();
 
-        assertEquals(1, eventstore.setStreamMetadata(stream, ExpectedVersion.of(0), new byte[256]).join().nextExpectedVersion);
+        assertEquals(1, eventstore.setStreamMetadata(stream, 0, new byte[256]).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);

@@ -26,10 +26,10 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
             asList(firstEvent, newTestEvent(), newTestEvent()))
             .join().nextExpectedVersion);
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(2)).join();
+        Transaction transaction = eventstore.startTransaction(stream, 2).join();
         assertEquals(2, transaction.commit().join().nextExpectedVersion);
 
-        assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.of(2), asList(newTestEvent(), newTestEvent())).join().nextExpectedVersion);
+        assertEquals(4, eventstore.appendToStream(stream, 2, asList(newTestEvent(), newTestEvent())).join().nextExpectedVersion);
 
         StreamEventsSlice slice = eventstore.readStreamEventsForward(stream, 0, 100, false).join();
         assertEquals(SliceReadStatus.Success, slice.status);
@@ -48,7 +48,7 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
             asList(firstEvent, newTestEvent(), newTestEvent()))
             .join().nextExpectedVersion);
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(2)).join();
+        Transaction transaction = eventstore.startTransaction(stream, 2).join();
         assertEquals(2, transaction.commit().join().nextExpectedVersion);
 
         assertEquals(4, eventstore.appendToStream(stream, ExpectedVersion.ANY, asList(newTestEvent(), newTestEvent())).join().nextExpectedVersion);
@@ -70,7 +70,7 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
             asList(firstEvent, newTestEvent(), newTestEvent()))
             .join().nextExpectedVersion);
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(2)).join();
+        Transaction transaction = eventstore.startTransaction(stream, 2).join();
         assertEquals(2, transaction.commit().join().nextExpectedVersion);
 
         assertEquals(0, eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, firstEvent).join().nextExpectedVersion);
@@ -92,7 +92,7 @@ public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
             asList(firstEvent, newTestEvent(), newTestEvent()))
             .join().nextExpectedVersion);
 
-        Transaction transaction = eventstore.startTransaction(stream, ExpectedVersion.of(2)).join();
+        Transaction transaction = eventstore.startTransaction(stream, 2).join();
         assertEquals(2, transaction.commit().join().nextExpectedVersion);
 
         try {

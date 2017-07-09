@@ -154,7 +154,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
         eventstore.deleteStream(stream, ExpectedVersion.NO_STREAM, true).get();
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.of(5), newTestEvent()).get();
+            eventstore.appendToStream(stream, 5, newTestEvent()).get();
             fail("append should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
@@ -167,7 +167,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
 
         eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvent()).get();
 
-        eventstore.appendToStream(stream, ExpectedVersion.of(0), newTestEvent()).get();
+        eventstore.appendToStream(stream, 0, newTestEvent()).get();
     }
 
     @Test
@@ -183,7 +183,7 @@ public class ITAppendToStream extends AbstractIntegrationTest {
         final String stream = generateStreamName();
 
         try {
-            eventstore.appendToStream(stream, ExpectedVersion.of(1), newTestEvent()).get();
+            eventstore.appendToStream(stream, 1, newTestEvent()).get();
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));

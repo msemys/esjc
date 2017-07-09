@@ -15,10 +15,10 @@ public class ITTryAppendToStream extends AbstractIntegrationTest {
     public void returnsWrongExpectedVersionStatusWhenAttemptsToWriteWithInvalidExpectedVersion() {
         final String stream = generateStreamName();
 
-        WriteAttemptResult result = eventstore.tryAppendToStream(stream, ExpectedVersion.of(17), newTestEvent()).join();
+        WriteAttemptResult result = eventstore.tryAppendToStream(stream, 17, newTestEvent()).join();
 
         assertEquals(WriteStatus.WrongExpectedVersion, result.status);
-        assertEquals(ExpectedVersion.ANY.value, result.nextExpectedVersion);
+        assertEquals(ExpectedVersion.ANY, result.nextExpectedVersion);
         assertNull(result.logPosition);
     }
 
@@ -32,7 +32,7 @@ public class ITTryAppendToStream extends AbstractIntegrationTest {
         WriteAttemptResult result = eventstore.tryAppendToStream(stream, ExpectedVersion.ANY, newTestEvent()).join();
 
         assertEquals(WriteStatus.StreamDeleted, result.status);
-        assertEquals(ExpectedVersion.ANY.value, result.nextExpectedVersion);
+        assertEquals(ExpectedVersion.ANY, result.nextExpectedVersion);
         assertNull(result.logPosition);
     }
 

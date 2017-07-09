@@ -172,54 +172,50 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CompletableFuture<DeleteResult> deleteStream(String stream,
-                                                        ExpectedVersion expectedVersion,
+                                                        long expectedVersion,
                                                         boolean hardDelete,
                                                         UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-        checkNotNull(expectedVersion, "expectedVersion is null");
 
         CompletableFuture<DeleteResult> result = new CompletableFuture<>();
-        enqueue(new DeleteStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, hardDelete, userCredentials));
+        enqueue(new DeleteStreamOperation(result, settings.requireMaster, stream, expectedVersion, hardDelete, userCredentials));
         return result;
     }
 
     @Override
     public CompletableFuture<WriteResult> appendToStream(String stream,
-                                                         ExpectedVersion expectedVersion,
+                                                         long expectedVersion,
                                                          Iterable<EventData> events,
                                                          UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-        checkNotNull(expectedVersion, "expectedVersion is null");
         checkNotNull(events, "events is null");
 
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
-        enqueue(new AppendToStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, events, userCredentials));
+        enqueue(new AppendToStreamOperation(result, settings.requireMaster, stream, expectedVersion, events, userCredentials));
         return result;
     }
 
     @Override
     public CompletableFuture<WriteAttemptResult> tryAppendToStream(String stream,
-                                                                   ExpectedVersion expectedVersion,
+                                                                   long expectedVersion,
                                                                    Iterable<EventData> events,
                                                                    UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-        checkNotNull(expectedVersion, "expectedVersion is null");
         checkNotNull(events, "events is null");
 
         CompletableFuture<WriteAttemptResult> result = new CompletableFuture<>();
-        enqueue(new TryAppendToStreamOperation(result, settings.requireMaster, stream, expectedVersion.value, events, userCredentials));
+        enqueue(new TryAppendToStreamOperation(result, settings.requireMaster, stream, expectedVersion, events, userCredentials));
         return result;
     }
 
     @Override
     public CompletableFuture<Transaction> startTransaction(String stream,
-                                                           ExpectedVersion expectedVersion,
+                                                           long expectedVersion,
                                                            UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-        checkNotNull(expectedVersion, "expectedVersion is null");
 
         CompletableFuture<Transaction> result = new CompletableFuture<>();
-        enqueue(new StartTransactionOperation(result, settings.requireMaster, stream, expectedVersion.value, transactionManager, userCredentials));
+        enqueue(new StartTransactionOperation(result, settings.requireMaster, stream, expectedVersion, transactionManager, userCredentials));
         return result;
     }
 
@@ -502,12 +498,11 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public CompletableFuture<WriteResult> setStreamMetadata(String stream,
-                                                            ExpectedVersion expectedMetastreamVersion,
+                                                            long expectedMetastreamVersion,
                                                             byte[] metadata,
                                                             UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
         checkArgument(!isMetastream(stream), "Setting metadata for metastream '%s' is not supported", stream);
-        checkNotNull(expectedMetastreamVersion, "expectedMetastreamVersion is null");
 
         CompletableFuture<WriteResult> result = new CompletableFuture<>();
 
@@ -517,7 +512,7 @@ public class EventStoreTcp implements EventStore {
             .build();
 
         enqueue(new AppendToStreamOperation(result, settings.requireMaster, SystemStreams.metastreamOf(stream),
-            expectedMetastreamVersion.value, singletonList(metaevent), userCredentials));
+            expectedMetastreamVersion, singletonList(metaevent), userCredentials));
 
         return result;
     }
