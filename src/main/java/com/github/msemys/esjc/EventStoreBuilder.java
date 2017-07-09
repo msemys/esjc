@@ -4,7 +4,7 @@ import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings.BuilderForDnsDiscoverer;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings.BuilderForGossipSeedDiscoverer;
 import com.github.msemys.esjc.node.single.SingleNodeSettings;
-import com.github.msemys.esjc.operation.manager.OperationTimedOutException;
+import com.github.msemys.esjc.operation.manager.OperationTimeoutException;
 import com.github.msemys.esjc.operation.manager.RetriesLimitReachedException;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
@@ -425,7 +425,7 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Sets whether or not to complete operation exceptionally with cause {@link OperationTimedOutException}
+     * Sets whether or not to complete operation exceptionally with cause {@link OperationTimeoutException}
      * if no response is received from the server for an operation. By default, it is disabled - operations are
      * scheduled to be retried.
      *

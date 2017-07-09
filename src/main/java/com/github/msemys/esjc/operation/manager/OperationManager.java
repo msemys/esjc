@@ -69,7 +69,7 @@ public class OperationManager {
                 logger.debug(error);
 
                 if (settings.failOnNoServerResponse) {
-                    item.operation.fail(new OperationTimedOutException(error));
+                    item.operation.fail(new OperationTimeoutException(error));
                     removeOperations.add(item);
                 } else {
                     retryOperations.add(item);

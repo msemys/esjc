@@ -3,7 +3,7 @@ package com.github.msemys.esjc.subscription.manager;
 import com.github.msemys.esjc.ConnectionClosedException;
 import com.github.msemys.esjc.Settings;
 import com.github.msemys.esjc.SubscriptionDropReason;
-import com.github.msemys.esjc.operation.manager.OperationTimedOutException;
+import com.github.msemys.esjc.operation.manager.OperationTimeoutException;
 import com.github.msemys.esjc.operation.manager.RetriesLimitReachedException;
 import com.github.msemys.esjc.tcp.ChannelId;
 import io.netty.channel.Channel;
@@ -81,7 +81,7 @@ public class SubscriptionManager {
                     logger.error(error);
 
                     if (settings.failOnNoServerResponse) {
-                        s.operation.drop(SubscriptionDropReason.SubscribingError, new OperationTimedOutException(error));
+                        s.operation.drop(SubscriptionDropReason.SubscribingError, new OperationTimeoutException(error));
                         removeSubscriptions.add(s);
                     } else {
                         retrySubscriptions.add(s);
