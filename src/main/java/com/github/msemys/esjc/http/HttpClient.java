@@ -143,7 +143,7 @@ public class HttpClient implements AutoCloseable {
 
             if (!received.await(operationTimeoutMillis, MILLISECONDS)) {
                 channel.close().awaitUninterruptibly();
-                operation.response.completeExceptionally(new HttpOperationTimedOutException(operation.request));
+                operation.response.completeExceptionally(new HttpOperationTimeoutException(operation.request));
             }
         } catch (Exception e) {
             operation.response.completeExceptionally(e);
