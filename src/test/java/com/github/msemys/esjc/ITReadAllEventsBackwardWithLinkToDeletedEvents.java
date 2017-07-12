@@ -30,10 +30,4 @@ public class ITReadAllEventsBackwardWithLinkToDeletedEvents extends AbstractInte
         assertFalse("Event was resolved", resolvedEvent.isResolved());
     }
 
-    private static EventData newLinkEvent(String stream, long eventNumber) {
-        return EventData.newBuilder()
-            .linkTo(eventNumber, stream)
-            .build();
-    }
-
 }

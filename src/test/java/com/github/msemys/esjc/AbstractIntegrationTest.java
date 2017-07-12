@@ -64,6 +64,12 @@ public abstract class AbstractIntegrationTest {
 
     protected abstract EventStore createEventStore();
 
+    protected static EventData newLinkEvent(String stream, long eventNumber) {
+        return EventData.newBuilder()
+            .linkTo(eventNumber, stream)
+            .build();
+    }
+
     protected static EventData newTestEvent() {
         return EventData.newBuilder()
             .type("test")

@@ -27,10 +27,4 @@ public class ITReadEventOfLinkToToDeletedEvent extends AbstractIntegrationTest {
         assertEquals(EventReadStatus.Success, result.status);
     }
 
-    private static EventData newLinkEvent(String stream, long eventNumber) {
-        return EventData.newBuilder()
-            .linkTo(eventNumber, stream)
-            .build();
-    }
-
 }

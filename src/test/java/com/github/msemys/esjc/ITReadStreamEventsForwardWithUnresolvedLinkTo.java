@@ -30,10 +30,4 @@ public class ITReadStreamEventsForwardWithUnresolvedLinkTo extends AbstractInteg
         assertNotNull(linkedStreamSlice.events.get(0).link);
     }
 
-    private static EventData newLinkEvent(String stream, long eventNumber) {
-        return EventData.newBuilder()
-            .linkTo(eventNumber, stream)
-            .build();
-    }
-
 }
