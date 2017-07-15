@@ -267,4 +267,23 @@ public class ITAppendToStream extends AbstractIntegrationTest {
         }
     }
 
+    @Test
+    public void whenAppendFailsWrongExpectedVersionExceptionContainsOperationDetails() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(3)).join();
+
+        try {
+            eventstore.appendToStream(stream, 5, newTestEvent()).join();
+            fail("append should fail with 'WrongExpectedVersionException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
+
+            WrongExpectedVersionException cause = (WrongExpectedVersionException) e.getCause();
+            assertEquals(stream, cause.stream);
+            assertEquals(Long.valueOf(5), cause.expectedVersion);
+            assertEquals(Long.valueOf(2), cause.currentVersion);
+        }
+    }
+
 }

@@ -218,4 +218,24 @@ public class ITTransaction extends AbstractIntegrationTest {
         assertEquals(event.eventId, slice.events.get(0).event.eventId);
     }
 
+    @Test
+    public void whenCommitFailsWrongExpectedVersionExceptionDoesNotContainOperationDetails() {
+        final String stream = generateStreamName();
+
+        Transaction transaction = eventstore.startTransaction(stream, 10).join();
+        transaction.write(newTestEvent()).join();
+
+        try {
+            transaction.commit().join();
+            fail("should fail with 'WrongExpectedVersionException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
+
+            WrongExpectedVersionException cause = (WrongExpectedVersionException) e.getCause();
+            assertNull(cause.stream);
+            assertNull(cause.expectedVersion);
+            assertNull(cause.currentVersion);
+        }
+    }
+
 }

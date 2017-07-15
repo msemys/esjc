@@ -69,7 +69,7 @@ public class StartTransactionOperation extends AbstractOperation<Transaction, Tr
                     .description("ForwardTimeout")
                     .build();
             case WrongExpectedVersion:
-                fail(new WrongExpectedVersionException(String.format("Start transaction failed due to WrongExpectedVersion. Stream: %s, Expected version: %d.", stream, expectedVersion)));
+                fail(new WrongExpectedVersionException("Start transaction failed due to WrongExpectedVersion. Stream: %s, Expected version: %d.", stream, expectedVersion));
                 return InspectionResult.newBuilder()
                     .decision(InspectionDecision.EndOperation)
                     .description("WrongExpectedVersion")

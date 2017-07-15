@@ -5,8 +5,7 @@ import com.github.msemys.esjc.operation.WrongExpectedVersionException;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class ITDeleteStream extends AbstractIntegrationTest {
 
@@ -56,6 +55,25 @@ public class ITDeleteStream extends AbstractIntegrationTest {
             fail("delete should fail with 'StreamDeletedException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(StreamDeletedException.class));
+        }
+    }
+
+    @Test
+    public void whenDeleteFailsWrongExpectedVersionExceptionContainsOperationDetails() {
+        final String stream = generateStreamName();
+
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, newTestEvents(3)).join();
+
+        try {
+            eventstore.deleteStream(stream, 10, true).join();
+            fail("delete should fail with 'WrongExpectedVersionException'");
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
+
+            WrongExpectedVersionException cause = (WrongExpectedVersionException) e.getCause();
+            assertEquals(stream, cause.stream);
+            assertEquals(Long.valueOf(10), cause.expectedVersion);
+            assertNull(cause.currentVersion);
         }
     }
 

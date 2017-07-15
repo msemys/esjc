@@ -71,7 +71,7 @@ public class DeleteStreamOperation extends AbstractOperation<DeleteResult, Delet
                     .description("ForwardTimeout")
                     .build();
             case WrongExpectedVersion:
-                fail(new WrongExpectedVersionException(String.format("Delete stream failed due to WrongExpectedVersion. Stream: %s, Expected version: %d.", stream, expectedVersion)));
+                fail(new WrongExpectedVersionException("Delete stream failed due to WrongExpectedVersion. Stream: %s, Expected version: %d.", stream, expectedVersion));
                 return InspectionResult.newBuilder()
                     .decision(InspectionDecision.EndOperation)
                     .description("WrongExpectedVersion")
