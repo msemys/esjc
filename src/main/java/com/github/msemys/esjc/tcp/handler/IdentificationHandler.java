@@ -98,7 +98,7 @@ public class IdentificationHandler extends SimpleChannelInboundHandler<TcpPackag
     }
 
     private void complete(ChannelHandlerContext ctx, IdentificationStatus status) {
-        logger.info("Identification {}", status);
+        logger.info("Identification [{}] {}", connectionName, status);
         ctx.channel().pipeline().remove(this);
 
         if (completionConsumer != null) {
