@@ -5,11 +5,22 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 ## Requirements
 
 * Java 8
-* EventStore Server 3.2.0 - 3.9.4
+* EventStore 4.0.0 - 4.0.1 (esjc v2)
+* EventStore 3.2.0 - 3.9.4 (esjc v1)
 
 
 ## Maven Dependency
 
+* EventStore v4 compatible
+```xml
+<dependency>
+    <groupId>com.github.msemys</groupId>
+    <artifactId>esjc</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
+
+* EventStore v3 compatible
 ```xml
 <dependency>
     <groupId>com.github.msemys</groupId>
@@ -141,7 +152,7 @@ eventstore.appendToStream("foo", ExpectedVersion.ANY, asList(
 ```
 
 ```java
-eventstore.appendToStream("foo", ExpectedVersion.of(2),
+eventstore.appendToStream("foo", 2,
     EventData.newBuilder()
         .type("quux")
         .data(new byte[0])
@@ -395,7 +406,7 @@ volatileSubscription.get().close();
 #### Subscribes to stream from event number (catch-up subscription)
 
 ```java
-CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3,
+CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3L,
     new CatchUpSubscriptionListener() {
         @Override
         public void onLiveProcessingStarted(CatchUpSubscription subscription) {
@@ -417,7 +428,7 @@ catchupSubscription.close();
 ```
 
 ```java
-CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3, (s, e) ->
+CatchUpSubscription catchupSubscription = eventstore.subscribeToStreamFrom("foo", 3L, (s, e) ->
     System.out.println(e.originalEvent().eventType)
 );
 
