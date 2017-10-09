@@ -9,8 +9,8 @@ before_install:
 install:
 - mkdir tools
 - cd tools
-- export ES_FNAME="EventStore-OSS-Ubuntu-14.04-v4.0.1.tar.gz"
-- wget http://download.geteventstore.com/binaries/$ES_FNAME
+- export ES_FNAME="EventStore-OSS-Ubuntu-14.04-v4.0.3.tar.gz"
+- wget https://eventstore.org/downloads/$ES_FNAME
 - tar -xzf $ES_FNAME
 - cd ${ES_FNAME%.tar.gz}
 - openssl req -x509 -sha256 -nodes -days 365 -subj "/CN=test.com" -newkey rsa:2048 -keyout domain.pem -out domain.csr
