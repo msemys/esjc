@@ -1,6 +1,11 @@
 package com.github.msemys.esjc;
 
+
 import com.github.msemys.esjc.runner.EventStoreRunnerWithParametersFactory;
+import com.github.msemys.esjc.http.HttpClient;
+import com.github.msemys.esjc.util.Throwables;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -37,6 +42,12 @@ public abstract class AbstractEventStoreTest {
                 .build()
         };
     }
+
+    protected static final HttpClient httpClient = HttpClient.newBuilder()
+        .address("127.0.0.1", 2113)
+        .build();
+
+    protected static final UserCredentials eventstoreCredentials = new UserCredentials("admin", "changeit");
 
     protected final EventStore eventstore;
 
