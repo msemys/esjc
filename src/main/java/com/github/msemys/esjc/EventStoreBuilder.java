@@ -214,6 +214,17 @@ public class EventStoreBuilder {
     }
 
     /**
+     * Enables connection encryption using SSL and trusts an X.509 server certificate whose certificate is trusted.
+     *
+     * @param certificateFile server certificate
+     * @return the builder reference
+     */
+    public EventStoreBuilder useSslConnectionCertificateFile(String certificateFile) {
+        settingsBuilder.sslSettings(SslSettings.trustCertificate(certificateFile));
+        return this;
+    }
+
+    /**
      * Enables connection encryption using SSL and trusts all X.509 server certificates without any verification.
      *
      * @return the builder reference
