@@ -23,7 +23,7 @@ public class SslSettings {
     public final String certificateCommonName;
 
     /**
-     * The certificate file to validate against.
+     * The file containing the signing certificate (chain) to validate against.
      */
     public final String certificateFile;
 
@@ -66,7 +66,7 @@ public class SslSettings {
      * Creates a new SSL settings that enables connection encryption using SSL and
      * trusts an X.509 server certificate which is trusted by the given certificate file.
      *
-     * @param certificateFile server certificate file
+     * @param certificateFile server certificate file in PEM form.
      * @return SSL settings
      */
     public static SslSettings trustCertificate(String certificateFile) {

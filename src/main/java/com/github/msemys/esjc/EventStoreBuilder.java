@@ -214,7 +214,8 @@ public class EventStoreBuilder {
     }
 
     /**
-     * Enables connection encryption using SSL and trusts an X.509 server certificate whose certificate is trusted.
+     * Enables connection encryption using SSL and trusts an X.509 server certificate whose certificate is trusted
+     * by the given certificate file (in PEM form).
      *
      * @param certificateFile server certificate
      * @return the builder reference
