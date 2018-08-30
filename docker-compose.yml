@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  eventstore:
+    image: eventstore/eventstore:release-4.1.0
+    ports:
+    - "7773:7773"
+    - "7779:7779"
+    - "2113:2113"
+    environment:
+    - EVENTSTORE_MEM_DB=true
+    - EVENTSTORE_RUN_PROJECTIONS=all
+    - EVENTSTORE_STATS_PERIOD_SEC=3000
+    - EVENTSTORE_EXT_TCP_PORT=7773
+    - EVENTSTORE_EXT_SECURE_TCP_PORT=7779
+    - EVENTSTORE_CERTIFICATE_FILE=/ssl/domain.p12
+    volumes:
+    - ./tools/ssl:/ssl
