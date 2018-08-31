@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.fail;
 
-public class ITSslCommonNameConnectionTest extends AbstractSslConnectionTest {
+public class ITSslCommonNameConnection extends AbstractSslConnectionTest {
 
     @Test
     public void connectsWithMatchingCommonName() throws InterruptedException {

@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.fail;
 
-public class ITSslCertificateConnectionTest extends AbstractSslConnectionTest {
+public class ITSslCertificateConnection extends AbstractSslConnectionTest {
 
     @Test
     public void connectsWithMatchingCertificateFile() throws InterruptedException {
