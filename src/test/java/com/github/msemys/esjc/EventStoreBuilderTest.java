@@ -70,6 +70,7 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(60))
                 .discoverAttemptInterval(Duration.ofMinutes(2))
                 .maxDiscoverAttempts(5)
+                .preferRandomNode(true)
                 .build())
             .userCredentials("username", "password")
             .tcpSettings(TcpSettings.newBuilder()
