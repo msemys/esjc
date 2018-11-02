@@ -46,7 +46,6 @@ import io.netty.util.concurrent.ScheduledFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
@@ -126,7 +125,7 @@ public class EventStoreTcp implements EventStore {
                                 builder = builder.trustManager(new CommonNameTrustManagerFactory(settings.sslSettings.certificateCommonName));
                                 break;
                             case CERTIFICATE:
-                                builder = builder.trustManager(new File(settings.sslSettings.certificateFile));
+                                builder = builder.trustManager(settings.sslSettings.certificateFile);
                                 break;
                         }
                         SslContext sslContext = builder.build();

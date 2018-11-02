@@ -9,6 +9,7 @@ import com.github.msemys.esjc.operation.manager.RetriesLimitReachedException;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.concurrent.Executor;
@@ -220,7 +221,7 @@ public class EventStoreBuilder {
      * @param certificateFile server certificate
      * @return the builder reference
      */
-    public EventStoreBuilder useSslConnectionCertificateFile(String certificateFile) {
+    public EventStoreBuilder useSslConnection(File certificateFile) {
         settingsBuilder.sslSettings(SslSettings.trustCertificate(certificateFile));
         return this;
     }

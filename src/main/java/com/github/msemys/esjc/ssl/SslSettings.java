@@ -25,14 +25,14 @@ public class SslSettings {
     /**
      * The file containing the signing certificate (chain) to validate against.
      */
-    public final String certificateFile;
+    public final File certificateFile;
 
     /**
      * The validation mode.
      */
     public final SslValidationMode validationMode;
 
-    private SslSettings(boolean useSslConnection, SslValidationMode validationMode, String certificateCommonName, String certificateFile) {
+    private SslSettings(boolean useSslConnection, SslValidationMode validationMode, String certificateCommonName, File certificateFile) {
         this.useSslConnection = useSslConnection;
         this.certificateCommonName = certificateCommonName;
         this.validationMode = validationMode;
@@ -69,9 +69,9 @@ public class SslSettings {
      * @param certificateFile server certificate file in PEM form.
      * @return SSL settings
      */
-    public static SslSettings trustCertificate(String certificateFile) {
-        checkArgument(!isNullOrEmpty(certificateFile), "certificateFile is null or empty");
-        checkArgument(new File(certificateFile).exists(), "certificateFile " + certificateFile + " does not exist");
+    public static SslSettings trustCertificate(File certificateFile) {
+        checkArgument(certificateFile != null, "certificateFile is null");
+        checkArgument(certificateFile.exists(), "certificateFile '" + certificateFile + "' does not exist");
         return new SslSettings(true, SslValidationMode.CERTIFICATE, null, certificateFile);
     }
 

@@ -5,6 +5,7 @@ import com.github.msemys.esjc.event.ErrorOccurred;
 import org.junit.Test;
 
 import javax.net.ssl.SSLHandshakeException;
+import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -14,17 +15,17 @@ public class ITSslCertificateConnection extends AbstractSslConnectionTest {
 
     @Test
     public void connectsWithMatchingCertificateFile() throws InterruptedException {
-        testSuccessfulConnection("tools/ssl/domain.crt");
+        testSuccessfulConnection(new File("tools/ssl/domain.crt"));
     }
 
     @Test
     public void connectsWithMatchingCACertificateFile() throws InterruptedException {
-        testSuccessfulConnection("tools/ssl/rootCA.crt");
+        testSuccessfulConnection(new File("tools/ssl/rootCA.crt"));
     }
 
     @Test
     public void failsWithNonMatchingCertificateFile() throws Throwable {
-        final String certificateFile = "tools/ssl/invalid.crt";
+        final File certificateFile = new File("tools/ssl/invalid.crt");
 
         eventstore = createEventStore(certificateFile);
         CountDownLatch connectionErrorSignal = new CountDownLatch(1);
@@ -47,9 +48,9 @@ public class ITSslCertificateConnection extends AbstractSslConnectionTest {
 
     @Test
     public void failsWithNonExistingCertificateFile() throws InterruptedException {
-        final String certificateFile = "doesnotexist.csr";
+        final File certificateFile = new File("doesnotexist.csr");
         expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("certificateFile " + certificateFile + " does not exist");
+        expectedException.expectMessage("certificateFile '" + certificateFile + "' does not exist");
 
         eventstore = createEventStore(certificateFile);
         fail("Exception expected!");
@@ -57,15 +58,15 @@ public class ITSslCertificateConnection extends AbstractSslConnectionTest {
 
     @Test
     public void failsWithEmptyCertificateFileName() throws InterruptedException {
-        final String certificateFile = "";
+        final File certificateFile = new File("");
         expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("certificateFile is null or empty");
+        expectedException.expectMessage("certificateFile '' does not exist");
 
         eventstore = createEventStore(certificateFile);
         fail("Exception expected!");
     }
 
-    private void testSuccessfulConnection(final String certificateFile) throws InterruptedException {
+    private void testSuccessfulConnection(final File certificateFile) throws InterruptedException {
         eventstore = createEventStore(certificateFile);
 
         CountDownLatch connectedSignal = new CountDownLatch(1);
@@ -79,10 +80,10 @@ public class ITSslCertificateConnection extends AbstractSslConnectionTest {
         assertNoTimeout(connectedSignal);
     }
 
-    private EventStore createEventStore(final String certificateFile) {
+    private EventStore createEventStore(final File certificateFile) {
         return EventStoreBuilder.newBuilder()
             .singleNodeAddress("127.0.0.1", 7779)
-            .useSslConnectionCertificateFile(certificateFile)
+            .useSslConnection(certificateFile)
             .userCredentials("admin", "changeit")
             .maxReconnections(2)
             .build();
