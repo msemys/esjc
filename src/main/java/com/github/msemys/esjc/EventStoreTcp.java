@@ -116,11 +116,19 @@ public class EventStoreTcp implements EventStore {
                     ChannelPipeline pipeline = ch.pipeline();
 
                     if (settings.sslSettings.useSslConnection) {
-                        SslContext sslContext = SslContextBuilder.forClient()
-                            .trustManager(settings.sslSettings.validateServerCertificate ?
-                                new CommonNameTrustManagerFactory(settings.sslSettings.certificateCommonName) :
-                                InsecureTrustManagerFactory.INSTANCE)
-                            .build();
+                        SslContextBuilder builder = SslContextBuilder.forClient();
+                        switch (settings.sslSettings.validationMode) {
+                            case NONE:
+                                builder = builder.trustManager(InsecureTrustManagerFactory.INSTANCE);
+                                break;
+                            case COMMON_NAME:
+                                builder = builder.trustManager(new CommonNameTrustManagerFactory(settings.sslSettings.certificateCommonName));
+                                break;
+                            case CERTIFICATE:
+                                builder = builder.trustManager(settings.sslSettings.certificateFile);
+                                break;
+                        }
+                        SslContext sslContext = builder.build();
                         pipeline.addLast("ssl", sslContext.newHandler(ch.alloc()));
                     }
 

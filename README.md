@@ -98,9 +98,18 @@ openssl pkcs12 -export -inkey domain.pem -in domain.csr -out domain.p12
 ./run-node.sh --ext-secure-tcp-port 1119 --certificate-file domain.p12
 ```
 
-Now we are ready to connect to single-node or cluster-node using secure channel. On the client side we are able to verify server certificate (check CN and expiration date) or accept any server certificate without verification.
+Now we are ready to connect to single-node or cluster-node using secure channel. On the client side we are able to
+verify server certificate (check either signing certificate or CN and expiration date only) or accept any server
+certificate without verification.
 
 ```java
+// creates a client with secure connection to server whose certificate is trusted by the given certificate file
+EventStore eventstore = EventStoreBuilder.newBuilder()
+    .singleNodeAddress("127.0.0.1", 1119)
+    .useSslConnectionCertificateFile("domain.csr")
+    .userCredentials("admin", "changeit")
+    .build();
+
 // creates a client with secure connection to server whose certificate Common Name (CN) matches 'test.com'
 EventStore eventstore = EventStoreBuilder.newBuilder()
     .singleNodeAddress("127.0.0.1", 1119)
