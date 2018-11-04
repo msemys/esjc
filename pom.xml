@@ -96,6 +96,14 @@
     </dependencies>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.6.1</version>
+            </extension>
+        </extensions>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -136,43 +144,20 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.6.1</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <id>compile-proto</id>
-                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <target>
-                                <mkdir dir="${project.build.directory}/generated-sources/protobuf"/>
-                                <exec executable="protoc">
-                                    <arg value="--java_out=${project.build.directory}/generated-sources/protobuf"/>
-                                    <arg value="--proto_path=${project.basedir}/src/main/protobuf"/>
-                                    <arg value="${project.basedir}/src/main/protobuf/EventStoreClientMessages.proto"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/protobuf</source>
-                            </sources>
+                            <clearOutputDirectory>false</clearOutputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/protobuf</outputDirectory>
+                            <protoSourceRoot>${project.basedir}/src/main/protobuf</protoSourceRoot>
+                            <protocArtifact>com.google.protobuf:protoc:2.6.1:exe:${os.detected.classifier}</protocArtifact>
                         </configuration>
                     </execution>
                 </executions>
