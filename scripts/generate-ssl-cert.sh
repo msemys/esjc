@@ -1,8 +1,8 @@
 #!/bin/bash
 
 GIT_ROOT=$(git rev-parse --show-toplevel)
-mkdir -p ${GIT_ROOT}/tools/ssl
-pushd ${GIT_ROOT}/tools/ssl
+mkdir -p ${GIT_ROOT}/ssl
+pushd ${GIT_ROOT}/ssl
 
 # generate CA-signed certificate
 openssl genrsa -out rootCA.key 2048

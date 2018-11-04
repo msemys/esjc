@@ -15,17 +15,17 @@ public class ITSslCertificateConnection extends AbstractSslConnectionTest {
 
     @Test
     public void connectsWithMatchingCertificateFile() throws InterruptedException {
-        testSuccessfulConnection(new File("tools/ssl/domain.crt"));
+        testSuccessfulConnection(new File("ssl/domain.crt"));
     }
 
     @Test
     public void connectsWithMatchingCACertificateFile() throws InterruptedException {
-        testSuccessfulConnection(new File("tools/ssl/rootCA.crt"));
+        testSuccessfulConnection(new File("ssl/rootCA.crt"));
     }
 
     @Test
     public void failsWithNonMatchingCertificateFile() throws Throwable {
-        final File certificateFile = new File("tools/ssl/invalid.crt");
+        final File certificateFile = new File("ssl/invalid.crt");
 
         eventstore = createEventStore(certificateFile);
         CountDownLatch connectionErrorSignal = new CountDownLatch(1);

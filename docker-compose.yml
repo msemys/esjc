@@ -15,4 +15,4 @@ services:
     - EVENTSTORE_EXT_SECURE_TCP_PORT=7779
     - EVENTSTORE_CERTIFICATE_FILE=/ssl/domain.p12
     volumes:
-    - ./tools/ssl:/ssl
+    - ./ssl:/ssl
