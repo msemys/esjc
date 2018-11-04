@@ -1,22 +1,25 @@
 language: java
+dist: trusty
+
 jdk:
 - oraclejdk8
+
 sudo: true
-script: mvn clean install
+
+services:
+  - docker
+
 before_install:
 - sudo apt-get update -qq
-- sudo apt-get install -y wget tar make openssl
-install:
-- mkdir tools
-- cd tools
-- ../scripts/generate-ssl-cert.sh
-- export ES_FNAME="EventStore-OSS-Ubuntu-14.04-v4.1.0.tar.gz"
-- wget https://eventstore.org/downloads/$ES_FNAME
-- tar -xzf $ES_FNAME
-- cd ${ES_FNAME%.tar.gz}
-- ./run-node.sh --mem-db --run-projections=all --stats-period-sec 3000 --ext-tcp-port 7773 --ext-secure-tcp-port 7779 --certificate-file ../ssl/domain.p12 > /dev/null &
-- cd ../
-- wget https://github.com/google/protobuf/releases/download/v2.6.1/protobuf-2.6.1.tar.gz
-- tar -xzf protobuf-2.6.1.tar.gz
-- cd protobuf-2.6.1 && ./configure --prefix=/usr && make > /dev/null 2>&1 && sudo make install > /dev/null 2>&1
-- cd ../../
+- sudo apt-get install -y openssl docker-ce
+
+before_script:
+- ./scripts/generate-ssl-cert.sh
+
+script:
+- sudo docker-compose up -d
+- mvn clean install
+
+cache:
+  directories:
+  - $HOME/.m2
