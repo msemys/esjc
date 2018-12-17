@@ -809,7 +809,9 @@ public class EventStoreTcp implements EventStore {
 
         switch (connectionState()) {
             case INIT:
-                connectingPhase = ConnectingPhase.RECONNECTING;
+                if (connectingPhase != ConnectingPhase.ENDPOINT_DISCOVERY) {
+                    connectingPhase = ConnectingPhase.RECONNECTING;
+                }
                 discoverEndpoint(task.result);
                 break;
             case CONNECTING:
