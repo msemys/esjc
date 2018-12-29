@@ -464,6 +464,17 @@ public class EventStoreBuilder {
     }
 
     /**
+     * Sets default executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
+     *
+     * @return the builder reference
+     * @see #executor(Executor)
+     */
+    public EventStoreBuilder defaultExecutor() {
+        this.settingsBuilder.defaultExecutor();
+        return this;
+    }
+
+    /**
      * Builds an Event Store client.
      *
      * @return Event Store client

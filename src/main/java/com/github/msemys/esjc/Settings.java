@@ -477,6 +477,16 @@ public class Settings {
         }
 
         /**
+         * Sets default executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
+         *
+         * @return the builder reference
+         * @see #executor(Executor)
+         */
+        public Builder defaultExecutor() {
+            return executor(null);
+        }
+
+        /**
          * Builds a client settings.
          *
          * @return client settings
