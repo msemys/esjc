@@ -3,76 +3,66 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.event.ClientConnected;
 import com.github.msemys.esjc.event.ErrorOccurred;
 import org.junit.Test;
-import org.junit.internal.matchers.ThrowableMessageMatcher;
 
 import java.security.cert.CertificateException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.fail;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 
 public class ITSslCommonNameConnection extends AbstractSslConnectionTest {
 
     @Test
     public void connectsWithMatchingCommonName() throws InterruptedException {
-        eventstore = createEventStore("localhost");
+        EventStore eventstore = createEventStore("localhost");
 
-        CountDownLatch connectedSignal = new CountDownLatch(1);
-        eventstore.addListener(event -> {
-            if (event instanceof ClientConnected) {
-                connectedSignal.countDown();
-            }
-        });
+        CountDownLatch signal = new CountDownLatch(1);
+        eventstore.addListener(onEvent(ClientConnected.class, e -> signal.countDown()));
 
         eventstore.connect();
-        assertNoTimeout(connectedSignal);
+
+        assertSignal(signal);
+
+        eventstore.shutdown();
+    }
+
+    @Test
+    public void failsWithNonMatchingCommonName() throws InterruptedException {
+        EventStore eventstore = createEventStore("somethingelse");
+
+        CountDownLatch signal = new CountDownLatch(1);
+        AtomicReference<Throwable> error = new AtomicReference<>();
+
+        eventstore.addListener(onEvent(ErrorOccurred.class, e -> {
+            error.set(e.throwable);
+            signal.countDown();
+        }));
+
+        eventstore.connect();
+
+        assertSignal(signal);
+        assertThrowable(error.get(),
+            instanceOf(CertificateException.class),
+            hasMessage(containsString("server certificate common name (CN) mismatch")));
+
+        eventstore.shutdown();
     }
 
     @Test
     public void failsWithEmptyCommonName() {
-        final String commonName = "";
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("certificateCommonName is null or empty");
 
-        eventstore = createEventStore(commonName);
+        createEventStore("");
+
         fail("Exception expected!");
     }
 
-
-    @Test
-    public void failsWithNonMatchingCommonName() throws InterruptedException {
-        final String commonName = "somethingelse";
-
-        eventstore = createEventStore(commonName);
-        CountDownLatch connectionErrorSignal = new CountDownLatch(1);
-        eventstore.addListener(event -> {
-            if (event instanceof ErrorOccurred) {
-                ErrorOccurred error = (ErrorOccurred) event;
-                thrown = error.throwable;
-                connectionErrorSignal.countDown();
-            }
-        });
-
-        eventstore.connect();
-
-        assertNoTimeout(connectionErrorSignal);
-        assertHasCause(
-            thrown,
-            allOf(
-                instanceOf(CertificateException.class),
-                ThrowableMessageMatcher.hasMessage(containsString("server certificate common name (CN) mismatch"))
-            )
-        );
-        eventstore.disconnect(); // is probably already disconnected, waiting for disconnection is flaky.
-        eventstore = null;
+    private static EventStore createEventStore(final String commonName) {
+        return newEventStoreBuilder().useSslConnection(commonName).build();
     }
 
-    private EventStore createEventStore(final String commonName) {
-        return EventStoreBuilder.newBuilder()
-            .singleNodeAddress("127.0.0.1", 7779)
-            .useSslConnection(commonName)
-            .userCredentials("admin", "changeit")
-            .maxReconnections(2)
-            .build();
-    }
 }
