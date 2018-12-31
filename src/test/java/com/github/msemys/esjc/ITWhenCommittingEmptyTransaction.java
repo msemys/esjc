@@ -8,11 +8,10 @@ import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITWhenCommittingEmptyTransaction extends AbstractIntegrationTest {
+public class ITWhenCommittingEmptyTransaction extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITWhenCommittingEmptyTransaction(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

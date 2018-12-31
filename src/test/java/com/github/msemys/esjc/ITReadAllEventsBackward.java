@@ -11,11 +11,10 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-public class ITReadAllEventsBackward extends AbstractIntegrationTest {
+public class ITReadAllEventsBackward extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadAllEventsBackward(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

@@ -12,11 +12,10 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITSoftDelete extends AbstractIntegrationTest {
+public class ITSoftDelete extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITSoftDelete(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

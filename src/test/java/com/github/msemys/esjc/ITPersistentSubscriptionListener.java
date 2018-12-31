@@ -9,13 +9,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertTrue;
 
-public class ITPersistentSubscriptionListener extends AbstractIntegrationTest {
+public class ITPersistentSubscriptionListener extends AbstractEventStoreTest {
     private static final int BUFFER_SIZE = 10;
     private static final int EVENT_COUNT = BUFFER_SIZE * 2;
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITPersistentSubscriptionListener(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

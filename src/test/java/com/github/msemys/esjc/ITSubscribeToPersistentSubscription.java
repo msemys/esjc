@@ -15,11 +15,10 @@ import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest {
+public class ITSubscribeToPersistentSubscription extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITSubscribeToPersistentSubscription(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

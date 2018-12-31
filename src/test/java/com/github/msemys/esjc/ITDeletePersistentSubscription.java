@@ -10,11 +10,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITDeletePersistentSubscription extends AbstractIntegrationTest {
+public class ITDeletePersistentSubscription extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITDeletePersistentSubscription(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

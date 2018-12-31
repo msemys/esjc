@@ -10,13 +10,12 @@ import static com.github.msemys.esjc.system.SystemStreams.metastreamOf;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
 
-public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractIntegrationTest {
+public class ITReadAllEventsForwardWithSoftDeletedStream extends AbstractEventStoreTest {
 
     private static final Long DELETED_STREAM_EVENT_NUMBER = Long.MAX_VALUE;
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadAllEventsForwardWithSoftDeletedStream(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

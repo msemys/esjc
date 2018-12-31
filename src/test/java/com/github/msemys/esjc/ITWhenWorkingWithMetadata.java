@@ -5,11 +5,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ITWhenWorkingWithMetadata extends AbstractIntegrationTest {
+public class ITWhenWorkingWithMetadata extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITWhenWorkingWithMetadata(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

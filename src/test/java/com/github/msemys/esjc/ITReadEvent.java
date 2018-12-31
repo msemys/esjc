@@ -7,11 +7,10 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
-public class ITReadEvent extends AbstractIntegrationTest {
+public class ITReadEvent extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadEvent(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test(expected = IllegalArgumentException.class)

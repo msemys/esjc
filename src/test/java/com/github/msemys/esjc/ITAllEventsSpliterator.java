@@ -15,11 +15,10 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-public class ITAllEventsSpliterator extends AbstractIntegrationTest {
+public class ITAllEventsSpliterator extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITAllEventsSpliterator(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

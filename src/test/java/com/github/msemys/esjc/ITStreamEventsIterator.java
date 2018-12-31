@@ -11,11 +11,10 @@ import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsIn
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 
-public class ITStreamEventsIterator extends AbstractIntegrationTest {
+public class ITStreamEventsIterator extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITStreamEventsIterator(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

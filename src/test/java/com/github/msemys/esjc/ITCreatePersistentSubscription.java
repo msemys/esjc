@@ -7,11 +7,10 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class ITCreatePersistentSubscription extends AbstractIntegrationTest {
+public class ITCreatePersistentSubscription extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITCreatePersistentSubscription(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

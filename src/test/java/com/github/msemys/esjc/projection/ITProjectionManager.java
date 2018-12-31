@@ -5,6 +5,8 @@ import com.github.msemys.esjc.http.HttpOperationTimeoutException;
 import com.github.msemys.esjc.rule.Retryable;
 import com.github.msemys.esjc.rule.RetryableMethodRule;
 import com.github.msemys.esjc.system.SystemProjections;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -20,21 +22,19 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITProjectionManager extends AbstractIntegrationTest {
+public class ITProjectionManager extends AbstractEventStoreTest {
 
     private ProjectionManager projectionManager;
 
     @Rule
     public RetryableMethodRule retryableMethodRule = new RetryableMethodRule();
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITProjectionManager(EventStore eventstore) {
+        super(eventstore);
     }
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() {
         projectionManager = ProjectionManagerBuilder.newBuilder()
             .address("127.0.0.1", 2113)
             .userCredentials("admin", "changeit")
@@ -42,9 +42,8 @@ public class ITProjectionManager extends AbstractIntegrationTest {
             .build();
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() {
         projectionManager.shutdown();
     }
 

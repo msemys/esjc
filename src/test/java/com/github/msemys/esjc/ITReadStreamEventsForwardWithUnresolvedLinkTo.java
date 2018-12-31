@@ -4,11 +4,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ITReadStreamEventsForwardWithUnresolvedLinkTo extends AbstractIntegrationTest {
+public class ITReadStreamEventsForwardWithUnresolvedLinkTo extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadStreamEventsForwardWithUnresolvedLinkTo(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

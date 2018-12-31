@@ -11,11 +11,10 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractIntegrationTest {
+public class ITWhenWorkingWithStreamMetadataAsStructuredInfo extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITWhenWorkingWithStreamMetadataAsStructuredInfo(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

@@ -12,11 +12,10 @@ import static java.util.stream.Stream.concat;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends AbstractIntegrationTest {
+public class ITAppendingToImplicitlyCreatedStreamUsingTransaction extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITAppendingToImplicitlyCreatedStreamUsingTransaction(EventStore eventstore) {
+        super(eventstore);
     }
 
     // method naming:

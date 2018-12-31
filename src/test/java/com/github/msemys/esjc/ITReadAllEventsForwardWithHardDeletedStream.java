@@ -9,11 +9,10 @@ import static com.github.msemys.esjc.matcher.RecordedEventListMatcher.containsIn
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
 
-public class ITReadAllEventsForwardWithHardDeletedStream extends AbstractIntegrationTest {
+public class ITReadAllEventsForwardWithHardDeletedStream extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadAllEventsForwardWithHardDeletedStream(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

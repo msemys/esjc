@@ -7,11 +7,10 @@ import java.util.concurrent.CountDownLatch;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
 
-public class ITSubscribeToStream extends AbstractIntegrationTest {
+public class ITSubscribeToStream extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITSubscribeToStream(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

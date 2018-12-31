@@ -15,12 +15,11 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 
-public class ITSubscribeToAllFrom extends AbstractIntegrationTest {
+public class ITSubscribeToAllFrom extends AbstractEventStoreTest {
     private static final Logger logger = LoggerFactory.getLogger(ITSubscribeToAllFrom.class);
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITSubscribeToAllFrom(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

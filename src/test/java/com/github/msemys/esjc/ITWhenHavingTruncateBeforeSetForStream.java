@@ -8,11 +8,10 @@ import java.util.UUID;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public class ITWhenHavingTruncateBeforeSetForStream extends AbstractIntegrationTest {
+public class ITWhenHavingTruncateBeforeSetForStream extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITWhenHavingTruncateBeforeSetForStream(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

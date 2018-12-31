@@ -6,11 +6,10 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-public class ITJsonFlagOnEventData extends AbstractIntegrationTest {
+public class ITJsonFlagOnEventData extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITJsonFlagOnEventData(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

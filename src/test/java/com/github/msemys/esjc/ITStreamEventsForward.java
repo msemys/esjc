@@ -11,11 +11,10 @@ import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITStreamEventsForward extends AbstractIntegrationTest {
+public class ITStreamEventsForward extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITStreamEventsForward(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test(expected = IllegalArgumentException.class)

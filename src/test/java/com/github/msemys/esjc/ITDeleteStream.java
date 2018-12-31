@@ -7,11 +7,10 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITDeleteStream extends AbstractIntegrationTest {
+public class ITDeleteStream extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITDeleteStream(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

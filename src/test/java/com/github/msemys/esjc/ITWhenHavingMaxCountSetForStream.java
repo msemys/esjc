@@ -8,11 +8,10 @@ import java.util.UUID;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public class ITWhenHavingMaxCountSetForStream extends AbstractIntegrationTest {
+public class ITWhenHavingMaxCountSetForStream extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITWhenHavingMaxCountSetForStream(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

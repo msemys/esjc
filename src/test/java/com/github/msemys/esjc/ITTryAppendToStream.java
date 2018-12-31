@@ -4,11 +4,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ITTryAppendToStream extends AbstractIntegrationTest {
+public class ITTryAppendToStream extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITTryAppendToStream(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

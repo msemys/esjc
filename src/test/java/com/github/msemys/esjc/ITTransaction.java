@@ -16,11 +16,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITTransaction extends AbstractIntegrationTest {
+public class ITTransaction extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITTransaction(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

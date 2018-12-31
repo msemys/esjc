@@ -4,11 +4,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ITReadAllEventsForwardWithLinkToPassedMaxCount extends AbstractIntegrationTest {
+public class ITReadAllEventsForwardWithLinkToPassedMaxCount extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadAllEventsForwardWithLinkToPassedMaxCount(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

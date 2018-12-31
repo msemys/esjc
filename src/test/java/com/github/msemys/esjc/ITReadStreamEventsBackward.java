@@ -9,11 +9,10 @@ import static com.github.msemys.esjc.matcher.RecordedEventMatcher.equalTo;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
 
-public class ITReadStreamEventsBackward extends AbstractIntegrationTest {
+public class ITReadStreamEventsBackward extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadStreamEventsBackward(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test(expected = IllegalArgumentException.class)

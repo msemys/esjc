@@ -1,68 +1,56 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.event.ClientConnected;
 import com.github.msemys.esjc.event.ClientDisconnected;
+import com.github.msemys.esjc.runner.EventStoreRunnerWithParametersFactory;
 import com.github.msemys.esjc.util.Throwables;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Parameterized.UseParametersRunnerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Supplier;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertTrue;
 
-public abstract class AbstractIntegrationTest {
+@RunWith(Parameterized.class)
+@UseParametersRunnerFactory(EventStoreRunnerWithParametersFactory.class)
+public abstract class AbstractEventStoreTest {
 
-    protected static final Supplier<EventStore> eventstoreSupplier = () -> EventStoreBuilder.newBuilder()
-        .singleNodeAddress("127.0.0.1", 7773)
-        .userCredentials("admin", "changeit")
-        .maxReconnections(2)
-        .build();
+    @Parameters
+    public static Object[] parameters() {
+        return new Object[]{
+            EventStoreBuilder.newBuilder()
+                .singleNodeAddress("127.0.0.1", 7773)
+                .userCredentials("admin", "changeit")
+                .maxReconnections(2)
+                .build(),
 
-    protected static final Supplier<EventStore> eventstoreSslSupplier = () -> EventStoreBuilder.newBuilder()
-        .singleNodeAddress("127.0.0.1", 7779)
-        .useSslConnection()
-        .userCredentials("admin", "changeit")
-        .maxReconnections(2)
-        .build();
+            EventStoreBuilder.newBuilder()
+                .singleNodeAddress("127.0.0.1", 7779)
+                .useSslConnection()
+                .userCredentials("admin", "changeit")
+                .maxReconnections(2)
+                .build()
+        };
+    }
 
-    protected EventStore eventstore;
+    protected final EventStore eventstore;
 
     @Rule
     public TestName name = new TestName();
 
-    @Before
-    public void setUp() throws Exception {
-        eventstore = createEventStore();
-
-        CountDownLatch clientConnectedSignal = new CountDownLatch(1);
-
-        eventstore.addListener(event -> {
-            if (event instanceof ClientConnected) {
-                clientConnectedSignal.countDown();
-            }
-        });
-
-        eventstore.connect();
-
-        assertTrue("client connect timeout", clientConnectedSignal.await(15, SECONDS));
+    protected AbstractEventStoreTest(EventStore eventstore) {
+        this.eventstore = eventstore;
     }
-
-    @After
-    public void tearDown() throws Exception {
-        awaitDisconnected(eventstore);
-    }
-
-    protected abstract EventStore createEventStore();
 
     protected static EventData newLinkEvent(String stream, long eventNumber) {
         return EventData.newBuilder()

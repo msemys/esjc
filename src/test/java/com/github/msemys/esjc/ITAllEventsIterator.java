@@ -13,11 +13,10 @@ import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-public class ITAllEventsIterator extends AbstractIntegrationTest {
+public class ITAllEventsIterator extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITAllEventsIterator(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

@@ -4,11 +4,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ITReadEventOfLinkToToDeletedEvent extends AbstractIntegrationTest {
+public class ITReadEventOfLinkToToDeletedEvent extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadEventOfLinkToToDeletedEvent(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

@@ -4,11 +4,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ITReadAllEventsForwardWithLinkToToDeletedEvents extends AbstractIntegrationTest {
+public class ITReadAllEventsForwardWithLinkToToDeletedEvents extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITReadAllEventsForwardWithLinkToToDeletedEvents(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test

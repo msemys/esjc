@@ -11,11 +11,10 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.*;
 
-public class ITIterateAllEventsBackward extends AbstractIntegrationTest {
+public class ITIterateAllEventsBackward extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITIterateAllEventsBackward(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test(expected = IllegalArgumentException.class)

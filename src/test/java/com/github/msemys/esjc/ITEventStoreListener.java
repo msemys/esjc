@@ -3,39 +3,24 @@ package com.github.msemys.esjc;
 import com.github.msemys.esjc.event.ClientConnected;
 import com.github.msemys.esjc.event.ClientDisconnected;
 import com.github.msemys.esjc.event.ConnectionClosed;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Verifier;
 
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
 
-public class ITEventStoreListener extends AbstractIntegrationTest {
+public class ITEventStoreListener extends AbstractEventStoreTest {
 
-    private CountDownLatch clientConnectedSignal;
-    private CountDownLatch clientDisconnectedSignal;
-    private CountDownLatch connectionClosedSignal;
-
-    @Rule
-    public Verifier verifier = new Verifier() {
-        @Override
-        protected void verify() throws Throwable {
-            assertTrue("connection close timeout", connectionClosedSignal.await(2, SECONDS));
-            assertTrue("client disconnect timeout", clientDisconnectedSignal.await(2, SECONDS));
-        }
-    };
-
-    @Override
-    protected EventStore createEventStore() {
-        return applyTestListener(eventstoreSupplier.get());
+    public ITEventStoreListener(EventStore eventstore) {
+        super(eventstore);
     }
 
-    protected EventStore applyTestListener(EventStore eventstore) {
-        clientConnectedSignal = new CountDownLatch(1);
-        clientDisconnectedSignal = new CountDownLatch(1);
-        connectionClosedSignal = new CountDownLatch(1);
+    @Test
+    public void firesClientInternalEvents() throws InterruptedException {
+        CountDownLatch clientConnectedSignal = new CountDownLatch(1);
+        CountDownLatch clientDisconnectedSignal = new CountDownLatch(1);
+        CountDownLatch connectionClosedSignal = new CountDownLatch(1);
 
         eventstore.addListener(event -> {
             if (event instanceof ClientConnected) {
@@ -47,12 +32,14 @@ public class ITEventStoreListener extends AbstractIntegrationTest {
             }
         });
 
-        return eventstore;
-    }
+        eventstore.connect();
 
-    @Test
-    public void firesClientConnectedEvent() throws InterruptedException {
         assertTrue("client connect timeout", clientConnectedSignal.await(15, SECONDS));
+
+        eventstore.disconnect();
+
+        assertTrue("connection close timeout", connectionClosedSignal.await(2, SECONDS));
+        assertTrue("client disconnect timeout", clientDisconnectedSignal.await(2, SECONDS));
     }
 
 }

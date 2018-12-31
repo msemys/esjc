@@ -12,11 +12,10 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractIntegrationTest {
+public class ITWhenWorkingWithStreamMetadataAsByteArray extends AbstractEventStoreTest {
 
-    @Override
-    protected EventStore createEventStore() {
-        return eventstoreSupplier.get();
+    public ITWhenWorkingWithStreamMetadataAsByteArray(EventStore eventstore) {
+        super(eventstore);
     }
 
     @Test
