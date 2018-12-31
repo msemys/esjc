@@ -106,7 +106,7 @@ certificate without verification.
 // creates a client with secure connection to server whose certificate is trusted by the given certificate file
 EventStore eventstore = EventStoreBuilder.newBuilder()
     .singleNodeAddress("127.0.0.1", 1119)
-    .useSslConnectionCertificateFile("domain.csr")
+    .useSslConnection(new File("domain.csr"))
     .userCredentials("admin", "changeit")
     .build();
 
