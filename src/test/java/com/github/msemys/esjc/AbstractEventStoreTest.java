@@ -1,8 +1,6 @@
 package com.github.msemys.esjc;
 
-import com.github.msemys.esjc.event.ClientDisconnected;
 import com.github.msemys.esjc.runner.EventStoreRunnerWithParametersFactory;
-import com.github.msemys.esjc.util.Throwables;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -14,12 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 @UseParametersRunnerFactory(EventStoreRunnerWithParametersFactory.class)
@@ -114,24 +109,6 @@ public abstract class AbstractEventStoreTest {
         }
 
         return result;
-    }
-
-    protected static void awaitDisconnected(EventStore eventstore) {
-        CountDownLatch clientDisconnectedSignal = new CountDownLatch(1);
-
-        eventstore.addListener(event -> {
-            if (event instanceof ClientDisconnected) {
-                clientDisconnectedSignal.countDown();
-            }
-        });
-
-        eventstore.disconnect();
-
-        try {
-            assertTrue("client disconnect timeout", clientDisconnectedSignal.await(15, SECONDS));
-        } catch (InterruptedException e) {
-            throw Throwables.propagate(e);
-        }
     }
 
 }

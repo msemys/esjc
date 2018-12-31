@@ -99,7 +99,7 @@ public class ITCreatePersistentSubscription extends AbstractEventStoreTest {
                 assertThat(e.getCause(), instanceOf(AccessDeniedException.class));
             }
         } finally {
-            awaitDisconnected(unauthenticatedEventstore);
+            unauthenticatedEventstore.shutdown();
         }
     }
 
