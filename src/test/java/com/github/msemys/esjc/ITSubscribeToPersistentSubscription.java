@@ -54,6 +54,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractIntegrationTest
 
         EventStore unauthenticatedEventstore = EventStoreBuilder.newBuilder(eventstore.settings())
             .noUserCredentials()
+            .defaultExecutor()
             .build();
 
         try {
