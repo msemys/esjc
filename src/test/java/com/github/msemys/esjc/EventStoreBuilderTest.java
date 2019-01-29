@@ -51,6 +51,7 @@ public class EventStoreBuilderTest {
             .persistentSubscriptionBufferSize(5555)
             .persistentSubscriptionAutoAck(false)
             .failOnNoServerResponse(true)
+            .disconnectOnTcpChannelError(false)
             .executor(Executors.newCachedThreadPool())
             .build();
 

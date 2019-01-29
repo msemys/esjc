@@ -128,6 +128,11 @@ public class Settings {
     public final boolean failOnNoServerResponse;
 
     /**
+     * Whether to disconnect on a channel error or to reconnect.
+     */
+    public final boolean disconnectOnTcpChannelError;
+
+    /**
      * The executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
      */
     public final Executor executor;
@@ -152,6 +157,7 @@ public class Settings {
         persistentSubscriptionBufferSize = builder.persistentSubscriptionBufferSize;
         persistentSubscriptionAutoAck = builder.persistentSubscriptionAutoAck;
         failOnNoServerResponse = builder.failOnNoServerResponse;
+        disconnectOnTcpChannelError = builder.disconnectOnTcpChannelError;
         executor = builder.executor;
     }
 
@@ -177,6 +183,7 @@ public class Settings {
         sb.append(", persistentSubscriptionBufferSize=").append(persistentSubscriptionBufferSize);
         sb.append(", persistentSubscriptionAutoAck=").append(persistentSubscriptionAutoAck);
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
+        sb.append(", disconnectOnTcpChannelError=").append(disconnectOnTcpChannelError);
         sb.append(", executor=").append(executor);
         sb.append('}');
         return sb.toString();
@@ -214,6 +221,7 @@ public class Settings {
         private Integer persistentSubscriptionBufferSize;
         private Boolean persistentSubscriptionAutoAck;
         private Boolean failOnNoServerResponse;
+        private Boolean disconnectOnTcpChannelError;
         private Executor executor;
 
         private Builder() {
@@ -466,6 +474,18 @@ public class Settings {
         }
 
         /**
+         * Sets whether or not to disconnect the client on detecting a channel error. By default, it is enabled and
+         * client disconnects immediately. If it is disabled the client tries to reconnect according to {@link #maxReconnections(int)}.
+         *
+         * @param disconnectOnTcpChannelError {@code true} to disconnect or {@code false} to try to reconnect.
+         * @return the builder reference
+         */
+        public Builder disconnectOnTcpChannelError(boolean disconnectOnTcpChannelError) {
+            this.disconnectOnTcpChannelError = disconnectOnTcpChannelError;
+            return this;
+        }
+
+        /**
          * Sets the executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
          *
          * @param executor the executor to execute client internal tasks and run subscriptions.
@@ -567,6 +587,10 @@ public class Settings {
 
             if (failOnNoServerResponse == null) {
                 failOnNoServerResponse = false;
+            }
+
+            if (disconnectOnTcpChannelError == null) {
+                disconnectOnTcpChannelError = true;
             }
 
             if (executor == null) {
