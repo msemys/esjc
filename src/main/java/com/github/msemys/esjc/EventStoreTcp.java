@@ -597,9 +597,11 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public void connect() {
-        if (!isRunning()) {
-            timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
-            reconnectionInfo.reset();
+        synchronized (mutex) {
+            if (!isRunning()) {
+                timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
+                reconnectionInfo.reset();
+            }
         }
         CompletableFuture<Void> result = new CompletableFuture<>();
         result.whenComplete((value, throwable) -> {
@@ -627,15 +629,17 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void disconnect(String reason, Throwable cause) {
-        if (isRunning()) {
-            timer.cancel(true);
-            timer = null;
-            operationManager.cleanUp(cause);
-            subscriptionManager.cleanUp(cause);
-            closeTcpConnection(reason);
-            connectingPhase = ConnectingPhase.INVALID;
-            fireEvent(Events.clientDisconnected());
-            logger.info("Disconnected, reason: {}", reason);
+        synchronized (mutex) {
+            if (isRunning()) {
+                timer.cancel(true);
+                timer = null;
+                operationManager.cleanUp(cause);
+                subscriptionManager.cleanUp(cause);
+                closeTcpConnection(reason);
+                connectingPhase = ConnectingPhase.INVALID;
+                fireEvent(Events.clientDisconnected());
+                logger.info("Disconnected, reason: {}", reason);
+            }
         }
     }
 
