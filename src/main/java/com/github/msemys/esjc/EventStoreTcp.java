@@ -696,24 +696,28 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void timerTick() {
-        switch (connectionState()) {
-            case INIT:
-                if (connectingPhase == ConnectingPhase.RECONNECTING && reconnectionInfo.timestamp.isElapsed(settings.reconnectionDelay)) {
-                    logger.debug("Checking reconnection...");
+        try {
+            switch (connectionState()) {
+                case INIT:
+                    if (connectingPhase == ConnectingPhase.RECONNECTING && reconnectionInfo.timestamp.isElapsed(settings.reconnectionDelay)) {
+                        logger.debug("Checking reconnection...");
 
-                    reconnectionInfo.inc();
+                        reconnectionInfo.inc();
 
-                    if (settings.maxReconnections >= 0 && reconnectionInfo.reconnectionAttempt > settings.maxReconnections) {
-                        handle(new CloseConnection("Reconnection limit reached"));
-                    } else {
-                        fireEvent(Events.clientReconnecting());
-                        discoverEndpoint(null);
+                        if (settings.maxReconnections >= 0 && reconnectionInfo.reconnectionAttempt > settings.maxReconnections) {
+                            handle(new CloseConnection("Reconnection limit reached"));
+                        } else {
+                            fireEvent(Events.clientReconnecting());
+                            discoverEndpoint(null);
+                        }
                     }
-                }
-                break;
-            case CONNECTED:
-                checkOperationTimeout();
-                break;
+                    break;
+                case CONNECTED:
+                    checkOperationTimeout();
+                    break;
+            }
+        } catch (Exception e) {
+            logger.debug("Caught exception to keep timer thread running", e);
         }
     }
 
