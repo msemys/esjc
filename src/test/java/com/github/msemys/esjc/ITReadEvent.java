@@ -1,9 +1,14 @@
 package com.github.msemys.esjc;
 
+import io.netty.handler.codec.http.FullHttpRequest;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
+import static com.github.msemys.esjc.http.HttpClient.newRequest;
+import static io.netty.handler.codec.http.HttpMethod.POST;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
@@ -91,6 +96,29 @@ public class ITReadEvent extends AbstractEventStoreTest {
         assertEquals(stream, result.stream);
         assertEquals(0, result.eventNumber);
         assertNotNull(result.event.originalEvent().created);
+    }
+
+    @Test
+    public void returnsCorrectEventId() throws ExecutionException, InterruptedException {
+        final String stream = generateStreamName();
+        final UUID eventId = UUID.randomUUID();
+
+        // create event with eventId
+        final EventData event = EventData.newBuilder()
+                .eventId(eventId)
+                .type("event0")
+                .data(new byte[3])
+                .metadata(new byte[2])
+                .build();
+
+        eventstore.appendToStream(stream, ExpectedVersion.NO_STREAM, event).join();
+
+        // read event via tcp
+        EventReadResult result = eventstore.readEvent(stream, 0, true).join();
+
+        // compare event IDs
+        assertEquals(EventReadStatus.Success, result.status);
+        assertEquals(eventId, result.event.originalEvent().eventId);
     }
 
     @Test
