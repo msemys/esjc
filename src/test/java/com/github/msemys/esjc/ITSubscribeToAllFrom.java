@@ -134,7 +134,7 @@ public class ITSubscribeToAllFrom extends AbstractEventStoreTest {
         CatchUpSubscription subscription = eventstore.subscribeToAllFrom(null, new CatchUpSubscriptionListener() {
             @Override
             public void onEvent(CatchUpSubscription subscription, ResolvedEvent event) {
-                if (event.originalPosition.compareTo(lastPosition) > 0) {
+                if (event.originalPosition.compareTo(lastPosition) > 0 && event.originalStreamId().startsWith(stream)) {
                     events.add(event);
                     eventSignal.countDown();
                 }
