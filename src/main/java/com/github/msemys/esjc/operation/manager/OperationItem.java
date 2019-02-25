@@ -1,8 +1,8 @@
 package com.github.msemys.esjc.operation.manager;
 
 import com.github.msemys.esjc.operation.Operation;
-import com.github.msemys.esjc.tcp.ChannelId;
 import com.github.msemys.esjc.util.SystemTime;
+import io.netty.channel.ChannelId;
 
 import java.time.Duration;
 import java.time.Instant;

@@ -2,7 +2,6 @@ package com.github.msemys.esjc.operation.manager;
 
 import com.github.msemys.esjc.ConnectionClosedException;
 import com.github.msemys.esjc.Settings;
-import com.github.msemys.esjc.tcp.ChannelId;
 import com.github.msemys.esjc.tcp.TcpPackage;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -57,10 +56,8 @@ public class OperationManager {
         List<OperationItem> retryOperations = new ArrayList<>();
         List<OperationItem> removeOperations = new ArrayList<>();
 
-        final ChannelId connectionId = ChannelId.of(connection);
-
         activeOperations.values().forEach(item -> {
-            if (!item.connectionId.equals(connectionId)) {
+            if (!item.connectionId.equals(connection.id())) {
                 retryOperations.add(item);
             } else if (!item.timeout.isZero() && item.lastUpdated.isElapsed(settings.operationTimeout)) {
                 String error = String.format("Operation never got response from server. UTC now: %s, operation: %s.",
@@ -142,7 +139,7 @@ public class OperationManager {
             logger.debug("scheduleOperation WAITING for {}.", item);
             waitingOperations.offer(item);
         } else {
-            item.connectionId = ChannelId.of(connection);
+            item.connectionId = connection.id();
             item.lastUpdated.update();
             activeOperations.put(item.correlationId, item);
 
