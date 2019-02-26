@@ -706,6 +706,7 @@ public class EventStoreTcp implements EventStore {
                         handle(new CloseConnection("Reconnection limit reached"));
                     } else {
                         fireEvent(Events.clientReconnecting());
+                        operationManager.checkTimeoutsAndRetry(connection);
                         discoverEndpoint(null);
                     }
                 }
