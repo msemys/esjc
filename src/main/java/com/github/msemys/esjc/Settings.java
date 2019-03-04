@@ -474,8 +474,8 @@ public class Settings {
         }
 
         /**
-         * Sets whether or not to disconnect the client on detecting a channel error. By default, it is enabled and
-         * client disconnects immediately. If it is disabled the client tries to reconnect according to {@link #maxReconnections(int)}.
+         * Sets whether or not to disconnect the client on detecting a channel error. By default, it is disabled and the client
+         * tries to reconnect according to {@link #maxReconnections(int)}. If it is enabled the client disconnects immediately.
          *
          * @param disconnectOnTcpChannelError {@code true} to disconnect or {@code false} to try to reconnect.
          * @return the builder reference
@@ -590,7 +590,7 @@ public class Settings {
             }
 
             if (disconnectOnTcpChannelError == null) {
-                disconnectOnTcpChannelError = true;
+                disconnectOnTcpChannelError = false;
             }
 
             if (executor == null) {
