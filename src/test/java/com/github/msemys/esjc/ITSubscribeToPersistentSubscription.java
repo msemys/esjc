@@ -71,7 +71,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractEventStoreTest 
                 assertThat(e.getCause(), instanceOf(AccessDeniedException.class));
             }
         } finally {
-            awaitDisconnected(unauthenticatedEventstore);
+            unauthenticatedEventstore.shutdown();
         }
     }
 

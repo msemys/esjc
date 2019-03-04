@@ -266,7 +266,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
         actionQueue.offer(action);
 
         if (actionQueue.size() > MAX_QUEUE_SIZE) {
-            drop(SubscriptionDropReason.UserInitiated, new SubscriptionBufferOverflowException("client buffer too big"));
+            drop(SubscriptionDropReason.ProcessingQueueOverflow, new SubscriptionBufferOverflowException("client buffer too big"));
         }
 
         if (actionExecuting.compareAndSet(false, true)) {

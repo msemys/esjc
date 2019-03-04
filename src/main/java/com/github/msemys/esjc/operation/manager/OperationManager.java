@@ -2,7 +2,6 @@ package com.github.msemys.esjc.operation.manager;
 
 import com.github.msemys.esjc.ConnectionClosedException;
 import com.github.msemys.esjc.Settings;
-import com.github.msemys.esjc.tcp.ChannelId;
 import com.github.msemys.esjc.tcp.TcpPackage;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -52,15 +51,11 @@ public class OperationManager {
     }
 
     public void checkTimeoutsAndRetry(Channel connection) {
-        checkNotNull(connection, "connection is null");
-
         List<OperationItem> retryOperations = new ArrayList<>();
         List<OperationItem> removeOperations = new ArrayList<>();
 
-        final ChannelId connectionId = ChannelId.of(connection);
-
         activeOperations.values().forEach(item -> {
-            if (!item.connectionId.equals(connectionId)) {
+            if (connection != null && !item.connectionId.equals(connection.id())) {
                 retryOperations.add(item);
             } else if (!item.timeout.isZero() && item.lastUpdated.isElapsed(settings.operationTimeout)) {
                 String error = String.format("Operation never got response from server. UTC now: %s, operation: %s.",
@@ -77,24 +72,27 @@ public class OperationManager {
             }
         });
 
-        retryOperations.forEach(this::scheduleOperationRetry);
         removeOperations.forEach(this::removeOperation);
 
-        if (!retryPendingOperations.isEmpty()) {
-            retryPendingOperations.stream().sorted().forEach(item -> {
-                UUID oldCorrelationId = item.correlationId;
-                item.correlationId = UUID.randomUUID();
-                item.retryCount += 1;
+        if (connection != null) {
+            retryOperations.forEach(this::scheduleOperationRetry);
 
-                logger.debug("retrying, old correlationId {}, operation {}.", oldCorrelationId, item.toString());
+            if (!retryPendingOperations.isEmpty()) {
+                retryPendingOperations.stream().sorted().forEach(item -> {
+                    UUID oldCorrelationId = item.correlationId;
+                    item.correlationId = UUID.randomUUID();
+                    item.retryCount += 1;
 
-                scheduleOperation(item, connection);
-            });
+                    logger.debug("retrying, old correlationId {}, operation {}.", oldCorrelationId, item.toString());
 
-            retryPendingOperations.clear();
+                    scheduleOperation(item, connection);
+                });
+
+                retryPendingOperations.clear();
+            }
+
+            scheduleWaitingOperations(connection);
         }
-
-        scheduleWaitingOperations(connection);
     }
 
     public void scheduleOperationRetry(OperationItem item) {
@@ -142,7 +140,7 @@ public class OperationManager {
             logger.debug("scheduleOperation WAITING for {}.", item);
             waitingOperations.offer(item);
         } else {
-            item.connectionId = ChannelId.of(connection);
+            item.connectionId = connection.id();
             item.lastUpdated.update();
             activeOperations.put(item.correlationId, item);
 

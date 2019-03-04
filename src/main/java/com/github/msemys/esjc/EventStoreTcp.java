@@ -17,7 +17,6 @@ import com.github.msemys.esjc.subscription.manager.SubscriptionManager;
 import com.github.msemys.esjc.system.SystemEventTypes;
 import com.github.msemys.esjc.system.SystemStreams;
 import com.github.msemys.esjc.task.*;
-import com.github.msemys.esjc.tcp.ChannelId;
 import com.github.msemys.esjc.tcp.TcpPackage;
 import com.github.msemys.esjc.tcp.TcpPackageDecoder;
 import com.github.msemys.esjc.tcp.TcpPackageEncoder;
@@ -716,6 +715,7 @@ public class EventStoreTcp implements EventStore {
                             handle(new CloseConnection("Reconnection limit reached"));
                         } else {
                             fireEvent(Events.clientReconnecting());
+                            operationManager.checkTimeoutsAndRetry(connection);
                             discoverEndpoint(null);
                         }
                     }
@@ -758,7 +758,7 @@ public class EventStoreTcp implements EventStore {
             handle(new CloseConnection("No endpoint is specified while trying to reconnect."));
         } else if (connectionState() == ConnectionState.CONNECTED && !connection.remoteAddress().equals(endpoint)) {
             String message = String.format("Connection '%s': going to reconnect to [%s]. Current endpoint: [%s, L%s].",
-                ChannelId.of(connection), endpoint, connection.remoteAddress(), connection.localAddress());
+                connection.id(), endpoint, connection.remoteAddress(), connection.localAddress());
 
             logger.trace(message);
 
@@ -807,7 +807,7 @@ public class EventStoreTcp implements EventStore {
 
     private void onTcpConnectionClosed() {
         if (connection != null) {
-            subscriptionManager.purgeSubscribedAndDropped(ChannelId.of(connection));
+            subscriptionManager.purgeSubscribedAndDropped(connection.id());
             fireEvent(Events.connectionClosed());
         }
 

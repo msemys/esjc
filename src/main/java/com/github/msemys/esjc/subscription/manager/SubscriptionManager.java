@@ -5,8 +5,8 @@ import com.github.msemys.esjc.Settings;
 import com.github.msemys.esjc.SubscriptionDropReason;
 import com.github.msemys.esjc.operation.manager.OperationTimeoutException;
 import com.github.msemys.esjc.operation.manager.RetriesLimitReachedException;
-import com.github.msemys.esjc.tcp.ChannelId;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,15 +64,13 @@ public class SubscriptionManager {
     public void checkTimeoutsAndRetry(Channel connection) {
         checkNotNull(connection, "connection is null");
 
-        final ChannelId connectionId = ChannelId.of(connection);
-
         List<SubscriptionItem> retrySubscriptions = new ArrayList<>();
         List<SubscriptionItem> removeSubscriptions = new ArrayList<>();
 
         activeSubscriptions.values().stream()
             .filter(s -> !s.isSubscribed)
             .forEach(s -> {
-                if (!s.connectionId.equals(connectionId)) {
+                if (!s.connectionId.equals(connection.id())) {
                     retrySubscriptions.add(s);
                 } else if (!s.timeout.isZero() && s.lastUpdated.isElapsed(settings.operationTimeout)) {
                     String error = String.format("Subscription never got confirmation from server. UTC now: %s, operation: %s.",
@@ -142,7 +140,7 @@ public class SubscriptionManager {
         }
 
         item.correlationId = UUID.randomUUID();
-        item.connectionId = ChannelId.of(connection);
+        item.connectionId = connection.id();
         item.lastUpdated.update();
 
         activeSubscriptions.put(item.correlationId, item);
