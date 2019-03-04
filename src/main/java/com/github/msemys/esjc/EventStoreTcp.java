@@ -694,7 +694,7 @@ public class EventStoreTcp implements EventStore {
         if(settings().disconnectOnTcpChannelError) {
             handle(new CloseConnection("Error when processing TCP package", throwable));
         } else {
-            logger.debug("Failed processing TCP package", throwable);
+            logger.error("Failed processing TCP package", throwable);
         }
     }
 
@@ -725,7 +725,7 @@ public class EventStoreTcp implements EventStore {
                     break;
             }
         } catch (Exception e) {
-            logger.debug("Caught exception to keep timer thread running", e);
+            logger.error("Error occurred in timer thread", e);
         }
     }
 
