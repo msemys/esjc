@@ -725,7 +725,7 @@ public class EventStoreTcp implements EventStore {
                     break;
             }
         } catch (Exception e) {
-            logger.debug("Caught exception to keep timer thread running", e);
+            logger.error("Error occurred in timer thread", e);
         }
     }
 
