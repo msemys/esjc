@@ -596,9 +596,11 @@ public class EventStoreTcp implements EventStore {
 
     @Override
     public void connect() {
-        if (!isRunning()) {
-            timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
-            reconnectionInfo.reset();
+        synchronized (mutex) {
+            if (!isRunning()) {
+                reconnectionInfo.reset();
+                timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
+            }
         }
         CompletableFuture<Void> result = new CompletableFuture<>();
         result.whenComplete((value, throwable) -> {
@@ -626,15 +628,17 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void disconnect(String reason, Throwable cause) {
-        if (isRunning()) {
-            timer.cancel(true);
-            timer = null;
-            operationManager.cleanUp(cause);
-            subscriptionManager.cleanUp(cause);
-            closeTcpConnection(reason);
-            connectingPhase = ConnectingPhase.INVALID;
-            fireEvent(Events.clientDisconnected());
-            logger.info("Disconnected, reason: {}", reason);
+        synchronized (mutex) {
+            if (isRunning()) {
+                timer.cancel(true);
+                timer = null;
+                operationManager.cleanUp(cause);
+                subscriptionManager.cleanUp(cause);
+                closeTcpConnection(reason);
+                connectingPhase = ConnectingPhase.INVALID;
+                fireEvent(Events.clientDisconnected());
+                logger.info("Disconnected, reason: {}", reason);
+            }
         }
     }
 
@@ -687,7 +691,12 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void onChannelError(Throwable throwable) {
-        handle(new CloseConnection("Error when processing TCP package", throwable));
+        if(settings().disconnectOnTcpChannelError) {
+            handle(new CloseConnection("Error when processing TCP package", throwable));
+        } else {
+            logger.error("Failed processing TCP package", throwable);
+            fireEvent(Events.errorOccurred(throwable));
+        }
     }
 
     private void onReconnect(NodeEndpoints nodeEndpoints) {
@@ -695,25 +704,29 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void timerTick() {
-        switch (connectionState()) {
-            case INIT:
-                if (connectingPhase == ConnectingPhase.RECONNECTING && reconnectionInfo.timestamp.isElapsed(settings.reconnectionDelay)) {
-                    logger.debug("Checking reconnection...");
+        try {
+            switch (connectionState()) {
+                case INIT:
+                    if (connectingPhase == ConnectingPhase.RECONNECTING && reconnectionInfo.timestamp.isElapsed(settings.reconnectionDelay)) {
+                        logger.debug("Checking reconnection...");
 
-                    reconnectionInfo.inc();
+                        reconnectionInfo.inc();
 
-                    if (settings.maxReconnections >= 0 && reconnectionInfo.reconnectionAttempt > settings.maxReconnections) {
-                        handle(new CloseConnection("Reconnection limit reached"));
-                    } else {
-                        fireEvent(Events.clientReconnecting());
-                        operationManager.checkTimeoutsAndRetry(connection);
-                        discoverEndpoint(null);
+                        if (settings.maxReconnections >= 0 && reconnectionInfo.reconnectionAttempt > settings.maxReconnections) {
+                            handle(new CloseConnection("Reconnection limit reached"));
+                        } else {
+                            fireEvent(Events.clientReconnecting());
+                            operationManager.checkTimeoutsAndRetry(connection);
+                            discoverEndpoint(null);
+                        }
                     }
-                }
-                break;
-            case CONNECTED:
-                checkOperationTimeout();
-                break;
+                    break;
+                case CONNECTED:
+                    checkOperationTimeout();
+                    break;
+            }
+        } catch (Exception e) {
+            logger.error("Error occurred in timer thread", e);
         }
     }
 

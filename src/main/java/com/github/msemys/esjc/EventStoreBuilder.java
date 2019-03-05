@@ -68,6 +68,7 @@ public class EventStoreBuilder {
             .persistentSubscriptionBufferSize(settings.persistentSubscriptionBufferSize)
             .persistentSubscriptionAutoAck(settings.persistentSubscriptionAutoAck)
             .failOnNoServerResponse(settings.failOnNoServerResponse)
+            .disconnectOnTcpChannelError(settings.disconnectOnTcpChannelError)
             .executor(settings.executor);
 
         // populate single-node settings builder
@@ -449,6 +450,18 @@ public class EventStoreBuilder {
      */
     public EventStoreBuilder failOnNoServerResponse(boolean failOnNoServerResponse) {
         settingsBuilder.failOnNoServerResponse(failOnNoServerResponse);
+        return this;
+    }
+
+    /**
+     * Sets whether or not to disconnect the client on detecting a channel error. By default, it is disabled and the client
+     * tries to reconnect according to {@link #maxReconnections(int)}. If it is enabled the client disconnects immediately.
+     *
+     * @param disconnectOnTcpChannelError {@code true} to disconnect or {@code false} to try to reconnect.
+     * @return the builder reference
+     */
+    public EventStoreBuilder disconnectOnTcpChannelError(boolean disconnectOnTcpChannelError) {
+        settingsBuilder.disconnectOnTcpChannelError(disconnectOnTcpChannelError);
         return this;
     }
 
