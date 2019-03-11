@@ -2,6 +2,7 @@ package com.github.msemys.esjc.subscription;
 
 import com.github.msemys.esjc.*;
 import com.github.msemys.esjc.operation.StreamDeletedException;
+import com.github.msemys.esjc.operation.StreamNotFoundException;
 
 import java.util.concurrent.Executor;
 
@@ -47,7 +48,7 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
                     break;
                 case StreamNotFound:
                     if (lastEventNumber != null && lastEventNumber != StreamPosition.END) {
-                        throw new Exception(String.format("Impossible: stream %s disappeared in the middle of catching up subscription.", streamId));
+                        throw new StreamNotFoundException("Impossible: stream %s disappeared in the middle of catching up subscription.", streamId);
                     }
                     done = true;
                     break;
