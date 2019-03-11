@@ -1,10 +1,11 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.operation.StreamDeletedException;
+import com.github.msemys.esjc.operation.StreamNotFoundException;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-
-import static com.github.msemys.esjc.util.Preconditions.checkState;
 
 /**
  * Stream events spliterator.
@@ -17,8 +18,17 @@ public class StreamEventsSpliterator extends AbstractEventsSpliterator<Long, Str
 
     @Override
     protected void onBatchReceived(StreamEventsSlice slice) {
-        checkState(slice.status == SliceReadStatus.Success, "Unexpected read status: %s", slice.status);
-        super.onBatchReceived(slice);
+        switch (slice.status) {
+            case Success:
+                super.onBatchReceived(slice);
+                break;
+            case StreamNotFound:
+                throw new StreamNotFoundException(slice.stream);
+            case StreamDeleted:
+                throw new StreamDeletedException(slice.stream);
+            default:
+                throw new IllegalStateException(String.format("Unexpected read status: %s", slice.status));
+        }
     }
 
     @Override

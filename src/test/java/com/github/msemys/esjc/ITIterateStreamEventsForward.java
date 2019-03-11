@@ -1,5 +1,7 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.operation.StreamDeletedException;
+import com.github.msemys.esjc.operation.StreamNotFoundException;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -37,10 +39,10 @@ public class ITIterateStreamEventsForward extends AbstractEventStoreTest {
 
         try {
             iterator.hasNext();
-            fail("should fail with 'IllegalStateException'");
+            fail("should fail with 'StreamNotFoundException'");
         } catch (Exception e) {
-            assertThat(e, instanceOf(IllegalStateException.class));
-            assertEquals("Unexpected read status: StreamNotFound", e.getMessage());
+            assertThat(e, instanceOf(StreamNotFoundException.class));
+            assertEquals(stream, ((StreamNotFoundException) e).stream);
         }
     }
 
@@ -52,10 +54,10 @@ public class ITIterateStreamEventsForward extends AbstractEventStoreTest {
 
         try {
             iterator.next();
-            fail("should fail with 'IllegalStateException'");
+            fail("should fail with 'StreamNotFoundException'");
         } catch (Exception e) {
-            assertThat(e, instanceOf(IllegalStateException.class));
-            assertEquals("Unexpected read status: StreamNotFound", e.getMessage());
+            assertThat(e, instanceOf(StreamNotFoundException.class));
+            assertEquals(stream, ((StreamNotFoundException) e).stream);
         }
     }
 
@@ -69,10 +71,10 @@ public class ITIterateStreamEventsForward extends AbstractEventStoreTest {
 
         try {
             iterator.hasNext();
-            fail("should fail with 'IllegalStateException'");
+            fail("should fail with 'StreamDeletedException'");
         } catch (Exception e) {
-            assertThat(e, instanceOf(IllegalStateException.class));
-            assertEquals("Unexpected read status: StreamDeleted", e.getMessage());
+            assertThat(e, instanceOf(StreamDeletedException.class));
+            assertEquals(stream, ((StreamDeletedException) e).stream);
         }
     }
 
@@ -86,10 +88,10 @@ public class ITIterateStreamEventsForward extends AbstractEventStoreTest {
 
         try {
             iterator.next();
-            fail("should fail with 'IllegalStateException'");
+            fail("should fail with 'StreamDeletedException'");
         } catch (Exception e) {
-            assertThat(e, instanceOf(IllegalStateException.class));
-            assertEquals("Unexpected read status: StreamDeleted", e.getMessage());
+            assertThat(e, instanceOf(StreamDeletedException.class));
+            assertEquals(stream, ((StreamDeletedException) e).stream);
         }
     }
 
