@@ -4,7 +4,6 @@ import com.github.msemys.esjc.*;
 import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NotHandled;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.NotHandled.MasterInfo;
-import com.github.msemys.esjc.proto.EventStoreClientMessages.StreamEventAppeared;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.SubscriptionDropped;
 import com.github.msemys.esjc.proto.EventStoreClientMessages.UnsubscribeFromStream;
 import com.github.msemys.esjc.tcp.TcpCommand;
@@ -132,13 +131,6 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
             }
 
             switch (tcpPackage.command) {
-                case StreamEventAppeared:
-                    StreamEventAppeared streamEventAppeared = newInstance(StreamEventAppeared.getDefaultInstance(), tcpPackage.data);
-                    eventAppeared(new ResolvedEvent(streamEventAppeared.getEvent()));
-                    return InspectionResult.newBuilder()
-                        .decision(InspectionDecision.DoNothing)
-                        .description("StreamEventAppeared")
-                        .build();
                 case SubscriptionDropped:
                     SubscriptionDropped subscriptionDropped = newInstance(SubscriptionDropped.getDefaultInstance(), tcpPackage.data);
                     switch (subscriptionDropped.getReason()) {
