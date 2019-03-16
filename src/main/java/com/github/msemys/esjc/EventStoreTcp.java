@@ -691,7 +691,7 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void onChannelError(Throwable throwable) {
-        if(settings().disconnectOnTcpChannelError) {
+        if (settings().disconnectOnTcpChannelError) {
             handle(new CloseConnection("Error when processing TCP package", throwable));
         } else {
             logger.error("Failed processing TCP package", throwable);
