@@ -1192,6 +1192,68 @@ public interface EventStore {
     }
 
     /**
+     * Subscribes to a persistent subscription asynchronously using default buffer size and default user credentials.
+     * <p>
+     * This will connect you to a persistent subscription group for a stream. The subscription group must first be created.
+     * Many connections can connect to the same group and they will be treated as competing consumers within the group.
+     * If one connection dies, work will be balanced across the rest of the consumers in the group.
+     * If you attempt to connect to a group that does not exist you will be given an exception.
+     * </p>
+     * <p>
+     * When auto-ack is disabled, the receiver is required to explicitly acknowledge messages through the subscription.
+     * </p>
+     *
+     * @param stream    the name of the stream to subscribe to.
+     * @param groupName the subscription group to connect to.
+     * @param listener  subscription listener.
+     * @param autoAck   whether the subscription should automatically acknowledge messages processed.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link PersistentSubscriptionDeletedException}, {@link MaximumSubscribersReachedException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
+     * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
+     */
+    default CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
+                                                                            String groupName,
+                                                                            PersistentSubscriptionListener listener,
+                                                                            boolean autoAck) {
+        return subscribeToPersistent(stream, groupName, listener, null, settings().persistentSubscriptionBufferSize, autoAck);
+    }
+
+    /**
+     * Subscribes to a persistent subscription asynchronously using default buffer size.
+     * <p>
+     * This will connect you to a persistent subscription group for a stream. The subscription group must first be created.
+     * Many connections can connect to the same group and they will be treated as competing consumers within the group.
+     * If one connection dies, work will be balanced across the rest of the consumers in the group.
+     * If you attempt to connect to a group that does not exist you will be given an exception.
+     * </p>
+     * <p>
+     * When auto-ack is disabled, the receiver is required to explicitly acknowledge messages through the subscription.
+     * </p>
+     *
+     * @param stream          the name of the stream to subscribe to.
+     * @param groupName       the subscription group to connect to.
+     * @param listener        subscription listener.
+     * @param userCredentials user credentials to be used for this operation (use {@code null} for default user credentials).
+     * @param autoAck         whether the subscription should automatically acknowledge messages processed.
+     * @return a {@code CompletableFuture} representing the result of this operation. The future's methods
+     * {@code get} and {@code join} can throw an exception with cause {@link IllegalArgumentException},
+     * {@link PersistentSubscriptionDeletedException}, {@link MaximumSubscribersReachedException},
+     * {@link CommandNotExpectedException}, {@link NotAuthenticatedException}, {@link AccessDeniedException}
+     * or {@link ServerErrorException} on exceptional completion.
+     * @see #subscribeToPersistent(String, String, PersistentSubscriptionListener, UserCredentials, int, boolean)
+     */
+    default CompletableFuture<PersistentSubscription> subscribeToPersistent(String stream,
+                                                                            String groupName,
+                                                                            PersistentSubscriptionListener listener,
+                                                                            UserCredentials userCredentials,
+                                                                            boolean autoAck) {
+        return subscribeToPersistent(stream, groupName, listener, userCredentials, settings().persistentSubscriptionBufferSize, autoAck);
+    }
+
+    /**
      * Subscribes to a persistent subscription asynchronously.
      * <p>
      * This will connect you to a persistent subscription group for a stream. The subscription group must first be created.
