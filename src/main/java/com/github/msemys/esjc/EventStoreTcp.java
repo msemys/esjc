@@ -451,7 +451,7 @@ public class EventStoreTcp implements EventStore {
             protected CompletableFuture<Subscription> startSubscription(String subscriptionId,
                                                                         String streamId,
                                                                         int bufferSize,
-                                                                        SubscriptionListener<PersistentSubscriptionChannel> listener,
+                                                                        SubscriptionListener<PersistentSubscriptionChannel, RetryableResolvedEvent> listener,
                                                                         UserCredentials userCredentials) {
                 CompletableFuture<Subscription> result = new CompletableFuture<>();
                 enqueue(new StartPersistentSubscription(result, subscriptionId, streamId, bufferSize,

@@ -1,6 +1,5 @@
 package com.github.msemys.esjc.subscription;
 
-import com.github.msemys.esjc.ResolvedEvent;
 import com.github.msemys.esjc.*;
 import com.github.msemys.esjc.operation.AccessDeniedException;
 import com.github.msemys.esjc.operation.InspectionDecision;
@@ -25,7 +24,7 @@ import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.UUIDConverter.toBytes;
 import static java.util.stream.Collectors.toCollection;
 
-public class PersistentSubscriptionOperation extends AbstractSubscriptionOperation<PersistentSubscriptionChannel> implements PersistentSubscriptionProtocol {
+public class PersistentSubscriptionOperation extends AbstractSubscriptionOperation<PersistentSubscriptionChannel, RetryableResolvedEvent> implements PersistentSubscriptionProtocol {
     private final String groupName;
     private final int bufferSize;
     private String subscriptionId;
@@ -35,7 +34,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
                                            String streamId,
                                            int bufferSize,
                                            UserCredentials userCredentials,
-                                           SubscriptionListener<PersistentSubscriptionChannel> listener,
+                                           SubscriptionListener<PersistentSubscriptionChannel, RetryableResolvedEvent> listener,
                                            Supplier<Channel> connectionSupplier,
                                            Executor executor) {
         super(result, TcpCommand.ConnectToPersistentSubscription, streamId, false, userCredentials, listener, connectionSupplier, executor);
@@ -68,7 +67,7 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
                 return true;
             case PersistentSubscriptionStreamEventAppeared:
                 PersistentSubscriptionStreamEventAppeared streamEventAppeared = newInstance(PersistentSubscriptionStreamEventAppeared.getDefaultInstance(), tcpPackage.data);
-                eventAppeared(new ResolvedEvent(streamEventAppeared.getEvent()));
+                eventAppeared(new RetryableResolvedEvent(streamEventAppeared.getEvent(), streamEventAppeared.hasRetryCount() ? streamEventAppeared.getRetryCount() : null));
                 builder.decision(InspectionDecision.DoNothing).description("StreamEventAppeared");
                 return true;
             case SubscriptionDropped:

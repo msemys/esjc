@@ -47,7 +47,7 @@ public class ITDeletePersistentSubscription extends AbstractEventStoreTest {
 
         eventstore.subscribeToPersistent(stream, group, new PersistentSubscriptionListener() {
             @Override
-            public void onEvent(PersistentSubscription subscription, ResolvedEvent event) {
+            public void onEvent(PersistentSubscription subscription, RetryableResolvedEvent event) {
             }
 
             @Override

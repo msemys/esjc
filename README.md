@@ -486,7 +486,7 @@ catchupSubscription.close();
 CompletableFuture<PersistentSubscription> persistentSubscription = eventstore.subscribeToPersistent("foo", "group", 
     new PersistentSubscriptionListener() {
         @Override
-        public void onEvent(PersistentSubscription subscription, ResolvedEvent event) {
+        public void onEvent(PersistentSubscription subscription, RetryableResolvedEvent event) {
             System.out.println(event.originalEvent().eventType);
         }
     

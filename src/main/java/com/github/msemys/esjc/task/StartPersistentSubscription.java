@@ -1,5 +1,6 @@
 package com.github.msemys.esjc.task;
 
+import com.github.msemys.esjc.RetryableResolvedEvent;
 import com.github.msemys.esjc.Subscription;
 import com.github.msemys.esjc.SubscriptionListener;
 import com.github.msemys.esjc.UserCredentials;
@@ -17,7 +18,7 @@ public class StartPersistentSubscription implements Task {
     public final String streamId;
     public final int bufferSize;
     public final UserCredentials userCredentials;
-    public final SubscriptionListener<PersistentSubscriptionChannel> listener;
+    public final SubscriptionListener<PersistentSubscriptionChannel, RetryableResolvedEvent> listener;
     public final int maxRetries;
     public final Duration timeout;
 
@@ -26,7 +27,7 @@ public class StartPersistentSubscription implements Task {
                                        String streamId,
                                        int bufferSize,
                                        UserCredentials userCredentials,
-                                       SubscriptionListener<PersistentSubscriptionChannel> listener,
+                                       SubscriptionListener<PersistentSubscriptionChannel, RetryableResolvedEvent> listener,
                                        int maxRetries,
                                        Duration timeout) {
         checkNotNull(result, "result is null");

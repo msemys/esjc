@@ -2,6 +2,7 @@ package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.operation.AccessDeniedException;
 import com.github.msemys.esjc.subscription.MaximumSubscribersReachedException;
+import com.github.msemys.esjc.subscription.PersistentSubscriptionNakEventAction;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -350,7 +351,7 @@ public class ITSubscribeToPersistentSubscription extends AbstractEventStoreTest 
 
         eventstore.subscribeToPersistent(stream, group, new PersistentSubscriptionListener() {
             @Override
-            public void onEvent(PersistentSubscription subscription, ResolvedEvent event) {
+            public void onEvent(PersistentSubscription subscription, RetryableResolvedEvent event) {
                 throw new RuntimeException("test");
             }
 
@@ -459,6 +460,45 @@ public class ITSubscribeToPersistentSubscription extends AbstractEventStoreTest 
         assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
         assertEquals(4, events.get(0).event.eventNumber);
         assertEquals(eventIds.get(4), events.get(0).event.eventId);
+    }
+
+    @Test
+    public void subscribesWithRetries() throws InterruptedException {
+        final String stream = generateStreamName();
+        final String group = "retries";
+
+        CountDownLatch eventSignal = new CountDownLatch(1);
+        AtomicReference<Integer> retryCount = new AtomicReference<>();
+
+        PersistentSubscriptionSettings settings = PersistentSubscriptionSettings.newBuilder()
+            .resolveLinkTos(false)
+            .startFromBeginning()
+            .build();
+
+        eventstore.createPersistentSubscription(stream, group, settings).join();
+
+        eventstore.subscribeToPersistent(stream, group, (s, e) -> {
+            if (e.retryCount > 4) {
+                retryCount.set(e.retryCount);
+                s.acknowledge(e);
+                eventSignal.countDown();
+            } else {
+                s.fail(e, PersistentSubscriptionNakEventAction.Retry, "Not yet tried enough times");
+            }
+        }, false).join();
+
+        eventstore.appendToStream(stream, ExpectedVersion.ANY,
+            EventData.newBuilder()
+                .eventId(UUID.randomUUID())
+                .type("test")
+                .jsonData("{'foo' : 'bar'}")
+                .metadata(new byte[0])
+                .build()
+        ).join();
+
+        assertTrue("onEvent timeout", eventSignal.await(10, SECONDS));
+        assertNotNull(retryCount.get());
+        assertEquals(5, retryCount.get().intValue());
     }
 
 }

@@ -28,7 +28,7 @@ import static com.github.msemys.esjc.util.Preconditions.*;
 import static com.github.msemys.esjc.util.Strings.defaultIfEmpty;
 import static com.github.msemys.esjc.util.Strings.newString;
 
-public abstract class AbstractSubscriptionOperation<T extends Subscription> implements SubscriptionOperation {
+public abstract class AbstractSubscriptionOperation<T extends Subscription, E extends ResolvedEvent> implements SubscriptionOperation {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSubscriptionOperation.class);
 
     private static final int MAX_QUEUE_SIZE = 2000;
@@ -38,7 +38,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
     protected final String streamId;
     protected final boolean resolveLinkTos;
     protected final UserCredentials userCredentials;
-    protected final SubscriptionListener<T> listener;
+    protected final SubscriptionListener<T, E> listener;
     protected final Supplier<Channel> connectionSupplier;
     private final Executor executor;
     private final Queue<Runnable> actionQueue = new ConcurrentLinkedQueue<>();
@@ -52,7 +52,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
                                             String streamId,
                                             boolean resolveLinkTos,
                                             UserCredentials userCredentials,
-                                            SubscriptionListener<T> listener,
+                                            SubscriptionListener<T, E> listener,
                                             Supplier<Channel> connectionSupplier,
                                             Executor executor) {
         checkNotNull(result, "result is null");
@@ -235,7 +235,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription> impl
         result.complete(subscription);
     }
 
-    protected void eventAppeared(ResolvedEvent event) {
+    protected void eventAppeared(E event) {
         if (!unsubscribed.get()) {
             checkNotNull(subscription, "Subscription not confirmed, but event appeared!");
 

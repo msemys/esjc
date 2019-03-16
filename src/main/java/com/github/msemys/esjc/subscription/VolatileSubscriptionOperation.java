@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public class VolatileSubscriptionOperation extends AbstractSubscriptionOperation<VolatileSubscription> {
+public class VolatileSubscriptionOperation extends AbstractSubscriptionOperation<VolatileSubscription, ResolvedEvent> {
 
     @SuppressWarnings("unchecked")
     public VolatileSubscriptionOperation(CompletableFuture<Subscription> result,

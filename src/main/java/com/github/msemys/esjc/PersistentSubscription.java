@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
-import static com.github.msemys.esjc.util.Subscriptions.DROP_SUBSCRIPTION_EVENT;
+import static com.github.msemys.esjc.util.Subscriptions.DROP_PERSISTENT_SUBSCRIPTION_EVENT;
 import static com.github.msemys.esjc.util.Subscriptions.UNKNOWN_DROP_DATA;
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
 import static java.util.Arrays.asList;
@@ -39,7 +39,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
     private final boolean autoAck;
 
     private PersistentSubscriptionChannel subscription;
-    private final Queue<ResolvedEvent> queue = new ConcurrentLinkedQueue<>();
+    private final Queue<RetryableResolvedEvent> queue = new ConcurrentLinkedQueue<>();
     private final AtomicBoolean isProcessing = new AtomicBoolean();
     private final AtomicReference<DropData> dropData = new AtomicReference<>();
     private final AtomicBoolean isDropped = new AtomicBoolean();
@@ -66,9 +66,9 @@ public abstract class PersistentSubscription implements AutoCloseable {
     protected CompletableFuture<PersistentSubscription> start() {
         stopped.reset();
 
-        SubscriptionListener<PersistentSubscriptionChannel> subscriptionListener = new SubscriptionListener<PersistentSubscriptionChannel>() {
+        SubscriptionListener<PersistentSubscriptionChannel, RetryableResolvedEvent> subscriptionListener = new SubscriptionListener<PersistentSubscriptionChannel, RetryableResolvedEvent>() {
             @Override
-            public void onEvent(PersistentSubscriptionChannel subscription, ResolvedEvent event) {
+            public void onEvent(PersistentSubscriptionChannel subscription, RetryableResolvedEvent event) {
                 enqueue(event);
             }
 
@@ -87,7 +87,7 @@ public abstract class PersistentSubscription implements AutoCloseable {
     protected abstract CompletableFuture<Subscription> startSubscription(String subscriptionId,
                                                                          String streamId,
                                                                          int bufferSize,
-                                                                         SubscriptionListener<PersistentSubscriptionChannel> listener,
+                                                                         SubscriptionListener<PersistentSubscriptionChannel, RetryableResolvedEvent> listener,
                                                                          UserCredentials userCredentials);
 
     /**
@@ -176,11 +176,11 @@ public abstract class PersistentSubscription implements AutoCloseable {
     private void enqueueSubscriptionDropNotification(SubscriptionDropReason reason, Exception exception) {
         // if drop data was already set -- no need to enqueue drop again, somebody did that already
         if (dropData.compareAndSet(null, new DropData(reason, exception))) {
-            enqueue(DROP_SUBSCRIPTION_EVENT);
+            enqueue(DROP_PERSISTENT_SUBSCRIPTION_EVENT);
         }
     }
 
-    private void enqueue(ResolvedEvent event) {
+    private void enqueue(RetryableResolvedEvent event) {
         queue.offer(event);
         if (isProcessing.compareAndSet(false, true)) {
             executor.execute(this::processQueue);
@@ -192,10 +192,10 @@ public abstract class PersistentSubscription implements AutoCloseable {
             if (subscription == null) {
                 sleepUninterruptibly(1);
             } else {
-                ResolvedEvent event;
+                RetryableResolvedEvent event;
                 while ((event = queue.poll()) != null) {
-                    // drop subscription artificial ResolvedEvent
-                    if (event.equals(DROP_SUBSCRIPTION_EVENT)) {
+                    // drop subscription artificial RetryableResolvedEvent
+                    if (event.equals(DROP_PERSISTENT_SUBSCRIPTION_EVENT)) {
                         DropData previousDropData = dropData.getAndAccumulate(UNKNOWN_DROP_DATA,
                             (current, update) -> (current == null) ? update : current);
 
