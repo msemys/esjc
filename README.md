@@ -15,7 +15,7 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 
 ## Maven Dependency
 
-* EventStore v4 compatible
+* EventStore v4 (or higher) compatible
 ```xml
 <dependency>
     <groupId>com.github.msemys</groupId>
