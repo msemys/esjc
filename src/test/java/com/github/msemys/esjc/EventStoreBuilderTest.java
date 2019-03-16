@@ -2,6 +2,7 @@ package com.github.msemys.esjc;
 
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.cluster.GossipSeed;
+import com.github.msemys.esjc.node.cluster.NodePreference;
 import com.github.msemys.esjc.node.single.SingleNodeSettings;
 import com.github.msemys.esjc.ssl.SslSettings;
 import com.github.msemys.esjc.tcp.TcpSettings;
@@ -71,7 +72,7 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(60))
                 .discoverAttemptInterval(Duration.ofMinutes(2))
                 .maxDiscoverAttempts(5)
-                .preferRandomNode(true)
+                .nodePreference(NodePreference.Random)
                 .build())
             .userCredentials("username", "password")
             .tcpSettings(TcpSettings.newBuilder()
@@ -289,7 +290,7 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(120))
                 .discoverAttemptInterval(Duration.ofMinutes(4))
                 .maxDiscoverAttempts(10)
-                .preferRandomNode(true))
+                .nodePreference(NodePreference.Slave))
             .build();
 
         assertNull(result.settings().singleNodeSettings);
@@ -304,7 +305,7 @@ public class EventStoreBuilderTest {
                 new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
         assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.gossipTimeout);
-        assertTrue(result.settings().clusterNodeSettings.preferRandomNode);
+        assertEquals(NodePreference.Slave, result.settings().clusterNodeSettings.nodePreference);
     }
 
     @Test
@@ -325,7 +326,7 @@ public class EventStoreBuilderTest {
                 .gossipTimeout(Duration.ofSeconds(120))
                 .discoverAttemptInterval(Duration.ofMinutes(4))
                 .maxDiscoverAttempts(10)
-                .preferRandomNode(true))
+                .nodePreference(NodePreference.Slave))
             .build();
 
         assertNull(result.settings().singleNodeSettings);
@@ -336,7 +337,7 @@ public class EventStoreBuilderTest {
         assertEquals(Duration.ofMinutes(4), result.settings().clusterNodeSettings.discoverAttemptInterval);
         assertTrue(result.settings().clusterNodeSettings.gossipSeeds.isEmpty());
         assertEquals(Duration.ofSeconds(120), result.settings().clusterNodeSettings.gossipTimeout);
-        assertTrue(result.settings().clusterNodeSettings.preferRandomNode);
+        assertEquals(NodePreference.Slave, result.settings().clusterNodeSettings.nodePreference);
     }
 
     @Test
@@ -456,7 +457,7 @@ public class EventStoreBuilderTest {
                 new GossipSeed(new InetSocketAddress("localhost", 1002)).toString(),
                 new GossipSeed(new InetSocketAddress("localhost", 1003)).toString()));
         assertEquals(Duration.ofSeconds(73), result.settings().clusterNodeSettings.gossipTimeout);
-        assertFalse(result.settings().clusterNodeSettings.preferRandomNode);
+        assertEquals(NodePreference.Master, result.settings().clusterNodeSettings.nodePreference);
     }
 
     @Test
@@ -478,7 +479,7 @@ public class EventStoreBuilderTest {
         assertEquals(1717, result.settings().clusterNodeSettings.externalGossipPort);
         assertTrue(result.settings().clusterNodeSettings.gossipSeeds.isEmpty());
         assertEquals(Duration.ofSeconds(83), result.settings().clusterNodeSettings.gossipTimeout);
-        assertFalse(result.settings().clusterNodeSettings.preferRandomNode);
+        assertEquals(NodePreference.Master, result.settings().clusterNodeSettings.nodePreference);
     }
 
     @Test

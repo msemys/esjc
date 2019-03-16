@@ -89,7 +89,7 @@ public class EventStoreBuilder {
                     .discoverAttemptInterval(settings.clusterNodeSettings.discoverAttemptInterval)
                     .gossipSeeds(settings.clusterNodeSettings.gossipSeeds)
                     .gossipTimeout(settings.clusterNodeSettings.gossipTimeout)
-                    .preferRandomNode(settings.clusterNodeSettings.preferRandomNode);
+                    .nodePreference(settings.clusterNodeSettings.nodePreference);
             } else {
                 clusterNodeUsingDnsSettingsBuilder = ClusterNodeSettings.forDnsDiscoverer()
                     .maxDiscoverAttempts(settings.clusterNodeSettings.maxDiscoverAttempts)
@@ -97,7 +97,7 @@ public class EventStoreBuilder {
                     .dns(settings.clusterNodeSettings.dns)
                     .externalGossipPort(settings.clusterNodeSettings.externalGossipPort)
                     .gossipTimeout(settings.clusterNodeSettings.gossipTimeout)
-                    .preferRandomNode(settings.clusterNodeSettings.preferRandomNode);
+                    .nodePreference(settings.clusterNodeSettings.nodePreference);
             }
         }
 

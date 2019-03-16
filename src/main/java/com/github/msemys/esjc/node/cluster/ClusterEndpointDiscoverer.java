@@ -208,8 +208,16 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
             .sorted((a, b) -> a.state.ordinal() > b.state.ordinal() ? -1 : 1)
             .collect(toList());
 
-        if (settings.preferRandomNode) {
-            Collections.shuffle(aliveMembers);
+        switch (settings.nodePreference) {
+            case Random:
+                Collections.shuffle(aliveMembers);
+                break;
+            case Slave:
+                aliveMembers = aliveMembers.stream()
+                    .sorted((a, b) -> a.state == VNodeState.Slave ? -1 : 1)
+                    .collect(toList());
+                Collections.shuffle(aliveMembers.subList(0, (int) aliveMembers.stream().filter(m -> m.state == VNodeState.Slave).count()));
+                break;
         }
 
         return aliveMembers.stream()
