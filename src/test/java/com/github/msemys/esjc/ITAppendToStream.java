@@ -186,6 +186,11 @@ public class ITAppendToStream extends AbstractEventStoreTest {
             fail("append should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
+
+            WrongExpectedVersionException cause = (WrongExpectedVersionException) e.getCause();
+            assertEquals(stream, cause.stream);
+            assertEquals(Long.valueOf(1), cause.expectedVersion);
+            assertEquals(Long.valueOf(ExpectedVersion.NO_STREAM), cause.currentVersion);
         }
     }
 
@@ -235,6 +240,11 @@ public class ITAppendToStream extends AbstractEventStoreTest {
             fail("should fail with 'WrongExpectedVersionException'");
         } catch (Exception e) {
             assertThat(e.getCause(), instanceOf(WrongExpectedVersionException.class));
+
+            WrongExpectedVersionException cause = (WrongExpectedVersionException) e.getCause();
+            assertEquals(stream, cause.stream);
+            assertEquals(Long.valueOf(ExpectedVersion.STREAM_EXISTS), cause.expectedVersion);
+            assertEquals(Long.valueOf(ExpectedVersion.NO_STREAM), cause.currentVersion);
         }
     }
 
