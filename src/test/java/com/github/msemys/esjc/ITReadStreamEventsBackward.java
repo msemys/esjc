@@ -126,4 +126,9 @@ public class ITReadStreamEventsBackward extends AbstractEventStoreTest {
         eventstore.readStreamEventsBackward("foo", StreamPosition.START, Integer.MAX_VALUE, false).join();
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void failsToReadWhenEventNumberIsLessThanMinusOne() {
+        eventstore.readStreamEventsBackward("foo", -2, 100, false).join();
+    }
+
 }

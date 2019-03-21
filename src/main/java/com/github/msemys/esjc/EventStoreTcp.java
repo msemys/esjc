@@ -237,7 +237,7 @@ public class EventStoreTcp implements EventStore {
                                                         boolean resolveLinkTos,
                                                         UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
-        checkArgument(eventNumber >= -1, "eventNumber out of range");
+        checkArgument(eventNumber >= StreamPosition.END, "eventNumber out of range");
 
         CompletableFuture<EventReadResult> result = new CompletableFuture<>();
         enqueue(new ReadEventOperation(result, stream, eventNumber, resolveLinkTos, settings.requireMaster, userCredentials));
@@ -266,6 +266,7 @@ public class EventStoreTcp implements EventStore {
                                                                          boolean resolveLinkTos,
                                                                          UserCredentials userCredentials) {
         checkArgument(!isNullOrEmpty(stream), "stream is null or empty");
+        checkArgument(eventNumber >= StreamPosition.END, "eventNumber out of range");
         checkArgument(BATCH_SIZE_RANGE.contains(maxCount), "maxCount is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
 
         CompletableFuture<StreamEventsSlice> result = new CompletableFuture<>();
