@@ -182,7 +182,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                                     }
                                 } catch (InterruptedException ex) {
                                     enqueueSubscriptionDropNotification(SubscriptionDropReason.ProcessingQueueOverflow, ex);
-                                    throw new RuntimeException(ex);
+                                    subscription.unsubscribe();
                                 }
                             }
                         }

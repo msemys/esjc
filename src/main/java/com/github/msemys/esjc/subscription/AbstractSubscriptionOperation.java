@@ -263,7 +263,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription, E ex
                 drop(SubscriptionDropReason.ProcessingQueueOverflow, new SubscriptionBufferOverflowException("client buffer too big"));
             }
         } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
+            drop(SubscriptionDropReason.UserInitiated, ex);
         }
 
         if (actionExecuting.compareAndSet(false, true)) {
