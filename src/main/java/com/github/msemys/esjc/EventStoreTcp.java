@@ -412,7 +412,7 @@ public class EventStoreTcp implements EventStore {
         checkNotNull(settings, "settings is null");
 
         CatchUpSubscription subscription = new StreamCatchUpSubscription(this,
-            stream, eventNumber, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
+            stream, eventNumber, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, settings.maxCongestionWaitTime, executor());
 
         subscription.start();
 
@@ -428,7 +428,7 @@ public class EventStoreTcp implements EventStore {
         checkNotNull(settings, "settings is null");
 
         CatchUpSubscription subscription = new AllCatchUpSubscription(this,
-            position, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
+            position, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, settings.maxCongestionWaitTime, executor());
 
         subscription.start();
 
@@ -929,7 +929,7 @@ public class EventStoreTcp implements EventStore {
                 VolatileSubscriptionOperation operation = new VolatileSubscriptionOperation(
                     task.result,
                     task.streamId, task.resolveLinkTos, task.userCredentials, task.listener,
-                    () -> connection, executor());
+                    () -> connection, settings.actionQueueCongestionTimeout, executor());
 
                 logger.debug("StartSubscription {} {}, {}, {}, {}.",
                     state == ConnectionState.CONNECTED ? "fire" : "enqueue",
@@ -965,7 +965,7 @@ public class EventStoreTcp implements EventStore {
                 PersistentSubscriptionOperation operation = new PersistentSubscriptionOperation(
                     task.result,
                     task.subscriptionId, task.streamId, task.bufferSize, task.userCredentials, task.listener,
-                    () -> connection, executor());
+                    () -> connection, settings.actionQueueCongestionTimeout, executor());
 
                 logger.debug("StartSubscription {} {}, {}, {}, {}.",
                     state == ConnectionState.CONNECTED ? "fire" : "enqueue",

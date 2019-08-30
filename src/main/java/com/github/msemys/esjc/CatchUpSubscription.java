@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,10 +39,9 @@ public abstract class CatchUpSubscription implements AutoCloseable {
     private final UserCredentials userCredentials;
     protected final CatchUpSubscriptionListener listener;
     protected final int readBatchSize;
-    protected final int maxPushQueueSize;
     private final Executor executor;
 
-    private final Queue<ResolvedEvent> liveQueue = new ConcurrentLinkedQueue<>();
+    private final BlockingQueue<ResolvedEvent> liveQueue;
     private Subscription subscription;
     private final AtomicReference<DropData> dropData = new AtomicReference<>();
     private volatile boolean allowProcessing;
@@ -55,6 +51,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
     private final ResettableLatch stopped = new ResettableLatch(true);
 
     private final EventStoreListener reconnectionHook;
+    private Duration maxWaitTime;
 
     protected CatchUpSubscription(EventStore eventstore,
                                   String streamId,
@@ -63,20 +60,22 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                                   UserCredentials userCredentials,
                                   int readBatchSize,
                                   int maxPushQueueSize,
+                                  Duration maxWaitForPushQueue,
                                   Executor executor) {
         checkNotNull(eventstore, "eventstore is null");
         checkNotNull(listener, "listener is null");
         checkNotNull(listener, "executor is null");
         checkArgument(BATCH_SIZE_RANGE.contains(readBatchSize), "readBatchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
         checkArgument(isPositive(maxPushQueueSize), "maxPushQueueSize should be positive");
-
+        checkArgument(!maxWaitForPushQueue.isNegative(), "maxWaitTime is negative");
+        this.maxWaitTime = maxWaitForPushQueue;
+        this.liveQueue = new LinkedBlockingQueue<>(maxPushQueueSize);
         this.eventstore = eventstore;
         this.streamId = defaultIfEmpty(streamId, Strings.EMPTY);
         this.resolveLinkTos = resolveLinkTos;
         this.listener = listener;
         this.userCredentials = userCredentials;
         this.readBatchSize = readBatchSize;
-        this.maxPushQueueSize = maxPushQueueSize;
         this.executor = executor;
 
         reconnectionHook = event -> {
@@ -172,14 +171,18 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                                     streamId(), event.originalStreamId(), event.originalEventNumber(),
                                     event.originalEvent().eventType, event.originalPosition);
 
-                                if (liveQueue.size() >= maxPushQueueSize) {
-                                    enqueueSubscriptionDropNotification(SubscriptionDropReason.ProcessingQueueOverflow, null);
-                                    subscription.unsubscribe();
-                                } else {
-                                    liveQueue.offer(event);
-                                    if (allowProcessing) {
-                                        ensureProcessingPushQueue();
+                                try {
+                                    if (!liveQueue.offer(event, maxWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
+                                        enqueueSubscriptionDropNotification(SubscriptionDropReason.ProcessingQueueOverflow, null);
+                                        subscription.unsubscribe();
+                                    } else {
+                                        if (allowProcessing) {
+                                            ensureProcessingPushQueue();
+                                        }
                                     }
+                                } catch (InterruptedException ex) {
+                                    enqueueSubscriptionDropNotification(SubscriptionDropReason.ProcessingQueueOverflow, ex);
+                                    throw new RuntimeException(ex);
                                 }
                             }
                         }

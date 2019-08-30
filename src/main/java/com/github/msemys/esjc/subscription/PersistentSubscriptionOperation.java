@@ -13,6 +13,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageLite;
 import io.netty.channel.Channel;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,8 +37,9 @@ public class PersistentSubscriptionOperation extends AbstractSubscriptionOperati
                                            UserCredentials userCredentials,
                                            SubscriptionListener<PersistentSubscriptionChannel, RetryableResolvedEvent> listener,
                                            Supplier<Channel> connectionSupplier,
+                                           Duration maxCongestionWaitTime,
                                            Executor executor) {
-        super(result, TcpCommand.ConnectToPersistentSubscription, streamId, false, userCredentials, listener, connectionSupplier, executor);
+        super(result, TcpCommand.ConnectToPersistentSubscription, streamId, false, userCredentials, listener, connectionSupplier, maxCongestionWaitTime, executor);
         this.groupName = groupName;
         this.bufferSize = bufferSize;
     }

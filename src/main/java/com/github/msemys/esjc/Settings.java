@@ -133,6 +133,11 @@ public class Settings {
     public final boolean disconnectOnTcpChannelError;
 
     /**
+     * Time to wait for congestion in action queue to clear before failing
+     */
+    public final Duration actionQueueCongestionTimeout;
+
+    /**
      * The executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
      */
     public final Executor executor;
@@ -159,6 +164,7 @@ public class Settings {
         failOnNoServerResponse = builder.failOnNoServerResponse;
         disconnectOnTcpChannelError = builder.disconnectOnTcpChannelError;
         executor = builder.executor;
+        actionQueueCongestionTimeout = builder.actionQueueCongestionTimeout;
     }
 
     @Override
@@ -184,6 +190,7 @@ public class Settings {
         sb.append(", persistentSubscriptionAutoAck=").append(persistentSubscriptionAutoAck);
         sb.append(", failOnNoServerResponse=").append(failOnNoServerResponse);
         sb.append(", disconnectOnTcpChannelError=").append(disconnectOnTcpChannelError);
+        sb.append(", actionQueueCongestionTimeout=").append(actionQueueCongestionTimeout);
         sb.append(", executor=").append(executor);
         sb.append('}');
         return sb.toString();
@@ -222,6 +229,7 @@ public class Settings {
         private Boolean persistentSubscriptionAutoAck;
         private Boolean failOnNoServerResponse;
         private Boolean disconnectOnTcpChannelError;
+        private Duration actionQueueCongestionTimeout;
         private Executor executor;
 
         private Builder() {
@@ -485,6 +493,11 @@ public class Settings {
             return this;
         }
 
+        public Builder actionQueueCongestionTimeout(Duration actionQueueCongestionTimeout) {
+            this.actionQueueCongestionTimeout = actionQueueCongestionTimeout;
+            return this;
+        }
+
         /**
          * Sets the executor to execute client internal tasks (such as establish-connection, start-operation) and run subscriptions.
          *
@@ -591,6 +604,12 @@ public class Settings {
 
             if (disconnectOnTcpChannelError == null) {
                 disconnectOnTcpChannelError = false;
+            }
+
+            if (actionQueueCongestionTimeout == null) {
+                actionQueueCongestionTimeout = Duration.ofSeconds(30);
+            } else {
+                checkArgument(!actionQueueCongestionTimeout.isNegative(), "actionQueueCongestionTimeout is negative");
             }
 
             if (executor == null) {

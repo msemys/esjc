@@ -1,5 +1,7 @@
 package com.github.msemys.esjc;
 
+import java.time.Duration;
+
 import static com.github.msemys.esjc.util.Numbers.isPositive;
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
 import static com.github.msemys.esjc.util.Ranges.BATCH_SIZE_RANGE;
@@ -30,10 +32,16 @@ public class CatchUpSubscriptionSettings {
      */
     public final int readBatchSize;
 
+    /**
+     * Maximum time to wait before dropping the connection when internal queues are full
+     */
+    public final Duration maxCongestionWaitTime;
+
     private CatchUpSubscriptionSettings(Builder builder) {
         maxLiveQueueSize = builder.maxLiveQueueSize;
         resolveLinkTos = builder.resolveLinkTos;
         readBatchSize = builder.readBatchSize;
+        maxCongestionWaitTime = builder.maxCongestionWaitTime;
     }
 
     @Override
@@ -42,6 +50,7 @@ public class CatchUpSubscriptionSettings {
         sb.append("maxLiveQueueSize=").append(maxLiveQueueSize);
         sb.append(", resolveLinkTos=").append(resolveLinkTos);
         sb.append(", readBatchSize=").append(readBatchSize);
+        sb.append(", maxCongestionWaitTime=").append(maxCongestionWaitTime);
         sb.append('}');
         return sb.toString();
     }
@@ -62,6 +71,7 @@ public class CatchUpSubscriptionSettings {
         private Integer maxLiveQueueSize;
         private Boolean resolveLinkTos;
         private Integer readBatchSize;
+        private Duration maxCongestionWaitTime;
 
         /**
          * Specifies the maximum number of events allowed to be cached when processing from live subscription (by default, 10000 events).
@@ -98,6 +108,16 @@ public class CatchUpSubscriptionSettings {
         }
 
         /**
+         * Sets the max time to wait before dropping connections when internal queues are full
+         * @param maxCongestionWaitTime max time to wait, any non-negative duration
+         * @return the builder reference
+         */
+        public Builder maxCongestionWaitTime(Duration maxCongestionWaitTime) {
+            this.maxCongestionWaitTime = maxCongestionWaitTime;
+            return this;
+        }
+
+        /**
          * Builds a catch-up subscription settings.
          *
          * @return catch-up subscription settings
@@ -117,6 +137,12 @@ public class CatchUpSubscriptionSettings {
                 readBatchSize = 500;
             } else {
                 checkArgument(BATCH_SIZE_RANGE.contains(readBatchSize), "readBatchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
+            }
+
+            if (maxCongestionWaitTime == null) {
+                maxCongestionWaitTime = Duration.ofSeconds(30);
+            } else {
+                checkArgument(!maxCongestionWaitTime.isNegative(), "maxCongestionWaitTime is negative: %s", maxCongestionWaitTime);
             }
 
             return new CatchUpSubscriptionSettings(this);

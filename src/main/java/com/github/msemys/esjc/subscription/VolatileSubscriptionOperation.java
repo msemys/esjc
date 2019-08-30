@@ -14,6 +14,7 @@ import com.github.msemys.esjc.tcp.TcpPackage;
 import com.google.protobuf.MessageLite;
 import io.netty.channel.Channel;
 
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
@@ -27,8 +28,9 @@ public class VolatileSubscriptionOperation extends AbstractSubscriptionOperation
                                          UserCredentials userCredentials,
                                          SubscriptionListener listener,
                                          Supplier<Channel> connectionSupplier,
+                                         Duration maxCongestionWaitTime,
                                          Executor executor) {
-        super(result, TcpCommand.SubscribeToStream, streamId, resolveLinkTos, userCredentials, listener, connectionSupplier, executor);
+        super(result, TcpCommand.SubscribeToStream, streamId, resolveLinkTos, userCredentials, listener, connectionSupplier, maxCongestionWaitTime, executor);
     }
 
     @Override

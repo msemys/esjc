@@ -16,11 +16,10 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -41,8 +40,9 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription, E ex
     protected final SubscriptionListener<T, E> listener;
     protected final Supplier<Channel> connectionSupplier;
     private final Executor executor;
-    private final Queue<Runnable> actionQueue = new ConcurrentLinkedQueue<>();
+    private final BlockingQueue<Runnable> actionQueue = new LinkedBlockingQueue<>(MAX_QUEUE_SIZE);
     private final AtomicBoolean actionExecuting = new AtomicBoolean();
+    private final Duration maxCongestionWaitTime;
     private T subscription;
     private final AtomicBoolean unsubscribed = new AtomicBoolean();
     protected UUID correlationId;
@@ -54,12 +54,15 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription, E ex
                                             UserCredentials userCredentials,
                                             SubscriptionListener<T, E> listener,
                                             Supplier<Channel> connectionSupplier,
+                                            Duration actionQueueCongestionTimeout,
                                             Executor executor) {
+        this.maxCongestionWaitTime = actionQueueCongestionTimeout;
         checkNotNull(result, "result is null");
         checkNotNull(subscribeCommand, "subscribeCommand is null");
         checkNotNull(listener, "listener is null");
         checkNotNull(connectionSupplier, "connectionSupplier is null");
         checkNotNull(executor, "executor is null");
+        checkArgument(!actionQueueCongestionTimeout.isNegative(), "maxCongestionWaitTime is negative");
 
         this.result = result;
         this.subscribeCommand = subscribeCommand;
@@ -255,10 +258,12 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription, E ex
     }
 
     private void action(Runnable action) {
-        actionQueue.offer(action);
-
-        if (actionQueue.size() > MAX_QUEUE_SIZE) {
-            drop(SubscriptionDropReason.ProcessingQueueOverflow, new SubscriptionBufferOverflowException("client buffer too big"));
+        try {
+            if (!actionQueue.offer(action, maxCongestionWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
+                drop(SubscriptionDropReason.ProcessingQueueOverflow, new SubscriptionBufferOverflowException("client buffer too big"));
+            }
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
         }
 
         if (actionExecuting.compareAndSet(false, true)) {

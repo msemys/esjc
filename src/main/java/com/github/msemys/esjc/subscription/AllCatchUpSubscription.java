@@ -3,6 +3,7 @@ package com.github.msemys.esjc.subscription;
 import com.github.msemys.esjc.*;
 import com.github.msemys.esjc.util.Strings;
 
+import java.time.Duration;
 import java.util.concurrent.Executor;
 
 import static com.github.msemys.esjc.util.Threads.sleepUninterruptibly;
@@ -18,8 +19,9 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
                                   UserCredentials userCredentials,
                                   int readBatchSize,
                                   int maxPushQueueSize,
+                                  Duration maxWaitForPushQueue,
                                   Executor executor) {
-        super(eventstore, Strings.EMPTY, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, executor);
+        super(eventstore, Strings.EMPTY, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, maxWaitForPushQueue, executor);
         lastProcessedPosition = (position == null) ? Position.END : position;
         nextReadPosition = (position == null) ? Position.START : position;
     }

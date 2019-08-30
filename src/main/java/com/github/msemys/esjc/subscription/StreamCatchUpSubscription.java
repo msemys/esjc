@@ -4,6 +4,7 @@ import com.github.msemys.esjc.*;
 import com.github.msemys.esjc.operation.StreamDeletedException;
 import com.github.msemys.esjc.operation.StreamNotFoundException;
 
+import java.time.Duration;
 import java.util.concurrent.Executor;
 
 import static com.github.msemys.esjc.util.Preconditions.checkArgument;
@@ -22,8 +23,9 @@ public class StreamCatchUpSubscription extends CatchUpSubscription {
                                      UserCredentials userCredentials,
                                      int readBatchSize,
                                      int maxPushQueueSize,
+                                     Duration maxWaitForPushQueue,
                                      Executor executor) {
-        super(eventstore, streamId, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, executor);
+        super(eventstore, streamId, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, maxWaitForPushQueue, executor);
         checkArgument(!isNullOrEmpty(streamId), "streamId is null or empty");
         lastProcessedEventNumber = (eventNumber == null) ? StreamPosition.END : eventNumber;
         nextReadEventNumber = (eventNumber == null) ? StreamPosition.START : eventNumber;
