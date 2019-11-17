@@ -143,6 +143,10 @@ public abstract class CatchUpSubscription implements AutoCloseable {
         logger.trace("Catch-up subscription to {}: unhooking from connection. Connected.", streamId());
         eventstore.removeListener(reconnectionHook);
 
+        while (dropData.get() != null && !isDropped.get()) {
+            stopped.await(1, TimeUnit.SECONDS);
+        }
+
         runSubscription();
     }
 
