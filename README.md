@@ -34,6 +34,13 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 ```
 
 
+## Build and run tests
+```
+$ ./scripts/generate-ssl-cert.sh
+$ docker-compose up -d
+$ mvn clean verify
+```
+
 ## Usage
 
 ### Creating a Client Instance
