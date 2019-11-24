@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static java.util.stream.Stream.concat;
@@ -18,7 +19,7 @@ public class OperationManager {
     private static final Logger logger = LoggerFactory.getLogger(OperationManager.class);
 
     private final Map<UUID, OperationItem> activeOperations = new ConcurrentHashMap<>();
-    private final Queue<OperationItem> waitingOperations = new ArrayDeque<>();
+    private final Queue<OperationItem> waitingOperations = new ConcurrentLinkedQueue<>();
     private final List<OperationItem> retryPendingOperations = new ArrayList<>();
     private int totalOperationCount;
 
@@ -121,8 +122,14 @@ public class OperationManager {
     public void scheduleWaitingOperations(Channel connection) {
         checkNotNull(connection, "connection is null");
 
-        while (!waitingOperations.isEmpty() && activeOperations.size() < settings.maxConcurrentOperations) {
-            scheduleOperation(waitingOperations.poll(), connection);
+        while (activeOperations.size() < settings.maxConcurrentOperations) {
+            OperationItem item = waitingOperations.poll();
+
+            if (item != null) {
+                scheduleOperation(item, connection);
+            } else {
+                break;
+            }
         }
 
         totalOperationCount = activeOperations.size() + waitingOperations.size();
