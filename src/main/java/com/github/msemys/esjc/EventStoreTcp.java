@@ -740,16 +740,24 @@ public class EventStoreTcp implements EventStore {
     }
 
     private void gotoIdentificationPhase() {
-        checkNotNull(connection, "connection is null");
-        connectingPhase = ConnectingPhase.IDENTIFICATION;
+        if (connection == null) {
+            connectingPhase = ConnectingPhase.RECONNECTING;
+            reconnectionInfo.inc();
+        } else {
+            connectingPhase = ConnectingPhase.IDENTIFICATION;
+        }
     }
 
     private void gotoConnectedPhase() {
-        checkNotNull(connection, "connection is null");
-        connectingPhase = ConnectingPhase.CONNECTED;
-        reconnectionInfo.reset();
-        fireEvent(Events.clientConnected((InetSocketAddress) connection.remoteAddress()));
-        checkOperationTimeout();
+        if (connection == null) {
+            connectingPhase = ConnectingPhase.RECONNECTING;
+            reconnectionInfo.inc();
+        } else {
+            connectingPhase = ConnectingPhase.CONNECTED;
+            reconnectionInfo.reset();
+            fireEvent(Events.clientConnected((InetSocketAddress) connection.remoteAddress()));
+            checkOperationTimeout();
+        }
     }
 
     private void reconnectTo(NodeEndpoints endpoints) {
