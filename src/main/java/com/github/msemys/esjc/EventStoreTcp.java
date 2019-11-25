@@ -741,6 +741,7 @@ public class EventStoreTcp implements EventStore {
 
     private void gotoIdentificationPhase() {
         if (connection == null) {
+            logger.debug("connection was null when going to Identification Phase, going to Reconnecting Phase instead");
             connectingPhase = ConnectingPhase.RECONNECTING;
             reconnectionInfo.inc();
         } else {
@@ -750,6 +751,7 @@ public class EventStoreTcp implements EventStore {
 
     private void gotoConnectedPhase() {
         if (connection == null) {
+            logger.debug("connection was null when going to Connected Phase, going to Reconnecting Phase instead");
             connectingPhase = ConnectingPhase.RECONNECTING;
             reconnectionInfo.inc();
         } else {
