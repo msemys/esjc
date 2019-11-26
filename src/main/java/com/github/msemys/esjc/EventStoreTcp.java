@@ -742,8 +742,7 @@ public class EventStoreTcp implements EventStore {
     private void gotoIdentificationPhase() {
         if (connection == null) {
             logger.debug("connection was null when going to Identification Phase, going to Reconnecting Phase instead");
-            connectingPhase = ConnectingPhase.RECONNECTING;
-            reconnectionInfo.inc();
+            gotoReconnectingPhase();
         } else {
             connectingPhase = ConnectingPhase.IDENTIFICATION;
         }
@@ -752,14 +751,18 @@ public class EventStoreTcp implements EventStore {
     private void gotoConnectedPhase() {
         if (connection == null) {
             logger.debug("connection was null when going to Connected Phase, going to Reconnecting Phase instead");
-            connectingPhase = ConnectingPhase.RECONNECTING;
-            reconnectionInfo.inc();
+            gotoReconnectingPhase();
         } else {
             connectingPhase = ConnectingPhase.CONNECTED;
             reconnectionInfo.reset();
             fireEvent(Events.clientConnected((InetSocketAddress) connection.remoteAddress()));
             checkOperationTimeout();
         }
+    }
+
+    private void gotoReconnectingPhase() {
+        connectingPhase = ConnectingPhase.RECONNECTING;
+        reconnectionInfo.touch();
     }
 
     private void reconnectTo(NodeEndpoints endpoints) {
@@ -813,7 +816,7 @@ public class EventStoreTcp implements EventStore {
                 logger.warn("Unable to close connection gracefully", e);
             }
         } else {
-            onTcpConnectionClosed();
+            gotoReconnectingPhase();
         }
     }
 
@@ -824,8 +827,7 @@ public class EventStoreTcp implements EventStore {
         }
 
         connection = null;
-        connectingPhase = ConnectingPhase.RECONNECTING;
-        reconnectionInfo.touch();
+        gotoReconnectingPhase();
     }
 
     private void handle(StartConnection task) {
