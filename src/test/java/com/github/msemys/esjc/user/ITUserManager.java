@@ -224,7 +224,7 @@ public class ITUserManager {
         final String password = "password";
         final String newPassword = "newPassword";
 
-        userManager.create(username, "---", password, emptyList()).join();
+        userManager.create(username, "---", password, asList("$admins")).join();
         assertFalse(userManager.findAll(new UserCredentials(username, password)).join().isEmpty());
 
         userManager.changePassword(username, password, newPassword).join();
@@ -250,7 +250,7 @@ public class ITUserManager {
         final String password = "password";
         final String newPassword = "newPassword";
 
-        userManager.create(username, "---", password, emptyList()).join();
+        userManager.create(username, "---", password, asList("$admins")).join();
         assertFalse(userManager.findAll(new UserCredentials(username, password)).join().isEmpty());
 
         userManager.resetPassword(username, newPassword).join();
