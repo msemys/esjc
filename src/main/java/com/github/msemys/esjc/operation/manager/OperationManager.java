@@ -126,7 +126,7 @@ public class OperationManager {
             OperationItem item = waitingOperations.poll();
 
             if (item != null) {
-                scheduleOperation(item, connection);
+                send(item, connection);
             } else {
                 break;
             }
@@ -143,22 +143,22 @@ public class OperationManager {
     public void scheduleOperation(OperationItem item, Channel connection) {
         checkNotNull(connection, "connection is null");
 
-        if (activeOperations.size() >= settings.maxConcurrentOperations) {
-            logger.debug("scheduleOperation WAITING for {}.", item);
-            waitingOperations.offer(item);
-        } else {
-            item.connectionId = connection.id();
-            item.lastUpdated.update();
-            activeOperations.put(item.correlationId, item);
+        logger.debug("scheduleOperation WAITING for {}.", item);
+        waitingOperations.offer(item);
 
-            TcpPackage tcpPackage = item.operation.create(item.correlationId);
+        scheduleWaitingOperations(connection);
+    }
 
-            logger.debug("scheduleOperation package {}, {}, {}.", tcpPackage.command, tcpPackage.correlationId, item);
+    private void send(OperationItem item, Channel connection) {
+        item.connectionId = connection.id();
+        item.lastUpdated.update();
+        activeOperations.put(item.correlationId, item);
 
-            connection.writeAndFlush(tcpPackage);
-        }
+        TcpPackage tcpPackage = item.operation.create(item.correlationId);
 
-        totalOperationCount = activeOperations.size() + waitingOperations.size();
+        logger.debug("send package {}, {}, {}.", tcpPackage.command, tcpPackage.correlationId, item);
+
+        connection.writeAndFlush(tcpPackage);
     }
 
 }
