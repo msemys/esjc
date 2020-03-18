@@ -92,9 +92,9 @@ public class CommitTransactionOperation extends AbstractOperation<WriteResult, T
 
     @Override
     protected WriteResult transformResponseMessage(TransactionCommitCompleted response) {
-        long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
         long commitPosition = response.hasCommitPosition() ? response.getCommitPosition() : -1;
-        return new WriteResult(response.getLastEventNumber(), new Position(preparePosition, commitPosition));
+        long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
+        return new WriteResult(response.getLastEventNumber(), new Position(commitPosition, preparePosition));
     }
 
     @Override

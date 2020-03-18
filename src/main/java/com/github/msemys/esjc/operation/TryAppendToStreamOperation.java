@@ -139,9 +139,9 @@ public class TryAppendToStreamOperation extends AbstractOperation<WriteAttemptRe
             default:
                 nextExpectedVersion = response.getLastEventNumber();
 
-                long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
                 long commitPosition = response.hasCommitPosition() ? response.getCommitPosition() : -1;
-                position = new Position(preparePosition, commitPosition);
+                long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
+                position = new Position(commitPosition, preparePosition);
 
                 status = WriteStatus.Success;
 

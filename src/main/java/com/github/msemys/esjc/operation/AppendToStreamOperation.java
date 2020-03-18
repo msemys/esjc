@@ -126,9 +126,9 @@ public class AppendToStreamOperation extends AbstractOperation<WriteResult, Writ
 
     @Override
     protected WriteResult transformResponseMessage(WriteEventsCompleted response) {
-        long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
         long commitPosition = response.hasCommitPosition() ? response.getCommitPosition() : -1;
-        return new WriteResult(response.getLastEventNumber(), new Position(preparePosition, commitPosition));
+        long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
+        return new WriteResult(response.getLastEventNumber(), new Position(commitPosition, preparePosition));
     }
 
     @Override

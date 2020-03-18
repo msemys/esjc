@@ -101,9 +101,9 @@ public class DeleteStreamOperation extends AbstractOperation<DeleteResult, Delet
 
     @Override
     protected DeleteResult transformResponseMessage(DeleteStreamCompleted response) {
-        long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
         long commitPosition = response.hasCommitPosition() ? response.getCommitPosition() : -1;
-        return new DeleteResult(new Position(preparePosition, commitPosition));
+        long preparePosition = response.hasPreparePosition() ? response.getPreparePosition() : -1;
+        return new DeleteResult(new Position(commitPosition, preparePosition));
     }
 
     @Override
