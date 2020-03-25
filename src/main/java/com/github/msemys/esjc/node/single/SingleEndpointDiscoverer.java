@@ -21,9 +21,12 @@ public class SingleEndpointDiscoverer implements EndpointDiscoverer {
 
     @Override
     public CompletableFuture<NodeEndpoints> discover(InetSocketAddress failedTcpEndpoint) {
+        // construct new address to handle ip address changes between discovers
+        InetSocketAddress freshAddress =
+                new InetSocketAddress(settings.address.getHostName(), settings.address.getPort());
         return CompletableFuture.completedFuture(new NodeEndpoints(
-                ssl ? null : settings.address,
-                ssl ? settings.address : null));
+                ssl ? null : freshAddress,
+                ssl ? freshAddress : null));
     }
 
 }
