@@ -10,18 +10,20 @@ import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 
 public class SingleEndpointDiscoverer implements EndpointDiscoverer {
 
-    private final CompletableFuture<NodeEndpoints> result;
+    private final SingleNodeSettings settings;
+    private final boolean ssl;
 
     public SingleEndpointDiscoverer(SingleNodeSettings settings, boolean ssl) {
         checkNotNull(settings, "settings is null");
-        result = CompletableFuture.completedFuture(new NodeEndpoints(
-            ssl ? null : settings.address,
-            ssl ? settings.address : null));
+        this.settings = settings;
+        this.ssl = ssl;
     }
 
     @Override
     public CompletableFuture<NodeEndpoints> discover(InetSocketAddress failedTcpEndpoint) {
-        return result;
+        return CompletableFuture.completedFuture(new NodeEndpoints(
+                ssl ? null : settings.address,
+                ssl ? settings.address : null));
     }
 
 }
