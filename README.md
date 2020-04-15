@@ -20,7 +20,7 @@ This is [EventStore](https://geteventstore.com/) driver for Java, that uses [Net
 <dependency>
     <groupId>com.github.msemys</groupId>
     <artifactId>esjc</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
