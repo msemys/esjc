@@ -1,5 +1,9 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.node.DefaultEndpointDiscovererFactory;
+import com.github.msemys.esjc.node.DelegatedEndpointDiscovererFactory;
+import com.github.msemys.esjc.node.EndpointDiscoverer;
+import com.github.msemys.esjc.node.EndpointDiscovererFactory;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings.BuilderForDnsDiscoverer;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings.BuilderForGossipSeedDiscoverer;
@@ -54,6 +58,7 @@ public class EventStoreBuilder {
         Settings.Builder settingsBuilder = Settings.newBuilder()
             .connectionName(settings.connectionName)
             .sslSettings(settings.sslSettings)
+            .endpointDiscovererFactory(settings.endpointDiscovererFactory)
             .reconnectionDelay(settings.reconnectionDelay)
             .heartbeatInterval(settings.heartbeatInterval)
             .heartbeatTimeout(settings.heartbeatTimeout)
@@ -257,6 +262,29 @@ public class EventStoreBuilder {
      */
     public EventStoreBuilder connectionName(String connectionName) {
         settingsBuilder.connectionName(connectionName);
+        return this;
+    }
+
+    /**
+     * Sets endpoint discoverer factory (by default, {@link DefaultEndpointDiscovererFactory} is used).
+     *
+     * @param endpointDiscovererFactory endpoint discoverer factory.
+     * @return the builder reference
+     */
+    public EventStoreBuilder endpointDiscovererFactory(EndpointDiscovererFactory endpointDiscovererFactory) {
+        settingsBuilder.endpointDiscovererFactory(endpointDiscovererFactory);
+        return this;
+    }
+
+    /**
+     * Sets endpoint discoverer using {@link DelegatedEndpointDiscovererFactory}.
+     *
+     * @param endpointDiscoverer endpoint discoverer.
+     * @return the builder reference
+     * @see #endpointDiscovererFactory(EndpointDiscovererFactory)
+     */
+    public EventStoreBuilder endpointDiscoverer(EndpointDiscoverer endpointDiscoverer) {
+        settingsBuilder.endpointDiscoverer(endpointDiscoverer);
         return this;
     }
 

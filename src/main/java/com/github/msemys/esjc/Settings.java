@@ -1,5 +1,9 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.node.DefaultEndpointDiscovererFactory;
+import com.github.msemys.esjc.node.DelegatedEndpointDiscovererFactory;
+import com.github.msemys.esjc.node.EndpointDiscoverer;
+import com.github.msemys.esjc.node.EndpointDiscovererFactory;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.single.SingleNodeSettings;
 import com.github.msemys.esjc.operation.manager.OperationTimeoutException;
@@ -49,6 +53,11 @@ public class Settings {
      * SSL settings.
      */
     public final SslSettings sslSettings;
+
+    /**
+     * Endpoint discoverer factory.
+     */
+    public final EndpointDiscovererFactory endpointDiscovererFactory;
 
     /**
      * The amount of time to delay before attempting to reconnect.
@@ -143,6 +152,7 @@ public class Settings {
         singleNodeSettings = builder.singleNodeSettings;
         clusterNodeSettings = builder.clusterNodeSettings;
         sslSettings = builder.sslSettings;
+        endpointDiscovererFactory = builder.endpointDiscovererFactory;
         reconnectionDelay = builder.reconnectionDelay;
         heartbeatInterval = builder.heartbeatInterval;
         heartbeatTimeout = builder.heartbeatTimeout;
@@ -169,6 +179,7 @@ public class Settings {
         sb.append(", singleNodeSettings=").append(singleNodeSettings);
         sb.append(", clusterNodeSettings=").append(clusterNodeSettings);
         sb.append(", sslSettings=").append(sslSettings);
+        sb.append(", endpointDiscovererFactory=").append(endpointDiscovererFactory);
         sb.append(", reconnectionDelay=").append(reconnectionDelay);
         sb.append(", heartbeatInterval=").append(heartbeatInterval);
         sb.append(", heartbeatTimeout=").append(heartbeatTimeout);
@@ -207,6 +218,7 @@ public class Settings {
         private SingleNodeSettings singleNodeSettings;
         private ClusterNodeSettings clusterNodeSettings;
         private SslSettings sslSettings;
+        private EndpointDiscovererFactory endpointDiscovererFactory;
         private Duration reconnectionDelay;
         private Duration heartbeatInterval;
         private Duration heartbeatTimeout;
@@ -280,6 +292,28 @@ public class Settings {
         public Builder sslSettings(SslSettings sslSettings) {
             this.sslSettings = sslSettings;
             return this;
+        }
+
+        /**
+         * Sets endpoint discoverer factory (by default, {@link DefaultEndpointDiscovererFactory} is used).
+         *
+         * @param endpointDiscovererFactory endpoint discoverer factory.
+         * @return the builder reference
+         */
+        public Builder endpointDiscovererFactory(EndpointDiscovererFactory endpointDiscovererFactory) {
+            this.endpointDiscovererFactory = endpointDiscovererFactory;
+            return this;
+        }
+
+        /**
+         * Sets endpoint discoverer using {@link DelegatedEndpointDiscovererFactory}.
+         *
+         * @param endpointDiscoverer endpoint discoverer.
+         * @return the builder reference
+         * @see #endpointDiscovererFactory(EndpointDiscovererFactory)
+         */
+        public Builder endpointDiscoverer(EndpointDiscoverer endpointDiscoverer) {
+            return endpointDiscovererFactory(new DelegatedEndpointDiscovererFactory(endpointDiscoverer));
         }
 
         /**
@@ -512,8 +546,12 @@ public class Settings {
          * @return client settings
          */
         public Settings build() {
-            checkArgument(singleNodeSettings != null || clusterNodeSettings != null, "Missing node settings");
-            checkArgument(singleNodeSettings == null || clusterNodeSettings == null, "Usage of 'single-node' and 'cluster-node' settings at once is not allowed");
+            if (endpointDiscovererFactory == null) {
+                checkArgument(singleNodeSettings != null || clusterNodeSettings != null, "Missing node settings");
+                checkArgument(singleNodeSettings == null || clusterNodeSettings == null, "Usage of 'single-node' and 'cluster-node' settings at once is not allowed");
+
+                endpointDiscovererFactory = new DefaultEndpointDiscovererFactory();
+            }
 
             if (isNullOrEmpty(connectionName)) {
                 connectionName = "ESJC-" + UUID.randomUUID().toString();

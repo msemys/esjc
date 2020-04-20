@@ -1,5 +1,6 @@
 package com.github.msemys.esjc;
 
+import com.github.msemys.esjc.node.*;
 import com.github.msemys.esjc.node.cluster.ClusterNodeSettings;
 import com.github.msemys.esjc.node.cluster.GossipSeed;
 import com.github.msemys.esjc.node.cluster.NodePreference;
@@ -13,6 +14,7 @@ import java.time.Duration;
 import java.util.concurrent.Executors;
 
 import static java.util.Arrays.asList;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -158,6 +160,24 @@ public class EventStoreBuilderTest {
             .build();
 
         assertFalse(result.settings().sslSettings.useSslConnection);
+    }
+
+    @Test
+    public void createsCustomizedClientWithEndpointDiscoverer() {
+        Settings settings = Settings.newBuilder()
+            .nodeSettings(SingleNodeSettings.newBuilder().address("localhost", 1010).build())
+            .build();
+
+        assertThat(settings.endpointDiscovererFactory, instanceOf(DefaultEndpointDiscovererFactory.class));
+
+        EndpointDiscoverer discoverer = failedTcpEndpoint -> completedFuture(new NodeEndpoints(failedTcpEndpoint, null));
+
+        EventStore result = EventStoreBuilder.newBuilder(settings)
+            .endpointDiscoverer(discoverer)
+            .build();
+
+        assertThat(result.settings().endpointDiscovererFactory, instanceOf(DelegatedEndpointDiscovererFactory.class));
+        assertEquals(discoverer, result.settings().endpointDiscovererFactory.create(null, null));
     }
 
     @Test
@@ -554,6 +574,48 @@ public class EventStoreBuilderTest {
             .build();
 
         assertEquals("test", result.settings().connectionName);
+    }
+
+    @Test
+    public void createsSingleNodeClientWithDefaultEndpointDiscovererFactory() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .singleNodeAddress("localhost", 1009)
+            .build();
+
+        assertThat(result.settings().endpointDiscovererFactory, instanceOf(DefaultEndpointDiscovererFactory.class));
+    }
+
+    @Test
+    public void createsClusterNodeClientWithDefaultEndpointDiscovererFactory() {
+        EventStore result = EventStoreBuilder.newBuilder()
+            .clusterNodeUsingGossipSeeds(cluster -> cluster.gossipSeedEndpoints(asList(new InetSocketAddress("localhost", 1001))))
+            .build();
+
+        assertThat(result.settings().endpointDiscovererFactory, instanceOf(DefaultEndpointDiscovererFactory.class));
+    }
+
+    @Test
+    public void createsClientWithCustomEndpointDiscovererFactory() {
+        EndpointDiscoverer discoverer = failedTcpEndpoint -> completedFuture(new NodeEndpoints(failedTcpEndpoint, null));
+        EndpointDiscovererFactory discovererFactory = (settings, scheduler) -> discoverer;
+
+        EventStore result = EventStoreBuilder.newBuilder()
+            .endpointDiscovererFactory(discovererFactory)
+            .build();
+
+        assertEquals(discovererFactory, result.settings().endpointDiscovererFactory);
+    }
+
+    @Test
+    public void createsClientWithCustomEndpointDiscoverer() {
+        EndpointDiscoverer discoverer = failedTcpEndpoint -> completedFuture(new NodeEndpoints(failedTcpEndpoint, null));
+
+        EventStore result = EventStoreBuilder.newBuilder()
+            .endpointDiscoverer(discoverer)
+            .build();
+
+        assertThat(result.settings().endpointDiscovererFactory, instanceOf(DelegatedEndpointDiscovererFactory.class));
+        assertEquals(discoverer, result.settings().endpointDiscovererFactory.create(null, null));
     }
 
     @Test

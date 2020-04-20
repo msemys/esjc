@@ -5,8 +5,6 @@ import com.github.msemys.esjc.event.EventQueue;
 import com.github.msemys.esjc.event.Events;
 import com.github.msemys.esjc.node.EndpointDiscoverer;
 import com.github.msemys.esjc.node.NodeEndpoints;
-import com.github.msemys.esjc.node.cluster.ClusterEndpointDiscoverer;
-import com.github.msemys.esjc.node.single.SingleEndpointDiscoverer;
 import com.github.msemys.esjc.operation.*;
 import com.github.msemys.esjc.operation.manager.OperationItem;
 import com.github.msemys.esjc.operation.manager.OperationManager;
@@ -158,13 +156,8 @@ public class EventStoreTcp implements EventStore {
 
         this.settings = settings;
 
-        if (settings.singleNodeSettings != null) {
-            discoverer = new SingleEndpointDiscoverer(settings.singleNodeSettings, settings.sslSettings.useSslConnection);
-        } else if (settings.clusterNodeSettings != null) {
-            discoverer = new ClusterEndpointDiscoverer(settings.clusterNodeSettings, group);
-        } else {
-            throw new IllegalStateException("Node settings not found");
-        }
+        discoverer = settings.endpointDiscovererFactory.create(settings, group);
+        checkNotNull(discoverer, "endpoint discoverer cannot be null");
 
         tasks = new TaskQueue(executor());
         tasks.register(StartConnection.class, this::handle);
