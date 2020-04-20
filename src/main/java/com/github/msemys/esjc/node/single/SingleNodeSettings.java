@@ -49,7 +49,7 @@ public class SingleNodeSettings {
          * @return the builder reference
          */
         public Builder address(String host, int port) {
-            return address(new InetSocketAddress(host, port));
+            return address(InetSocketAddress.createUnresolved(host, port));
         }
 
         /**
