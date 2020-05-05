@@ -5,24 +5,28 @@ import com.github.msemys.esjc.Settings;
 import com.github.msemys.esjc.SubscriptionDropReason;
 import com.github.msemys.esjc.operation.manager.OperationTimeoutException;
 import com.github.msemys.esjc.operation.manager.RetriesLimitReachedException;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
+
 import static java.util.stream.Stream.concat;
 
 public class SubscriptionManager {
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionManager.class);
 
     private final Map<UUID, SubscriptionItem> activeSubscriptions = new ConcurrentHashMap<>();
-    private final Queue<SubscriptionItem> waitingSubscriptions = new ArrayDeque<>();
-    private final List<SubscriptionItem> retryPendingSubscriptions = new ArrayList<>();
+    private final Queue<SubscriptionItem> waitingSubscriptions = new ConcurrentLinkedQueue<>();
+    private final Queue<SubscriptionItem> retryPendingSubscriptions = new ConcurrentLinkedQueue<>();
 
     private final Settings settings;
 
@@ -90,16 +94,14 @@ public class SubscriptionManager {
         retrySubscriptions.forEach(this::scheduleSubscriptionRetry);
         removeSubscriptions.forEach(this::removeSubscription);
 
-        if (!retryPendingSubscriptions.isEmpty()) {
-            retryPendingSubscriptions.forEach(s -> {
-                s.retryCount += 1;
-                startSubscription(s, connection);
-            });
-            retryPendingSubscriptions.clear();
+        SubscriptionItem item;
+        while ((item = retryPendingSubscriptions.poll()) != null) {
+            item.retryCount += 1;
+            startSubscription(item, connection);
         }
 
-        while (!waitingSubscriptions.isEmpty()) {
-            startSubscription(waitingSubscriptions.poll(), connection);
+        while ((item = waitingSubscriptions.poll()) != null) {
+            startSubscription(item, connection);
         }
     }
 
@@ -152,5 +154,4 @@ public class SubscriptionManager {
             logger.debug("StartSubscription SUBSCRIBING {}.", item);
         }
     }
-
 }
