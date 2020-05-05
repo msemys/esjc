@@ -40,7 +40,13 @@ public class IdentificationHandler extends SimpleChannelInboundHandler<TcpPackag
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TcpPackage msg) throws Exception {
-        if (timeoutTask != null && !timeoutTask.isDone() && msg.correlationId.equals(correlationId)) {
+        final boolean isClientIdentificationResponse;
+
+        synchronized (timeoutTaskLock) {
+            isClientIdentificationResponse = (timeoutTask != null) && !timeoutTask.isDone() &&msg.correlationId.equals(correlationId);
+        }
+
+        if (isClientIdentificationResponse) {
             switch (msg.command) {
                 case ClientIdentified:
                     cancelTimeoutTask();
@@ -111,6 +117,7 @@ public class IdentificationHandler extends SimpleChannelInboundHandler<TcpPackag
             if (timeoutTask != null) {
                 timeoutTask.cancel(true);
                 timeoutTask = null;
+                correlationId = null;
             }
         }
     }
