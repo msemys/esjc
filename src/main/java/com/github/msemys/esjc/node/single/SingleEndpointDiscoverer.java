@@ -43,6 +43,10 @@ public class SingleEndpointDiscoverer implements EndpointDiscoverer {
     }
 
     private static InetAddress maybeIpAddress(String address) {
+        if (address == null) {
+            return null;
+        }
+
         byte[] ipAddressBytes = createByteArrayFromIpAddressString(address);
 
         if (ipAddressBytes != null) {
