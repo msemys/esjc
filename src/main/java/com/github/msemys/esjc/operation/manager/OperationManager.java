@@ -11,17 +11,18 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
+import static com.github.msemys.esjc.util.Iterables.consume;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
-import static java.util.stream.Stream.concat;
 
 public class OperationManager {
     private static final Logger logger = LoggerFactory.getLogger(OperationManager.class);
 
     private final Map<UUID, OperationItem> activeOperations = new ConcurrentHashMap<>();
     private final Queue<OperationItem> waitingOperations = new ConcurrentLinkedQueue<>();
-    private final List<OperationItem> retryPendingOperations = new ArrayList<>();
-    private int totalOperationCount;
+    private final Queue<OperationItem> retryPendingOperations = new ConcurrentLinkedQueue<>();
+    private volatile int totalOperationCount;
 
     private final Settings settings;
 
@@ -37,18 +38,19 @@ public class OperationManager {
         return totalOperationCount;
     }
 
+    private void updateTotalOperationCount() {
+        totalOperationCount = activeOperations.size() + waitingOperations.size();
+    }
+
     public void cleanUp(Throwable cause) {
-        if (!activeOperations.isEmpty() || !waitingOperations.isEmpty() || !retryPendingOperations.isEmpty()) {
-            ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.", cause);
+        Exception exception = new ConnectionClosedException("Connection was closed.", cause);
+        Consumer<OperationItem> failOperation = item -> item.operation.fail(exception);
 
-            concat(activeOperations.values().stream(), concat(waitingOperations.stream(), retryPendingOperations.stream()))
-                .forEach(item -> item.operation.fail(connectionClosedException));
-        }
+        consume(activeOperations.values(), failOperation);
+        consume(waitingOperations, failOperation);
+        consume(retryPendingOperations, failOperation);
 
-        activeOperations.clear();
-        waitingOperations.clear();
-        retryPendingOperations.clear();
-        totalOperationCount = 0;
+        updateTotalOperationCount();
     }
 
     public void checkTimeoutsAndRetry(Channel connection) {
@@ -76,21 +78,18 @@ public class OperationManager {
         removeOperations.forEach(this::removeOperation);
 
         if (connection != null) {
-            retryOperations.forEach(this::scheduleOperationRetry);
+            consume(retryOperations, this::scheduleOperationRetry);
+            consume(retryPendingOperations, retryOperations::add);
 
-            if (!retryPendingOperations.isEmpty()) {
-                retryPendingOperations.stream().sorted().forEach(item -> {
-                    UUID oldCorrelationId = item.correlationId;
-                    item.correlationId = UUID.randomUUID();
-                    item.retryCount += 1;
+            retryOperations.stream().sorted().forEach(item -> {
+                UUID oldCorrelationId = item.correlationId;
+                item.correlationId = UUID.randomUUID();
+                item.retryCount += 1;
 
-                    logger.debug("retrying, old correlationId {}, operation {}.", oldCorrelationId, item.toString());
+                logger.debug("retrying, old correlationId {}, operation {}.", oldCorrelationId, item.toString());
 
-                    scheduleOperation(item, connection);
-                });
-
-                retryPendingOperations.clear();
-            }
+                scheduleOperation(item, connection);
+            });
 
             scheduleWaitingOperations(connection);
         }
@@ -103,7 +102,7 @@ public class OperationManager {
             if (item.maxRetries >= 0 && item.retryCount >= item.maxRetries) {
                 item.operation.fail(new RetriesLimitReachedException(item.toString(), item.retryCount));
             } else {
-                retryPendingOperations.add(item);
+                retryPendingOperations.offer(item);
             }
         }
     }
@@ -114,7 +113,7 @@ public class OperationManager {
             return false;
         } else {
             logger.debug("removeOperation SUCCEEDED for {}", item);
-            totalOperationCount = activeOperations.size() + waitingOperations.size();
+            updateTotalOperationCount();
             return true;
         }
     }
@@ -132,7 +131,7 @@ public class OperationManager {
             }
         }
 
-        totalOperationCount = activeOperations.size() + waitingOperations.size();
+        updateTotalOperationCount();
     }
 
     public void enqueueOperation(OperationItem item) {
