@@ -136,9 +136,10 @@ public class HttpClient implements AutoCloseable {
         operation.response.whenComplete((r, t) -> received.release());
 
         HttpResponseHandler responseHandler = channel.pipeline().get(HttpResponseHandler.class);
-        responseHandler.pendingResponse = operation.response;
 
         try {
+            responseHandler.pendingResponse = operation.response;
+
             channel.writeAndFlush(operation.request).sync();
 
             if (!received.await(operationTimeoutMillis, MILLISECONDS)) {
