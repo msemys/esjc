@@ -100,8 +100,7 @@ public abstract class AbstractSubscriptionOperation<T extends Subscription, E ex
     @Override
     public void drop(SubscriptionDropReason reason, Exception exception, Channel connection) {
         if (unsubscribed.compareAndSet(false, true)) {
-            logger.trace(String.format("Subscription %s to %s: closing subscription, reason: %s",
-                correlationId, streamId(), reason), exception);
+            logger.trace("Subscription {} to {}: closing subscription, reason: {}", correlationId, streamId(), reason, exception);
 
             if (reason != SubscriptionDropReason.UserInitiated) {
                 checkNotNull(exception, "No exception provided for subscription drop reason '%s", reason);
