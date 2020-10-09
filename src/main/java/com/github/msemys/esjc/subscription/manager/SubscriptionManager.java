@@ -88,15 +88,12 @@ public class SubscriptionManager {
         retrySubscriptions.forEach(this::scheduleSubscriptionRetry);
         removeSubscriptions.forEach(this::removeSubscription);
 
-        SubscriptionItem item;
-        while ((item = retryPendingSubscriptions.poll()) != null) {
+        consume(retryPendingSubscriptions, item -> {
             item.retryCount += 1;
             startSubscription(item, connection);
-        }
+        });
 
-        while ((item = waitingSubscriptions.poll()) != null) {
-            startSubscription(item, connection);
-        }
+        consume(waitingSubscriptions, item -> startSubscription(item, connection));
     }
 
     public boolean removeSubscription(SubscriptionItem item) {
