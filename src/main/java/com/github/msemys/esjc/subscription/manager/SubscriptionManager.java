@@ -5,10 +5,8 @@ import com.github.msemys.esjc.Settings;
 import com.github.msemys.esjc.SubscriptionDropReason;
 import com.github.msemys.esjc.operation.manager.OperationTimeoutException;
 import com.github.msemys.esjc.operation.manager.RetriesLimitReachedException;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +14,10 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
+import static com.github.msemys.esjc.util.Iterables.consume;
 import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
-
-import static java.util.stream.Stream.concat;
 
 public class SubscriptionManager {
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionManager.class);
@@ -40,16 +38,12 @@ public class SubscriptionManager {
     }
 
     public void cleanUp(Throwable cause) {
-        if (!activeSubscriptions.isEmpty() || !waitingSubscriptions.isEmpty() || !retryPendingSubscriptions.isEmpty()) {
-            ConnectionClosedException connectionClosedException = new ConnectionClosedException("Connection was closed.", cause);
+        ConnectionClosedException exception = new ConnectionClosedException("Connection was closed.", cause);
+        Consumer<SubscriptionItem> dropSubscription = item -> item.operation.drop(SubscriptionDropReason.ConnectionClosed, exception);
 
-            concat(activeSubscriptions.values().stream(), concat(waitingSubscriptions.stream(), retryPendingSubscriptions.stream()))
-                .forEach(item -> item.operation.drop(SubscriptionDropReason.ConnectionClosed, connectionClosedException));
-        }
-
-        activeSubscriptions.clear();
-        waitingSubscriptions.clear();
-        retryPendingSubscriptions.clear();
+        consume(activeSubscriptions.values(), dropSubscription);
+        consume(waitingSubscriptions, dropSubscription);
+        consume(retryPendingSubscriptions, dropSubscription);
     }
 
     public void purgeSubscribedAndDropped(ChannelId connectionId) {
