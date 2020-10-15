@@ -84,7 +84,7 @@ public class TcpPackageTest {
 
         assertEquals(TcpCommand.HeartbeatRequestCommand, tcpPackage.command);
         assertEquals(TcpFlag.None, tcpPackage.flag);
-        assertEquals("0dc092bd-aeb3-4ad4-a6cf-4448e4ca50cb", tcpPackage.correlationId.toString());
+        assertEquals("bd92c00d-b3ae-d44a-a6cf-4448e4ca50cb", tcpPackage.correlationId.toString());
         assertNull(tcpPackage.login);
         assertNull(tcpPackage.password);
         assertEquals(DATA, new String(tcpPackage.data, UTF_8));
@@ -100,7 +100,7 @@ public class TcpPackageTest {
 
         assertEquals(TcpCommand.HeartbeatRequestCommand, tcpPackage.command);
         assertEquals(TcpFlag.Authenticated, tcpPackage.flag);
-        assertEquals("beca0c9b-4d2d-4c10-9bd8-d518da5ccf00", tcpPackage.correlationId.toString());
+        assertEquals("9b0ccabe-2d4d-104c-9bd8-d518da5ccf00", tcpPackage.correlationId.toString());
         assertEquals("admin", tcpPackage.login);
         assertEquals("secret", tcpPackage.password);
         assertEquals(DATA, new String(tcpPackage.data, UTF_8));
