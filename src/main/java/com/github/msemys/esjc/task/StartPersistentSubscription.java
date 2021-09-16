@@ -43,4 +43,9 @@ public class StartPersistentSubscription implements Task {
         this.timeout = timeout;
     }
 
+    @Override
+    public void fail(Exception exception) {
+        result.completeExceptionally(exception);
+    }
+
 }

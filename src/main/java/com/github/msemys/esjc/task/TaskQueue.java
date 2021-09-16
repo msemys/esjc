@@ -1,5 +1,8 @@
 package com.github.msemys.esjc.task;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -12,6 +15,8 @@ import static com.github.msemys.esjc.util.Preconditions.checkNotNull;
 import static com.github.msemys.esjc.util.Preconditions.checkState;
 
 public class TaskQueue {
+    private static final Logger logger = LoggerFactory.getLogger(TaskQueue.class);
+
     private final Executor executor;
     private final Queue<Task> queue = new ConcurrentLinkedQueue<>();
     private final Map<Class<? extends Task>, Consumer<Task>> handlers = new HashMap<>();
@@ -43,9 +48,14 @@ public class TaskQueue {
             Task task;
 
             while ((task = queue.poll()) != null) {
-                Consumer<Task> handler = handlers.get(task.getClass());
-                checkState(handler != null, "No handler registered for task '%s'", task.getClass().getSimpleName());
-                handler.accept(task);
+                try {
+                    Consumer<Task> handler = handlers.get(task.getClass());
+                    checkState(handler != null, "No handler registered for task '%s'", task.getClass().getSimpleName());
+                    handler.accept(task);
+                } catch (Exception e) {
+                    logger.error("Failed processing task: {}", task.getClass().getSimpleName(), e);
+                    task.fail(e);
+                }
             }
 
             processing.set(false);

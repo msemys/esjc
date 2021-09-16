@@ -11,4 +11,10 @@ public class StartOperation implements Task {
         checkNotNull(operation, "operation is null");
         this.operation = operation;
     }
+
+    @Override
+    public void fail(Exception exception) {
+        operation.fail(exception);
+    }
+
 }

@@ -39,4 +39,9 @@ public class StartSubscription implements Task {
         this.timeout = timeout;
     }
 
+    @Override
+    public void fail(Exception exception) {
+        result.completeExceptionally(exception);
+    }
+
 }
