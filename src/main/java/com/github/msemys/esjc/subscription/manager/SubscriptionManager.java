@@ -60,15 +60,13 @@ public class SubscriptionManager {
     }
 
     public void checkTimeoutsAndRetry(Channel connection) {
-        checkNotNull(connection, "connection is null");
-
         List<SubscriptionItem> retrySubscriptions = new ArrayList<>();
         List<SubscriptionItem> removeSubscriptions = new ArrayList<>();
 
         activeSubscriptions.values().stream()
             .filter(s -> !s.isSubscribed)
             .forEach(s -> {
-                if (!s.connectionId.equals(connection.id())) {
+                if (connection != null && !s.connectionId.equals(connection.id())) {
                     retrySubscriptions.add(s);
                 } else if (!s.timeout.isZero() && s.lastUpdated.isElapsed(settings.operationTimeout)) {
                     String error = String.format("Subscription never got confirmation from server. UTC now: %s, operation: %s.",
@@ -85,15 +83,18 @@ public class SubscriptionManager {
                 }
             });
 
-        retrySubscriptions.forEach(this::scheduleSubscriptionRetry);
         removeSubscriptions.forEach(this::removeSubscription);
 
-        consume(retryPendingSubscriptions, item -> {
-            item.retryCount += 1;
-            startSubscription(item, connection);
-        });
+        if (connection != null) {
+            retrySubscriptions.forEach(this::scheduleSubscriptionRetry);
 
-        consume(waitingSubscriptions, item -> startSubscription(item, connection));
+            consume(retryPendingSubscriptions, item -> {
+                item.retryCount += 1;
+                startSubscription(item, connection);
+            });
+
+            consume(waitingSubscriptions, item -> startSubscription(item, connection));
+        }
     }
 
     public boolean removeSubscription(SubscriptionItem item) {
