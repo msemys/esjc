@@ -1,9 +1,9 @@
 language: java
+dist: bionic
+os: linux
 
 jdk:
-- oraclejdk8
-
-sudo: true
+- openjdk8
 
 services:
   - docker
