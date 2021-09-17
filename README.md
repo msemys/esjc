@@ -1,6 +1,6 @@
 # EventStore Java Client 
 
-[![Build Status](https://api.travis-ci.org/msemys/esjc.svg)](https://travis-ci.org/msemys/esjc)
+[![Build Status](https://app.travis-ci.com/msemys/esjc.svg?branch=master)](https://app.travis-ci.com/msemys/esjc)
 [![Version](https://img.shields.io/maven-central/v/com.github.msemys/esjc.svg?label=version)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.msemys%22%20AND%20a%3A%22esjc%22)
 [![Javadocs](https://www.javadoc.io/badge/com.github.msemys/esjc.svg)](https://www.javadoc.io/doc/com.github.msemys/esjc) 
 
