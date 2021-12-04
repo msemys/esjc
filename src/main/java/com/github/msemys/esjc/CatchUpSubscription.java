@@ -108,7 +108,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
     public void stop(Duration timeout) throws TimeoutException {
         stop();
         logger.trace("Waiting on subscription to stop");
-        if (!stopped.await(timeout.toMillis(), TimeUnit.MILLISECONDS)) {
+        if (!awaitStopped(timeout)) {
             throw new TimeoutException(String.format("Could not stop %s in time.", getClass().getSimpleName()));
         }
     }
@@ -124,6 +124,27 @@ public abstract class CatchUpSubscription implements AutoCloseable {
 
         shouldStop = true;
         enqueueSubscriptionDropNotification(SubscriptionDropReason.UserInitiated, null);
+    }
+
+    /**
+     * Waits until the subscription stops or the specified waiting time elapses.
+     *
+     * @param duration the amount of time to wait subscription to be stopped
+     * @return {@code true} if the subscription stops and {@code false} if the waiting time elapsed before the subscription stops
+     */
+    public boolean awaitStopped(Duration duration) {
+        return awaitStopped(duration.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Waits until the subscription stops or the specified waiting time elapses.
+     *
+     * @param time the maximum time to wait
+     * @param unit the time unit
+     * @return {@code true} if the subscription stops and {@code false} if the waiting time elapsed before the subscription stops
+     */
+    public boolean awaitStopped(long time, TimeUnit unit) {
+        return stopped.await(time, unit);
     }
 
     /**
@@ -144,7 +165,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
         eventstore.removeListener(reconnectionHook);
 
         while (dropData.get() != null && !isDropped.get()) {
-            stopped.await(1, TimeUnit.SECONDS);
+            awaitStopped(1, TimeUnit.SECONDS);
         }
 
         runSubscription();
