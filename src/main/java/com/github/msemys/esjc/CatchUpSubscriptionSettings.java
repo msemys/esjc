@@ -30,10 +30,16 @@ public class CatchUpSubscriptionSettings {
      */
     public final int readBatchSize;
 
+    /**
+     * Whether or not the subscription should automatically resubscribe on reconnect (be default {@code true}).
+     */
+    public final boolean resubscribeOnReconnect;
+
     private CatchUpSubscriptionSettings(Builder builder) {
         maxLiveQueueSize = builder.maxLiveQueueSize;
         resolveLinkTos = builder.resolveLinkTos;
         readBatchSize = builder.readBatchSize;
+        resubscribeOnReconnect = builder.resubscribeOnReconnect;
     }
 
     @Override
@@ -42,6 +48,7 @@ public class CatchUpSubscriptionSettings {
         sb.append("maxLiveQueueSize=").append(maxLiveQueueSize);
         sb.append(", resolveLinkTos=").append(resolveLinkTos);
         sb.append(", readBatchSize=").append(readBatchSize);
+        sb.append(", resubscribeOnReconnect=").append(resubscribeOnReconnect);
         sb.append('}');
         return sb.toString();
     }
@@ -62,6 +69,7 @@ public class CatchUpSubscriptionSettings {
         private Integer maxLiveQueueSize;
         private Boolean resolveLinkTos;
         private Integer readBatchSize;
+        private Boolean resubscribeOnReconnect;
 
         /**
          * Specifies the maximum number of events allowed to be cached when processing from live subscription (by default, 10000 events).
@@ -98,6 +106,17 @@ public class CatchUpSubscriptionSettings {
         }
 
         /**
+         * Specifies whether or not the subscription should automatically resubscribe on reconnect (be default {@code true}).
+         *
+         * @param resubscribeOnReconnect whether to resubscribe on reconnect.
+         * @return the builder reference
+         */
+        public Builder resubscribeOnReconnect(boolean resubscribeOnReconnect) {
+            this.resubscribeOnReconnect = resubscribeOnReconnect;
+            return this;
+        }
+
+        /**
          * Builds a catch-up subscription settings.
          *
          * @return catch-up subscription settings
@@ -117,6 +136,10 @@ public class CatchUpSubscriptionSettings {
                 readBatchSize = 500;
             } else {
                 checkArgument(BATCH_SIZE_RANGE.contains(readBatchSize), "readBatchSize is out of range. Allowed range: %s.", BATCH_SIZE_RANGE.toString());
+            }
+
+            if (resubscribeOnReconnect == null) {
+                resubscribeOnReconnect = true;
             }
 
             return new CatchUpSubscriptionSettings(this);

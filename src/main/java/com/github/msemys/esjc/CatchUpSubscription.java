@@ -63,6 +63,7 @@ public abstract class CatchUpSubscription implements AutoCloseable {
                                   UserCredentials userCredentials,
                                   int readBatchSize,
                                   int maxPushQueueSize,
+                                  boolean resubscribeOnReconnect,
                                   Executor executor) {
         checkNotNull(eventstore, "eventstore is null");
         checkNotNull(listener, "listener is null");
@@ -79,11 +80,15 @@ public abstract class CatchUpSubscription implements AutoCloseable {
         this.maxPushQueueSize = maxPushQueueSize;
         this.executor = executor;
 
-        reconnectionHook = event -> {
-            if (event instanceof ClientConnected) {
-                onReconnect();
-            }
-        };
+        if (resubscribeOnReconnect) {
+            reconnectionHook = event -> {
+                if (event instanceof ClientConnected) {
+                    onReconnect();
+                }
+            };
+        } else {
+            reconnectionHook = null;
+        }
     }
 
     protected abstract void readEventsTill(EventStore eventstore,
@@ -119,8 +124,10 @@ public abstract class CatchUpSubscription implements AutoCloseable {
     public void stop() {
         logger.trace("Catch-up subscription to {}: requesting stop...", streamId());
 
-        logger.trace("Catch-up subscription to {}: unhooking from connection. Connected.", streamId());
-        eventstore.removeListener(reconnectionHook);
+        if (reconnectionHook != null) {
+            logger.trace("Catch-up subscription to {}: unhooking from connection. Connected.", streamId());
+            eventstore.removeListener(reconnectionHook);
+        }
 
         shouldStop = true;
         enqueueSubscriptionDropNotification(SubscriptionDropReason.UserInitiated, null);
@@ -161,8 +168,10 @@ public abstract class CatchUpSubscription implements AutoCloseable {
     private void onReconnect() {
         logger.trace("Catch-up subscription to {}: recovering after reconnection.", streamId());
 
-        logger.trace("Catch-up subscription to {}: unhooking from connection. Connected.", streamId());
-        eventstore.removeListener(reconnectionHook);
+        if (reconnectionHook != null) {
+            logger.trace("Catch-up subscription to {}: unhooking from connection. Connected.", streamId());
+            eventstore.removeListener(reconnectionHook);
+        }
 
         while (dropData.get() != null && !isDropped.get()) {
             awaitStopped(1, TimeUnit.SECONDS);
@@ -235,8 +244,10 @@ public abstract class CatchUpSubscription implements AutoCloseable {
             logger.trace("Catch-up subscription to {}: processing live events...", streamId());
             listener.onLiveProcessingStarted(this);
 
-            logger.trace("Catch-up subscription to {}: hooking to connection. Connected", streamId());
-            eventstore.addListener(reconnectionHook);
+            if (reconnectionHook != null) {
+                logger.trace("Catch-up subscription to {}: hooking to connection. Connected", streamId());
+                eventstore.addListener(reconnectionHook);
+            }
 
             allowProcessing = true;
             ensureProcessingPushQueue();

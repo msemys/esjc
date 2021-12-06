@@ -18,8 +18,9 @@ public class AllCatchUpSubscription extends CatchUpSubscription {
                                   UserCredentials userCredentials,
                                   int readBatchSize,
                                   int maxPushQueueSize,
+                                  boolean resubscribeOnReconnect,
                                   Executor executor) {
-        super(eventstore, Strings.EMPTY, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, executor);
+        super(eventstore, Strings.EMPTY, resolveLinkTos, listener, userCredentials, readBatchSize, maxPushQueueSize, resubscribeOnReconnect, executor);
         lastProcessedPosition = (position == null) ? Position.END : position;
         nextReadPosition = (position == null) ? Position.START : position;
     }

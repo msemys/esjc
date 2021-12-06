@@ -405,7 +405,7 @@ public class EventStoreTcp implements EventStore {
         checkNotNull(settings, "settings is null");
 
         CatchUpSubscription subscription = new StreamCatchUpSubscription(this,
-            stream, eventNumber, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
+            stream, eventNumber, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, settings.resubscribeOnReconnect, executor());
 
         subscription.start();
 
@@ -421,7 +421,7 @@ public class EventStoreTcp implements EventStore {
         checkNotNull(settings, "settings is null");
 
         CatchUpSubscription subscription = new AllCatchUpSubscription(this,
-            position, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, executor());
+            position, settings.resolveLinkTos, listener, userCredentials, settings.readBatchSize, settings.maxLiveQueueSize, settings.resubscribeOnReconnect, executor());
 
         subscription.start();
 
