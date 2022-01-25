@@ -4,18 +4,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>no.ks.fiks.pom</groupId>
-        <artifactId>fiks-superpom</artifactId>
-        <version>2.5.1</version>
-    </parent>
-
     <groupId>no.ks.fiks</groupId>
     <artifactId>fiks-esjc</artifactId>
     <version>2.6.0-SNAPSHOT</version>
 
     <name>EventStore Java Client</name>
     <description>EventStore client for Java 8 that uses Netty for network communication. Clone with support for Evenstore v20.X</description>
+
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>central</id>
+            <name>KS Repository</name>
+            <url>https://artifactory.fiks.ks.no/artifactory/ks-maven/</url>
+        </repository>
+        <snapshotRepository>
+            <uniqueVersion>true</uniqueVersion>
+            <id>snapshots</id>
+            <name>KS Snapshots</name>
+            <url>https://artifactory.fiks.ks.no/artifactory/maven-all/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <licenses>
         <license>
@@ -31,6 +40,7 @@
         <netty.version>4.1.68.Final</netty.version>
         <protobuf.version>2.6.1</protobuf.version>
         <gson.version>2.8.8</gson.version>
+        <maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
         <slf4j.version>1.7.32</slf4j.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -178,6 +188,33 @@
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <inherited>true</inherited>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <configuration>
+                            <rules>
+                                <requireReleaseVersion/>
+                                <requireReleaseDeps />
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>validate-snap</id>
+                        <configuration>
+                            <rules>
+                                <requireSnapshotVersion>
+                                    <failWhenParentIsRelease>false</failWhenParentIsRelease>
+                                </requireSnapshotVersion>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
