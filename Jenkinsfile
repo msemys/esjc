@@ -65,13 +65,6 @@ pipeline {
                 )
             }
         }
-        stage('Opprett sertifikat') {
-            steps {
-                script {
-                    sh script: "./scripts/generate-ssl-cert.sh", label: "Opprette sertifikat til Eventstore"
-                }
-            }
-        }
         stage('Build') {
             environment {
              UID = "${sh(script: 'echo $(id -u)', returnStdout: true, label: 'Finn UID')}"
@@ -79,6 +72,7 @@ pipeline {
             }
             steps {
                 script {
+                     sh script: "./scripts/generate-ssl-cert.sh", label: "Opprette sertifikat til Eventstore"
                      docker.withRegistry('https://docker-all.artifactory.fiks.ks.no', 'artifactory-token-based') {
                          sh script: "docker-compose --no-ansi build", label: "Build docker images"
                          sh script: "UID=${UID} GID=${GID} docker-compose --no-ansi up -d --remove-orphans"
