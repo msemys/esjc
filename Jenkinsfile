@@ -87,21 +87,21 @@ pipeline {
                      deployerId: "MAVEN_DEPLOYER",
                      tool: 'maven'
                 )
-                post {
-                    success {
-                        recordIssues enabledForFailure: true, tool: java()
-                        rtMavenRun(
-                            pom: 'pom.xml',
-                            goals: "org.jacoco:jacoco-maven-plugin:${JACOCO_VERSION}:report",
-                            tool: 'maven',
-                            resolverId: "MAVEN_RESOLVER"
-                        )
-                        jacoco(execPattern: '**/*.exec')
-                    }
+            }
+            post {
+                success {
+                    recordIssues enabledForFailure: true, tool: java()
+                    rtMavenRun(
+                        pom: 'pom.xml',
+                        goals: "org.jacoco:jacoco-maven-plugin:${JACOCO_VERSION}:report",
+                        tool: 'maven',
+                        resolverId: "MAVEN_RESOLVER"
+                    )
+                    jacoco(execPattern: '**/*.exec')
                 }
-                 cleanup {
-                     sh script: "docker-compose --no-ansi down -v", label: "Stop all docker images"
-                 }
+                cleanup {
+                    sh script: "docker-compose --no-ansi down -v", label: "Stop all docker images"
+                }
             }
         }
         stage('Security check') {
