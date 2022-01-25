@@ -196,7 +196,7 @@ pipeline {
                     branch 'main'
                 }
             }
-
+        }
 
         stage('Release: Set new snapshot') {
            when {
