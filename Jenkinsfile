@@ -88,29 +88,17 @@ pipeline {
                      tool: 'maven'
                 )
                 post {
-                     success {
-                         recordIssues enabledForFailure: true, tools: [java(), mavenConsole(), kotlin()]
-                         rtMavenRun(
-                             pom: 'pom.xml',
-                             goals: "org.jacoco:jacoco-maven-plugin:${JACOCO_VERSION}:report",
-                             resolverId: 'MAVEN_RESOLVER',
-                             tool: 'maven'
-                         )
-                         jacoco(execPattern: '**/*.exec')
-                     }
-                 }
-                 always {
-                     junit testResults:'**/surefire-reports/*.xml', allowEmptyResults: true
-                 }
-                 failure {
-                     sh "docker-compose logs --no-color -t > docker.logs"
-                     archiveArtifacts artifacts: 'docker.logs', fingerprint: true
-                     script {
-                         if(fileExists("component-test/build/reports/tests")) {
-                             zip zipFile: 'buildReports.zip', archive: true, glob: 'component-test/build/reports/tests/*.*'
-                         }
-                     }
-                 }
+                    success {
+                        recordIssues enabledForFailure: true, tool: java()
+                        rtMavenRun(
+                            pom: 'pom.xml',
+                            goals: "org.jacoco:jacoco-maven-plugin:${JACOCO_VERSION}:report",
+                            tool: 'maven',
+                            resolverId: "MAVEN_RESOLVER"
+                        )
+                        jacoco(execPattern: '**/*.exec')
+                    }
+                }
                  cleanup {
                      sh script: "docker-compose --no-ansi down -v", label: "Stop all docker images"
                  }
