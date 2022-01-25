@@ -121,14 +121,7 @@ pipeline {
 
         stage('Release: new version') {
             when {
-                allOf {
-                    expression { params.isRelease }
-                    anyOf {
-                        branch 'master'
-                        branch 'main'
-                        branch 'supportV20'
-                    }
-                }
+                expression { params.isRelease }
             }
 
             steps {
