@@ -73,11 +73,11 @@ pipeline {
             }
         }
         stage('Build') {
+            environment {
+             UID = "${sh(script: 'echo $(id -u)', returnStdout: true, label: 'Finn UID')}"
+             GID = "${sh(script: 'echo $(id -g)', returnStdout: true, label: 'Finn GID')}"
+            }
             steps {
-                environment {
-                 UID = "${sh(script: 'echo $(id -u)', returnStdout: true, label: 'Finn UID')}"
-                 GID = "${sh(script: 'echo $(id -g)', returnStdout: true, label: 'Finn GID')}"
-                }
                 script {
                      docker.withRegistry('https://docker-all.artifactory.fiks.ks.no', 'artifactory-token-based') {
                          sh script: "docker-compose --no-ansi build", label: "Build docker images"
