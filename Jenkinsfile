@@ -126,6 +126,7 @@ pipeline {
                     anyOf {
                         branch 'master'
                         branch 'main'
+                        branch 'supportV20'
                     }
                 }
             }
