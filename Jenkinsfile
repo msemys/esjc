@@ -66,8 +66,10 @@ pipeline {
             }
         }
         stage('Opprett sertifikat') {
-            script {
-                sh script: "./scripts/generate-ssl-cert.sh", label: "Opprette sertifikat til Eventstore"
+            steps {
+                script {
+                    sh script: "./scripts/generate-ssl-cert.sh", label: "Opprette sertifikat til Eventstore"
+                }
             }
         }
         stage('Build') {
