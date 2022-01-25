@@ -92,15 +92,16 @@ pipeline {
                      tool: 'maven'
                 )
                 post {
-                 success {
-                     recordIssues enabledForFailure: true, tools: [java(), mavenConsole(), kotlin()]
-                     rtMavenRun(
-                         pom: 'pom.xml',
-                         goals: "org.jacoco:jacoco-maven-plugin:${JACOCO_VERSION}:report",
-                         resolverId: 'MAVEN_RESOLVER',
-                         tool: 'maven'
-                     )
-                     jacoco(execPattern: '**/*.exec')
+                     success {
+                         recordIssues enabledForFailure: true, tools: [java(), mavenConsole(), kotlin()]
+                         rtMavenRun(
+                             pom: 'pom.xml',
+                             goals: "org.jacoco:jacoco-maven-plugin:${JACOCO_VERSION}:report",
+                             resolverId: 'MAVEN_RESOLVER',
+                             tool: 'maven'
+                         )
+                         jacoco(execPattern: '**/*.exec')
+                     }
                  }
                  always {
                      junit testResults:'**/surefire-reports/*.xml', allowEmptyResults: true
