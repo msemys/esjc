@@ -10,6 +10,8 @@ import com.google.gson.stream.JsonReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.*;
@@ -179,7 +181,10 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
 
     private Optional<ClusterInfoDto> tryGetGossipFrom(GossipSeed gossipSeed) {
         try {
-            URL url = new URL("http://" + gossipSeed.endpoint.getHostString() + ":" + gossipSeed.endpoint.getPort() + "/gossip?format=json");
+
+            final boolean gossipTLSConfig = Boolean.parseBoolean(System.getenv("EVENTSTORE_GOSSIP_TLS"));
+
+            URL url = new URL( (gossipTLSConfig ? "https" : "http") +"://" + gossipSeed.endpoint.getHostString() + ":" + gossipSeed.endpoint.getPort() + "/gossip?format=json");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout((int) settings.gossipTimeout.toMillis());
@@ -189,11 +194,17 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
-                    return Optional.of(gson.fromJson(new JsonReader(reader), ClusterInfoDto.class));
+                    final Optional<ClusterInfoDto> clusterInfoDto = Optional.of(gson.fromJson(new JsonReader(reader), ClusterInfoDto.class));
+                    logger.info("tryGetGossipFrom: "+clusterInfoDto.get().members.size());
+                    for (MemberInfoDto m: clusterInfoDto.get().members) {
+                        logger.info("tryGetGossipFrom members: "+m);
+                    }
+                    return clusterInfoDto;
                 }
             }
         } catch (Exception e) {
-            // ignore
+            logger.error("Feil ved tilkobling til Eventstore",e);
+            throw new RuntimeException(e);
         }
 
         return Optional.empty();
@@ -214,7 +225,7 @@ public class ClusterEndpointDiscoverer implements EndpointDiscoverer {
                 break;
             case Slave:
                 aliveMembers = aliveMembers.stream()
-                    .sorted((a, b) -> a.state == VNodeState.Slave ? -1 : 1)
+                    .sorted((a, b) -> (a.state == VNodeState.Slave || a.state == VNodeState.Follower) ? -1 : 1)
                     .collect(toList());
                 Collections.shuffle(aliveMembers.subList(0, (int) aliveMembers.stream().filter(m -> m.state == VNodeState.Slave).count()));
                 break;
