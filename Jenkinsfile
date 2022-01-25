@@ -88,7 +88,7 @@ pipeline {
                 }
                 rtMavenRun (
                      pom: 'pom.xml',
-                     goals: '-D jib.console=plain -Dkotlin.environment.keepalive=true -T0.5C -U -B clean install',
+                     goals: '-D jib.console=plain -T0.5C -U -B clean install',
                      resolverId: 'MAVEN_RESOLVER',
                      deployerId: "MAVEN_DEPLOYER",
                      tool: 'maven'
