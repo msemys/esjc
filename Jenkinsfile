@@ -134,87 +134,66 @@ pipeline {
             }
         }
 
-        stage('Release: Set version and tag') {
-            when {
-                expression { params.isRelease }
-            }
-
-            steps {
-                script {
-                    docker.withRegistry('https://docker-all.artifactory.fiks.ks.no', 'artifactory-token-based') {
-                         sh script: "docker-compose --no-ansi build", label: "Build docker images"
-                         sh script: "UID=${UID} GID=${GID} docker-compose --no-ansi up -d --remove-orphans"
-                    }
-
-                    if (params.specifiedVersion == null || params.specifiedVersion == "")
-                        env.version = env.POM_VERSION.replace("-SNAPSHOT", "")
-                    else
-                        env.version = params.specifiedVersion
-
-                    env.IMAGE_TAG = env.version
-
-                    println("Version: ${env.version}")
-
-                    currentBuild.description = "${env.user} released version ${env.version}"
-                }
-
-                gitCheckout()
-                prepareReleaseNoBuild env.version
-                rtMavenRun(
-                    pom: 'pom.xml',
-                    goals: '-T0.5C -U -B clean install',
-                    opts: '-DskipTests=true',
-                    deployerId: "MAVEN_DEPLOYER",
-                    resolverId: 'MAVEN_RESOLVER',
-                    tool: 'maven'
-                )
-                gitTag(isRelease, env.version)
-            }
-        }
-
-        stage('Snapshot: Set version and tag') {
+        stage('Snapshot: verify pom') {
             when {
                 expression { !params.isRelease }
             }
 
             steps {
-                script {
-                    env.version = env.POM_VERSION.replace("SNAPSHOT", env.GIT_SHA)
-                    env.IMAGE_TAG = env.version
-                    println("Version: ${env.version}")
-                }
-                rtMavenRun(
-                    resolverId: 'MAVEN_RESOLVER',
-                    pom: 'pom.xml',
-                    goals: '-T0.5C enforcer:enforce@validate-snap',
-                    tool: 'maven'
+                rtMavenRun (
+                        pom: 'pom.xml',
+                        goals: "-T0.5C enforcer:enforce@validate-snap",
+                        resolverId: "MAVEN_RESOLVER"
                 )
             }
         }
 
-        stage('Deploy artifacts') {
+        stage('Release: new version') {
             when {
-                anyOf {
-                    branch 'master'
-                    branch 'main'
+                allOf {
+                    expression { params.isRelease }
+                    anyOf {
+                        branch 'master'
+                        branch 'main'
+                    }
+                }
+            }
+
+            steps {
+                script {
+                    if (params.specifiedVersion == null || params.specifiedVersion == "")
+                        env.releaseVersion = env.POM_VERSION.replace("-SNAPSHOT", "")
+                    else
+                        env.releaseVersion = params.specifiedVersion
+
+                    currentBuild.description = "${env.user} released version ${env.releaseVersion}"
+                }
+
+                gitCheckout(env.BRANCH_NAME)
+                prepareReleaseNoBuildRT(releaseVersion,'MAVEN_RESOLVER')
+                rtMavenRun(
+                        pom: 'pom.xml',
+                        goals: '-DskipTests -U -B clean install',
+                        deployerId: 'MAVEN_DEPLOYER',
+                        resolverId: 'MAVEN_RESOLVER'
+                )
+                gitTag(isRelease, releaseVersion)
+            }
+        }
+        stage('Release: set snapshot') {
+            when {
+                expression { params.isRelease }
+            }
+            steps {
+                setSnapshotRT(releaseVersion, 'MAVEN_RESOLVER')
+                gitPush()
+            }
+            post {
+                success {
+                    createGithubRelease env.REPO_NAME, params.reviewer, params.releaseNotes, env.releaseVersion, env.user
                 }
             }
         }
-
-        stage('Release: Set new snapshot') {
-           when {
-               expression { params.isRelease }
-           }
-           steps {
-               setSnapshotRT(env.version, 'MAVEN_RESOLVER')
-               gitPush()
-           }
-           post {
-               success {
-                   createGithubRelease env.REPO_NAME, params.reviewer, params.releaseNotes, env.version, env.user, params.securityReview
-               }
-           }
-       }
     }
     post {
         always {
