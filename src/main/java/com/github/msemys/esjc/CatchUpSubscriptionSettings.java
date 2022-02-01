@@ -31,7 +31,7 @@ public class CatchUpSubscriptionSettings {
     public final int readBatchSize;
 
     /**
-     * Whether or not the subscription should automatically resubscribe on reconnect (be default {@code true}).
+     * Whether or not the subscription should automatically resubscribe on reconnect (by default {@code true}).
      */
     public final boolean resubscribeOnReconnect;
 
@@ -106,7 +106,7 @@ public class CatchUpSubscriptionSettings {
         }
 
         /**
-         * Specifies whether or not the subscription should automatically resubscribe on reconnect (be default {@code true}).
+         * Specifies whether or not the subscription should automatically resubscribe on reconnect (by default {@code true}).
          *
          * @param resubscribeOnReconnect whether to resubscribe on reconnect.
          * @return the builder reference
