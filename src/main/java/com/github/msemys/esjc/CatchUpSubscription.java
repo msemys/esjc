@@ -173,8 +173,8 @@ public abstract class CatchUpSubscription implements AutoCloseable {
             eventstore.removeListener(reconnectionHook);
         }
 
-        while (dropData.get() != null && !isDropped.get()) {
-            awaitStopped(1, TimeUnit.SECONDS);
+        while (!awaitStopped(1, TimeUnit.SECONDS)) {
+            // do nothing
         }
 
         runSubscription();
