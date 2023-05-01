@@ -39,6 +39,7 @@ public class EventStoreBuilderTest {
                 .receiveBufferSize(2222)
                 .writeBufferHighWaterMark(4444)
                 .writeBufferLowWaterMark(3333)
+                .maxFrameLength(5555)
                 .build())
             .sslSettings(SslSettings.trustCertificateCN("dummy"))
             .reconnectionDelay(Duration.ofSeconds(33))
@@ -86,6 +87,7 @@ public class EventStoreBuilderTest {
                 .receiveBufferSize(2222)
                 .writeBufferHighWaterMark(4444)
                 .writeBufferLowWaterMark(3333)
+                .maxFrameLength(5555)
                 .build())
             .sslSettings(SslSettings.trustAllCertificates())
             .reconnectionDelay(Duration.ofSeconds(33))
@@ -514,7 +516,8 @@ public class EventStoreBuilderTest {
                 .sendBufferSize(1)
                 .receiveBufferSize(2)
                 .writeBufferLowWaterMark(3)
-                .writeBufferHighWaterMark(4))
+                .writeBufferHighWaterMark(4)
+                .maxFrameLength(5))
             .build();
 
         assertEquals(Duration.ofSeconds(100), result.settings().tcpSettings.closeTimeout);
@@ -525,6 +528,7 @@ public class EventStoreBuilderTest {
         assertEquals(2, result.settings().tcpSettings.receiveBufferSize);
         assertEquals(3, result.settings().tcpSettings.writeBufferLowWaterMark);
         assertEquals(4, result.settings().tcpSettings.writeBufferHighWaterMark);
+        assertEquals(5, result.settings().tcpSettings.maxFrameLength);
     }
 
     @Test

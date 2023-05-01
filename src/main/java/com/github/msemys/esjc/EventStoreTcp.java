@@ -67,8 +67,6 @@ import static java.util.stream.StreamSupport.stream;
 public class EventStoreTcp implements EventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStore.class);
 
-    private static final int MAX_FRAME_LENGTH = 64 * 1024 * 1024;
-
     private enum ConnectionState {INIT, CONNECTING, CONNECTED, CLOSED}
 
     private enum ConnectingPhase {INVALID, RECONNECTING, ENDPOINT_DISCOVERY, CONNECTION_ESTABLISHING, AUTHENTICATION, IDENTIFICATION, CONNECTED}
@@ -130,7 +128,7 @@ public class EventStoreTcp implements EventStore {
                     }
 
                     // decoder
-                    pipeline.addLast("frame-decoder", new LengthFieldBasedFrameDecoder(LITTLE_ENDIAN, MAX_FRAME_LENGTH, 0, 4, 0, 4, true));
+                    pipeline.addLast("frame-decoder", new LengthFieldBasedFrameDecoder(LITTLE_ENDIAN, settings.tcpSettings.maxFrameLength, 0, 4, 0, 4, true));
                     pipeline.addLast("package-decoder", new TcpPackageDecoder());
 
                     // encoder

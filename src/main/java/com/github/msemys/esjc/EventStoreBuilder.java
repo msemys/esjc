@@ -115,7 +115,8 @@ public class EventStoreBuilder {
             .sendBufferSize(settings.tcpSettings.sendBufferSize)
             .receiveBufferSize(settings.tcpSettings.receiveBufferSize)
             .writeBufferHighWaterMark(settings.tcpSettings.writeBufferHighWaterMark)
-            .writeBufferLowWaterMark(settings.tcpSettings.writeBufferLowWaterMark);
+            .writeBufferLowWaterMark(settings.tcpSettings.writeBufferLowWaterMark)
+            .maxFrameLength(settings.tcpSettings.maxFrameLength);
 
         return new EventStoreBuilder(
             settingsBuilder,

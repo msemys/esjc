@@ -51,6 +51,11 @@ public class TcpSettings {
      */
     public final int writeBufferHighWaterMark;
 
+    /**
+     * The maximum length of the frame in bytes.
+     */
+    public final int maxFrameLength;
+
     private TcpSettings(Builder builder) {
         connectTimeout = builder.connectTimeout;
         closeTimeout = builder.closeTimeout;
@@ -60,6 +65,7 @@ public class TcpSettings {
         receiveBufferSize = builder.receiveBufferSize;
         writeBufferHighWaterMark = builder.writeBufferHighWaterMark;
         writeBufferLowWaterMark = builder.writeBufferLowWaterMark;
+        maxFrameLength = builder.maxFrameLength;
     }
 
     @Override
@@ -73,6 +79,7 @@ public class TcpSettings {
         sb.append(", receiveBufferSize=").append(receiveBufferSize);
         sb.append(", writeBufferLowWaterMark=").append(writeBufferLowWaterMark);
         sb.append(", writeBufferHighWaterMark=").append(writeBufferHighWaterMark);
+        sb.append(", maxFrameLength=").append(maxFrameLength);
         sb.append('}');
         return sb.toString();
     }
@@ -98,6 +105,7 @@ public class TcpSettings {
         private Integer receiveBufferSize;
         private Integer writeBufferHighWaterMark;
         private Integer writeBufferLowWaterMark;
+        private Integer maxFrameLength;
 
         /**
          * Sets connection establishment timeout (by default, 10 seconds).
@@ -191,6 +199,17 @@ public class TcpSettings {
         }
 
         /**
+         * Sets maximum length of the frame in bytes (by default, 64 megabytes).
+         *
+         * @param maxFrameLength maximum length of the frame in bytes.
+         * @return the builder reference
+         */
+        public Builder maxFrameLength(int maxFrameLength) {
+            this.maxFrameLength = maxFrameLength;
+            return this;
+        }
+
+        /**
          * Builds a TCP settings.
          *
          * @return TCP settings
@@ -234,6 +253,12 @@ public class TcpSettings {
                 writeBufferLowWaterMark = 32 * 1024;
             } else {
                 checkArgument(!isNegative(writeBufferLowWaterMark), "writeBufferLowWaterMark should not be negative");
+            }
+
+            if (maxFrameLength == null) {
+                maxFrameLength = 64 * 1024 * 1024;
+            } else {
+                checkArgument(isPositive(maxFrameLength), "maxFrameLength should be positive");
             }
 
             return new TcpSettings(this);
