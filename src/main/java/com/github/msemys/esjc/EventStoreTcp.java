@@ -593,7 +593,7 @@ public class EventStoreTcp implements EventStore {
         synchronized (mutex) {
             if (!isRunning()) {
                 reconnectionInfo.reset();
-                timer = group.scheduleAtFixedRate(this::timerTick, 200, 200, MILLISECONDS);
+                timer = group.scheduleWithFixedDelay(this::timerTick, 200, 200, MILLISECONDS);
             }
         }
         CompletableFuture<Void> result = new CompletableFuture<>();
