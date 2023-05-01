@@ -16,6 +16,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.Future;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Queue;
@@ -39,7 +40,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class HttpClient implements AutoCloseable {
     private final EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("es-http"));
     private final Bootstrap bootstrap;
-    private final String host;
+    private String host;
     private final boolean acceptGzip;
     private final long operationTimeoutMillis;
 
@@ -51,7 +52,7 @@ public class HttpClient implements AutoCloseable {
     private volatile Channel channel;
 
     private HttpClient(Builder builder) {
-        host = builder.address.getHostString();
+        host = resolveHostName(builder.address);
         acceptGzip = builder.acceptGzip;
         operationTimeoutMillis = builder.operationTimeout.toMillis();
 
@@ -76,6 +77,16 @@ public class HttpClient implements AutoCloseable {
                     pipeline.addLast("response-handler", new HttpResponseHandler());
                 }
             });
+    }
+
+    public SocketAddress address() {
+        return bootstrap.config().remoteAddress();
+    }
+
+    public void address(InetSocketAddress address) {
+        checkNotNull(address, "address is null");
+        bootstrap.remoteAddress(address);
+        host = resolveHostName(address);
     }
 
     public CompletableFuture<FullHttpResponse> send(HttpRequest request) {
@@ -342,6 +353,10 @@ public class HttpClient implements AutoCloseable {
             this.request = request;
             this.response = response;
         }
+    }
+
+    private static String resolveHostName(InetSocketAddress address) {
+        return address.getHostString();
     }
 
 }

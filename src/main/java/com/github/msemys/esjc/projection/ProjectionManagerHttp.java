@@ -16,6 +16,8 @@ import io.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -252,6 +254,18 @@ public class ProjectionManagerHttp implements ProjectionManager {
     public void shutdown() {
         timer.stop();
         client.close();
+    }
+
+    public SocketAddress address() {
+        return client.address();
+    }
+
+    public void address(String host, int port) {
+        address(new InetSocketAddress(host, port));
+    }
+
+    public void address(InetSocketAddress address) {
+        client.address(address);
     }
 
     private CompletableFuture<String> get(String uri, UserCredentials userCredentials, HttpResponseStatus expectedStatus) {
